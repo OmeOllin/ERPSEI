@@ -12,12 +12,16 @@
 <div class="row">
     <div class="col-md-6">
         @Localizer["Message"]
-        <form id="download-data" asp-page="DownloadPersonalData" method="post">
-            <button class="btn btn-primary" type="submit">@Localizer["DownloadButton"]</button>
-        </form>
-        <p>
-            <a id="delete" asp-page="DeletePersonalData" class="btn btn-danger">@Localizer["DeleteButton"]</a>
-        </p>
+        <div class="mb-3">
+            <form id="download-data" asp-page="DownloadPersonalData" method="post">
+                <button class="btn btn-primary" type="submit">@Localizer["DownloadButton"]</button>
+            </form>
+        </div>
+        <div class="mb-3">
+            <p>
+                <a id="delete" asp-page="DeletePersonalData" class="btn btn-danger">@Localizer["DeleteButton"]</a>
+            </p>
+        <div>
     </div>
 </div>
 
