@@ -1,8 +1,10 @@
 ﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 @model LoginModel
 
 @{
-    ViewData["Title"] = "Inicio de sesión";
+    ViewData["Title"] = Localizer["Title"];
 }
 
 <div class="container">
@@ -17,17 +19,17 @@
                         <div class="col-lg-6">
                             <div class="p-5">
                                 <form id="account" method="post">
-                                    <center><h2>Iniciar sesión</h2></center>
+                                    <center><h2>@ViewData["Title"]</h2></center>
                                     <hr />
                                     <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                                     <div class="form-floating mb-3">
-                                        <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="nombre@ejemplo.com" />
-                                        <label asp-for="Input.Email" class="form-label">Correo electrónico</label>
+                                        <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="@Localizer["EmailPlaceholder"]" />
+                                        <label asp-for="Input.Email" class="form-label"></label>
                                         <span asp-validation-for="Input.Email" class="text-danger"></span>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="contraseña" />
-                                        <label asp-for="Input.Password" class="form-label">Contraseña</label>
+                                        <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="@Localizer["PasswordPlaceholder"]" />
+                                        <label asp-for="Input.Password" class="form-label"></label>
                                         <span asp-validation-for="Input.Password" class="text-danger"></span>
                                     </div>
                                     <div class="checkbox mb-3">
@@ -37,17 +39,17 @@
                                         </label>
                                     </div>
                                     <div>
-                                        <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Iniciar sesión</button>
+                                        <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">@Localizer["LoginButton"]</button>
                                     </div>
                                     <div>
                                         <p>
-                                            <a id="forgot-password" asp-page="./ForgotPassword">¿Olvidó su contraseña?</a>
+                                            <a id="forgot-password" asp-page="./ForgotPassword">@Localizer["ForgotLink"]</a>
                                         </p>
                                         <p>
-                                            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Registrarse como usuario nuevo</a>
+                                            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">@Localizer["RegisterLink"]</a>
                                         </p>
                                         <p>
-                                            <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Reenviar confirmación de correo electrónico</a>
+                                            <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">@Localizer["ResendLink"]</a>
                                         </p>
                                     </div>
                                 </form>
