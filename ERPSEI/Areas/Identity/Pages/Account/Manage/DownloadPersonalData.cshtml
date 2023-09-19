@@ -1,7 +1,9 @@
 ﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 @model DownloadPersonalDataModel
 @{
-    ViewData["Title"] = "Descargue su información";
+    ViewData["Title"] = Localizer["Title"];
     ViewData["ActivePage"] = ManageNavPages.PersonalData;
 }
 
