@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Resources\Areas\Identity\Pages\Account\Manage\" />
     <Folder Include="wwwroot\img\" />
   </ItemGroup>
 
