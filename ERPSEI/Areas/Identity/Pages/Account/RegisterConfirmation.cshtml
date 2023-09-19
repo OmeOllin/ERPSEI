@@ -1,7 +1,9 @@
 ﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 @model RegisterConfirmationModel
 @{
-    ViewData["Title"] = "Confirmación de registro";
+    ViewData["Title"] = Localizer["Title"];
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -9,14 +11,13 @@
     if (@Model.DisplayConfirmAccountLink)
     {
 <p>
-    Esta aplicación actualmente no tiene un remitente de correo electrónico real registrado, consulte <a href="https://aka.ms/aspaccountconf">estos documentos</a> para saber cómo configurar un remitente de correo real.
-    Normalmente esto se enviaría por correo electrónico: <a id="confirm-link" href="@Model.EmailConfirmationUrl">Clic aquí para confirmar su cuenta</a>
+            <a id="confirm-link" href="@Model.EmailConfirmationUrl">@Localizer["AlternativeMessage"]</a>
 </p>
     }
     else
     {
 <p>
-        Por favor, revise su correo electrónico para confirmar su cuenta.
+        @Localizer["Message"].
 </p>
     }
 }
