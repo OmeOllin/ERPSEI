@@ -117,7 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="IndexTitle" xml:space="preserve">
+  <data name="Instructions" xml:space="preserve">
+    <value>Si ya se ha registrado, por favor &lt;b&gt;inicie sesión&lt;/b&gt; para comenzar. De lo contrario, &lt;b&gt;regístrese&lt;/b&gt; de manera sencilla con una cuenta de correo electrónico.</value>
+  </data>
+  <data name="Title" xml:space="preserve">
     <value>Inicio</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>¡Bienvenido a &lt;strong&gt;ERPSEI&lt;/strong&gt;! el planificador de recursos empresariales de &lt;strong&gt;SEI Consulting Group.&lt;/strong&gt;</value>
   </data>
 </root>

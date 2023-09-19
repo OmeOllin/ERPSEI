@@ -3,21 +3,21 @@
 @inject IViewLocalizer Localizer
 @model IndexModel
 @{
-    ViewData["Title"] = Localizer["IndexTitle"];
+    ViewData["Title"] = Localizer["Title"];
 }
 
 <div class="text-center container-fluid">
-    <h1 class="display-5"><b>E</b>nterprise <b>R</b>esource <b>P</b>lanning <b>SEI</b></h1>
+    <h1 class="display-5"><b>E</b>nterprise <b>R</b>esource <b>P</b>lanner <b>SEI</b></h1>
     <hr />
     <p>
-        ¡Bienvenido a <strong>ERPSEI</strong>! el planificador de recursos empresariales de <strong>SEI Consulting Group.</strong>
+        @Localizer["Welcome"]
     </p>
     <img class="indeximage" src="@this.HttpContext.Request.Scheme://@this.HttpContext.Request.Host/img/business2.jpg" />
     <br />
     <br />
     <p>
         <i>
-            Si ya se ha registrado, por favor <b>inicie sesión</b> para comenzar. De lo contrario, <b>regístrese</b> de manera sencilla con una cuenta de correo electrónico.
+            @Localizer["Instructions"]
         </i>
     </p>
 </div>
