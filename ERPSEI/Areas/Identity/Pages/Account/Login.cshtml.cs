@@ -19,11 +19,16 @@ namespace ERPSEI.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(
+            UserManager<IdentityUser> userManager, 
+            SignInManager<IdentityUser> signInManager, 
+            ILogger<LoginModel> logger)
         {
+            _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
         }
@@ -111,13 +116,14 @@ namespace ERPSEI.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
+                IdentityUser user = await _userManager.FindByEmailAsync(_userManager.NormalizeEmail(Input.Email));
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("El usuario inició sesión.");
-                    return LocalRedirect(returnUrl);
+                    return LocalRedirect("/");
                 }
                 if (result.RequiresTwoFactor)
                 {

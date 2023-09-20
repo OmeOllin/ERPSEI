@@ -29,14 +29,6 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
-
-        [Display(Name = "Nombre de usuario")]
-        public string Username { get; set; }
-
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
@@ -57,7 +49,12 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
+
+            [Display(Name = "Nombre de usuario")]
+            public string Username { get; set; }
+
             [Phone]
+            [DataType(DataType.PhoneNumber)]
             [Display(Name = "Número de teléfono")]
             public string PhoneNumber { get; set; }
         }
@@ -67,10 +64,9 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
-            Username = userName;
-
             Input = new InputModel
             {
+                Username = userName,
                 PhoneNumber = phoneNumber
             };
         }
@@ -99,6 +95,18 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             {
                 await LoadAsync(user);
                 return Page();
+            }
+
+            var userName = await _userManager.GetUserNameAsync(user);
+            if (Input.Username != userName)
+            {
+                var setUsernameResult = await _userManager.SetUserNameAsync(user, Input.Username);
+                if(!setUsernameResult.Succeeded) 
+                {
+                    string details = String.Join(" - ", from error in setUsernameResult.Errors.ToList() select error.Description);
+                    StatusMessage = "Error al intentar configurar el nombre de usuario. " + details;
+                    return RedirectToPage();
+                }
             }
 
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
