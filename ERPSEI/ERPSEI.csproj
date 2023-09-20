@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Resources\ValidationStrings.es-MX.resx">
+    <EmbeddedResource Update="Resources\ValidationsLocalization.es-MX.resx">
       <Generator></Generator>
     </EmbeddedResource>
   </ItemGroup>
