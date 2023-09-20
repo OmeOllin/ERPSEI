@@ -43,7 +43,12 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; @DateTime.Now.Year - ERPSEI - <a asp-area="" asp-page="/Privacy">@Localizer["SecondMenu"]</a>
+            <div class="float-start">
+                &copy; @DateTime.Now.Year - ERPSEI - <a asp-area="" asp-page="/Privacy">@Localizer["SecondMenu"]</a>
+            </div>
+            <div class="float-end">
+                @Localizer["RightFooter"]
+            </div>
         </div>
     </footer>
 

@@ -120,6 +120,9 @@
   <data name="FirstMenu" xml:space="preserve">
     <value>Inicio</value>
   </data>
+  <data name="RightFooter" xml:space="preserve">
+    <value>Imagenes del sitio por &lt;a href="https://www.freepik.com/author/stories"&gt;storyset&lt;/a&gt; en Freepik.com</value>
+  </data>
   <data name="SecondMenu" xml:space="preserve">
     <value>Aviso de privacidad</value>
   </data>
