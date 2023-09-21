@@ -120,8 +120,23 @@
   <data name="ChangeEmailButton" xml:space="preserve">
     <value>Change email</value>
   </data>
+  <data name="EmailBodyFP" xml:space="preserve">
+    <value>Please confirm your account by</value>
+  </data>
+  <data name="EmailBodySP" xml:space="preserve">
+    <value>clicking here</value>
+  </data>
+  <data name="EmailChangeFails" xml:space="preserve">
+    <value>Your email is unchanged.</value>
+  </data>
   <data name="EmailPlaceholder" xml:space="preserve">
     <value>Please insert your email</value>
+  </data>
+  <data name="EmailSentSuccessful" xml:space="preserve">
+    <value>Confirmation link to change email sent. Please check your email.</value>
+  </data>
+  <data name="EmailSubject" xml:space="preserve">
+    <value>Confirm your email</value>
   </data>
   <data name="NewEmailPlaceholder" xml:space="preserve">
     <value>Please insert a new email</value>
@@ -131,5 +146,11 @@
   </data>
   <data name="Title" xml:space="preserve">
     <value>Manage email</value>
+  </data>
+  <data name="UserLoadFails" xml:space="preserve">
+    <value>Unable to load user with ID</value>
+  </data>
+  <data name="VerificationEmailSentSuccessful" xml:space="preserve">
+    <value>Verification email sent. Please check your email.</value>
   </data>
 </root>

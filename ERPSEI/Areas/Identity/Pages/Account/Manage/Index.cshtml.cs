@@ -2,13 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Localization;
 
 namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 {
@@ -16,13 +14,16 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IStringLocalizer<IndexModel> _localizer;
 
         public IndexModel(
             UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+            SignInManager<IdentityUser> signInManager,
+            IStringLocalizer<IndexModel> localizer)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _localizer = localizer;
         }
 
         /// <summary>
@@ -50,12 +51,12 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
 
-            [Display(Name = "Nombre de usuario")]
+            [Display(Name = "UserNameField")]
             public string Username { get; set; }
 
             [Phone]
             [DataType(DataType.PhoneNumber)]
-            [Display(Name = "Número de teléfono")]
+            [Display(Name = "PhoneNumberField")]
             public string PhoneNumber { get; set; }
         }
 
@@ -76,7 +77,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"No se puede cargar el usuario con ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"{_localizer["UserLoadFails"]} '{_userManager.GetUserId(User)}'.");
             }
 
             await LoadAsync(user);
@@ -88,7 +89,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"No se puede cargar el usuario con ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"{_localizer["UserLoadFails"]} '{_userManager.GetUserId(User)}'.");
             }
 
             if (!ModelState.IsValid)
@@ -103,8 +104,8 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                 var setUsernameResult = await _userManager.SetUserNameAsync(user, Input.Username);
                 if(!setUsernameResult.Succeeded) 
                 {
-                    string details = String.Join(" - ", from error in setUsernameResult.Errors.ToList() select error.Description);
-                    StatusMessage = "Error al intentar configurar el nombre de usuario. " + details;
+                    //string details = String.Join(" - ", from error in setUsernameResult.Errors.ToList() select error.Description);
+                    StatusMessage = _localizer["UserNameChangeFails"];
                     return RedirectToPage();
                 }
             }
@@ -115,13 +116,13 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                 var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
                 if (!setPhoneResult.Succeeded)
                 {
-                    StatusMessage = "Error inesperado al intentar configurar el número de teléfono.";
+                    StatusMessage = _localizer["UserPhoneChangeFails"];
                     return RedirectToPage();
                 }
             }
 
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Su perfil ha sido actualizado";
+            StatusMessage = _localizer["UserProfileChangeSuccessful"];
             return RedirectToPage();
         }
     }

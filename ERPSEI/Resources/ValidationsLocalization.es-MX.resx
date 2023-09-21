@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ConfirmNewPasswordField" xml:space="preserve">
+    <value>Confirmar nueva contraseña</value>
+  </data>
   <data name="ConfirmPasswordField" xml:space="preserve">
     <value>Confirmar contraseña</value>
   </data>
@@ -132,13 +135,28 @@
   <data name="FieldsComparison" xml:space="preserve">
     <value>El campo {1} y el campo {0} no coinciden.</value>
   </data>
+  <data name="NewEmailField" xml:space="preserve">
+    <value>Nuevo correo electrónico</value>
+  </data>
+  <data name="NewPasswordField" xml:space="preserve">
+    <value>Nueva contraseña</value>
+  </data>
+  <data name="OldPasswordField" xml:space="preserve">
+    <value>Contraseña anterior</value>
+  </data>
   <data name="PasswordField" xml:space="preserve">
     <value>Contraseña</value>
+  </data>
+  <data name="PhoneNumberField" xml:space="preserve">
+    <value>Número de teléfono</value>
   </data>
   <data name="RememberField" xml:space="preserve">
     <value>¿Recordarme?</value>
   </data>
   <data name="Required" xml:space="preserve">
     <value>El campo {0} es requerido</value>
+  </data>
+  <data name="UserNameField" xml:space="preserve">
+    <value>Nombre de usuario</value>
   </data>
 </root>

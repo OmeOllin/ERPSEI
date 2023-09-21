@@ -54,6 +54,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account
             [Required(ErrorMessage = "Required")]
             [StringLength(100, ErrorMessage = "FieldLength", MinimumLength = 6)]
             [DataType(DataType.Password)]
+            [Display(Name = "PasswordField")]
             public string Password { get; set; }
 
             /// <summary>
