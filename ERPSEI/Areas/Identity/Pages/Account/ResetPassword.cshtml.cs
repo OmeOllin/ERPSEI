@@ -2,25 +2,27 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
+using Microsoft.Extensions.Localization;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
 {
     public class ResetPasswordModel : PageModel
     {
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IStringLocalizer<ResetPasswordModel> _localizer;
 
-        public ResetPasswordModel(UserManager<IdentityUser> userManager)
+        public ResetPasswordModel(
+            UserManager<IdentityUser> userManager,
+            IStringLocalizer<ResetPasswordModel> localizer)
         {
             _userManager = userManager;
+            _localizer = localizer;
         }
 
         /// <summary>
@@ -40,16 +42,17 @@ namespace ERPSEI.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = "Required")]
+            [EmailAddress(ErrorMessage = "EmailFormat")]
+            [Display(Name = "EmailField")]
             public string Email { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [Required(ErrorMessage = "Required")]
+            [StringLength(100, ErrorMessage = "FieldLength", MinimumLength = 6)]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 
@@ -58,8 +61,8 @@ namespace ERPSEI.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Confirmar contraseña")]
-            [Compare("Password", ErrorMessage = "La contraseña y la confirmación de contraseña no coinciden.")]
+            [Display(Name = "ConfirmPasswordField")]
+            [Compare("Password", ErrorMessage = "FieldsComparison")]
             public string ConfirmPassword { get; set; }
 
             /// <summary>
@@ -75,7 +78,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account
         {
             if (code == null)
             {
-                return BadRequest("Se debe proporcionar un código para restablecer la contraseña.");
+                return BadRequest(_localizer["CodeRequestMessage"]);
             }
             else
             {

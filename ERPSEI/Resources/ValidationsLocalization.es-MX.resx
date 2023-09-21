@@ -117,11 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ConfirmPasswordField" xml:space="preserve">
+    <value>Confirmar contraseña</value>
+  </data>
   <data name="EmailField" xml:space="preserve">
     <value>Correo electrónico</value>
   </data>
   <data name="EmailFormat" xml:space="preserve">
     <value>El campo {0} no es una dirección de correo electrónico válida.</value>
+  </data>
+  <data name="FieldLength" xml:space="preserve">
+    <value>El campo {0} debe tener al menos {2} y un máximo de {1} caracteres.</value>
+  </data>
+  <data name="FieldsComparison" xml:space="preserve">
+    <value>El campo {1} y el campo {0} no coinciden.</value>
   </data>
   <data name="PasswordField" xml:space="preserve">
     <value>Contraseña</value>

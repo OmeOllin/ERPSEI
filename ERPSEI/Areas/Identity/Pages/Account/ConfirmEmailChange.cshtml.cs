@@ -2,14 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using System.Text;
+using Microsoft.Extensions.Localization;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
 {
@@ -17,11 +15,16 @@ namespace ERPSEI.Areas.Identity.Pages.Account
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IStringLocalizer _localizer;
 
-        public ConfirmEmailChangeModel(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public ConfirmEmailChangeModel(
+            UserManager<IdentityUser> userManager, 
+            SignInManager<IdentityUser> signInManager,
+            IStringLocalizer stringLocalizer)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _localizer = stringLocalizer;
         }
 
         /// <summary>
@@ -41,28 +44,19 @@ namespace ERPSEI.Areas.Identity.Pages.Account
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{userId}'.");
+                return NotFound($"{_localizer["UserLoadFails"]} '{userId}'.");
             }
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             var result = await _userManager.ChangeEmailAsync(user, email, code);
             if (!result.Succeeded)
             {
-                StatusMessage = "Error changing email.";
-                return Page();
-            }
-
-            // In our UI email and user name are one and the same, so when we update the email
-            // we need to update the user name.
-            var setUserNameResult = await _userManager.SetUserNameAsync(user, email);
-            if (!setUserNameResult.Succeeded)
-            {
-                StatusMessage = "Error changing user name.";
+                StatusMessage = _localizer["EmailChangeFails"];
                 return Page();
             }
 
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Gracias por confirmar su cambio de correo electrónico.";
+            StatusMessage = _localizer["EmailChangeSuccessful"];
             return Page();
         }
     }

@@ -2,15 +2,14 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using System.Text;
+using Microsoft.Extensions.Localization;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
 {
@@ -19,11 +18,16 @@ namespace ERPSEI.Areas.Identity.Pages.Account
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailSender _sender;
+        private readonly IStringLocalizer<RegisterConfirmationModel> _localizer;
 
-        public RegisterConfirmationModel(UserManager<IdentityUser> userManager, IEmailSender sender)
+        public RegisterConfirmationModel(
+            UserManager<IdentityUser> userManager, 
+            IEmailSender sender,
+            IStringLocalizer<RegisterConfirmationModel> localizer)
         {
             _userManager = userManager;
             _sender = sender;
+            _localizer = localizer;
         }
 
         /// <summary>
@@ -55,7 +59,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
-                return NotFound($"Unable to load user with email '{email}'.");
+                return NotFound($"{_localizer["UserLoadFails"]} '{email}'.");
             }
 
             Email = email;

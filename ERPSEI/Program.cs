@@ -46,8 +46,6 @@ var app = builder.Build();
 
 app.UseRequestLocalization();
 
-var supportedCultures = new[] { "en-US", "es-MX" }; 
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

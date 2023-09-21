@@ -2,25 +2,26 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Localization;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
 {
     public class ConfirmEmailModel : PageModel
     {
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IStringLocalizer<ConfirmEmailModel> _localization;
 
-        public ConfirmEmailModel(UserManager<IdentityUser> userManager)
+        public ConfirmEmailModel(
+            UserManager<IdentityUser> userManager, 
+            IStringLocalizer<ConfirmEmailModel> localization)
         {
             _userManager = userManager;
+            _localization = localization;   
         }
 
         /// <summary>
@@ -39,12 +40,12 @@ namespace ERPSEI.Areas.Identity.Pages.Account
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{userId}'.");
+                return NotFound($"{_localization["UserLoadFails"]} '{userId}'.");
             }
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             var result = await _userManager.ConfirmEmailAsync(user, code);
-            StatusMessage = result.Succeeded ? "Gracias por confirmar su correo electrónico." : "Error al confirmar su correo electrónico.";
+            StatusMessage = result.Succeeded ? _localization["ConfirmationSuccessful"] : _localization["ConfirmationFails"];
             return Page();
         }
     }
