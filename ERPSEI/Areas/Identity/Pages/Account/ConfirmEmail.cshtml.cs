@@ -14,14 +14,14 @@ namespace ERPSEI.Areas.Identity.Pages.Account
     public class ConfirmEmailModel : PageModel
     {
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly IStringLocalizer<ConfirmEmailModel> _localization;
+        private readonly IStringLocalizer<ConfirmEmailModel> _localizer;
 
         public ConfirmEmailModel(
             UserManager<IdentityUser> userManager, 
             IStringLocalizer<ConfirmEmailModel> localization)
         {
             _userManager = userManager;
-            _localization = localization;   
+            _localizer = localization;   
         }
 
         /// <summary>
@@ -40,12 +40,12 @@ namespace ERPSEI.Areas.Identity.Pages.Account
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return NotFound($"{_localization["UserLoadFails"]} '{userId}'.");
+                return NotFound($"{_localizer["UserLoadFails"]} '{userId}'.");
             }
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             var result = await _userManager.ConfirmEmailAsync(user, code);
-            StatusMessage = result.Succeeded ? _localization["ConfirmationSuccessful"] : _localization["ConfirmationFails"];
+            StatusMessage = result.Succeeded ? _localizer["ConfirmationSuccessful"] : _localizer["ConfirmationFails"];
             return Page();
         }
     }

@@ -117,17 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="EmailBodyFP" xml:space="preserve">
-    <value>Por favor confirme su cuenta dando</value>
-  </data>
-  <data name="EmailBodySP" xml:space="preserve">
-    <value>clic aquí</value>
-  </data>
   <data name="EmailPlaceholder" xml:space="preserve">
     <value>nombre@ejemplo.com</value>
-  </data>
-  <data name="EmailSubject" xml:space="preserve">
-    <value>Confirme su correo electrónico</value>
   </data>
   <data name="PasswordPlaceholder" xml:space="preserve">
     <value>contraseña</value>
