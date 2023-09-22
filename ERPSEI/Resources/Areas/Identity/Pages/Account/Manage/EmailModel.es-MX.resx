@@ -117,19 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ChangeEmailButton" xml:space="preserve">
-    <value>Cambiar correo electrónico</value>
+  <data name="EmailBodyFP" xml:space="preserve">
+    <value>Por favor confirme su cuenta dando</value>
   </data>
-  <data name="EmailPlaceholder" xml:space="preserve">
-    <value>Por favor introduzca su correo electrónico</value>
+  <data name="EmailBodySP" xml:space="preserve">
+    <value>clic aquí</value>
   </data>
-  <data name="NewEmailPlaceholder" xml:space="preserve">
-    <value>Por favor ingresa un nuevo correo electrónico</value>
+  <data name="EmailChangeFails" xml:space="preserve">
+    <value>Su correo electrónico no se cambió.</value>
   </data>
-  <data name="SendEmailButton" xml:space="preserve">
-    <value>Envia un correo electronico de verificación</value>
+  <data name="EmailSentSuccessful" xml:space="preserve">
+    <value>Se envió el link de confirmación para cambiar el correo electrónico. Por favor revise su correo electrónico.</value>
   </data>
-  <data name="Title" xml:space="preserve">
-    <value>Administrar correo electrónico</value>
+  <data name="EmailSubject" xml:space="preserve">
+    <value>Confirme su correo electrónico</value>
+  </data>
+  <data name="UserLoadFails" xml:space="preserve">
+    <value>No se puede cargar el usuario con ID</value>
+  </data>
+  <data name="VerificationEmailSentSuccessful" xml:space="preserve">
+    <value>Correo de verificación enviado. Por favor revise su email.</value>
   </data>
 </root>

@@ -14,7 +14,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<DownloadPersonalDataModel> _logger;
-        private readonly IStringLocalizer<DownloadPersonalDataModel> _stringLocalizer;  
+        private readonly IStringLocalizer<DownloadPersonalDataModel> _localizer;  
 
         public DownloadPersonalDataModel(
             UserManager<IdentityUser> userManager,
@@ -23,7 +23,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
         {
             _userManager = userManager;
             _logger = logger;
-            _stringLocalizer = stringLocalizer;
+            _localizer = stringLocalizer;
         }
 
         public IActionResult OnGet()
@@ -36,7 +36,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"{_stringLocalizer["UserLoadFails"]} '{_userManager.GetUserId(User)}'.");
+                return NotFound($"{_localizer["UserLoadFails"]} '{_userManager.GetUserId(User)}'.");
             }
 
             _logger.LogInformation("User with ID '{UserId}' asked for their personal data.", _userManager.GetUserId(User));
