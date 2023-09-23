@@ -117,13 +117,43 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="FirstMenu" xml:space="preserve">
+  <data name="AccountingMenu" xml:space="preserve">
+    <value>Contabilidad</value>
+  </data>
+  <data name="CatalogsMenu" xml:space="preserve">
+    <value>Catálogos</value>
+  </data>
+  <data name="DisabilitiesMenu" xml:space="preserve">
+    <value>Incapacidades</value>
+  </data>
+  <data name="ERPMenu" xml:space="preserve">
+    <value>ERP</value>
+  </data>
+  <data name="HomeMenu" xml:space="preserve">
     <value>Inicio</value>
+  </data>
+  <data name="HumanResourcesMenu" xml:space="preserve">
+    <value>Recursos Humanos</value>
+  </data>
+  <data name="OrganizationChartMenu" xml:space="preserve">
+    <value>Organigrama</value>
+  </data>
+  <data name="PermissionsMenu" xml:space="preserve">
+    <value>Permisos</value>
+  </data>
+  <data name="PersonalCatalogMenu" xml:space="preserve">
+    <value>Catálogo de personal</value>
+  </data>
+  <data name="PositionsCatalogMenu" xml:space="preserve">
+    <value>Catálogo de puestos</value>
+  </data>
+  <data name="PrivacyMenu" xml:space="preserve">
+    <value>Aviso de privacidad</value>
   </data>
   <data name="RightFooter" xml:space="preserve">
     <value>Imagenes por &lt;a href="https://www.freepik.com/author/stories"&gt;storyset&lt;/a&gt; en Freepik.com</value>
   </data>
-  <data name="SecondMenu" xml:space="preserve">
-    <value>Aviso de privacidad</value>
+  <data name="VacationMenu" xml:space="preserve">
+    <value>Vacaciones</value>
   </data>
 </root>
