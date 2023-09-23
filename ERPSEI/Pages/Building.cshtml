@@ -1,0 +1,12 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Title"];
+}
+
+<center>
+    <h1>@Localizer["Title"]</h1>
+    <h6>@Localizer["SecondaryTitle"]</h6>
+    <img class="buildingimage d-none d-sm-block d-lg-block d-md-block" src="@HttpContext.Request.Scheme://@HttpContext.Request.Host/img/building.jpg" />
+</center>
