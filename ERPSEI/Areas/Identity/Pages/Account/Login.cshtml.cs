@@ -110,27 +110,35 @@ namespace ERPSEI.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 IdentityUser user = await _userManager.FindByEmailAsync(_userManager.NormalizeEmail(Input.Email));
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-                if (result.Succeeded)
+                if (user == null)
                 {
-                    _logger.LogInformation("El usuario inició sesión.");
-                    return LocalRedirect("/");
-                }
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-                }
-                if (result.IsLockedOut)
-                {
-                    _logger.LogWarning("Cuenta de usuario bloqueada.");
-                    return RedirectToPage("./Lockout");
+                    ModelState.AddModelError(string.Empty, "Error de inicio de sesión. Usuario o contraseña incorrectos.");
+                    return Page();
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Error de inicio de sesión.");
-                    return Page();
+                    // This doesn't count login failures towards account lockout
+                    // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+                    var result = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                    if (result.Succeeded)
+                    {
+                        _logger.LogInformation("El usuario inició sesión.");
+                        return LocalRedirect("/");
+                    }
+                    if (result.RequiresTwoFactor)
+                    {
+                        return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+                    }
+                    if (result.IsLockedOut)
+                    {
+                        _logger.LogWarning("Cuenta de usuario bloqueada.");
+                        return RedirectToPage("./Lockout");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Error de inicio de sesión. Usuario o contraseña incorrectos.");
+                        return Page();
+                    }
                 }
             }
 
