@@ -124,7 +124,7 @@
     <value>contraseña</value>
   </data>
   <data name="RegisterButton" xml:space="preserve">
-    <value>Iniciar sesión</value>
+    <value>Registrarse</value>
   </data>
   <data name="SecondTitle" xml:space="preserve">
     <value>Crear una cuenta nueva</value>
