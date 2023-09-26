@@ -1,9 +1,11 @@
 ﻿@page
+@using ERPSEI.Pages.Shared;
 @using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
 @model IndexModel
 @{
     ViewData["Title"] = Localizer["Title"];
+    ViewData["ActivePage"] = _LayoutPages.Inicio;
 }
 
 <div class="text-center container-fluid">

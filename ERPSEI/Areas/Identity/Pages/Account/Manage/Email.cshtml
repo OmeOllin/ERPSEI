@@ -17,7 +17,7 @@
             {
                 <div class="form-floating mb-3 input-group">
                     <input asp-for="Email" class="form-control" placeholder="@Localizer["EmailPlaceholder"]." disabled />
-                        <div class="input-group-append">
+                        <div class="input-group-append" data-bs-toggle="tooltip" data-bs-placement="top" title="Correo verificado">
                             <span class="h-100 input-group-text text-success font-weight-bold">✓</span>
                         </div>
                     <label asp-for="Email" class="form-label"></label>
@@ -43,4 +43,10 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script type="text/javascript">
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
 }

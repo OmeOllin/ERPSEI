@@ -1,9 +1,11 @@
 ﻿@page
+@using ERPSEI.Pages.Shared;
 @using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
 @model PrivacyModel
 @{
     ViewData["Title"] = Localizer["Title"];
+    ViewData["ActivePage"] = _LayoutPages.AvisoPrivacidad;
 }
 
 <h1>@Localizer["SecondaryTitle"]</h1>

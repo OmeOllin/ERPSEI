@@ -27,36 +27,36 @@
                         @if (!SignInManager.IsSignedIn(User))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-page="/Index">@Localizer["HomeMenu"]</a>
+                                <a class="nav-link @_LayoutPages.InicioNavClass(ViewContext)" asp-area="" asp-page="/Index">@Localizer["HomeMenu"]</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">@Localizer["PrivacyMenu"]</a>
+                                <a class="nav-link @_LayoutPages.AvisoPrivacidadNavClass(ViewContext)" asp-area="" asp-page="/Privacy">@Localizer["PrivacyMenu"]</a>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a class="nav-link dropdown-toggle @_LayoutPages.CatalogosNavClass(ViewContext)" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     @Localizer["CatalogsMenu"]
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item text-dark" asp-area="" asp-page="/Building">@Localizer["PersonalCatalogMenu"]</a>
-                                    <a class="dropdown-item text-dark" asp-area="" asp-page="/Building">@Localizer["PositionsCatalogMenu"]</a>
+                                    <a class="dropdown-item nav-link" asp-area="" asp-page="/Building">@Localizer["PersonalCatalogMenu"]</a>
+                                    <a class="dropdown-item nav-link" asp-area="" asp-page="/Building">@Localizer["PositionsCatalogMenu"]</a>
                                 </div>
                             </li>
                             <li class="nav-item dropdown">
                                 <!--Los submenues deben llevar el atributo data-bs-auto-close="outside" para que el menú padre permanezca abierto al dar clic-->
-                                <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdownMenuLinkERP" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                                <a class="nav-link dropdown-toggle @_LayoutPages.ERPNavClass(ViewContext)" href="#" id="navbarDropdownMenuLinkERP" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
                                     @Localizer["ERPMenu"]
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkERP">
                                     <div class="dropend">
-                                        <a class="dropdown-item dropdown-toggle text-dark" data-bs-toggle="dropdown" href="#">@Localizer["HumanResourcesMenu"]</a>
+                                        <a class="dropdown-item nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">@Localizer["HumanResourcesMenu"]</a>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item text-dark" asp-area="" asp-page="/Building">@Localizer["OrganizationChartMenu"]</a>
-                                            <a class="dropdown-item text-dark" asp-area="" asp-page="/Building">@Localizer["VacationMenu"]</a>
-                                            <a class="dropdown-item text-dark" asp-area="" asp-page="/Building">@Localizer["DisabilitiesMenu"]</a>
-                                            <a class="dropdown-item text-dark" asp-area="" asp-page="/Building">@Localizer["PermissionsMenu"]</a>
+                                            <a class="dropdown-item" asp-area="" asp-page="/Building">@Localizer["OrganizationChartMenu"]</a>
+                                            <a class="dropdown-item" asp-area="" asp-page="/Building">@Localizer["VacationMenu"]</a>
+                                            <a class="dropdown-item" asp-area="" asp-page="/Building">@Localizer["DisabilitiesMenu"]</a>
+                                            <a class="dropdown-item" asp-area="" asp-page="/Building">@Localizer["PermissionsMenu"]</a>
                                         </div>
                                     </div>
                                     @* <div class="dropend">
