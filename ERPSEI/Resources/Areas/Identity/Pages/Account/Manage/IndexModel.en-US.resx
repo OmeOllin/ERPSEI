@@ -126,7 +126,7 @@
   <data name="UserPhoneChangeFails" xml:space="preserve">
     <value>Error trying to configure phone number.</value>
   </data>
-  <data name="UserProfileChangeSuccesful" xml:space="preserve">
+  <data name="UserProfileChangeSuccessful" xml:space="preserve">
     <value>Your profile has been updated</value>
   </data>
 </root>

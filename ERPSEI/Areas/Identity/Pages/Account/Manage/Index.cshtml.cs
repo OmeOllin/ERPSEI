@@ -54,7 +54,19 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             [Display(Name = "UserNameField")]
             public string Username { get; set; }
 
-            [Phone]
+            [Display(Name = "FirstNameField")]
+            public string FirstName { get; set; }
+
+            [Display(Name = "SecondNameField")]
+            public string SecondName {  get; set; }
+
+            [Display(Name = "FathersLastNameField")]
+            public string FathersLastName {  get; set; }
+
+            [Display(Name = "MothersLastNameField")]
+            public string MothersLastName { get; set; }
+
+            [Phone(ErrorMessage = "PhoneFormat")]
             [DataType(DataType.PhoneNumber)]
             [Display(Name = "PhoneNumberField")]
             public string PhoneNumber { get; set; }

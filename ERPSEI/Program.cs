@@ -17,6 +17,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddRazorPages()
@@ -25,8 +26,8 @@ builder.Services.AddRazorPages()
     {
         options.DataAnnotationLocalizerProvider = (type, factory) =>
         {
-            var assemblyName = new AssemblyName(typeof(ValidationsLocalization).GetTypeInfo().Assembly.FullName);
-            return factory.Create(nameof(ValidationsLocalization), assemblyName.Name);
+            var assemblyName = new AssemblyName(typeof(ValidationsLocalization).GetTypeInfo().Assembly.FullName ?? "");
+            return factory.Create(nameof(ValidationsLocalization), assemblyName.Name ?? "");
         };
     });
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");

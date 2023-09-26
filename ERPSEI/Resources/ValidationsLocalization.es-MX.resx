@@ -129,11 +129,20 @@
   <data name="EmailFormat" xml:space="preserve">
     <value>El campo {0} no es una dirección de correo electrónico válida.</value>
   </data>
+  <data name="FathersLastNameField" xml:space="preserve">
+    <value>Primer apellido</value>
+  </data>
   <data name="FieldLength" xml:space="preserve">
     <value>El campo {0} debe tener al menos {2} y un máximo de {1} caracteres.</value>
   </data>
   <data name="FieldsComparison" xml:space="preserve">
     <value>El campo {1} y el campo {0} no coinciden.</value>
+  </data>
+  <data name="FirstNameField" xml:space="preserve">
+    <value>Primer nombre</value>
+  </data>
+  <data name="MothersLastNameField" xml:space="preserve">
+    <value>Segundo apellido</value>
   </data>
   <data name="NewEmailField" xml:space="preserve">
     <value>Nuevo correo electrónico</value>
@@ -147,6 +156,9 @@
   <data name="PasswordField" xml:space="preserve">
     <value>Contraseña</value>
   </data>
+  <data name="PhoneFormat" xml:space="preserve">
+    <value>El campo {0} no es un número de teléfono válido</value>
+  </data>
   <data name="PhoneNumberField" xml:space="preserve">
     <value>Número de teléfono</value>
   </data>
@@ -155,6 +167,9 @@
   </data>
   <data name="Required" xml:space="preserve">
     <value>El campo {0} es requerido</value>
+  </data>
+  <data name="SecondNameField" xml:space="preserve">
+    <value>Segundo nombre</value>
   </data>
   <data name="UserNameField" xml:space="preserve">
     <value>Nombre de usuario</value>
