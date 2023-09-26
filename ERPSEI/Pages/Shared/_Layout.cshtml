@@ -40,8 +40,8 @@
                                     @Localizer["CatalogsMenu"]
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item nav-link" asp-area="" asp-page="/Building">@Localizer["PersonalCatalogMenu"]</a>
-                                    <a class="dropdown-item nav-link" asp-area="" asp-page="/Building">@Localizer["PositionsCatalogMenu"]</a>
+                                    <a class="dropdown-item @_LayoutPages.CatalogoPersonalNavClass(ViewContext)" asp-area="" asp-page="/Building">@Localizer["PersonalCatalogMenu"]</a>
+                                    <a class="dropdown-item @_LayoutPages.CatalogoPuestosNavClass(ViewContext)" asp-area="" asp-page="/Building">@Localizer["PositionsCatalogMenu"]</a>
                                 </div>
                             </li>
                             <li class="nav-item dropdown">
@@ -92,9 +92,9 @@
         </div>
     </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="@Context.Request.Scheme://@Context.Request.Host/lib/jquery/dist/jquery.min.js"></script>
+    <script src="@Context.Request.Scheme://@Context.Request.Host/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="@Context.Request.Scheme://@Context.Request.Host/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
