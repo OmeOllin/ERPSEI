@@ -5,19 +5,21 @@ namespace ERPSEI.Email
 {
     public class EmailSender : IEmailSender
     {
-        public Task SendEmailAsync(string email, string subject, string message)
-        {
-            string mail = "omeollincozcacuauhtli@gmail.com";
-            string password = "pccnvttjxauanieo";
+        private readonly string mailAddress;
+        private readonly SmtpClient smtpClient;
 
-            SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
+        public EmailSender(string _mailAddress, string _mailPassword, string _smtpServer, int _smtpPort) { 
+            mailAddress = _mailAddress;
+            smtpClient = new SmtpClient(_smtpServer, _smtpPort)
             {
                 EnableSsl = true,
-                Credentials = new NetworkCredential(mail, password)
+                Credentials = new NetworkCredential(_mailAddress, _mailPassword)
             };
-
+        }
+        public Task SendEmailAsync(string email, string subject, string message)
+        {
             MailMessage msg = new MailMessage(
-                        from: mail,
+                        from: mailAddress,
                         to: email,
                         subject,
                         message
@@ -25,7 +27,7 @@ namespace ERPSEI.Email
 
             msg.IsBodyHtml = true;
 
-            return client.SendMailAsync(msg);
+            return smtpClient.SendMailAsync(msg);
                 
         }
     }
