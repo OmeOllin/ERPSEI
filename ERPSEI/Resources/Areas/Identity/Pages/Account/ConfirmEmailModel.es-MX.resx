@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ConfirmationFails" xml:space="preserve">
-    <value>Error al confirmar su correo electrónico.</value>
+    <value>Lo sentimos. Ocurrió un error al confirmar su correo electrónico.</value>
   </data>
-  <data name="ConfirmationSuccesful" xml:space="preserve">
-    <value>Gracias por confirmar su correo electrónico.</value>
+  <data name="ConfirmationSuccessful" xml:space="preserve">
+    <value>¡Gracias por confirmar su correo electrónico! Inicie sesión para comenzar.</value>
   </data>
   <data name="UserLoadFails" xml:space="preserve">
     <value>No se puede cargar el usuario con ID</value>

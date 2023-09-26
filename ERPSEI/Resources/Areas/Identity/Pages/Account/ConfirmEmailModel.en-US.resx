@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ConfirmationFails" xml:space="preserve">
-    <value>Error confirming your email.</value>
+    <value>We're sorry. An error occurred while confirming your email.</value>
   </data>
-  <data name="ConfirmationSuccesful" xml:space="preserve">
-    <value>Thank you for confirming your email.</value>
+  <data name="ConfirmationSuccessful" xml:space="preserve">
+    <value>Thank you for confirming your email! Sign in to get started.</value>
   </data>
   <data name="UserLoadFails" xml:space="preserve">
     <value>Unable to load user with ID</value>

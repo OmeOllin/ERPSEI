@@ -4,7 +4,6 @@
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
@@ -12,6 +11,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.Extensions.Localization;
+using ERPSEI.Email;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
 {
@@ -130,7 +130,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account
                         protocol: Request.Scheme);
 
                     await _emailSender.SendEmailAsync(Input.Email, _localizer["EmailSubject"],
-                        $"{_localizer["EmailBodyFP"]} <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>{_localizer["EmailBodySP"]}</a>.");
+                        $"{_localizer["EmailBodyFP"]} <a href='{callbackUrl}'>{_localizer["EmailBodySP"]}</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {

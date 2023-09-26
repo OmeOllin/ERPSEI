@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Instructions" xml:space="preserve">
-    <value>Por favor revise su correo electrónico para restablecer su contraseña</value>
+    <value>El correo electrónico de confirmación ha sido reenviado. Por favor verifique su bandeja de entrada</value>
   </data>
   <data name="Title" xml:space="preserve">
-    <value>¿Olvidó su contraseña?</value>
+    <value>Reenviar correo electrónico de confirmación</value>
   </data>
 </root>

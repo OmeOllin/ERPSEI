@@ -45,8 +45,14 @@ namespace ERPSEI.Areas.Identity.Pages.Account
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             var result = await _userManager.ConfirmEmailAsync(user, code);
-            StatusMessage = result.Succeeded ? _localizer["ConfirmationSuccessful"] : _localizer["ConfirmationFails"];
-            return Page();
+            if(result.Succeeded)
+            {
+                return RedirectToPage("./ConfirmEmailConfirmation");
+            }
+            else
+            {
+                return RedirectToPage("./ConfirmEmailFails");
+            }
         }
     }
 }
