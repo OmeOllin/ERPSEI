@@ -8,16 +8,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
+using ERPSEI.Entities;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
 {
     public class ConfirmEmailModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly IStringLocalizer<ConfirmEmailModel> _localizer;
 
         public ConfirmEmailModel(
-            UserManager<IdentityUser> userManager, 
+            UserManager<AppUser> userManager, 
             IStringLocalizer<ConfirmEmailModel> localization)
         {
             _userManager = userManager;

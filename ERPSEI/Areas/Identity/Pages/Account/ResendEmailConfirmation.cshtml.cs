@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
-using Microsoft.AspNetCore.Localization;
+using ERPSEI.Entities;
 using Microsoft.Extensions.Localization;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
@@ -18,12 +18,12 @@ namespace ERPSEI.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class ResendEmailConfirmationModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly IEmailSender _emailSender;
         private readonly IStringLocalizer<ResendEmailConfirmationModel> _localizer;
 
         public ResendEmailConfirmationModel(
-            UserManager<IdentityUser> userManager, 
+            UserManager<AppUser> userManager, 
             IEmailSender emailSender,
             IStringLocalizer<ResendEmailConfirmationModel> localizer)
         {

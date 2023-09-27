@@ -9,16 +9,17 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Microsoft.Extensions.Localization;
+using ERPSEI.Entities;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
 {
     public class ResetPasswordModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly IStringLocalizer<ResetPasswordModel> _localizer;
 
         public ResetPasswordModel(
-            UserManager<IdentityUser> userManager,
+            UserManager<AppUser> userManager,
             IStringLocalizer<ResetPasswordModel> localizer)
         {
             _userManager = userManager;

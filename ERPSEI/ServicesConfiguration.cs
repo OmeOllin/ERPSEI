@@ -1,5 +1,6 @@
 ﻿using ERPSEI.Data;
 using ERPSEI.Email;
+using ERPSEI.Entities;
 using ERPSEI.Resources;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +35,7 @@ namespace ERPSEI
 
         public static void ConfigureIdentity(WebApplicationBuilder _builder)
         {
-            _builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            _builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
         }

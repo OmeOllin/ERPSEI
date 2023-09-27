@@ -4,17 +4,18 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
+using ERPSEI.Entities;
 
 namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 {
     public class PersonalDataModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly ILogger<PersonalDataModel> _logger;
         private readonly IStringLocalizer<PersonalDataModel> _localizer;
 
         public PersonalDataModel(
-            UserManager<IdentityUser> userManager,
+            UserManager<AppUser> userManager,
             ILogger<PersonalDataModel> logger,
             IStringLocalizer<PersonalDataModel> localizer)
         {

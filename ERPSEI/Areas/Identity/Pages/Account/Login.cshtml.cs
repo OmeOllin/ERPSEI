@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
+using ERPSEI.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,13 +13,13 @@ namespace ERPSEI.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
 
         public LoginModel(
-            UserManager<IdentityUser> userManager, 
-            SignInManager<IdentityUser> signInManager, 
+            UserManager<AppUser> userManager, 
+            SignInManager<AppUser> signInManager, 
             ILogger<LoginModel> logger)
         {
             _userManager = userManager;
@@ -109,7 +110,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                IdentityUser user = await _userManager.FindByEmailAsync(_userManager.NormalizeEmail(Input.Email));
+                AppUser user = await _userManager.FindByEmailAsync(_userManager.NormalizeEmail(Input.Email));
                 if (user == null)
                 {
                     ModelState.AddModelError(string.Empty, "Error de inicio de sesión. Usuario o contraseña incorrectos.");

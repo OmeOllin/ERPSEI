@@ -9,19 +9,19 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
-using System.Text.Encodings.Web;
+using ERPSEI.Entities;
 using Microsoft.Extensions.Localization;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
 {
     public class ForgotPasswordModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly IEmailSender _emailSender;
         private readonly IStringLocalizer<ForgotPasswordModel> _localizer;
 
         public ForgotPasswordModel(
-            UserManager<IdentityUser> userManager, 
+            UserManager<AppUser> userManager, 
             IEmailSender emailSender,
             IStringLocalizer<ForgotPasswordModel> localizer)
         {

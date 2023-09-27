@@ -10,18 +10,19 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 using Microsoft.Extensions.Localization;
+using ERPSEI.Entities;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class RegisterConfirmationModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly IEmailSender _sender;
         private readonly IStringLocalizer<RegisterConfirmationModel> _localizer;
 
         public RegisterConfirmationModel(
-            UserManager<IdentityUser> userManager, 
+            UserManager<AppUser> userManager, 
             IEmailSender sender,
             IStringLocalizer<RegisterConfirmationModel> localizer)
         {

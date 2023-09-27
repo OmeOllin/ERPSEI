@@ -8,18 +8,19 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 using Microsoft.Extensions.Localization;
+using ERPSEI.Entities;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
 {
     public class ConfirmEmailChangeModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
         private readonly IStringLocalizer _localizer;
 
         public ConfirmEmailChangeModel(
-            UserManager<IdentityUser> userManager, 
-            SignInManager<IdentityUser> signInManager,
+            UserManager<AppUser> userManager, 
+            SignInManager<AppUser> signInManager,
             IStringLocalizer stringLocalizer)
         {
             _userManager = userManager;
