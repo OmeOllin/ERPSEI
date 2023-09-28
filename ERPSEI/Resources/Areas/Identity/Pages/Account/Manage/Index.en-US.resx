@@ -138,6 +138,9 @@
   <data name="PhonePlaceholder" xml:space="preserve">
     <value>Please insert your phone number</value>
   </data>
+  <data name="ProfilePicSuggestion" xml:space="preserve">
+    <value>Consider uploading a professional profile photo so other people can recognize you.</value>
+  </data>
   <data name="SaveButton" xml:space="preserve">
     <value>Save</value>
   </data>

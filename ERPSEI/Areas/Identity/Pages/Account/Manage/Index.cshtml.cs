@@ -139,10 +139,10 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             }
 
             user.FirstName = Input.FirstName;
-            user.SecondName = Input.SecondName;
+            user.SecondName = Input.SecondName ?? "";
             user.FathersLastName = Input.FathersLastName;
             user.MothersLastName = Input.MothersLastName;
-            user.PhoneNumber = Input.PhoneNumber;
+            user.PhoneNumber = Input.PhoneNumber ?? "";
 
             //Si el usuario estableció una imagen de perfil
             if (Input.ProfilePicture != null && Input.ProfilePicture.Length >= 1)
