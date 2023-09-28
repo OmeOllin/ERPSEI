@@ -120,4 +120,7 @@
   <data name="UserLoadFails" xml:space="preserve">
     <value>No se puede cargar el usuario con ID</value>
   </data>
+  <data name="WrongPassword" xml:space="preserve">
+    <value>Contraseña incorrecta.</value>
+  </data>
 </root>

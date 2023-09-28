@@ -10,7 +10,9 @@
 <form id="profile-form" method="post" enctype="multipart/form-data">
     <h3>@ViewData["Title"]</h3>
     <br />
+    <hr />
     <h5>@Localizer["FirstSectionTitle"]</h5>
+    <br />
     <partial name="_StatusMessage" for="StatusMessage" />
     <div class="row">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
@@ -28,6 +30,9 @@
                             @Localizer["EditLink"]
                         </a>
                     </div>
+                    <p>
+                        Por favor, considera subir una foto de perfil profesional para que el resto de las personas puedan reconocerte.
+                    </p>
                 </center>
             </div>
             <div class="col-lg-6">
@@ -69,6 +74,13 @@
     </div>
     <hr />
     <h5>@Localizer["SecondSectionTitle"]</h5>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-6">
+                <a id="delete" asp-page="DeletePersonalData" class="btn btn-danger">@Localizer["DeactivateButton"]</a>
+            </div>
+        </div>
+    </div>
 </form>
 
 @section Scripts {

@@ -84,7 +84,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             {
                 if (!await _userManager.CheckPasswordAsync(user, Input.Password))
                 {
-                    ModelState.AddModelError(string.Empty, "Contraseña incorrecta.");
+                    ModelState.AddModelError(string.Empty, _localizer["WrongPassword"]);
                     return Page();
                 }
             }
@@ -98,7 +98,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 
             await _signInManager.SignOutAsync();
 
-            _logger.LogInformation("El usuario con ID '{UserId}' se eliminó a sí mismo.", userId);
+            _logger.LogInformation("El usuario con ID '{UserId}' fue bloqueado satisfactoriamente.", userId);
 
             return Redirect("~/");
         }
