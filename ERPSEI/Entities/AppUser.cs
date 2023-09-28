@@ -14,6 +14,8 @@ namespace ERPSEI.Entities
         public string MothersLastName { get; set; } = string.Empty;
 
         public byte[] ProfilePicture { get; set; } = new byte[0];
- 
+
+        public bool IsBanned { get; set; }
+
     }
 }

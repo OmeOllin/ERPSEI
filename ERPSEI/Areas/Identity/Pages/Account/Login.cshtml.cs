@@ -116,6 +116,11 @@ namespace ERPSEI.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, "Error de inicio de sesión. Usuario o contraseña incorrectos.");
                     return Page();
                 }
+                else if (user.IsBanned)
+                {
+                    _logger.LogWarning("Cuenta de usuario bloqueada.");
+                    return RedirectToPage("./Lockout");
+                }
                 else
                 {
                     // This doesn't count login failures towards account lockout
