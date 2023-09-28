@@ -117,14 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ProfilePictureTooLarge" xml:space="preserve">
+    <value>Error al actualizar los datos. La foto de perfil es demasiado grande. Debe tener un tamaño máximo de</value>
+  </data>
+  <data name="SaveUserFails" xml:space="preserve">
+    <value>Error al intentar actualizar la información del perfil</value>
+  </data>
   <data name="UserLoadFails" xml:space="preserve">
     <value>No se puede cargar el usuario con ID</value>
-  </data>
-  <data name="UserNameChangeFails" xml:space="preserve">
-    <value>Error al intentar configurar el nombre de usuario.</value>
-  </data>
-  <data name="UserPhoneChangeFails" xml:space="preserve">
-    <value>Error al intentar configurar el número de teléfono.</value>
   </data>
   <data name="UserProfileChangeSuccessful" xml:space="preserve">
     <value>Su perfil ha sido actualizado</value>

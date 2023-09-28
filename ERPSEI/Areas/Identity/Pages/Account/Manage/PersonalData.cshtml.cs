@@ -10,12 +10,12 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 {
     public class PersonalDataModel : PageModel
     {
-        private readonly UserManager<AppUser> _userManager;
+        private readonly AppUserManager _userManager;
         private readonly ILogger<PersonalDataModel> _logger;
         private readonly IStringLocalizer<PersonalDataModel> _localizer;
 
         public PersonalDataModel(
-            UserManager<AppUser> userManager,
+            AppUserManager userManager,
             ILogger<PersonalDataModel> logger,
             IStringLocalizer<PersonalDataModel> localizer)
         {

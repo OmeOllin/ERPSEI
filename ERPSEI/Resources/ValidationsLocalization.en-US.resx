@@ -156,6 +156,9 @@
   <data name="PasswordField" xml:space="preserve">
     <value>Password</value>
   </data>
+  <data name="PersonName" xml:space="preserve">
+    <value>The {0} field must have only letters. The first letter must be capitalized and there must be at least two letters.</value>
+  </data>
   <data name="PhoneFormat" xml:space="preserve">
     <value>The {0} field is not a valid phone number.</value>
   </data>

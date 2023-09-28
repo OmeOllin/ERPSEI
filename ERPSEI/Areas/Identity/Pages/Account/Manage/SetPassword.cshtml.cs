@@ -13,12 +13,12 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 {
     public class SetPasswordModel : PageModel
     {
-        private readonly UserManager<AppUser> _userManager;
+        private readonly AppUserManager _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IStringLocalizer<SetPasswordModel> _localizer;
 
         public SetPasswordModel(
-            UserManager<AppUser> userManager,
+            AppUserManager userManager,
             SignInManager<AppUser> signInManager,
             IStringLocalizer<SetPasswordModel> localizer)
         {

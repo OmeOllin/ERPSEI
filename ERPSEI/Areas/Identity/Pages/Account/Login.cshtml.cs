@@ -13,12 +13,12 @@ namespace ERPSEI.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
-        private readonly UserManager<AppUser> _userManager;
+        private readonly AppUserManager _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
 
         public LoginModel(
-            UserManager<AppUser> userManager, 
+            AppUserManager userManager, 
             SignInManager<AppUser> signInManager, 
             ILogger<LoginModel> logger)
         {

@@ -18,7 +18,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<AppUser> _signInManager;
-        private readonly UserManager<AppUser> _userManager;
+        private readonly AppUserManager _userManager;
         private readonly IUserStore<AppUser> _userStore;
         private readonly IUserEmailStore<AppUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
@@ -27,7 +27,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account
 
 
         public RegisterModel(
-            UserManager<AppUser> userManager,
+            AppUserManager userManager,
             IUserStore<AppUser> userStore,
             SignInManager<AppUser> signInManager,
             ILogger<RegisterModel> logger,

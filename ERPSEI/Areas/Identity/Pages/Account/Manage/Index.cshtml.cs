@@ -3,23 +3,25 @@
 #nullable disable
 
 using System.ComponentModel.DataAnnotations;
+using System.IO;
+using System.IO.Compression;
 using ERPSEI.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Localization;
 
 namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 {
     public class IndexModel : PageModel
     {
-        private readonly UserManager<AppUser> _userManager;
+        private readonly AppUserManager _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IStringLocalizer<IndexModel> _localizer;
 
         public IndexModel(
-            UserManager<AppUser> userManager,
+            AppUserManager userManager,
             SignInManager<AppUser> signInManager,
             IStringLocalizer<IndexModel> localizer)
         {
@@ -42,6 +44,8 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
         [BindProperty]
         public InputModel Input { get; set; }
 
+        public string ProfilePictureSrc { get; set; }
+
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -50,19 +54,29 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
         {
             public IFormFile ProfilePicture {  get; set; }
 
-            [Required(ErrorMessage = "Required")]
             [Display(Name = "UserNameField")]
             public string Username { get; set; }
 
+            [Required(ErrorMessage = "Required")]
+            [StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
+            [RegularExpression(@"^[A-ZÁÉÍÓÚ][a-záéíóú]+$", ErrorMessage = "PersonName")]
             [Display(Name = "FirstNameField")]
             public string FirstName { get; set; }
 
+            [StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
+            [RegularExpression(@"^[A-ZÁÉÍÓÚ][a-záéíóú]+$", ErrorMessage = "PersonName")]
             [Display(Name = "SecondNameField")]
             public string SecondName {  get; set; }
 
+            [Required(ErrorMessage = "Required")]
+            [StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
+            [RegularExpression(@"^[A-ZÁÉÍÓÚ][a-záéíóú]+$", ErrorMessage = "PersonName")]
             [Display(Name = "FathersLastNameField")]
             public string FathersLastName {  get; set; }
 
+            [Required(ErrorMessage = "Required")]
+            [StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
+            [RegularExpression(@"^[A-ZÁÉÍÓÚ][a-záéíóú]+$", ErrorMessage = "PersonName")]
             [Display(Name = "MothersLastNameField")]
             public string MothersLastName { get; set; }
 
@@ -75,14 +89,27 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
         private async Task LoadAsync(AppUser user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
-            var firstName = await _userManager.GetFirstName
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-
             Input = new InputModel
             {
                 Username = userName,
+                FirstName = user.FirstName,
+                SecondName = user.SecondName,
+                FathersLastName = user.FathersLastName,
+                MothersLastName = user.MothersLastName,
                 PhoneNumber = phoneNumber
             };
+
+            //Si el usuario tiene imagen de perfil
+            if(user.ProfilePicture != null && user.ProfilePicture.Length >= 1) { 
+                //Se usa para mostrarla
+                ProfilePictureSrc = $"data:image/png;base64,{Convert.ToBase64String(user.ProfilePicture)}"; 
+            }
+            else
+            {
+                //De lo contrario, se usa la imagen default.
+                ProfilePictureSrc = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/img/default_profile_pic.jpg";
+            }
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -111,27 +138,41 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
-            var userName = await _userManager.GetUserNameAsync(user);
-            if (Input.Username != userName)
+            user.FirstName = Input.FirstName;
+            user.SecondName = Input.SecondName;
+            user.FathersLastName = Input.FathersLastName;
+            user.MothersLastName = Input.MothersLastName;
+            user.PhoneNumber = Input.PhoneNumber;
+
+            //Si el usuario estableció una imagen de perfil
+            if (Input.ProfilePicture != null && Input.ProfilePicture.Length >= 1)
             {
-                var setUsernameResult = await _userManager.SetUserNameAsync(user, Input.Username);
-                if(!setUsernameResult.Succeeded) 
+                //Transforma la imagen a memoryStream
+                using (var memoryStream = new MemoryStream())
                 {
-                    //string details = String.Join(" - ", from error in setUsernameResult.Errors.ToList() select error.Description);
-                    StatusMessage = _localizer["UserNameChangeFails"];
-                    return RedirectToPage();
+                    await Input.ProfilePicture.CopyToAsync(memoryStream);
+                    int maxSizeInBytes = 1000000;
+                    //Verifica que el tamaño máximo no exceda el megabyte
+                    if (memoryStream.Length < maxSizeInBytes)
+                    {
+                        //Se guarda el arreglo de bytes de la imagen.
+                        user.ProfilePicture = memoryStream.ToArray();
+                    }
+                    else
+                    {
+                        //Se notifica error del tamaño máximo de archivo.
+                        StatusMessage = $"{_localizer["ProfilePictureTooLarge"]} {maxSizeInBytes / 1000000} Mb";
+                        return RedirectToPage();
+                    }
                 }
             }
 
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            if (Input.PhoneNumber != phoneNumber)
+            //Se actualiza el usuario.
+            var setResult = await _userManager.UpdateAsync(user);
+            if(!setResult.Succeeded)
             {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
-                if (!setPhoneResult.Succeeded)
-                {
-                    StatusMessage = _localizer["UserPhoneChangeFails"];
-                    return RedirectToPage();
-                }
+                StatusMessage = _localizer["SaveUserFails"];
+                return RedirectToPage();
             }
 
             await _signInManager.RefreshSignInAsync(user);

@@ -15,11 +15,11 @@ namespace ERPSEI.Areas.Identity.Pages.Account
 {
     public class ResetPasswordModel : PageModel
     {
-        private readonly UserManager<AppUser> _userManager;
+        private readonly AppUserManager _userManager;
         private readonly IStringLocalizer<ResetPasswordModel> _localizer;
 
         public ResetPasswordModel(
-            UserManager<AppUser> userManager,
+            AppUserManager userManager,
             IStringLocalizer<ResetPasswordModel> localizer)
         {
             _userManager = userManager;

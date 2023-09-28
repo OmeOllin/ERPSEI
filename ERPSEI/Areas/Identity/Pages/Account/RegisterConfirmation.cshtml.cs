@@ -17,12 +17,12 @@ namespace ERPSEI.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class RegisterConfirmationModel : PageModel
     {
-        private readonly UserManager<AppUser> _userManager;
+        private readonly AppUserManager _userManager;
         private readonly IEmailSender _sender;
         private readonly IStringLocalizer<RegisterConfirmationModel> _localizer;
 
         public RegisterConfirmationModel(
-            UserManager<AppUser> userManager, 
+            AppUserManager userManager, 
             IEmailSender sender,
             IStringLocalizer<RegisterConfirmationModel> localizer)
         {

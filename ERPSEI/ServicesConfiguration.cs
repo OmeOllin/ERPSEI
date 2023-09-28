@@ -37,6 +37,7 @@ namespace ERPSEI
         {
             _builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddRoles<IdentityRole>()
+            .AddUserManager<AppUserManager>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
         }
 

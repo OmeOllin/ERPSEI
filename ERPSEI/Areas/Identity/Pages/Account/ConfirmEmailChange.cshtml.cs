@@ -14,12 +14,12 @@ namespace ERPSEI.Areas.Identity.Pages.Account
 {
     public class ConfirmEmailChangeModel : PageModel
     {
-        private readonly UserManager<AppUser> _userManager;
+        private readonly AppUserManager _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IStringLocalizer _localizer;
 
         public ConfirmEmailChangeModel(
-            UserManager<AppUser> userManager, 
+            AppUserManager userManager, 
             SignInManager<AppUser> signInManager,
             IStringLocalizer stringLocalizer)
         {

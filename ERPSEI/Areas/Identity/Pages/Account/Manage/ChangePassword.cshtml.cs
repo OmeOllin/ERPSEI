@@ -13,13 +13,13 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 {
     public class ChangePasswordModel : PageModel
     {
-        private readonly UserManager<AppUser> _userManager;
+        private readonly AppUserManager _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ILogger<ChangePasswordModel> _logger;
         private readonly IStringLocalizer<ChangePasswordModel> _localizer;
 
         public ChangePasswordModel(
-            UserManager<AppUser> userManager,
+            AppUserManager userManager,
             SignInManager<AppUser> signInManager,
             ILogger<ChangePasswordModel> logger,
             IStringLocalizer<ChangePasswordModel> localizer)

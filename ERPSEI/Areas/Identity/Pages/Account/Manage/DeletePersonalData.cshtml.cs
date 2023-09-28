@@ -13,13 +13,13 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 {
     public class DeletePersonalDataModel : PageModel
     {
-        private readonly UserManager<AppUser> _userManager;
+        private readonly AppUserManager _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
         private readonly IStringLocalizer<DeletePersonalDataModel> _localizer;
 
         public DeletePersonalDataModel(
-            UserManager<AppUser> userManager,
+            AppUserManager userManager,
             SignInManager<AppUser> signInManager,
             ILogger<DeletePersonalDataModel> logger,
             IStringLocalizer<DeletePersonalDataModel> localizer)

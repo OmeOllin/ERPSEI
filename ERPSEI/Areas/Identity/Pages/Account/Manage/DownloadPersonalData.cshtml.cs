@@ -13,12 +13,12 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 {
     public class DownloadPersonalDataModel : PageModel
     {
-        private readonly UserManager<AppUser> _userManager;
+        private readonly AppUserManager _userManager;
         private readonly ILogger<DownloadPersonalDataModel> _logger;
         private readonly IStringLocalizer<DownloadPersonalDataModel> _localizer;  
 
         public DownloadPersonalDataModel(
-            UserManager<AppUser> userManager,
+            AppUserManager userManager,
             ILogger<DownloadPersonalDataModel> logger,
             IStringLocalizer<DownloadPersonalDataModel> stringLocalizer)
         {

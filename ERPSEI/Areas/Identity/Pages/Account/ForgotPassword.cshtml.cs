@@ -16,12 +16,12 @@ namespace ERPSEI.Areas.Identity.Pages.Account
 {
     public class ForgotPasswordModel : PageModel
     {
-        private readonly UserManager<AppUser> _userManager;
+        private readonly AppUserManager _userManager;
         private readonly IEmailSender _emailSender;
         private readonly IStringLocalizer<ForgotPasswordModel> _localizer;
 
         public ForgotPasswordModel(
-            UserManager<AppUser> userManager, 
+            AppUserManager userManager, 
             IEmailSender emailSender,
             IStringLocalizer<ForgotPasswordModel> localizer)
         {

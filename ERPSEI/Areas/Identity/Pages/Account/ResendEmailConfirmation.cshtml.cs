@@ -18,12 +18,12 @@ namespace ERPSEI.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class ResendEmailConfirmationModel : PageModel
     {
-        private readonly UserManager<AppUser> _userManager;
+        private readonly AppUserManager _userManager;
         private readonly IEmailSender _emailSender;
         private readonly IStringLocalizer<ResendEmailConfirmationModel> _localizer;
 
         public ResendEmailConfirmationModel(
-            UserManager<AppUser> userManager, 
+            AppUserManager userManager, 
             IEmailSender emailSender,
             IStringLocalizer<ResendEmailConfirmationModel> localizer)
         {

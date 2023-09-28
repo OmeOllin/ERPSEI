@@ -17,13 +17,13 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 {
     public class EmailModel : PageModel
     {
-        private readonly UserManager<AppUser> _userManager;
+        private readonly AppUserManager _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly IStringLocalizer<AppUser> _localizer;   
 
         public EmailModel(
-            UserManager<AppUser> userManager,
+            AppUserManager userManager,
             SignInManager<AppUser> signInManager,
             IEmailSender emailSender,
             IStringLocalizer<AppUser> stringLocalizer)
