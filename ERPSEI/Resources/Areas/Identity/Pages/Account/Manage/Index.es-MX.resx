@@ -126,6 +126,9 @@
   <data name="FathersLastNamePlaceholder" xml:space="preserve">
     <value>Primer apellido</value>
   </data>
+  <data name="FirstDocumentTitle" xml:space="preserve">
+    <value>Acta de nacimiento</value>
+  </data>
   <data name="FirstNamePlaceholder" xml:space="preserve">
     <value>Primer nombre</value>
   </data>
@@ -143,6 +146,9 @@
   </data>
   <data name="SaveButton" xml:space="preserve">
     <value>Guardar</value>
+  </data>
+  <data name="SecondDocumentTitle" xml:space="preserve">
+    <value>CURP</value>
   </data>
   <data name="SecondNamePlaceholder" xml:space="preserve">
     <value>Segundo nombre</value>

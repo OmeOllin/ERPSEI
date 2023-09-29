@@ -54,6 +54,10 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
         {
             public IFormFile ProfilePicture {  get; set; }
 
+            public IFormFile FirstDocument { get; set; }
+
+            public IFormFile SecondDocument { get; set; }
+
             [Display(Name = "UserNameField")]
             public string Username { get; set; }
 
