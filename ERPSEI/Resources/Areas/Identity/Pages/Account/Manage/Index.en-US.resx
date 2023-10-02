@@ -123,8 +123,14 @@
   <data name="EditLink" xml:space="preserve">
     <value>Edit</value>
   </data>
+  <data name="EighthDocumentTitle" xml:space="preserve">
+    <value>Federal taxpayer registration</value>
+  </data>
   <data name="FathersLastNamePlaceholder" xml:space="preserve">
     <value>Father's last name</value>
+  </data>
+  <data name="FifthDocumentTitle" xml:space="preserve">
+    <value>Emergency contacts</value>
   </data>
   <data name="FirstDocumentTitle" xml:space="preserve">
     <value>Birth certificate</value>
@@ -135,8 +141,14 @@
   <data name="FirstSectionTitle" xml:space="preserve">
     <value>Main information</value>
   </data>
+  <data name="FourthDocumentTitle" xml:space="preserve">
+    <value>Proof of address</value>
+  </data>
   <data name="MothersLastNamePlaceholder" xml:space="preserve">
     <value>Mother's last name</value>
+  </data>
+  <data name="NinethDocumentTitle" xml:space="preserve">
+    <value>Proof of studies</value>
   </data>
   <data name="PhonePlaceholder" xml:space="preserve">
     <value>Please insert your phone number</value>
@@ -155,6 +167,18 @@
   </data>
   <data name="SecondSectionTitle" xml:space="preserve">
     <value>Additional information</value>
+  </data>
+  <data name="SeventhDocumentTitle" xml:space="preserve">
+    <value>Personal identification</value>
+  </data>
+  <data name="SixthDocumentTitle" xml:space="preserve">
+    <value>Proof of tax situation</value>
+  </data>
+  <data name="TenthDocumentTitle" xml:space="preserve">
+    <value>Social security number</value>
+  </data>
+  <data name="ThirdDocumentTitle" xml:space="preserve">
+    <value>Standardized bank key</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Profile</value>

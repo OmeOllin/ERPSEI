@@ -4,7 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
-using ERPSEI.Entities;
+using ERPSEI.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

@@ -123,8 +123,14 @@
   <data name="EditLink" xml:space="preserve">
     <value>Editar</value>
   </data>
+  <data name="EighthDocumentTitle" xml:space="preserve">
+    <value>RFC</value>
+  </data>
   <data name="FathersLastNamePlaceholder" xml:space="preserve">
     <value>Primer apellido</value>
+  </data>
+  <data name="FifthDocumentTitle" xml:space="preserve">
+    <value>Contactos de emergencia</value>
   </data>
   <data name="FirstDocumentTitle" xml:space="preserve">
     <value>Acta de nacimiento</value>
@@ -135,8 +141,14 @@
   <data name="FirstSectionTitle" xml:space="preserve">
     <value>Información principal</value>
   </data>
+  <data name="FourthDocumentTitle" xml:space="preserve">
+    <value>Comprobante domicilio</value>
+  </data>
   <data name="MothersLastNamePlaceholder" xml:space="preserve">
     <value>Segundo apellido</value>
+  </data>
+  <data name="NinethDocumentTitle" xml:space="preserve">
+    <value>Comprobante de estudios</value>
   </data>
   <data name="PhonePlaceholder" xml:space="preserve">
     <value>Por favor introduzca su número de teléfono</value>
@@ -155,6 +167,18 @@
   </data>
   <data name="SecondSectionTitle" xml:space="preserve">
     <value>Información adicional</value>
+  </data>
+  <data name="SeventhDocumentTitle" xml:space="preserve">
+    <value>INE</value>
+  </data>
+  <data name="SixthDocumentTitle" xml:space="preserve">
+    <value>CSF</value>
+  </data>
+  <data name="TenthDocumentTitle" xml:space="preserve">
+    <value>NSS</value>
+  </data>
+  <data name="ThirdDocumentTitle" xml:space="preserve">
+    <value>CLABE</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Perfil</value>

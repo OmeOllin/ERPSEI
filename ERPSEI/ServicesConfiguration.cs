@@ -1,6 +1,6 @@
 ﻿using ERPSEI.Data;
+using ERPSEI.Data.Entities;
 using ERPSEI.Email;
-using ERPSEI.Entities;
 using ERPSEI.Resources;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

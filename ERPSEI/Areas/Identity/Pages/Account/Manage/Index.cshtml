@@ -86,12 +86,10 @@
                 <div>
                     <h6>@Localizer["FirstDocumentTitle"]</h6>
                 </div>
-                <div>
-                    <img id="firstDocument" class="document-container" src="" />
-                </div>
+                <div id="firstSourceContainer"></div>
                 <br />
                 <div style="width:auto;" class="mb-3">
-                    <input asp-for="Input.FirstDocument" type="file" id="firstDocumentSelector" onchange="onDocumentSelectorChanged(this);" hidden />
+                    <input asp-for="Input.FirstDocument" type="file" id="firstDocumentSelector" containerName="firstSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
                     <a id="editFirstDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="firstDocumentSelector">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
                             <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
@@ -106,12 +104,10 @@
                 <div>
                     <h6>@Localizer["SecondDocumentTitle"]</h6>
                 </div>
-                <div>
-                    <img id="secondDocument" class="document-container" src="" />
-                </div>
+                <div id="secondSourceContainer"></div>
                 <br />
                 <div style="width:auto;" class="mb-3">
-                    <input asp-for="Input.SecondDocument" type="file" id="secondDocumentSelector" onchange="onDocumentSelectorChanged(this);" hidden />
+                    <input asp-for="Input.SecondDocument" type="file" id="secondDocumentSelector" containerName="secondSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
                     <a id="editSecondDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="secondDocumentSelector">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
                             <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
@@ -121,26 +117,36 @@
                 </div>
             </center>
         </div>
-        @* la siguiente sección deberá retirarse cuando se tenga el catálogo de personal 
-           para que la desactivación del perfil se realice desde allá.
-        *@
-        @* <div class="col-md-6">
-        </div>
-        <div class="col-md-6">
-            <div class="mb-6">
-                <a id="delete" asp-page="DeletePersonalData" class="w-100 btn btn-lg btn-danger">@Localizer["DeactivateButton"]</a>
-            </div>
-        </div> *@
     </div>
+    @* la siguiente sección deberá retirarse cuando se tenga el catálogo de personal
+    para que la desactivación del perfil se realice desde allá.
+    *@
+    @* <div class="col-md-6">
+    </div>
+    <div class="col-md-6">
+        <div class="mb-6">
+            <a id="delete" asp-page="DeletePersonalData" class="w-100 btn btn-lg btn-danger">@Localizer["DeactivateButton"]</a>
+        </div>
+    </div> *@
 </form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/lib/pdfjs/pdf.js"></script>
     <script type="text/javascript">
+        // Loaded via <script> tag, create shortcut to access PDF.js exports.
+        var pdfjsLib = window['pdfjs-dist/build/pdf'];
+
+        // The workerSrc property shall be specified.
+        pdfjsLib.GlobalWorkerOptions.workerSrc = '../../../lib/pdfjs/pdf.worker.js';
+
+        //Función para capturar el clic en el botón de edición, que dispara la apertura del selector de archivo.
         function onEditDocumentClick(button) {
             let inputName = button.getAttribute("inputName");
             document.getElementById(inputName).click();
         }
+
+        //Función para mostrar la foto de perfil seleccionada.
         function onProfilePicSelectorChanged(input) {
             if (input.files && (input.files.length||0) >= 1) {
                 let imgType = input.files[0].type;
@@ -148,6 +154,72 @@
                     document.getElementById("profilePicContainer").src = window.URL.createObjectURL(input.files[0]);
                 }
             }
+        }
+
+        //Función para mostrar cualquiera de los documentos seleccionados.
+        function onDocumentSelectorChanged(input) {
+            if (input.files && (input.files.length || 0) >= 1) {
+                let docType = input.files[0].type;
+                let isImg = docType == "image/png" || docType == "image/jpg" || docType == "image/jpeg";
+                let isPDF = docType == "application/pdf";
+                let containerName = input.getAttribute("containerName");
+                let showerName = containerName + "_children";
+                let container = document.getElementById(containerName);
+
+                if (isImg) {
+                    let src = window.URL.createObjectURL(input.files[0]);
+                    container.setHTML(`<img id="${showerName}" class="document-container" src="${src}" />`, { sanitizer: new Sanitizer() });
+                }
+                else if (isPDF) {
+                    container.setHTML(`<canvas id="${showerName}" class="document-container"></canvas>`, { sanitizer: new Sanitizer() });
+                    loadPDF(input.files[0], showerName);
+                }
+            }
+        }
+
+        //Función para la carga y render de archivos pdf
+        function loadPDF(file, showerName) {
+            let desiredWidth = 200;
+            var fileReader = new FileReader();
+            fileReader.onload = function () {
+                var pdfData = new Uint8Array(this.result);
+                // Using DocumentInitParameters object to load binary data.
+                var loadingTask = pdfjsLib.getDocument({ data: pdfData });
+                loadingTask.promise.then(function (pdf) {
+                    console.log('PDF loaded');
+
+                    // Fetch the first page
+                    var pageNumber = 1;
+                    pdf.getPage(pageNumber).then(function (page) {
+                        console.log('Page loaded');
+
+                        var scale = 1;
+                        var viewport = page.getViewport({ scale: scale });
+                        scale = desiredWidth / viewport.width;
+                        viewport = page.getViewport({ scale: scale });
+
+                        // Prepare canvas using PDF page dimensions
+                        var canvas = document.getElementById(showerName);
+                        var context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+
+                        // Render PDF page into canvas context
+                        var renderContext = {
+                            canvasContext: context,
+                            viewport: viewport
+                        };
+                        var renderTask = page.render(renderContext);
+                        renderTask.promise.then(function () {
+                            console.log('Page rendered');
+                        });
+                    });
+                }, function (reason) {
+                    // PDF loading error
+                    console.error(reason);
+                });
+            };
+            fileReader.readAsArrayBuffer(file);
         }
     </script>
 }

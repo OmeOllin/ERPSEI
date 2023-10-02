@@ -11,7 +11,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.Extensions.Localization;
-using ERPSEI.Entities;
+using ERPSEI.Data.Entities;
 
 namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 {
