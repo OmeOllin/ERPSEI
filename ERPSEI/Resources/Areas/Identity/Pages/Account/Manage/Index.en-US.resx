@@ -189,4 +189,7 @@
   <data name="UsernamePlaceholder" xml:space="preserve">
     <value>Please select your user name</value>
   </data>
+  <data name="ViewLink" xml:space="preserve">
+    <value>View</value>
+  </data>
 </root>

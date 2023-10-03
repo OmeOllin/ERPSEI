@@ -17,7 +17,5 @@ namespace ERPSEI.Data.Entities
 
         public bool IsBanned { get; set; }
 
-        public ICollection<UserFile> UserFiles { get; set; } = new List<UserFile>();
-
     }
 }

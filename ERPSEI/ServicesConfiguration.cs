@@ -31,6 +31,8 @@ namespace ERPSEI
             _builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
             _builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+            _builder.Services.AddScoped<IUserFileManager, UserFileManager>();
+
         }
 
         public static void ConfigureIdentity(WebApplicationBuilder _builder)

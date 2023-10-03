@@ -142,7 +142,7 @@
     <value>Información principal</value>
   </data>
   <data name="FourthDocumentTitle" xml:space="preserve">
-    <value>Comprobante domicilio</value>
+    <value>Comprobante de domicilio</value>
   </data>
   <data name="MothersLastNamePlaceholder" xml:space="preserve">
     <value>Segundo apellido</value>
@@ -188,5 +188,8 @@
   </data>
   <data name="UsernamePlaceholder" xml:space="preserve">
     <value>Por favor elija su nombre de usuario</value>
+  </data>
+  <data name="ViewLink" xml:space="preserve">
+    <value>Ver</value>
   </data>
 </root>

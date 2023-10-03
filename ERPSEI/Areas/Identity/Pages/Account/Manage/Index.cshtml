@@ -86,15 +86,23 @@
                 <div>
                     <h6>@Localizer["FirstDocumentTitle"]</h6>
                 </div>
-                <div id="firstSourceContainer"></div>
+                <div id="firstSourceContainer">
+                    @Html.Raw(Model.ActaNacimientoSrc)
+                </div>
                 <br />
                 <div style="width:auto;" class="mb-3">
-                    <input asp-for="Input.FirstDocument" type="file" id="firstDocumentSelector" containerName="firstSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                    <input asp-for="Input.Acta" type="file" id="firstDocumentSelector" containerName="firstSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
                     <a id="editFirstDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="firstDocumentSelector">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
                             <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
                         </svg>
                         @Localizer["EditLink"]
+                    </a>
+                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.ActaNacimientoId" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                        </svg>
+                        @Localizer["ViewLink"]
                     </a>
                 </div>
             </center>
@@ -104,15 +112,239 @@
                 <div>
                     <h6>@Localizer["SecondDocumentTitle"]</h6>
                 </div>
-                <div id="secondSourceContainer"></div>
+                <div id="secondSourceContainer">
+                    @Html.Raw(Model.CURPSrc)
+                </div>
                 <br />
                 <div style="width:auto;" class="mb-3">
-                    <input asp-for="Input.SecondDocument" type="file" id="secondDocumentSelector" containerName="secondSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                    <input asp-for="Input.CURP" type="file" id="secondDocumentSelector" containerName="secondSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
                     <a id="editSecondDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="secondDocumentSelector">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
                             <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
                         </svg>
                         @Localizer["EditLink"]
+                    </a>
+                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.CURPId" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                        </svg>
+                        @Localizer["ViewLink"]
+                    </a>
+                </div>
+            </center>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <center>
+                <div>
+                    <h6>@Localizer["ThirdDocumentTitle"]</h6>
+                </div>
+                <div id="thirdSourceContainer">
+                    @Html.Raw(Model.CLABESrc)
+                </div>
+                <br />
+                <div style="width:auto;" class="mb-3">
+                    <input asp-for="Input.CLABE" type="file" id="thirdDocumentSelector" containerName="thirdSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                    <a id="editThirdDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="thirdDocumentSelector">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+                        </svg>
+                        @Localizer["EditLink"]
+                    </a>
+                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.CLABEId" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                        </svg>
+                        @Localizer["ViewLink"]
+                    </a>
+                </div>
+            </center>
+        </div>
+        <div class="col-lg-6">
+            <center>
+                <div>
+                    <h6>@Localizer["FourthDocumentTitle"]</h6>
+                </div>
+                <div id="fourthSourceContainer">
+                    @Html.Raw(Model.ComprobanteDomiciloSrc)
+                </div>
+                <br />
+                <div style="width:auto;" class="mb-3">
+                    <input asp-for="Input.ComprobanteDomicilio" type="file" id="fourthDocumentSelector" containerName="fourthSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                    <a id="editFourthDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="fourthDocumentSelector">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+                        </svg>
+                        @Localizer["EditLink"]
+                    </a>
+                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.ComprobanteDomiciloId" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                        </svg>
+                        @Localizer["ViewLink"]
+                    </a>
+                </div>
+            </center>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <center>
+                <div>
+                    <h6>@Localizer["FifthDocumentTitle"]</h6>
+                </div>
+                <div id="fifthSourceContainer">
+                    @Html.Raw(Model.ContactosEmergenciaSrc)
+                </div>
+                <br />
+                <div style="width:auto;" class="mb-3">
+                    <input asp-for="Input.ContactosEmergencia" type="file" id="fifthDocumentSelector" containerName="fifthSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                    <a id="editFifthDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="fifthDocumentSelector">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+                        </svg>
+                        @Localizer["EditLink"]
+                    </a>
+                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.ContactosEmergenciaId" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                        </svg>
+                        @Localizer["ViewLink"]
+                    </a>
+                </div>
+            </center>
+        </div>
+        <div class="col-lg-6">
+            <center>
+                <div>
+                    <h6>@Localizer["SixthDocumentTitle"]</h6>
+                </div>
+                <div id="sixthSourceContainer">
+                    @Html.Raw(Model.CSFSrc)
+                </div>
+                <br />
+                <div style="width:auto;" class="mb-3">
+                    <input asp-for="Input.CSF" type="file" id="sixthDocumentSelector" containerName="sixthSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                    <a id="editSixthDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="sixthDocumentSelector">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+                        </svg>
+                        @Localizer["EditLink"]
+                    </a>
+                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.CSFId" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                        </svg>
+                        @Localizer["ViewLink"]
+                    </a>
+                </div>
+            </center>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <center>
+                <div>
+                    <h6>@Localizer["SeventhDocumentTitle"]</h6>
+                </div>
+                <div id="seventhSourceContainer">
+                    @Html.Raw(Model.INESrc)
+                </div>
+                <br />
+                <div style="width:auto;" class="mb-3">
+                    <input asp-for="Input.INE" type="file" id="seventhDocumentSelector" containerName="seventhSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                    <a id="editSeventhDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="seventhDocumentSelector">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+                        </svg>
+                        @Localizer["EditLink"]
+                    </a>
+                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.INEId" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                        </svg>
+                        @Localizer["ViewLink"]
+                    </a>
+                </div>
+            </center>
+        </div>
+        <div class="col-lg-6">
+            <center>
+                <div>
+                    <h6>@Localizer["EighthDocumentTitle"]</h6>
+                </div>
+                <div id="eighthSourceContainer">
+                    @Html.Raw(Model.RFCSrc)
+                </div>
+                <br />
+                <div style="width:auto;" class="mb-3">
+                    <input asp-for="Input.RFC" type="file" id="eighthDocumentSelector" containerName="eighthSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                    <a id="editEighthDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="eighthDocumentSelector">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+                        </svg>
+                        @Localizer["EditLink"]
+                    </a>
+                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.RFCId" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                        </svg>
+                        @Localizer["ViewLink"]
+                    </a>
+                </div>
+            </center>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <center>
+                <div>
+                    <h6>@Localizer["NinethDocumentTitle"]</h6>
+                </div>
+                <div id="ninethSourceContainer">
+                    @Html.Raw(Model.ComprobanteEstudiosSrc)
+                </div>
+                <br />
+                <div style="width:auto;" class="mb-3">
+                    <input asp-for="Input.ComprobanteEstudios" type="file" id="ninethDocumentSelector" containerName="ninethSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                    <a id="editNinethDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="ninethDocumentSelector">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+                        </svg>
+                        @Localizer["EditLink"]
+                    </a>
+                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.ComprobanteEstudiosId" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                        </svg>
+                        @Localizer["ViewLink"]
+                    </a>
+                </div>
+            </center>
+        </div>
+        <div class="col-lg-6">
+            <center>
+                <div>
+                    <h6>@Localizer["TenthDocumentTitle"]</h6>
+                </div>
+                <div id="tenthSourceContainer">
+                    @Html.Raw(Model.NSSSrc)
+                </div>
+                <br />
+                <div style="width:auto;" class="mb-3">
+                    <input asp-for="Input.NSS" type="file" id="tenthDocumentSelector" containerName="tenthSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                    <a id="editTenthDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="tenthDocumentSelector">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+                        </svg>
+                        @Localizer["EditLink"]
+                    </a>
+                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.NSSId" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                        </svg>
+                        @Localizer["ViewLink"]
                     </a>
                 </div>
             </center>
@@ -139,6 +371,10 @@
 
         // The workerSrc property shall be specified.
         pdfjsLib.GlobalWorkerOptions.workerSrc = '../../../lib/pdfjs/pdf.worker.js';
+
+        document.addEventListener("DOMContentLoaded", function (event) {
+            renderFiles();
+        });
 
         //Función para capturar el clic en el botón de edición, que dispara la apertura del selector de archivo.
         function onEditDocumentClick(button) {
@@ -172,54 +408,79 @@
                 }
                 else if (isPDF) {
                     container.setHTML(`<canvas id="${showerName}" class="document-container"></canvas>`, { sanitizer: new Sanitizer() });
-                    loadPDF(input.files[0], showerName);
+                    loadPDFFromFile(input.files[0], showerName);
                 }
             }
         }
 
         //Función para la carga y render de archivos pdf
-        function loadPDF(file, showerName) {
+        function loadPDF(pdfData, showerName){
+            // Using DocumentInitParameters object to load binary data.
+            var loadingTask = pdfjsLib.getDocument({ data: pdfData });
             let desiredWidth = 200;
+            loadingTask.promise.then(function (pdf) {
+                console.log('PDF loaded');
+
+                // Fetch the first page
+                var pageNumber = 1;
+                pdf.getPage(pageNumber).then(function (page) {
+                    console.log('Page loaded');
+
+                    var scale = 1;
+                    var viewport = page.getViewport({ scale: scale });
+                    scale = desiredWidth / viewport.width;
+                    viewport = page.getViewport({ scale: scale });
+
+                    // Prepare canvas using PDF page dimensions
+                    var canvas = document.getElementById(showerName);
+                    var context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    // Render PDF page into canvas context
+                    var renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    var renderTask = page.render(renderContext);
+                    renderTask.promise.then(function () {
+                        console.log('Page rendered');
+                    });
+                });
+            }, function (reason) {
+                // PDF loading error
+                console.error(reason);
+            });
+        }
+
+        //Función para la carga y render de archivos pdf a partir de una cadena base64
+        function loadPDFFromB64(b64, showerName) {
+            let pdfData = atob(b64);
+            loadPDF(pdfData, showerName);
+
+        }
+
+        //Función para la carga y render de archivos pdf a partir de un archivo seleccionado.
+        function loadPDFFromFile(file, showerName) {
             var fileReader = new FileReader();
             fileReader.onload = function () {
                 var pdfData = new Uint8Array(this.result);
-                // Using DocumentInitParameters object to load binary data.
-                var loadingTask = pdfjsLib.getDocument({ data: pdfData });
-                loadingTask.promise.then(function (pdf) {
-                    console.log('PDF loaded');
-
-                    // Fetch the first page
-                    var pageNumber = 1;
-                    pdf.getPage(pageNumber).then(function (page) {
-                        console.log('Page loaded');
-
-                        var scale = 1;
-                        var viewport = page.getViewport({ scale: scale });
-                        scale = desiredWidth / viewport.width;
-                        viewport = page.getViewport({ scale: scale });
-
-                        // Prepare canvas using PDF page dimensions
-                        var canvas = document.getElementById(showerName);
-                        var context = canvas.getContext('2d');
-                        canvas.height = viewport.height;
-                        canvas.width = viewport.width;
-
-                        // Render PDF page into canvas context
-                        var renderContext = {
-                            canvasContext: context,
-                            viewport: viewport
-                        };
-                        var renderTask = page.render(renderContext);
-                        renderTask.promise.then(function () {
-                            console.log('Page rendered');
-                        });
-                    });
-                }, function (reason) {
-                    // PDF loading error
-                    console.error(reason);
-                });
+                loadPDF(pdfData, showerName);
             };
             fileReader.readAsArrayBuffer(file);
+        }
+
+        //Función para renderizar los archivos en formato pdf.
+        function renderFiles() {
+            let elements = document.getElementsByClassName("canvaspdf");
+            if (elements.length <= 0) { return; }
+
+            for (let i = 0; i < elements.length; i++) {
+                let element = elements[i];
+                let id = element.getAttribute("id");
+                let b64 = element.getAttribute("b64");
+                loadPDFFromB64(b64, id);
+            }
         }
     </script>
 }
