@@ -1,8 +1,10 @@
 using ERPSEI.Data.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace ERPSEI.Pages
 {
+    [Authorize]
     public class PDFViewerModel : PageModel
     {
         private readonly IUserFileManager _userFileManager;
