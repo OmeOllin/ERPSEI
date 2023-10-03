@@ -41,9 +41,9 @@ namespace ERPSEI.Data.Entities
             return await db.UserFiles.Where(uf => uf.UserId == userId).ToListAsync();
         }
 
-        public UserFile GetFileById(string id)
+        public UserFile? GetFileById(string id)
         {
-            return db.UserFiles.Where(uf => uf.Id == id).First();
+            return db.UserFiles.Where(uf => uf.Id == id).FirstOrDefault();
         }
 
 	}

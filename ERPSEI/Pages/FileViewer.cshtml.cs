@@ -1,5 +1,6 @@
 using ERPSEI.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace ERPSEI.Pages
@@ -15,10 +16,12 @@ namespace ERPSEI.Pages
             _userFileManager = userFileManager;
         }
 
-        public void OnGet(string id)
+        public IActionResult OnGet(string id)
         {
-            if (id == null) { return; }
-            UserFile file = _userFileManager.GetFileById(id);
+            if (id == null) { return RedirectToPage("/404"); }
+            UserFile? file = _userFileManager.GetFileById(id);
+            if (file == null) { return RedirectToPage("/404"); }
+
             string src = Convert.ToBase64String(file.File);
             if(file.Extension == "pdf")
             {
@@ -28,6 +31,7 @@ namespace ERPSEI.Pages
             {
                 iframesrc = $"data:image/{file.Extension};base64,{src}";
             }
+            return Page();
         }
     }
 }

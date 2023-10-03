@@ -11,6 +11,6 @@
 
         public Task<List<UserFile>> GetFilesByUserIdAsync(string userId);
 
-		UserFile GetFileById(string id);
+		UserFile? GetFileById(string id);
 	}
 }
