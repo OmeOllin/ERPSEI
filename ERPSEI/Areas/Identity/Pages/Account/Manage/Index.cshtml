@@ -19,7 +19,7 @@
         <div class="col-lg-6">
             <center>
                 <div>
-                    <img id="profilePicContainer" class="profile-pic" src="@Model.ProfilePictureSrc" />
+                    <img id="profilePicContainer" class="profile-pic mb-3" src="@Model.ProfilePictureSrc" />
                 </div>
                 <div style="width:auto;" class="mb-3">
                     <input asp-for="Input.ProfilePicture" type="file" id="profilePicSelector" onchange="onProfilePicSelectorChanged(this);" accept="image/png, image/jpeg" hidden />
@@ -98,7 +98,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.ActaNacimientoId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.ActaNacimientoId" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -124,7 +124,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.CURPId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.CURPId" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -152,7 +152,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.CLABEId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.CLABEId" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -178,7 +178,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.ComprobanteDomiciloId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.ComprobanteDomiciloId" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -206,7 +206,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.ContactosEmergenciaId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.ContactosEmergenciaId" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -232,7 +232,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.CSFId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.CSFId" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -260,7 +260,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.INEId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.INEId" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -286,7 +286,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.RFCId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.RFCId" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -314,7 +314,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.ComprobanteEstudiosId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.ComprobanteEstudiosId" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -340,7 +340,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary" asp-page="/PDFViewer" asp-route-id="@Model.NSSId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.NSSId" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -365,122 +365,5 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/lib/pdfjs/pdf.js"></script>
-    <script type="text/javascript">
-        // Loaded via <script> tag, create shortcut to access PDF.js exports.
-        var pdfjsLib = window['pdfjs-dist/build/pdf'];
-
-        // The workerSrc property shall be specified.
-        pdfjsLib.GlobalWorkerOptions.workerSrc = '../../../lib/pdfjs/pdf.worker.js';
-
-        document.addEventListener("DOMContentLoaded", function (event) {
-            renderFiles();
-        });
-
-        //Función para capturar el clic en el botón de edición, que dispara la apertura del selector de archivo.
-        function onEditDocumentClick(button) {
-            let inputName = button.getAttribute("inputName");
-            document.getElementById(inputName).click();
-        }
-
-        //Función para mostrar la foto de perfil seleccionada.
-        function onProfilePicSelectorChanged(input) {
-            if (input.files && (input.files.length||0) >= 1) {
-                let imgType = input.files[0].type;
-                if (imgType == "image/png" || imgType == "image/jpg" || imgType == "image/jpeg") {
-                    document.getElementById("profilePicContainer").src = window.URL.createObjectURL(input.files[0]);
-                }
-            }
-        }
-
-        //Función para mostrar cualquiera de los documentos seleccionados.
-        function onDocumentSelectorChanged(input) {
-            if (input.files && (input.files.length || 0) >= 1) {
-                let docType = input.files[0].type;
-                let isImg = docType == "image/png" || docType == "image/jpg" || docType == "image/jpeg";
-                let isPDF = docType == "application/pdf";
-                let containerName = input.getAttribute("containerName");
-                let showerName = containerName + "_children";
-                let container = document.getElementById(containerName);
-
-                if (isImg) {
-                    let src = window.URL.createObjectURL(input.files[0]);
-                    container.setHTML(`<img id="${showerName}" class="document-container" src="${src}" />`, { sanitizer: new Sanitizer() });
-                }
-                else if (isPDF) {
-                    container.setHTML(`<canvas id="${showerName}" class="document-container"></canvas>`, { sanitizer: new Sanitizer() });
-                    loadPDFFromFile(input.files[0], showerName);
-                }
-            }
-        }
-
-        //Función para la carga y render de archivos pdf
-        function loadPDF(pdfData, showerName){
-            // Using DocumentInitParameters object to load binary data.
-            var loadingTask = pdfjsLib.getDocument({ data: pdfData });
-            let desiredWidth = 200;
-            loadingTask.promise.then(function (pdf) {
-                console.log('PDF loaded');
-
-                // Fetch the first page
-                var pageNumber = 1;
-                pdf.getPage(pageNumber).then(function (page) {
-                    console.log('Page loaded');
-
-                    var scale = 1;
-                    var viewport = page.getViewport({ scale: scale });
-                    scale = desiredWidth / viewport.width;
-                    viewport = page.getViewport({ scale: scale });
-
-                    // Prepare canvas using PDF page dimensions
-                    var canvas = document.getElementById(showerName);
-                    var context = canvas.getContext('2d');
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
-
-                    // Render PDF page into canvas context
-                    var renderContext = {
-                        canvasContext: context,
-                        viewport: viewport
-                    };
-                    var renderTask = page.render(renderContext);
-                    renderTask.promise.then(function () {
-                        console.log('Page rendered');
-                    });
-                });
-            }, function (reason) {
-                // PDF loading error
-                console.error(reason);
-            });
-        }
-
-        //Función para la carga y render de archivos pdf a partir de una cadena base64
-        function loadPDFFromB64(b64, showerName) {
-            let pdfData = atob(b64);
-            loadPDF(pdfData, showerName);
-
-        }
-
-        //Función para la carga y render de archivos pdf a partir de un archivo seleccionado.
-        function loadPDFFromFile(file, showerName) {
-            var fileReader = new FileReader();
-            fileReader.onload = function () {
-                var pdfData = new Uint8Array(this.result);
-                loadPDF(pdfData, showerName);
-            };
-            fileReader.readAsArrayBuffer(file);
-        }
-
-        //Función para renderizar los archivos en formato pdf.
-        function renderFiles() {
-            let elements = document.getElementsByClassName("canvaspdf");
-            if (elements.length <= 0) { return; }
-
-            for (let i = 0; i < elements.length; i++) {
-                let element = elements[i];
-                let id = element.getAttribute("id");
-                let b64 = element.getAttribute("b64");
-                loadPDFFromB64(b64, id);
-            }
-        }
-    </script>
+    <script src="~/../Areas/Identity/Pages/Account/Manage/Index.cshtml.js"></script>
 }

@@ -5,13 +5,13 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace ERPSEI.Pages
 {
     [Authorize]
-    public class PDFViewerModel : PageModel
+    public class FileViewerModel : PageModel
     {
         private readonly IUserFileManager _userFileManager;
 
         public string iframesrc { get; set; } = string.Empty;
 
-        public PDFViewerModel(IUserFileManager userFileManager) { 
+        public FileViewerModel(IUserFileManager userFileManager) { 
             _userFileManager = userFileManager;
         }
 
@@ -20,7 +20,14 @@ namespace ERPSEI.Pages
             if (id == null) { return; }
             UserFile file = _userFileManager.GetFileById(id);
             string src = Convert.ToBase64String(file.File);
-            iframesrc = $"data:application/pdf;base64,{src}";
+            if(file.Extension == "pdf")
+            {
+                iframesrc = $"data:application/pdf;base64,{src}";
+            }
+            else
+            {
+                iframesrc = $"data:image/{file.Extension};base64,{src}";
+            }
         }
     }
 }

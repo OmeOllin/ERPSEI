@@ -24,6 +24,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\js\Loading.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Update="Resources\ValidationsLocalization.es-MX.resx">
       <Generator></Generator>
     </EmbeddedResource>
