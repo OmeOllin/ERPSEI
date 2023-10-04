@@ -1,29 +1,28 @@
-﻿let loadingHTML = '<div id="modal"'
-                + ' class="modal fade bd-example-modal-lg"'
-                + ' data-backdrop="static"'
-                + ' data-keyboard="false"'
-                + ' tabindex="-1">'
-                    + '<div class="modal-dialog modal-sm position-fixed" style="left: 50%; top: 50%">'
-                        + '<div class="spinner-border text-info">'
-                        + '</div>'
-                    + '</div>'
-                + '</div>'
-                + '<div class="modal-backdrop fade show" id="backdrop" style="display: none;"></div>';
+﻿let loadingHTML = `<div id="modal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+                       <div class="modal-dialog modal-sm modal-dialog-centered">
+                           <span class="spinner-border text-info position-fixed" style="left: 50%;"></span>
+                       </div>
+                   </div>
+                   <button id="showLoading" type="button" data-bs-toggle="modal" data-bs-target="#modal" hidden></button>
+                   <button id="hideLoading" type="button" data-bs-dismiss="modal" data-bs-target="#modal" hidden></button>`;
 
-function initializeLoading() {
-    document.body.innerHTML += loadingHTML;
-}
+document.addEventListener("DOMContentLoaded", async function (event) {
+    let modal = document.getElementById('modal');
+    if (modal == null) { document.body.innerHTML += loadingHTML; }
+});
 
 function showLoading() {
-    let modalExist = document.getElementById("modal") != null;
-    if (!modalExist) { initializeLoading(); }
-    document.getElementById('backdrop').style.display = 'block';
-    document.getElementById('modal').style.display = 'block';
-    document.getElementById('modal').classList.add('show');
+    let button = document.getElementById('showLoading');
+    button.click();
 }
 
 function hideLoading() {
-    document.getElementById('backdrop').style.display = 'none';
-    document.getElementById('modal').style.display = 'none';
-    document.getElementById('modal').classList.remove('show');
+    let button = document.getElementById('hideLoading');
+    button.click();
+    setTimeout(function () {
+        let modal = document.getElementById('modal');
+        if (modal.classList.contains('show')) {
+            hideLoading();
+        }
+    }, 200);
 }
