@@ -44,11 +44,11 @@ async function onDocumentSelectorChanged(input) {
 
         if (isImg) {
             let src = window.URL.createObjectURL(input.files[0]);
-            container.setHTML(`<img id="${showerName}" class="document-container" src="${src}" />`, { sanitizer: new Sanitizer() });
+            container.setHTML(`<img id="${showerName}" src="${src}" style="width:100%; height: auto; max-height: 200px;" />`, { sanitizer: new Sanitizer() });
         }
         else if (isPDF) {
             showLoading();
-            container.setHTML(`<canvas id="${showerName}" class="document-container"></canvas>`, { sanitizer: new Sanitizer() });
+            container.setHTML(`<canvas id="${showerName}" class="canvaspdf"></canvas>`, { sanitizer: new Sanitizer() });
             await loadPDFFromFileAsync(input.files[0], showerName);
             hideLoading();
         }
@@ -138,7 +138,7 @@ async function initializeViewButtonsAsync() {
             let urlLastPartItems = urlLastPart.split("?");
             let strUrlParams = `?${urlLastPartItems[urlLastPartItems.length - 1]}`;
             let params = new URLSearchParams(strUrlParams);
-            let hasId = params.get("id").length >= 1;
+            let hasId = params.get("id")||"".length >= 1;
 
             //Si tiene parámetro Id, habilita el botón, de lo contrario lo deshabilita.
             if (hasId) {

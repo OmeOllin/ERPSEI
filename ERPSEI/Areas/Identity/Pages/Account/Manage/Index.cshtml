@@ -1,5 +1,6 @@
 ﻿@page
 @using Microsoft.AspNetCore.Mvc.Localization
+@using ERPSEI.Data.Entities
 @inject IViewLocalizer Localizer
 @model IndexModel
 @{
@@ -86,8 +87,8 @@
                 <div>
                     <h6>@Localizer["FirstDocumentTitle"]</h6>
                 </div>
-                <div id="firstSourceContainer">
-                    @Html.Raw(Model.ActaNacimientoSrc)
+                <div id="firstSourceContainer" class="document-container">
+                    @Html.Raw(Model.dFilesData[FileTypes.ActaNacimiento].Src)
                 </div>
                 <br />
                 <div style="width:auto;" class="mb-3">
@@ -98,7 +99,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.ActaNacimientoId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.ActaNacimiento].Id" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -112,8 +113,8 @@
                 <div>
                     <h6>@Localizer["SecondDocumentTitle"]</h6>
                 </div>
-                <div id="secondSourceContainer">
-                    @Html.Raw(Model.CURPSrc)
+                <div id="secondSourceContainer" class="document-container">
+                    @Html.Raw(Model.dFilesData[FileTypes.CURP].Src)
                 </div>
                 <br />
                 <div style="width:auto;" class="mb-3">
@@ -124,7 +125,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.CURPId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.CURP].Id" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -140,8 +141,8 @@
                 <div>
                     <h6>@Localizer["ThirdDocumentTitle"]</h6>
                 </div>
-                <div id="thirdSourceContainer">
-                    @Html.Raw(Model.CLABESrc)
+                <div id="thirdSourceContainer" class="document-container">
+                    @Html.Raw(Model.dFilesData[FileTypes.CLABE].Src)
                 </div>
                 <br />
                 <div style="width:auto;" class="mb-3">
@@ -152,7 +153,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.CLABEId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.CLABE].Id" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -166,8 +167,8 @@
                 <div>
                     <h6>@Localizer["FourthDocumentTitle"]</h6>
                 </div>
-                <div id="fourthSourceContainer">
-                    @Html.Raw(Model.ComprobanteDomiciloSrc)
+                <div id="fourthSourceContainer" class="document-container">
+                    @Html.Raw(Model.dFilesData[FileTypes.ComprobanteDomicilio].Src)
                 </div>
                 <br />
                 <div style="width:auto;" class="mb-3">
@@ -178,7 +179,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.ComprobanteDomiciloId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.ComprobanteDomicilio].Id" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -194,8 +195,8 @@
                 <div>
                     <h6>@Localizer["FifthDocumentTitle"]</h6>
                 </div>
-                <div id="fifthSourceContainer">
-                    @Html.Raw(Model.ContactosEmergenciaSrc)
+                <div id="fifthSourceContainer" class="document-container">
+                    @Html.Raw(Model.dFilesData[FileTypes.ContactosEmergencia].Src)
                 </div>
                 <br />
                 <div style="width:auto;" class="mb-3">
@@ -206,7 +207,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.ContactosEmergenciaId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.ContactosEmergencia].Id" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -220,8 +221,8 @@
                 <div>
                     <h6>@Localizer["SixthDocumentTitle"]</h6>
                 </div>
-                <div id="sixthSourceContainer">
-                    @Html.Raw(Model.CSFSrc)
+                <div id="sixthSourceContainer" class="document-container">
+                    @Html.Raw(Model.dFilesData[FileTypes.CSF].Src)
                 </div>
                 <br />
                 <div style="width:auto;" class="mb-3">
@@ -232,7 +233,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.CSFId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.CSF].Id" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -248,8 +249,8 @@
                 <div>
                     <h6>@Localizer["SeventhDocumentTitle"]</h6>
                 </div>
-                <div id="seventhSourceContainer">
-                    @Html.Raw(Model.INESrc)
+                <div id="seventhSourceContainer" class="document-container">
+                    @Html.Raw(Model.dFilesData[FileTypes.INE].Src)
                 </div>
                 <br />
                 <div style="width:auto;" class="mb-3">
@@ -260,7 +261,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.INEId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.INE].Id" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -274,8 +275,8 @@
                 <div>
                     <h6>@Localizer["EighthDocumentTitle"]</h6>
                 </div>
-                <div id="eighthSourceContainer">
-                    @Html.Raw(Model.RFCSrc)
+                <div id="eighthSourceContainer" class="document-container">
+                    @Html.Raw(Model.dFilesData[FileTypes.RFC].Src)
                 </div>
                 <br />
                 <div style="width:auto;" class="mb-3">
@@ -286,7 +287,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.RFCId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.RFC].Id" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -302,8 +303,8 @@
                 <div>
                     <h6>@Localizer["NinethDocumentTitle"]</h6>
                 </div>
-                <div id="ninethSourceContainer">
-                    @Html.Raw(Model.ComprobanteEstudiosSrc)
+                <div id="ninethSourceContainer" class="document-container">
+                    @Html.Raw(Model.dFilesData[FileTypes.ComprobanteEstudios].Src)
                 </div>
                 <br />
                 <div style="width:auto;" class="mb-3">
@@ -314,7 +315,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.ComprobanteEstudiosId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.ComprobanteEstudios].Id" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -328,8 +329,8 @@
                 <div>
                     <h6>@Localizer["TenthDocumentTitle"]</h6>
                 </div>
-                <div id="tenthSourceContainer">
-                    @Html.Raw(Model.NSSSrc)
+                <div id="tenthSourceContainer" class="document-container">
+                    @Html.Raw(Model.dFilesData[FileTypes.NSS].Src)
                 </div>
                 <br />
                 <div style="width:auto;" class="mb-3">
@@ -340,7 +341,7 @@
                         </svg>
                         @Localizer["EditLink"]
                     </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.NSSId" target="_blank">
+                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.NSS].Id" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>

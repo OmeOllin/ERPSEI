@@ -3,12 +3,10 @@
 #nullable disable
 
 using ERPSEI.Data.Entities;
-using ERPSEI.Data.Migrations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
-using SQLitePCL;
 using System.ComponentModel.DataAnnotations;
 
 namespace ERPSEI.Areas.Identity.Pages.Account.Manage
@@ -46,37 +44,31 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
         [BindProperty]
         public InputModel Input { get; set; }
 
+        public struct FileData
+        {
+            public string Id { get; set; } 
+            public string Src { get; set; }
+
+            public FileData(string _id, string _src) { 
+                Id = _id;
+                Src = _src;
+            }
+        }
+
+        public IDictionary<FileTypes, FileData> dFilesData { get; set; } = new Dictionary<FileTypes, FileData>(){
+            { FileTypes.ActaNacimiento, new FileData() },
+            { FileTypes.CURP, new FileData() },
+            { FileTypes.CLABE, new FileData() },
+            { FileTypes.ComprobanteDomicilio, new FileData() },
+            { FileTypes.ContactosEmergencia, new FileData() },
+            { FileTypes.CSF, new FileData() },
+            { FileTypes.INE, new FileData() },
+            { FileTypes.RFC, new FileData() },
+            { FileTypes.ComprobanteEstudios, new FileData() },
+            { FileTypes.NSS, new FileData() } 
+        };
+
         public string ProfilePictureSrc { get; set; }
-
-        public string ActaNacimientoSrc { get; set; }
-		public string ActaNacimientoId { get; set; }
-
-		public string CURPSrc { get; set; }
-        public string CURPId { get; set; }
-
-        public string CLABESrc { get; set; }
-        public string CLABEId { get; set; }
-
-        public string ComprobanteDomiciloSrc { get; set; }
-        public string ComprobanteDomiciloId { get; set; }
-
-        public string ContactosEmergenciaSrc { get; set; }
-        public string ContactosEmergenciaId { get; set; }
-
-        public string CSFSrc { get; set; }
-        public string CSFId { get; set; }
-
-        public string INESrc { get; set; }
-        public string INEId { get; set; }
-
-        public string RFCSrc { get; set; }
-        public string RFCId { get; set; }
-
-        public string ComprobanteEstudiosSrc { get; set; }
-        public string ComprobanteEstudiosId { get; set; }
-
-        public string NSSSrc { get; set; }
-        public string NSSId { get; set; }
 
 
         /// <summary>
@@ -165,141 +157,30 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                 ProfilePictureSrc = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/img/default_profile_pic.jpg";
             }
 
+            //Carga los archivos del usuario.
             List<UserFile> files = await _userFileManager.GetFilesByUserIdAsync(user.Id);
-
+            //Recorre los archivos del usuario.
             foreach (UserFile file in files)
             {
+                //Si el archivo tiene contenido
                 if (file.File != null && file.File.Length >= 1)
                 {
+                    //Asigna la información del archivo al arreglo de datos.
                     string b64 = Convert.ToBase64String(file.File);
                     string imgSrc = $"data:image/png;base64,{b64}";
-                    string id = "";
-                    switch (file.FileTypeId)
+                    string id = Guid.NewGuid().ToString();
+                    FileTypes type = (FileTypes)file.FileTypeId;
+                    string src;
+                    if (file.Extension == "pdf")
                     {
-                        case (int)FileTypes.ActaNacimiento:
-                            id = "firstSourceContainer_children";
-							ActaNacimientoId = file.Id;
-							if (file.Extension == "pdf") 
-                            { 
-                                ActaNacimientoSrc = "<canvas id = '" + id + "' b64='" + b64 + "' class = 'canvaspdf document-container'></canvas>";
-
-							}
-                            else
-                            {
-                                ActaNacimientoSrc = "<img id = '" + id + "' class = 'document-container' src = '" + imgSrc + "'/>";
-                            }
-                            break;
-                        case (int)FileTypes.CURP:
-                            id = "secondSourceContainer_children";
-                            CURPId = file.Id;
-                            if (file.Extension == "pdf")
-                            {
-                                CURPSrc = "<canvas id = '" + id + "' b64='" + b64 + "' class = 'canvaspdf document-container'></canvas>";
-                            }
-                            else
-                            {
-                                CURPSrc = "<img id = '" + id + "' class = 'document-container' src = '" + imgSrc + "'/>";
-                            }
-                            break;
-                        case (int)FileTypes.CLABE:
-                            id = "thirdSourceContainer_children";
-                            CLABEId = file.Id;
-                            if (file.Extension == "pdf")
-                            {
-                                CLABESrc = "<canvas id = '" + id + "' b64='" + b64 + "' class = 'canvaspdf document-container'></canvas>";
-                            }
-                            else
-                            {
-                                CLABESrc = "<img id = '" + id + "' class = 'document-container' src = '" + imgSrc + "'/>";
-                            }
-                            break;
-                        case (int)FileTypes.ComprobanteDomicilio:
-                            id = "fourthSourceContainer_children";
-                            ComprobanteDomiciloId = file.Id;
-                            if (file.Extension == "pdf")
-                            {
-                                ComprobanteDomiciloSrc = "<canvas id = '" + id + "' b64='" + b64 + "' class = 'canvaspdf document-container'></canvas>";
-                            }
-                            else
-                            {
-                                ComprobanteDomiciloSrc = "<img id = '" + id + "' class = 'document-container' src = '" + imgSrc + "'/>";
-                            }
-                            break;
-                        case (int)FileTypes.ContactosEmergencia:
-                            id = "fifthSourceContainer_children";
-                            ContactosEmergenciaId = file.Id;
-                            if (file.Extension == "pdf")
-                            {
-                                ContactosEmergenciaSrc = "<canvas id = '" + id + "' b64='" + b64 + "' class = 'canvaspdf document-container'></canvas>";
-                            }
-                            else
-                            {
-                                ContactosEmergenciaSrc = "<img id = '" + id + "' class = 'document-container' src = '" + imgSrc + "'/>";
-                            }
-                            break;
-                        case (int)FileTypes.CSF:
-                            id = "sixthSourceContainer_children";
-                            CSFId = file.Id;
-                            if (file.Extension == "pdf")
-                            {
-                                CSFSrc = "<canvas id = '" + id + "' b64='" + b64 + "' class = 'canvaspdf document-container'></canvas>";
-                            }
-                            else
-                            {
-                                CSFSrc = "<img id = '" + id + "' class = 'document-container' src = '" + imgSrc + "'/>";
-                            }
-                            break;
-                        case (int)FileTypes.INE:
-                            id = "seventhSourceContainer_children";
-                            INEId = file.Id;
-                            if (file.Extension == "pdf")
-                            {
-                                INESrc = "<canvas id = '" + id + "' b64='" + b64 + "' class = 'canvaspdf document-container'></canvas>";
-                            }
-                            else
-                            {
-                                INESrc = "<img id = '" + id + "' class = 'document-container' src = '" + imgSrc + "'/>";
-                            }
-                            break;
-                        case (int)FileTypes.RFC:
-                            id = "eighthSourceContainer_children";
-                            RFCId = file.Id;
-                            if (file.Extension == "pdf")
-                            {
-                                RFCSrc = "<canvas id = '" + id + "' b64='" + b64 + "' class = 'canvaspdf document-container'></canvas>";
-                            }
-                            else
-                            {
-                                RFCSrc = "<img id = '" + id + "' class = 'document-container' src = '" + imgSrc + "'/>";
-                            }
-                            break;
-                        case (int)FileTypes.ComprobanteEstudios:
-                            id = "ninethSourceContainer_children";
-                            ComprobanteEstudiosId = file.Id;
-                            if (file.Extension == "pdf")
-                            {
-                                ComprobanteEstudiosSrc = "<canvas id = '" + id + "' b64='" + b64 + "' class = 'canvaspdf document-container'></canvas>";
-                            }
-                            else
-                            {
-                                ComprobanteEstudiosSrc = "<img id = '" + id + "' class = 'document-container' src = '" + imgSrc + "'/>";
-                            }
-                            break;
-                        case (int)FileTypes.NSS:
-                            id = "tenthSourceContainer_children";
-                            NSSId = file.Id;
-                            if (file.Extension == "pdf")
-                            {
-                                NSSSrc = "<canvas id = '" + id + "' b64='" + b64 + "' class = 'canvaspdf document-container'></canvas>";
-                            }
-                            else
-                            {
-                                NSSSrc = "<img id = '" + id + "' class = 'document-container' src = '" + imgSrc + "'/>";
-                            }
-                            break;
-                        default:
-                            break;
+                        src = $"<canvas id = '{id}' b64 = '{b64}' class = 'canvaspdf'></canvas>";
                     }
+                    else
+                    {
+                        src = $"<img id = '{id}' src = '{imgSrc}' style='min-height: 200px;'/>";
+                    }
+
+                    dFilesData[type] = new FileData(file.Id, src);
                 }
             }
         }

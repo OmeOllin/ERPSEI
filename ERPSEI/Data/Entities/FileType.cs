@@ -1,6 +1,6 @@
 ﻿namespace ERPSEI.Data.Entities
 {
-    enum FileTypes
+    public enum FileTypes
     {
         ImagenPerfil,
         ActaNacimiento,
