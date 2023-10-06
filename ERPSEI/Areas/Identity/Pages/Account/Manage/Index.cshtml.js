@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", async function (event) {
     showLoading();
 
     await renderFilesAsync();
-    await initializeViewButtonsAsync();
+    await initializeDisableableButtonsAsync();
 
     hideLoading()
 });
@@ -61,11 +61,11 @@ async function loadPDFAsync(pdfData, showerName) {
     let desiredWidth = 200;
     var loadingTask = pdfjsLib.getDocument({ data: pdfData });
 
-    await loadingTask.promise.then(async function (pdf) {
+    loadingTask.promise.then(async function (pdf) {
         // Fetch the first page
         var pageNumber = 1;
 
-        await pdf.getPage(pageNumber).then(async function (page) {
+        pdf.getPage(pageNumber).then(async function (page) {
             var scale = 1;
             var viewport = page.getViewport({ scale: scale });
             scale = desiredWidth / viewport.width;
@@ -120,33 +120,67 @@ async function renderFilesAsync() {
 }
 
 //Función para habilitar/deshabilitar los botones de visualización en base a si existe contenido o no para visualizar.
-async function initializeViewButtonsAsync() {
-    let buttons = document.getElementsByClassName("viewbutton");
-    if (buttons.length <= 0) { return; }
+async function initializeDisableableButtonsAsync() {
+    //Botones de acción de editar
+    let buttonsA = document.getElementsByClassName("btn-primary disableable");
+    //Botones de acción de eliminar
+    let buttonsB = document.getElementsByClassName("btn-danger disableable");
 
-    for (let i = 0; i < buttons.length; i++) {
-        let button = buttons[i];
-        let urlParts = button.href.split("/");
-        let urlLastPart = urlParts[urlParts.length - 1];
+    //Se inicializan los botones de edición
+    if (buttonsA.length >= 1) {
+        for (let i = 0; i < buttonsA.length; i++) {
+            let button = buttonsA[i];
+            let urlParts = button.href.split("/");
+            let urlLastPart = urlParts[urlParts.length - 1];
 
-        if (urlLastPart == "PDFViewer") {
-            //Si la última parte de la URL solo contiene el link a la página, sin parámetros, entonces no hay documento a mostrar, por lo tanto, se deshabilita el botón view.
-            button.classList.add("disabled");
+            if (urlLastPart == "FileViewer") {
+                //Si la última parte de la URL solo contiene el link a la página, sin parámetros, entonces no hay documento a mostrar, por lo tanto, se deshabilita el botón view.
+                button.classList.add("disabled");
+            }
+            else {
+                //De lo contrario, verifica si el link contiene un parámetro llamado id.
+                let urlLastPartItems = urlLastPart.split("?");
+                let strUrlParams = `?${urlLastPartItems[urlLastPartItems.length - 1]}`;
+                let params = new URLSearchParams(strUrlParams);
+                let hasId = params.get("id")||"".length >= 1;
+
+                //Si tiene parámetro Id, habilita el botón, de lo contrario lo deshabilita.
+                if (hasId) {
+                    button.classList.remove("disabled");
+                }
+                else {
+                    button.classList.add("disabled");
+                }
+            }
         }
-        else {
-            //De lo contrario, verifica si el link contiene un parámetro llamado id.
-            let urlLastPartItems = urlLastPart.split("?");
-            let strUrlParams = `?${urlLastPartItems[urlLastPartItems.length - 1]}`;
-            let params = new URLSearchParams(strUrlParams);
-            let hasId = params.get("id")||"".length >= 1;
+    }
 
-            //Si tiene parámetro Id, habilita el botón, de lo contrario lo deshabilita.
-            if (hasId) {
+    //Se inicializan los botones de eliminación
+    if (buttonsB.length >= 1) {
+        for (let i = 0; i < buttonsB.length; i++) {
+            let button = buttonsB[i];
+            let sourceId = button.getAttribute("sourceId")||"";
+
+            if (sourceId.length >= 1) {
                 button.classList.remove("disabled");
             }
             else {
                 button.classList.add("disabled");
             }
+        }
+    }
+}
+
+function onDeleteClick(button) {
+    let sourceId = button.getAttribute("sourceId") || "";
+
+    if (sourceId.length >= 1) {
+        let fileInput = document.getElementById(sourceId);
+        let containerName = fileInput.getAttribute("containerName") || "";
+        fileInput.files = null;
+        if (containerName.length >= 1) {
+            let container = document.getElementById(containerName);
+            container.innerHTML = "";
         }
     }
 }

@@ -81,276 +81,70 @@
     <hr />
     <h5>@Localizer["SecondSectionTitle"]</h5>
     <br />
-    <div class="row">
-        <div class="col-lg-6">
-            <center>
-                <div>
-                    <h6>@Localizer["FirstDocumentTitle"]</h6>
-                </div>
-                <div id="firstSourceContainer" class="document-container">
-                    @Html.Raw(Model.dFilesData[FileTypes.ActaNacimiento].Src)
-                </div>
-                <br />
-                <div style="width:auto;" class="mb-3">
-                    <input asp-for="Input.Acta" type="file" id="firstDocumentSelector" containerName="firstSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-                    <a id="editFirstDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="firstDocumentSelector">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
-                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
-                        </svg>
-                        @Localizer["EditLink"]
-                    </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.ActaNacimiento].Id" target="_blank">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                        </svg>
-                        @Localizer["ViewLink"]
-                    </a>
-                </div>
-            </center>
-        </div>
-        <div class="col-lg-6">
-            <center>
-                <div>
-                    <h6>@Localizer["SecondDocumentTitle"]</h6>
-                </div>
-                <div id="secondSourceContainer" class="document-container">
-                    @Html.Raw(Model.dFilesData[FileTypes.CURP].Src)
-                </div>
-                <br />
-                <div style="width:auto;" class="mb-3">
-                    <input asp-for="Input.CURP" type="file" id="secondDocumentSelector" containerName="secondSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-                    <a id="editSecondDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="secondDocumentSelector">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
-                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
-                        </svg>
-                        @Localizer["EditLink"]
-                    </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.CURP].Id" target="_blank">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                        </svg>
-                        @Localizer["ViewLink"]
-                    </a>
-                </div>
-            </center>
+    <div class="alert alert-primary d-flex align-items-center" role="alert">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi flex-shrink-0 me-2" width="24" height="24" aria-label="Info:">
+            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+        </svg>
+        <div>
+            @Localizer["DocumentSuggestion"]
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-6">
-            <center>
-                <div>
-                    <h6>@Localizer["ThirdDocumentTitle"]</h6>
-                </div>
-                <div id="thirdSourceContainer" class="document-container">
-                    @Html.Raw(Model.dFilesData[FileTypes.CLABE].Src)
-                </div>
-                <br />
-                <div style="width:auto;" class="mb-3">
-                    <input asp-for="Input.CLABE" type="file" id="thirdDocumentSelector" containerName="thirdSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-                    <a id="editThirdDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="thirdDocumentSelector">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
-                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
-                        </svg>
-                        @Localizer["EditLink"]
-                    </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.CLABE].Id" target="_blank">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                        </svg>
-                        @Localizer["ViewLink"]
-                    </a>
-                </div>
-            </center>
-        </div>
-        <div class="col-lg-6">
-            <center>
-                <div>
-                    <h6>@Localizer["FourthDocumentTitle"]</h6>
-                </div>
-                <div id="fourthSourceContainer" class="document-container">
-                    @Html.Raw(Model.dFilesData[FileTypes.ComprobanteDomicilio].Src)
-                </div>
-                <br />
-                <div style="width:auto;" class="mb-3">
-                    <input asp-for="Input.ComprobanteDomicilio" type="file" id="fourthDocumentSelector" containerName="fourthSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-                    <a id="editFourthDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="fourthDocumentSelector">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
-                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
-                        </svg>
-                        @Localizer["EditLink"]
-                    </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.ComprobanteDomicilio].Id" target="_blank">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                        </svg>
-                        @Localizer["ViewLink"]
-                    </a>
-                </div>
-            </center>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-6">
-            <center>
-                <div>
-                    <h6>@Localizer["FifthDocumentTitle"]</h6>
-                </div>
-                <div id="fifthSourceContainer" class="document-container">
-                    @Html.Raw(Model.dFilesData[FileTypes.ContactosEmergencia].Src)
-                </div>
-                <br />
-                <div style="width:auto;" class="mb-3">
-                    <input asp-for="Input.ContactosEmergencia" type="file" id="fifthDocumentSelector" containerName="fifthSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-                    <a id="editFifthDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="fifthDocumentSelector">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
-                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
-                        </svg>
-                        @Localizer["EditLink"]
-                    </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.ContactosEmergencia].Id" target="_blank">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                        </svg>
-                        @Localizer["ViewLink"]
-                    </a>
-                </div>
-            </center>
-        </div>
-        <div class="col-lg-6">
-            <center>
-                <div>
-                    <h6>@Localizer["SixthDocumentTitle"]</h6>
-                </div>
-                <div id="sixthSourceContainer" class="document-container">
-                    @Html.Raw(Model.dFilesData[FileTypes.CSF].Src)
-                </div>
-                <br />
-                <div style="width:auto;" class="mb-3">
-                    <input asp-for="Input.CSF" type="file" id="sixthDocumentSelector" containerName="sixthSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-                    <a id="editSixthDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="sixthDocumentSelector">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
-                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
-                        </svg>
-                        @Localizer["EditLink"]
-                    </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.CSF].Id" target="_blank">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                        </svg>
-                        @Localizer["ViewLink"]
-                    </a>
-                </div>
-            </center>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-6">
-            <center>
-                <div>
-                    <h6>@Localizer["SeventhDocumentTitle"]</h6>
-                </div>
-                <div id="seventhSourceContainer" class="document-container">
-                    @Html.Raw(Model.dFilesData[FileTypes.INE].Src)
-                </div>
-                <br />
-                <div style="width:auto;" class="mb-3">
-                    <input asp-for="Input.INE" type="file" id="seventhDocumentSelector" containerName="seventhSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-                    <a id="editSeventhDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="seventhDocumentSelector">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
-                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
-                        </svg>
-                        @Localizer["EditLink"]
-                    </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.INE].Id" target="_blank">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                        </svg>
-                        @Localizer["ViewLink"]
-                    </a>
-                </div>
-            </center>
-        </div>
-        <div class="col-lg-6">
-            <center>
-                <div>
-                    <h6>@Localizer["EighthDocumentTitle"]</h6>
-                </div>
-                <div id="eighthSourceContainer" class="document-container">
-                    @Html.Raw(Model.dFilesData[FileTypes.RFC].Src)
-                </div>
-                <br />
-                <div style="width:auto;" class="mb-3">
-                    <input asp-for="Input.RFC" type="file" id="eighthDocumentSelector" containerName="eighthSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-                    <a id="editEighthDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="eighthDocumentSelector">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
-                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
-                        </svg>
-                        @Localizer["EditLink"]
-                    </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.RFC].Id" target="_blank">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                        </svg>
-                        @Localizer["ViewLink"]
-                    </a>
-                </div>
-            </center>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-6">
-            <center>
-                <div>
-                    <h6>@Localizer["NinethDocumentTitle"]</h6>
-                </div>
-                <div id="ninethSourceContainer" class="document-container">
-                    @Html.Raw(Model.dFilesData[FileTypes.ComprobanteEstudios].Src)
-                </div>
-                <br />
-                <div style="width:auto;" class="mb-3">
-                    <input asp-for="Input.ComprobanteEstudios" type="file" id="ninethDocumentSelector" containerName="ninethSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-                    <a id="editNinethDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="ninethDocumentSelector">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
-                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
-                        </svg>
-                        @Localizer["EditLink"]
-                    </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.ComprobanteEstudios].Id" target="_blank">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                        </svg>
-                        @Localizer["ViewLink"]
-                    </a>
-                </div>
-            </center>
-        </div>
-        <div class="col-lg-6">
-            <center>
-                <div>
-                    <h6>@Localizer["TenthDocumentTitle"]</h6>
-                </div>
-                <div id="tenthSourceContainer" class="document-container">
-                    @Html.Raw(Model.dFilesData[FileTypes.NSS].Src)
-                </div>
-                <br />
-                <div style="width:auto;" class="mb-3">
-                    <input asp-for="Input.NSS" type="file" id="tenthDocumentSelector" containerName="tenthSourceContainer" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-                    <a id="editTenthDocumentLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="tenthDocumentSelector">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
-                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
-                        </svg>
-                        @Localizer["EditLink"]
-                    </a>
-                    <a class="btn btn-primary viewbutton" asp-page="/FileViewer" asp-route-id="@Model.dFilesData[FileTypes.NSS].Id" target="_blank">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                        </svg>
-                        @Localizer["ViewLink"]
-                    </a>
-                </div>
-            </center>
-        </div>
-    </div>
+    <br />
+    <table class="table table-bordered" align="center" style="width:auto;">
+        <thead>
+            <tr align="center">
+                <th scope="col"></th>
+                <th scope="col">Nombre documento</th>
+                <th scope="col">Documento</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int i = 0;
+                foreach (IndexModel.FileFromGet fd in Model.FilesFromGet)
+                {
+                    //Obtiene el nombre del tipo.
+                    string? enumName = Enum.GetName(typeof(FileTypes),fd.TypeId) ?? "";
+                    string containerId = Guid.NewGuid().ToString();
+                    string selectorId = Guid.NewGuid().ToString();
+
+                    <tr valign="middle" align="center">
+                        <th scope="row">@fd.TypeId</th>
+                        <td><b>@Localizer[@enumName]</b></td>
+                        <td>
+                            <div id="@containerId" class="document-container">
+                                @Html.Raw(fd.Src)
+                            </div>
+                        </td>
+                        <td align="left">
+                            <div style="width:auto;">
+                                <input type="hidden" name="FilesToPost.Index" value="@fd.TypeId" />
+                                <input asp-for="FilesToPost[fd.TypeId].File" type="file" id="@selectorId" containerName="@containerId" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                                <a class="btn btn-primary mb-1" onclick="onEditDocumentClick(this);" inputName="@selectorId">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                                        <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+                                    </svg>
+                                </a>
+                                <a class="btn btn-primary disableable mb-1" asp-page="/FileViewer" asp-route-id="@fd.Id" target="_blank">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                                    </svg>
+                                </a>
+                                <a class="btn btn-danger disableable mb-1" onclick="onDeleteClick(this);" sourceId="@selectorId">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+
+                    i++;
+                }
+            }
+        </tbody>
+    </table>
     @* la siguiente sección deberá retirarse cuando se tenga el catálogo de personal
     para que la desactivación del perfil se realice desde allá.
     *@

@@ -2,10 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
+using ERPSEI.Data;
 using ERPSEI.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
 
@@ -17,87 +19,61 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IUserFileManager _userFileManager;
         private readonly IStringLocalizer<IndexModel> _localizer;
+        private readonly ApplicationDbContext _db;
 
         public IndexModel(
             AppUserManager userManager,
             SignInManager<AppUser> signInManager,
             IUserFileManager userFileManager,
-            IStringLocalizer<IndexModel> localizer)
+            IStringLocalizer<IndexModel> localizer,
+            ApplicationDbContext db)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _userFileManager = userFileManager;
             _localizer = localizer;
-        }
+            _db = db;
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        [TempData]
-        public string StatusMessage { get; set; }
+            Input = new InputModel();
+            FilesFromGet = new List<FileFromGet>();
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        [BindProperty]
-        public InputModel Input { get; set; }
-
-        public struct FileData
-        {
-            public string Id { get; set; } 
-            public string Src { get; set; }
-
-            public FileData(string _id, string _src) { 
-                Id = _id;
-                Src = _src;
+            //Se llena el arreglo de datos de los archivos.
+            foreach (FileTypes i in Enum.GetValues(typeof(FileTypes)))
+            {
+                //Omite el tipo imagen de perfil.
+                if ((int)i == 0) { continue; }
+                FilesFromGet.Add(new FileFromGet() { TypeId = (int)i });
             }
         }
 
-        public IDictionary<FileTypes, FileData> dFilesData { get; set; } = new Dictionary<FileTypes, FileData>(){
-            { FileTypes.ActaNacimiento, new FileData() },
-            { FileTypes.CURP, new FileData() },
-            { FileTypes.CLABE, new FileData() },
-            { FileTypes.ComprobanteDomicilio, new FileData() },
-            { FileTypes.ContactosEmergencia, new FileData() },
-            { FileTypes.CSF, new FileData() },
-            { FileTypes.INE, new FileData() },
-            { FileTypes.RFC, new FileData() },
-            { FileTypes.ComprobanteEstudios, new FileData() },
-            { FileTypes.NSS, new FileData() } 
-        };
+        [TempData]
+        public string StatusMessage { get; set; }
+
+        [BindProperty]
+        public InputModel Input { get; set; }
 
         public string ProfilePictureSrc { get; set; }
 
+        public class FileFromGet
+        {
+            public string Id { get; set; }
+            public string Src { get; set; }
+            public int TypeId { get; set; }
+        }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        public class FileToPost
+        {
+            public IFormFile File { get; set; }
+        }
+
+        public List<FileFromGet> FilesFromGet { get; set; }
+
+        [BindProperty]
+        public List<FileToPost> FilesToPost { get; set; }
+
         public class InputModel
         {
             public IFormFile ProfilePicture {  get; set; }
-
-            public IFormFile Acta { get; set; }
-
-            public IFormFile CURP { get; set; }
-
-            public IFormFile CLABE { get; set; }
-
-            public IFormFile ComprobanteDomicilio { get; set; }
-
-            public IFormFile ContactosEmergencia { get; set; }
-
-            public IFormFile CSF { get; set; }
-
-            public IFormFile INE { get; set; }
-
-            public IFormFile RFC { get; set; }
-
-            public IFormFile ComprobanteEstudios { get; set; }
-
-            public IFormFile NSS { get; set; }
 
             [Display(Name = "UserNameField")]
             public string Username { get; set; }
@@ -135,19 +111,17 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            Input = new InputModel
-            {
-                Username = userName,
-                FirstName = user.FirstName,
-                SecondName = user.SecondName,
-                FathersLastName = user.FathersLastName,
-                MothersLastName = user.MothersLastName,
-                PhoneNumber = phoneNumber
-            };
+
+            Input.Username = userName;
+            Input.FirstName = user.FirstName;
+            Input.SecondName = user.SecondName;
+            Input.FathersLastName = user.FathersLastName;
+            Input.MothersLastName = user.MothersLastName;
+            Input.PhoneNumber = phoneNumber;
 
             //Si el usuario tiene imagen de perfil
             if(user.ProfilePicture != null && user.ProfilePicture.Length >= 1) 
-            { 
+            {
                 //Se usa para mostrarla
                 ProfilePictureSrc = $"data:image/png;base64,{Convert.ToBase64String(user.ProfilePicture)}"; 
             }
@@ -158,9 +132,9 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             }
 
             //Carga los archivos del usuario.
-            List<UserFile> files = await _userFileManager.GetFilesByUserIdAsync(user.Id);
+            List<UserFile> userFiles = await _userFileManager.GetFilesByUserIdAsync(user.Id);
             //Recorre los archivos del usuario.
-            foreach (UserFile file in files)
+            foreach (UserFile file in userFiles)
             {
                 //Si el archivo tiene contenido
                 if (file.File != null && file.File.Length >= 1)
@@ -170,7 +144,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                     string imgSrc = $"data:image/png;base64,{b64}";
                     string id = Guid.NewGuid().ToString();
                     FileTypes type = (FileTypes)file.FileTypeId;
-                    string src;
+                    string src; 
                     if (file.Extension == "pdf")
                     {
                         src = $"<canvas id = '{id}' b64 = '{b64}' class = 'canvaspdf'></canvas>";
@@ -180,7 +154,12 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                         src = $"<img id = '{id}' src = '{imgSrc}' style='min-height: 200px;'/>";
                     }
 
-                    dFilesData[type] = new FileData(file.Id, src);
+
+                    FileFromGet fd = FilesFromGet.Find(x => x.TypeId == file.FileTypeId);
+                    if (fd != null) { 
+                        fd.Id = file.Id;
+                        fd.Src = src;
+                    }
                 }
             }
         }
@@ -219,102 +198,54 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             user.MothersLastName = Input.MothersLastName;
             user.PhoneNumber = Input.PhoneNumber ?? "";
 
-
-            //Si el usuario estableció una imagen de perfil
-            if (Input.ProfilePicture != null && Input.ProfilePicture.Length >= 1)
+            //Inicia una transacción.
+            await _db.Database.BeginTransactionAsync();
+            try
             {
-                await saveUploadedFile(user, Input.ProfilePicture, FileTypes.ImagenPerfil);
-            }
 
-            //Si el usuario estableció acta de nacimiento
-            if (Input.Acta != null && Input.Acta.Length >= 1)
-            {
-                UserFile fileToRemove = (from UserFile uf in userFiles where uf.FileTypeId == (int)FileTypes.ActaNacimiento select uf).FirstOrDefault();
-                if (fileToRemove != null) { await _userFileManager.DeleteAsync(fileToRemove); }
-                await saveUploadedFile(user, Input.Acta, FileTypes.ActaNacimiento);
-            }
+                //Si el usuario estableció una imagen de perfil
+                if (Input.ProfilePicture != null && Input.ProfilePicture.Length >= 1)
+                {
+                    await saveUploadedFile(user, Input.ProfilePicture, FileTypes.ImagenPerfil);
+                }
 
-            //Si el usuario estableció CURP
-            if (Input.CURP != null && Input.CURP.Length >= 1)
-            {
-                UserFile fileToRemove = (from UserFile uf in userFiles where uf.FileTypeId == (int)FileTypes.CURP select uf).FirstOrDefault();
-                if (fileToRemove != null) { await _userFileManager.DeleteAsync(fileToRemove); }
-                await saveUploadedFile(user, Input.CURP, FileTypes.CURP);
-            }
+                int fileType = 0;
+                foreach (FileToPost file in FilesToPost)
+                {
+                    FileFromGet fg = FilesFromGet.Find(x => x.TypeId == fileType);
+                    if (fg == null)
+                    {
+                        UserFile fileToRemove = (from UserFile uf in userFiles where uf.FileTypeId == fileType select uf).FirstOrDefault();
+                        if (fileToRemove != null) { await _userFileManager.DeleteAsync(fileToRemove); }
+                    }
 
-            //Si el usuario estableció CLABE
-            if (Input.CLABE != null && Input.CLABE.Length >= 1)
-            {
-                UserFile fileToRemove = (from UserFile uf in userFiles where uf.FileTypeId == (int)FileTypes.CLABE select uf).FirstOrDefault();
-                if (fileToRemove != null) { await _userFileManager.DeleteAsync(fileToRemove); }
-                await saveUploadedFile(user, Input.CLABE, FileTypes.CLABE);
-            }
+                    if (file != null && file.File.Length >= 0) { 
+                        await saveUploadedFile(user, file.File, (FileTypes)fileType);
+                    }
 
-            //Si el usuario estableció Comprobante de domicilio
-            if (Input.ComprobanteDomicilio  != null && Input.ComprobanteDomicilio.Length >= 1)
-            {
-                UserFile fileToRemove = (from UserFile uf in userFiles where uf.FileTypeId == (int)FileTypes.ComprobanteDomicilio select uf).FirstOrDefault();
-                if (fileToRemove != null) { await _userFileManager.DeleteAsync(fileToRemove); }
-                await saveUploadedFile(user, Input.ComprobanteDomicilio, FileTypes.ComprobanteDomicilio);
-            }
+                    fileType++;
+                }
 
-            //Si el usuario estableció Contactos de emergencia
-            if (Input.ContactosEmergencia != null && Input.ContactosEmergencia.Length >= 1)
-            {
-                UserFile fileToRemove = (from UserFile uf in userFiles where uf.FileTypeId == (int)FileTypes.ContactosEmergencia select uf).FirstOrDefault();
-                if (fileToRemove != null) { await _userFileManager.DeleteAsync(fileToRemove); }
-                await saveUploadedFile(user, Input.ContactosEmergencia, FileTypes.ContactosEmergencia);
-            }
+                //Se actualiza el usuario.
+                var setResult = await _userManager.UpdateAsync(user);
+                if(!setResult.Succeeded)
+                {
+                    StatusMessage = _localizer["SaveUserFails"];
+                    return RedirectToPage();
+                }
 
-            //Si el usuario estableció Constancia de situación fiscal
-            if (Input.CSF != null && Input.CSF.Length >= 1)
-            {
-                UserFile fileToRemove = (from UserFile uf in userFiles where uf.FileTypeId == (int)FileTypes.CSF select uf).FirstOrDefault();
-                if (fileToRemove != null) { await _userFileManager.DeleteAsync(fileToRemove); }
-                await saveUploadedFile(user, Input.CSF, FileTypes.CSF);
-            }
+                await _signInManager.RefreshSignInAsync(user);
+                StatusMessage = _localizer["UserProfileChangeSuccessful"];
 
-            //Si el usuario estableció INE
-            if (Input.INE != null && Input.INE.Length >= 1)
-            {
-                UserFile fileToRemove = (from UserFile uf in userFiles where uf.FileTypeId == (int)FileTypes.INE select uf).FirstOrDefault();
-                if (fileToRemove != null) { await _userFileManager.DeleteAsync(fileToRemove); }
-                await saveUploadedFile(user, Input.INE, FileTypes.INE);
+                //Confirma la transacción
+                await _db.Database.CommitTransactionAsync();
             }
-
-            //Si el usuario estableció RFC
-            if (Input.RFC != null && Input.RFC.Length >= 1)
+            catch (Exception)
             {
-                UserFile fileToRemove = (from UserFile uf in userFiles where uf.FileTypeId == (int)FileTypes.RFC select uf).FirstOrDefault();
-                if (fileToRemove != null) { await _userFileManager.DeleteAsync(fileToRemove); }
-                await saveUploadedFile(user, Input.RFC, FileTypes.RFC);
+                //Revierte la transacción.
+                await _db.Database.RollbackTransactionAsync();
+                throw;
             }
-
-            //Si el usuario estableció Comprobante de estudios
-            if (Input.ComprobanteEstudios != null && Input.ComprobanteEstudios.Length >= 1)
-            {
-                UserFile fileToRemove = (from UserFile uf in userFiles where uf.FileTypeId == (int)FileTypes.ComprobanteEstudios select uf).FirstOrDefault();
-                if (fileToRemove != null) { await _userFileManager.DeleteAsync(fileToRemove); }
-                await saveUploadedFile(user, Input.ComprobanteEstudios, FileTypes.ComprobanteEstudios);
-            }
-
-            //Si el usuario estableció NSS
-            if (Input.NSS != null && Input.NSS.Length >= 1)
-            {
-                UserFile fileToRemove = (from UserFile uf in userFiles where uf.FileTypeId == (int)FileTypes.NSS select uf).FirstOrDefault();
-                if (fileToRemove != null) { await _userFileManager.DeleteAsync(fileToRemove); }
-                await saveUploadedFile(user, Input.NSS, FileTypes.NSS);
-            }
-            //Se actualiza el usuario.
-            var setResult = await _userManager.UpdateAsync(user);
-            if(!setResult.Succeeded)
-            {
-                StatusMessage = _localizer["SaveUserFails"];
-                return RedirectToPage();
-            }
-
-            await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = _localizer["UserProfileChangeSuccessful"];
             return RedirectToPage();
         }
 
