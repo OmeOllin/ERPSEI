@@ -34,7 +34,10 @@ function onProfilePicSelectorChanged(input) {
 //Función para mostrar cualquiera de los documentos seleccionados.
 async function onDocumentSelectorChanged(input) {
     if (input.files && (input.files.length || 0) >= 1) {
-        if (input.files[0].size >= maxFileSizeInBytes) { return; }
+        if (input.files[0].size >= maxFileSizeInBytes) {
+            showMessage("Tama&ntilde;o de archivo inv&aacute;lido", `El tama&ntilde;o del archivo no debe superar ${maxFileSizeInBytes / 1000000}Mb. Por favor elija otro archivo.`);
+            return;
+        }
         let docType = input.files[0].type;
         let isImg = docType == "image/png" || docType == "image/jpg" || docType == "image/jpeg";
         let isPDF = docType == "application/pdf";
@@ -51,6 +54,9 @@ async function onDocumentSelectorChanged(input) {
             container.setHTML(`<canvas id="${showerName}" class="canvaspdf"></canvas>`, { sanitizer: new Sanitizer() });
             await loadPDFFromFileAsync(input.files[0], showerName);
             hideLoading();
+        }
+        else {
+            showMessage("Formato de archivo inv&aacute;lido", `El formato del archivo debe ser .jpg, .jpeg o .png. Por favor elija otro archivo.`);
         }
     }
 }

@@ -3,6 +3,8 @@ const MSG_TYPE_INFO = 1;
 const MSG_TYPE_QUESTION = 2;
 const MSG_TYPE_OK = 3;
 
+var messageDialog = null;
+
 const alertIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi flex-shrink-0 me-3" width="32" height="32" aria-label="Alerta:" viewBox="0 0 16 16">
                         <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
                    </svg>`;
@@ -28,13 +30,15 @@ const messageDialogHTML = `<div id="messageDialog" class="modal fade" data-bs-ba
                              </div>
                            </div>
                          </div>
-                     </div>
-                     <button id="showMessage" type="button" data-bs-toggle="modal" data-bs-target="#messageDialog" hidden></button>
-                     <button id="hideMessage" type="button" data-bs-dismiss="modal" data-bs-target="#messageDialog" hidden></button>`;
+                     </div>`;
 
 document.addEventListener("DOMContentLoaded", async function (event) {
-    let messageDialog = document.getElementById('messageDialog');
-    if (messageDialog == null) { document.body.innerHTML += messageDialogHTML; }
+    let messageDialogDOM = document.getElementById('messageDialog');
+    if (messageDialogDOM == null) {
+        document.body.innerHTML += messageDialogHTML;
+        messageDialogDOM = document.getElementById('messageDialog');
+    }
+    messageDialog = new bootstrap.Modal(messageDialogDOM);
 });
 
 function showMessage(title, message, type, funcOK, funcCancel) {
@@ -42,7 +46,6 @@ function showMessage(title, message, type, funcOK, funcCancel) {
     let modalBody = document.getElementById('modalBody');
     let icon = "";
     let buttonsContainer = document.getElementById('buttonsContainer');
-    let button = document.getElementById('showMessage');
 
     titleContainer.setHTML(title, { sanitizer: new Sanitizer() });
 
@@ -71,11 +74,11 @@ function showMessage(title, message, type, funcOK, funcCancel) {
     modalBody.innerHTML = `<div class="w-100 alert align-items-center d-flex ${color}">${icon}<div>${message}</div></div>`;
 
     if (type == MSG_TYPE_QUESTION) {
-        buttonsContainer.setHTML(`<button id="cancelbutton" type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-target="#messageDialog">Cancelar</button>
-                                  <button id="okbutton" type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-target="#messageDialog">Confirmar</button>`, { sanitizer: new Sanitizer() });
+        buttonsContainer.innerHTML = `<button id="cancelbutton" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                      <button id="okbutton" type="button" class="btn btn-primary" data-bs-dismiss="modal">Confirmar</button>`;
     }
     else {
-        buttonsContainer.setHTML(`<button id="okbutton" type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-target="#messageDialog">Confirmar</button>`, { sanitizer: new Sanitizer() });
+        buttonsContainer.innerHTML = `<button id="okbutton" type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>`;
     }
 
     let okbutton = document.getElementById('okbutton');
@@ -88,23 +91,22 @@ function showMessage(title, message, type, funcOK, funcCancel) {
     }
     
 
-    button.click();
+    messageDialog.show();
 }
 
 function hideMessage() {
     let titleContainer = document.getElementById('titleContainer');
     let modalBody = document.getElementById('modalBody');
     let buttonsContainer = document.getElementById('buttonsContainer');
-    let button = document.getElementById('hideMessage');
 
-    button.click();
+    messageDialog.hide();
 
     titleContainer.innerHTML = '';
     modalBody.innerHTML = '';
     buttonsContainer.innerHTML = '';
 
     setTimeout(function () {
-        let modal = document.getElementById('modal');
+        let modal = document.getElementById('messageDialog');
         if (modal.classList.contains('show')) {
             hideMessage();
         }
