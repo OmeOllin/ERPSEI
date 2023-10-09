@@ -35,7 +35,12 @@ function onProfilePicSelectorChanged(input) {
 async function onDocumentSelectorChanged(input) {
     if (input.files && (input.files.length || 0) >= 1) {
         if (input.files[0].size >= maxFileSizeInBytes) {
-            showMessage("Tama&ntilde;o de archivo inv&aacute;lido", `El tama&ntilde;o del archivo no debe superar ${maxFileSizeInBytes / 1000000}Mb. Por favor elija otro archivo.`);
+            input.value = null;
+            showMessage(
+                "Tama&ntilde;o de archivo inv&aacute;lido",
+                `El tama&ntilde;o del archivo no debe superar ${maxFileSizeInBytes / 1000000}Mb. Por favor elija otro archivo.`,
+                MSG_TYPE_ALERT
+            );
             return;
         }
         let docType = input.files[0].type;
@@ -56,7 +61,12 @@ async function onDocumentSelectorChanged(input) {
             hideLoading();
         }
         else {
-            showMessage("Formato de archivo inv&aacute;lido", `El formato del archivo debe ser .jpg, .jpeg o .png. Por favor elija otro archivo.`);
+            input.value = null;
+            showMessage(
+                "Formato de archivo inv&aacute;lido",
+                `El formato del archivo debe ser .pdf, .jpg, .jpeg o .png. Por favor elija otro archivo.`,
+                MSG_TYPE_ALERT
+            );
         }
     }
 }
