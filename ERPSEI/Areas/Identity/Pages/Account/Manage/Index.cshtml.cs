@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 
 namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 {
@@ -33,18 +34,9 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             _userFileManager = userFileManager;
             _localizer = localizer;
             _db = db;
-
-            Input = new InputModel();
-            FilesFromGet = new List<FileFromGet>();
-
-            //Se llena el arreglo de datos de los archivos.
-            foreach (FileTypes i in Enum.GetValues(typeof(FileTypes)))
-            {
-                //Omite el tipo imagen de perfil.
-                if ((int)i == 0) { continue; }
-                FilesFromGet.Add(new FileFromGet() { TypeId = (int)i });
-            }
         }
+
+
 
         [TempData]
         public string StatusMessage { get; set; }
@@ -52,24 +44,20 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
         [BindProperty]
         public InputModel Input { get; set; }
 
+        [BindProperty]
+        public List<FileFromGet> FilesFromGet { get; set; }
+
+
+
         public string ProfilePictureSrc { get; set; }
 
         public class FileFromGet
         {
-            public string Id { get; set; }
+            public string FileId { get; set; }
             public string Src { get; set; }
             public int TypeId { get; set; }
-        }
-
-        public class FileToPost
-        {
             public IFormFile File { get; set; }
         }
-
-        public List<FileFromGet> FilesFromGet { get; set; }
-
-        [BindProperty]
-        public List<FileToPost> FilesToPost { get; set; }
 
         public class InputModel
         {
@@ -107,6 +95,55 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             public string PhoneNumber { get; set; }
         }
 
+
+
+
+        private async Task LoadUserFilesAsync(string userId) {
+            //Carga y recorre los archivos del usuario.
+            List<UserFile> userFiles = await _userFileManager.GetFilesByUserIdAsync(userId);
+            //Ordena los archivos del usuario por tipo de archivo de manera ascendente
+            userFiles = (from userFile in userFiles
+                         orderby userFile.FileTypeId ascending
+                         select userFile).ToList();
+            if(userFiles == null || userFiles.Count == 0)
+            {
+                //Si el usuario no tiene archivos, se llena el arreglo de datos a partir del enum.
+                foreach (FileTypes i in Enum.GetValues(typeof(FileTypes)))
+                {
+                    //Omite el tipo imagen de perfil.
+                    if ((int)i == 0) { continue; }
+                    FilesFromGet.Add(new FileFromGet() { FileId = new Guid().ToString(), TypeId = (int)i, Src = "" });
+                }
+            }
+            else
+            {
+                //Si el usuario ya tiene archivos, se llena el arreglo de datos a partir de ellos.
+                foreach (UserFile file in userFiles)
+                {
+                    FileFromGet fg = new FileFromGet() { FileId = file.Id, TypeId = file.FileTypeId, Src = "" };
+                    //Si el archivo tiene contenido
+                    if (file.File != null && file.File.Length >= 1)
+                    {
+                        //Asigna la información del archivo al arreglo de datos.
+                        string b64 = Convert.ToBase64String(file.File);
+                        string imgSrc = $"data:image/png;base64,{b64}";
+                        string id = Guid.NewGuid().ToString();
+
+                        if (file.Extension == "pdf")
+                        {
+                            fg.Src = $"<canvas id = '{id}' b64 = '{b64}' class = 'canvaspdf'></canvas>";
+                        }
+                        else
+                        {
+                            fg.Src = $"<img id = '{id}' src = '{imgSrc}' style='min-height: 200px;'/>";
+                        }
+                    }
+
+                    FilesFromGet.Add(fg);
+                }
+            }
+        }
+
         private async Task LoadAsync(AppUser user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
@@ -120,10 +157,10 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             Input.PhoneNumber = phoneNumber;
 
             //Si el usuario tiene imagen de perfil
-            if(user.ProfilePicture != null && user.ProfilePicture.Length >= 1) 
+            if (user.ProfilePicture != null && user.ProfilePicture.Length >= 1)
             {
                 //Se usa para mostrarla
-                ProfilePictureSrc = $"data:image/png;base64,{Convert.ToBase64String(user.ProfilePicture)}"; 
+                ProfilePictureSrc = $"data:image/png;base64,{Convert.ToBase64String(user.ProfilePicture)}";
             }
             else
             {
@@ -131,37 +168,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                 ProfilePictureSrc = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/img/default_profile_pic.jpg";
             }
 
-            //Carga los archivos del usuario.
-            List<UserFile> userFiles = await _userFileManager.GetFilesByUserIdAsync(user.Id);
-            //Recorre los archivos del usuario.
-            foreach (UserFile file in userFiles)
-            {
-                //Si el archivo tiene contenido
-                if (file.File != null && file.File.Length >= 1)
-                {
-                    //Asigna la información del archivo al arreglo de datos.
-                    string b64 = Convert.ToBase64String(file.File);
-                    string imgSrc = $"data:image/png;base64,{b64}";
-                    string id = Guid.NewGuid().ToString();
-                    FileTypes type = (FileTypes)file.FileTypeId;
-                    string src; 
-                    if (file.Extension == "pdf")
-                    {
-                        src = $"<canvas id = '{id}' b64 = '{b64}' class = 'canvaspdf'></canvas>";
-                    }
-                    else
-                    {
-                        src = $"<img id = '{id}' src = '{imgSrc}' style='min-height: 200px;'/>";
-                    }
-
-
-                    FileFromGet fd = FilesFromGet.Find(x => x.TypeId == file.FileTypeId);
-                    if (fd != null) { 
-                        fd.Id = file.Id;
-                        fd.Src = src;
-                    }
-                }
-            }
+            await LoadUserFilesAsync(user.Id);
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -171,6 +178,9 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"{_localizer["UserLoadFails"]} '{_userManager.GetUserId(User)}'.");
             }
+
+            Input = new InputModel();
+            FilesFromGet = new List<FileFromGet>();
 
             await LoadAsync(user);
             return Page();
@@ -209,18 +219,22 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                     await saveUploadedFile(user, Input.ProfilePicture, FileTypes.ImagenPerfil);
                 }
 
-                int fileType = 0;
-                foreach (FileToPost file in FilesToPost)
+                int fileType = 1;
+                foreach (FileFromGet file in FilesFromGet)
                 {
-                    FileFromGet fg = FilesFromGet.Find(x => x.TypeId == fileType);
-                    if (fg == null)
-                    {
-                        UserFile fileToRemove = (from UserFile uf in userFiles where uf.FileTypeId == fileType select uf).FirstOrDefault();
-                        if (fileToRemove != null) { await _userFileManager.DeleteAsync(fileToRemove); }
-                    }
+                    if (file == null) { continue; }
 
-                    if (file != null && file.File.Length >= 0) { 
-                        await saveUploadedFile(user, file.File, (FileTypes)fileType);
+                    if (file.File != null && file.File.Length >= 0) 
+                    {
+                        //Si el usuario subió un archivo, borra el existente y sube el nuevo.
+                        await _userFileManager.DeleteByIdAsync(file.FileId);
+                        await saveUploadedFile(user, file.File, (FileTypes)fileType); 
+                    }
+                    else if(file.FileId.Length <= 0)
+                    {
+                        //Si el usuario no subió archivo pero quitó el que estaba asignado, entonces borra el existente y sube uno vacío.
+                        await _userFileManager.DeleteByIdAsync(file.FileId);
+                        await saveEmptyFile(user.Id, (FileTypes)fileType);
                     }
 
                     fileType++;
@@ -247,6 +261,16 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                 throw;
             }
             return RedirectToPage();
+        }
+
+        private async Task saveEmptyFile(string userId, FileTypes type)
+        {
+            //Se guarda el archivo vacío
+            await _userFileManager.CreateAsync(new UserFile()
+            {
+                FileTypeId = (int)type,
+                UserId = userId
+            });
         }
 
         private async Task saveUploadedFile(AppUser user, IFormFile file, FileTypes type)

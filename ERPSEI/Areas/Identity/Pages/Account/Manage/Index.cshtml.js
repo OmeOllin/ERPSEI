@@ -121,47 +121,16 @@ async function renderFilesAsync() {
 
 //Función para habilitar/deshabilitar los botones de visualización en base a si existe contenido o no para visualizar.
 async function initializeDisableableButtonsAsync() {
-    //Botones de acción de editar
-    let buttonsA = document.getElementsByClassName("btn-primary disableable");
-    //Botones de acción de eliminar
-    let buttonsB = document.getElementsByClassName("btn-danger disableable");
+    //Botones de acción de editar y eliminar
+    let buttons = document.getElementsByClassName("disableable");
 
     //Se inicializan los botones de edición
-    if (buttonsA.length >= 1) {
-        for (let i = 0; i < buttonsA.length; i++) {
-            let button = buttonsA[i];
-            let urlParts = button.href.split("/");
-            let urlLastPart = urlParts[urlParts.length - 1];
-
-            if (urlLastPart == "FileViewer") {
-                //Si la última parte de la URL solo contiene el link a la página, sin parámetros, entonces no hay documento a mostrar, por lo tanto, se deshabilita el botón view.
-                button.classList.add("disabled");
-            }
-            else {
-                //De lo contrario, verifica si el link contiene un parámetro llamado id.
-                let urlLastPartItems = urlLastPart.split("?");
-                let strUrlParams = `?${urlLastPartItems[urlLastPartItems.length - 1]}`;
-                let params = new URLSearchParams(strUrlParams);
-                let hasId = params.get("id")||"".length >= 1;
-
-                //Si tiene parámetro Id, habilita el botón, de lo contrario lo deshabilita.
-                if (hasId) {
-                    button.classList.remove("disabled");
-                }
-                else {
-                    button.classList.add("disabled");
-                }
-            }
-        }
-    }
-
-    //Se inicializan los botones de eliminación
-    if (buttonsB.length >= 1) {
-        for (let i = 0; i < buttonsB.length; i++) {
-            let button = buttonsB[i];
-            let sourceId = button.getAttribute("sourceId")||"";
-
-            if (sourceId.length >= 1) {
+    if (buttons.length >= 1) {
+        for (let i = 0; i < buttons.length; i++) {
+            let button = buttons[i];
+            let sourceLength = parseInt(button.getAttribute("sourceLength") || "0");
+            let hasFile = sourceLength >= 1;
+            if (hasFile) {
                 button.classList.remove("disabled");
             }
             else {

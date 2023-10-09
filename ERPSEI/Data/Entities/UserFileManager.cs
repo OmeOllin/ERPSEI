@@ -36,6 +36,16 @@ namespace ERPSEI.Data.Entities
             await db.SaveChangesAsync();
         }
 
+        public async Task DeleteByIdAsync(string fileId)
+        {
+            UserFile? file = GetFileById(fileId);
+            if (file != null) 
+            {  
+                db.Remove(file);
+                await db.SaveChangesAsync();
+            }
+        }
+
         public async Task<List<UserFile>> GetFilesByUserIdAsync(string userId)
         {
             return await db.UserFiles.Where(uf => uf.UserId == userId).ToListAsync();

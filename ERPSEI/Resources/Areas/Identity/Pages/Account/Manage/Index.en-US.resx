@@ -144,6 +144,9 @@
   <data name="DocumentSuggestion" xml:space="preserve">
     <value>Please note that files should not be larger than 1mb and only files in .pdf, .jpg, .jpeg and .png formats are accepted.</value>
   </data>
+  <data name="EditLink" xml:space="preserve">
+    <value>Edit</value>
+  </data>
   <data name="FathersLastNamePlaceholder" xml:space="preserve">
     <value>Father's last name</value>
   </data>
