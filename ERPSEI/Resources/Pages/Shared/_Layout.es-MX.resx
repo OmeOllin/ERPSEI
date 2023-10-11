@@ -142,7 +142,7 @@
     <value>Permisos</value>
   </data>
   <data name="PersonalCatalogMenu" xml:space="preserve">
-    <value>Catálogo de personal</value>
+    <value>Gestión de talento</value>
   </data>
   <data name="PositionsCatalogMenu" xml:space="preserve">
     <value>Catálogo de puestos</value>
