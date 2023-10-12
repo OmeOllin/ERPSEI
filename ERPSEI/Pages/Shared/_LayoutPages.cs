@@ -16,8 +16,8 @@ namespace ERPSEI.Pages.Shared
         public static string Catalogos => "Catalogos";
         public static string CatalogosNavClass(ViewContext viewContext) => PageNavClass(viewContext, Catalogos);
 
-        public static string CatalogoPersonal => "CatalogoPersonal";
-        public static string CatalogoPersonalNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoPersonal);
+        public static string GestionDeTalento => "GestionDeTalento";
+        public static string GestionDeTalentoNavClass(ViewContext viewContext) => PageNavClass(viewContext, GestionDeTalento);
 
         public static string CatalogoPuestos => "CatalogoPuestos";
         public static string CatalogoPuestosNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoPuestos);
