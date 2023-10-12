@@ -40,7 +40,7 @@ function additionalButtons() {
             text: 'Importar',
             icon: 'bi-upload',
             event: function () {
-                alert("Importar datos");
+                showMessage("Importar datos", "Esta funcionalidad permitirá agregar datos mediante un archivo excel", MSG_TYPE_OK);
             },
             attributes: {
                 title: 'Importar datos desde un archivo excel'
@@ -69,23 +69,26 @@ function detailFormatter(index, row) {
 }
 function operateFormatter(value, row, index) {
     return [
-        '<a class="like" href="javascript:void(0)" title="Like">',
-            '<i class="bi bi-heart"></i>',
+        '<a class="see" href="javascript:void(0)" title="Ver">',
+            '<i class="bi bi-search"></i>',
         '</a>  ',
-        '<a class="remove" href="javascript:void(0)" title="Remove">',
-            '<i class="bi bi-trash"></i>',
+        '<a class="edit" href="javascript:void(0)" title="Editar">',
+            '<i class="bi bi-pencil-fill"></i>',
         '</a>'
     ].join('')
 }
 window.operateEvents = {
-    'click .like': function (e, value, row, index) {
-        alert('You click like action, row: ' + JSON.stringify(row))
+    'click .see': function (e, value, row, index) {
+        let stringJSON = JSON.stringify(row);
+        showMessage("Ver", `Diste clic para ver a: ${row.nombre}`, MSG_TYPE_OK);
     },
-    'click .remove': function (e, value, row, index) {
-        table.bootstrapTable('remove', {
-            field: 'id',
-            values: [row.id]
-        })
+    'click .edit': function (e, value, row, index) {
+        let stringJSON = JSON.stringify(row);
+        showMessage("Ver", `Diste clic para editar a: ${row.nombre}`, MSG_TYPE_OK);
+        //table.bootstrapTable('remove', {
+        //    field: 'id',
+        //    values: [row.id]
+        //})
     }
 }
 function totalTextFormatter(data) {
@@ -230,12 +233,14 @@ function initTable() {
         console.log(name, args)
     })
     buttonRemove.click(function () {
-        var ids = getIdSelections()
-        table.bootstrapTable('remove', {
-            field: 'id',
-            values: ids
-        })
-        buttonRemove.prop('disabled', true);
+        showMessage("Eliminar registros", "¿Está seguro que desea eliminar los registros seleccionados?", MSG_TYPE_QUESTION, function () {
+            var ids = getIdSelections()
+            table.bootstrapTable('remove', {
+                field: 'id',
+                values: ids
+            })
+            buttonRemove.prop('disabled', true);
+        });
     })
 }
 
