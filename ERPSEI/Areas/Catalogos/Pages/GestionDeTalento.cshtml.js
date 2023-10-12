@@ -40,7 +40,7 @@ function additionalButtons() {
             text: 'Importar',
             icon: 'bi-upload',
             event: function () {
-                showMessage("Importar datos", "Esta funcionalidad permitirá agregar datos mediante un archivo excel", MSG_TYPE_OK);
+                showInfo("Importar datos", "Esta funcionalidad permitirá agregar datos mediante un archivo excel");
             },
             attributes: {
                 title: 'Importar datos desde un archivo excel'
@@ -80,11 +80,11 @@ function operateFormatter(value, row, index) {
 window.operateEvents = {
     'click .see': function (e, value, row, index) {
         let stringJSON = JSON.stringify(row);
-        showMessage("Ver", `Diste clic para ver a: ${row.nombre}`, MSG_TYPE_OK);
+        showInfo("Ver", `Diste clic para ver a: ${row.nombre}`);
     },
     'click .edit': function (e, value, row, index) {
         let stringJSON = JSON.stringify(row);
-        showMessage("Ver", `Diste clic para editar a: ${row.nombre}`, MSG_TYPE_OK);
+        showInfo("Ver", `Diste clic para editar a: ${row.nombre}`);
         //table.bootstrapTable('remove', {
         //    field: 'id',
         //    values: [row.id]
@@ -233,7 +233,7 @@ function initTable() {
         console.log(name, args)
     })
     buttonRemove.click(function () {
-        showMessage("Eliminar registros", "¿Está seguro que desea eliminar los registros seleccionados?", MSG_TYPE_QUESTION, function () {
+        askConfirmation("Eliminar registros", "¿Está seguro que desea eliminar los registros seleccionados?", function () {
             var ids = getIdSelections()
             table.bootstrapTable('remove', {
                 field: 'id',

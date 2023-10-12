@@ -36,7 +36,7 @@ async function onDocumentSelectorChanged(input) {
     if (input.files && (input.files.length || 0) >= 1) {
         if (input.files[0].size >= maxFileSizeInBytes) {
             input.value = null;
-            showMessage(
+            showAlert(
                 "Tama&ntilde;o de archivo inv&aacute;lido",
                 `El tama&ntilde;o del archivo no debe superar ${maxFileSizeInBytes / 1000000}Mb. Por favor elija otro archivo.`,
                 MSG_TYPE_ALERT
@@ -62,7 +62,7 @@ async function onDocumentSelectorChanged(input) {
         }
         else {
             input.value = null;
-            showMessage(
+            showAlert(
                 "Formato de archivo inv&aacute;lido",
                 `El formato del archivo debe ser .pdf, .jpg, .jpeg o .png. Por favor elija otro archivo.`,
                 MSG_TYPE_ALERT
