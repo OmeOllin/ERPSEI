@@ -41,8 +41,23 @@ namespace ERPSEI.Areas.Pages.Catalogos
             Input = new InputModel();
         }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
+            return Page();
+		}
+
+        public JsonResult OnGetTalentList()
+        {
+            List<string> talent = new List<string>();
+            for (int i = 0; i < 20; i++)
+            {
+                int rn1 = i + 1;
+				
+                talent.Add("{\"id\": " + rn1 + ",\"nombre\": \"Luis Alberto Linares Hernández\",\"fechaIngreso\": \"07/05/1991\",\"puesto\": \"Desarrollador de software\",\"area\": \"Desarrollo\",\"telefono\": \"5529300993\",\"correo\": \"luis_linares75@hotmail.com\"}");
+            }
+
+
+            return new JsonResult(talent);
         }
     }
 }

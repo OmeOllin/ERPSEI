@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "{handler?}"
 @using Microsoft.AspNetCore.Localization;
 @using Microsoft.AspNetCore.Mvc.Localization;
 @using ERPSEI.Areas.Pages.Catalogos;
@@ -118,7 +118,7 @@
 @* 
 	NOTA:
 	Si los datos de la tabla son seteados en el cliente, entonces data-side-pagination debe ser "client".
-	Si los datos de la tabla son seteados con URL entonces data-side-pagination debe ser "server" 
+	Si los datos de la tabla son seteados con URL (data-url) entonces data-side-pagination debe ser "server" 
 *@
 <table id="table" class="table-sm"
 		data-toolbar="#toolbar"
@@ -137,10 +137,11 @@
 		data-pagination="true"
 		data-id-field="id"
 		data-page-list="[10, 25, 50, 100, all]"
-		data-show-footer="true"
+		data-show-footer="false"
 		data-side-pagination="client"
 		data-response-handler="responseHandler"
 		data-buttons-class="primary"
+		data-url="/Catalogos/GestionDeTalento/TalentList"
 		data-buttons="additionalButtons">
 	<thead>
 		<tr align="center" valign="middle" class="bg-primary bg-opacity-10">

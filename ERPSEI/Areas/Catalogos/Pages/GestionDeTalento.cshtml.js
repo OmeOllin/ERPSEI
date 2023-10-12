@@ -1,30 +1,7 @@
 ﻿var table;
 var buttonRemove;
 var selections = [];
-var data = {
-    total: 2,
-    totalNotFiltered: 2,
-    rows: [
-        {
-            "id": 1,
-            "nombre": "Luis Alberto Linares Hernández",
-            "fechaIngreso": "07/05/1991",
-            "puesto": "Desarrollador de software",
-            "area": "Desarrollo",
-            "telefono": "5529300993",
-            "correo": "luis_linares75@hotmail.com"
-        },
-        {
-            "id": 2,
-            "nombre": "Pablo Suarez Nájera",
-            "fechaIngreso": "12/12/1985",
-            "puesto": "Tester",
-            "area": "Desarrollo",
-            "telefono": "5531330467",
-            "correo": "pablo_suarez333@hotmail.com"
-        }
-    ]
-};
+
 document.addEventListener("DOMContentLoaded", function (event) {
     initializeDate();
 
@@ -54,8 +31,10 @@ function getIdSelections() {
     })
 }
 function responseHandler(res) {
-    $.each(res.rows, function (i, row) {
-        row.state = $.inArray(row.id, selections) !== -1
+    $.each(res, function (i, row) {
+        let oRow = JSON.parse(row);
+        row.state = $.inArray(oRow.id, selections) !== -1
+        res[i] = oRow;
     })
     return res
 }
@@ -112,7 +91,6 @@ function initTable() {
         locale: cultureName,
         exportDataType: 'all',
         exportTypes: ['excel', 'pdf'],
-        data: data,
         columns: [
             {
                 field: "state",
