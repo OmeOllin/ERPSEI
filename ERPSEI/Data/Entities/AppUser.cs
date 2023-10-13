@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using ERPSEI.Data.Entities.Empleados;
+using Microsoft.AspNetCore.Identity;
 
 namespace ERPSEI.Data.Entities
 {
@@ -16,6 +17,9 @@ namespace ERPSEI.Data.Entities
         public byte[] ProfilePicture { get; set; } = new byte[0];
 
         public bool IsBanned { get; set; }
+
+        public int EmpleadoId {  get; set; }
+        public Empleado? Empleado { get; set; }
 
     }
 }

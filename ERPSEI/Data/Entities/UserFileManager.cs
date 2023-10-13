@@ -21,7 +21,7 @@ namespace ERPSEI.Data.Entities
             UserFile? uf = db.Find<UserFile>(file.Id);
             if (uf != null)
             {
-                uf.UserId = file.UserId;
+                uf.EmpleadoId = file.EmpleadoId;
                 uf.Name = file.Name;
                 uf.Extension = file.Extension;
                 uf.File = file.File;
@@ -46,9 +46,10 @@ namespace ERPSEI.Data.Entities
             }
         }
 
-        public async Task<List<UserFile>> GetFilesByUserIdAsync(string userId)
+        public async Task<List<UserFile>> GetFilesByEmpleadoIdAsync(int empleadoId)
         {
-            return await db.UserFiles.Where(uf => uf.UserId == userId).ToListAsync();
+
+            return await db.UserFiles.Where(uf => uf.EmpleadoId == empleadoId).ToListAsync();
         }
 
         public UserFile? GetFileById(string id)

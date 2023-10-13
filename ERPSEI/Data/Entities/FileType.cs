@@ -20,6 +20,8 @@
 
         public string Description { get; set; }
 
+        public ICollection<UserFile>? UserFiles { get; }
+
         public FileType(int id, string description)
         {
             Id = id;

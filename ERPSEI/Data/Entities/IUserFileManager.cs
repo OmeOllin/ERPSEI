@@ -11,7 +11,7 @@
 
         public Task DeleteByIdAsync(string fileId);
 
-        public Task<List<UserFile>> GetFilesByUserIdAsync(string userId);
+        public Task<List<UserFile>> GetFilesByEmpleadoIdAsync(int empleadoId);
 
 		UserFile? GetFileById(string id);
 	}
