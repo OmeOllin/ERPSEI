@@ -60,7 +60,7 @@ namespace ERPSEI.Data
 				);
 
 			List<string> puestos = new List<string>()
-			{ 
+			{
 				"Analista de IMSS",
 				"Analista de Nómina",
 				"Asistente AC",
@@ -132,12 +132,12 @@ namespace ERPSEI.Data
 			};
 			Puesto[] dataPuestos = new Puesto[puestos.Count];
 			int i = 0;
-            foreach (string puesto in puestos)
+			foreach (string puesto in puestos)
 			{
 				dataPuestos[i] = new Puesto() { Id = i + 1, Nombre = puesto };
 				i++;
-            }
-            modelBuilder.Entity<Puesto>().HasData(dataPuestos);
+			}
+			modelBuilder.Entity<Puesto>().HasData(dataPuestos);
 
 			List<string> areas = new List<string>()
 			{
@@ -166,7 +166,7 @@ namespace ERPSEI.Data
 			int j = 0;
 			foreach (string area in areas)
 			{
-				dataPuestos[j] = new Puesto() { Id = j + 1, Nombre = area };
+				dataAreas[j] = new Area() { Id = j + 1, Nombre = area };
 				j++;
 			}
 			modelBuilder.Entity<Area>().HasData(dataAreas);

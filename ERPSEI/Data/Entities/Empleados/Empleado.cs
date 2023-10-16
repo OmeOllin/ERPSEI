@@ -11,9 +11,9 @@
 
         public string NombreCompleto { get; set; } = string.Empty;
 
-		public DateOnly FechaIngreso { get; set; }
+		public DateTime FechaIngreso { get; set; }
 
-		public DateOnly FechaNacimiento { get; set; }
+		public DateTime FechaNacimiento { get; set; }
 
         public string CURP { get; set; } = string.Empty;
 
@@ -43,7 +43,6 @@
 
 		public ICollection<ContactoEmergencia>? ContactosEmergencia { get; }
 
-        public int UserId {  get; set; }
         public AppUser? User { get; set; }
 
     }
