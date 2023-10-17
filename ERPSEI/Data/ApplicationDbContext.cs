@@ -30,30 +30,42 @@ namespace ERPSEI.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<UserFile>();
+            modelBuilder.Entity<UserFile>().HasOne(uf => uf.FileType).WithMany(f => f.UserFiles).OnDelete(DeleteBehavior.SetNull);
 
-			modelBuilder.Entity<Empleado>();
+			modelBuilder.Entity<Empleado>().HasOne(e => e.User).WithOne(u => u.Empleado).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<Empleado>().HasOne(e => e.EstadoCivil).WithMany(ec => ec.Empleados).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<Empleado>().HasOne(e => e.Genero).WithMany(g => g.Empleados).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<Empleado>().HasOne(e => e.Puesto).WithMany(p => p.Empleados).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<Empleado>().HasOne(e => e.Area).WithMany(a => a.Empleados).OnDelete(DeleteBehavior.SetNull);
+
 
 			modelBuilder.Entity<FileType>()
-                .HasData(
-                    new FileType((int)FileTypes.ActaNacimiento, "Acta de nacimiento"),
-                    new FileType((int)FileTypes.CURP, "CURP"),
-                    new FileType((int)FileTypes.CLABE, "CLABE"),
-                    new FileType((int)FileTypes.ComprobanteDomicilio, "Comprobante de domicilio"),
-                    new FileType((int)FileTypes.ContactosEmergencia, "Contactos de emergencia"),
-                    new FileType((int)FileTypes.CSF, "CSF"),
-                    new FileType((int)FileTypes.INE, "INE"),
-                    new FileType((int)FileTypes.RFC, "RFC"),
-                    new FileType((int)FileTypes.ComprobanteEstudios, "Comprobante de estudios"),
-                    new FileType((int)FileTypes.NSS, "NSS")
-                );
+				.HasMany(ft => ft.UserFiles)
+				.WithOne(uf => uf.FileType)
+				.OnDelete(DeleteBehavior.SetNull);
 
+			modelBuilder.Entity<FileType>()
+				.HasData(
+					new FileType((int)FileTypes.ActaNacimiento, "Acta de nacimiento"),
+					new FileType((int)FileTypes.CURP, "CURP"),
+					new FileType((int)FileTypes.CLABE, "CLABE"),
+					new FileType((int)FileTypes.ComprobanteDomicilio, "Comprobante de domicilio"),
+					new FileType((int)FileTypes.ContactosEmergencia, "Contactos de emergencia"),
+					new FileType((int)FileTypes.CSF, "CSF"),
+					new FileType((int)FileTypes.INE, "INE"),
+					new FileType((int)FileTypes.RFC, "RFC"),
+					new FileType((int)FileTypes.ComprobanteEstudios, "Comprobante de estudios"),
+					new FileType((int)FileTypes.NSS, "NSS")
+				);
+
+			modelBuilder.Entity<EstadoCivil>().HasMany(ec => ec.Empleados).WithOne(e => e.EstadoCivil).OnDelete(DeleteBehavior.SetNull);
 			modelBuilder.Entity<EstadoCivil>()
 				.HasData(
 					new EstadoCivil() { Id = 1, Nombre = "Soltero(a)" },
 					new EstadoCivil() { Id = 2, Nombre = "Casado(a)" }
 				);
 
+			modelBuilder.Entity<Genero>().HasMany(g => g.Empleados).WithOne(e => e.Genero).OnDelete(DeleteBehavior.SetNull);
 			modelBuilder.Entity<Genero>()
 				.HasData(
 					new Genero() { Id = 1, Nombre = "Masculino" },
@@ -139,6 +151,7 @@ namespace ERPSEI.Data
 				i++;
 			}
 			modelBuilder.Entity<Puesto>().HasData(dataPuestos);
+			modelBuilder.Entity<Puesto>().HasMany(p => p.Empleados).WithOne(e => e.Puesto).OnDelete(DeleteBehavior.SetNull);
 
 			List<string> areas = new List<string>()
 			{
@@ -171,6 +184,7 @@ namespace ERPSEI.Data
 				j++;
 			}
 			modelBuilder.Entity<Area>().HasData(dataAreas);
+			modelBuilder.Entity<Area>().HasMany(a => a.Empleados).WithOne(e => e.Area).OnDelete(DeleteBehavior.SetNull);
 		}
 
     }

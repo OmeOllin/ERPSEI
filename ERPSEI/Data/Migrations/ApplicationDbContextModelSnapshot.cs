@@ -130,7 +130,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Areas");
+                    b.ToTable("Areas", (string)null);
 
                     b.HasData(
                         new
@@ -258,7 +258,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasIndex("EmpleadoId");
 
-                    b.ToTable("ContactosEmergencia");
+                    b.ToTable("ContactosEmergencia", (string)null);
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.Empleado", b =>
@@ -333,7 +333,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasIndex("PuestoId");
 
-                    b.ToTable("Empleados");
+                    b.ToTable("Empleados", (string)null);
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.EstadoCivil", b =>
@@ -350,7 +350,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EstadosCiviles");
+                    b.ToTable("EstadosCiviles", (string)null);
 
                     b.HasData(
                         new
@@ -379,7 +379,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Generos");
+                    b.ToTable("Generos", (string)null);
 
                     b.HasData(
                         new
@@ -408,7 +408,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Puestos");
+                    b.ToTable("Puestos", (string)null);
 
                     b.HasData(
                         new
@@ -767,7 +767,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FileType");
+                    b.ToTable("FileType", (string)null);
 
                     b.HasData(
                         new
@@ -851,7 +851,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasIndex("FileTypeId");
 
-                    b.ToTable("UserFiles");
+                    b.ToTable("UserFiles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

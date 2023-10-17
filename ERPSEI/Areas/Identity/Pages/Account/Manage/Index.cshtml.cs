@@ -120,7 +120,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                 //Si el usuario ya tiene archivos, se llena el arreglo de datos a partir de ellos.
                 foreach (UserFile file in userFiles)
                 {
-                    FileFromGet fg = new FileFromGet() { FileId = file.Id, TypeId = file.FileTypeId, Src = "" };
+                    FileFromGet fg = new FileFromGet() { FileId = file.Id, TypeId = file.FileTypeId ?? 0, Src = "" };
                     //Si el archivo tiene contenido
                     if (file.File != null && file.File.Length >= 1)
                     {

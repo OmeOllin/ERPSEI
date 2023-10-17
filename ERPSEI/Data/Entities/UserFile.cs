@@ -10,10 +10,10 @@
 
         public byte[] File { get; set; } = new byte[0];
 
-        public int FileTypeId { get; set; }
+        public int? FileTypeId { get; set; }
         public FileType? FileType { get; set; }
 
-		public int EmpleadoId { get; set; }
+		public int? EmpleadoId { get; set; }
         public Empleados.Empleado? Empleado { get; set; }
 
 		public UserFile()
