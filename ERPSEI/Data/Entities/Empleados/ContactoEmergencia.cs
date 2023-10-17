@@ -8,7 +8,7 @@
 
         public string Telefono { get; set; } = string.Empty;
 
-        public int EmpleadoId {  get; set; }
+        public int? EmpleadoId {  get; set; }
         public Empleado? Empleado { get; set; }
     }
 }

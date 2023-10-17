@@ -29,20 +29,21 @@
 
         
         //Relaciones de la entidad
-        public int GeneroId {  get; set; }
+        public int? GeneroId {  get; set; }
 		public Genero? Genero { get; set; }
 
-        public int PuestoId { get; set; }
+        public int? PuestoId { get; set; }
 		public Puesto? Puesto { get; set; }
 
-        public int AreaId { get; set; }
+        public int? AreaId { get; set; }
 		public Area? Area { get; set; }
 
-        public int EstadoCivilId {  get; set; }
+        public int? EstadoCivilId {  get; set; }
 		public EstadoCivil? EstadoCivil { get; set; }
 
 		public ICollection<ContactoEmergencia>? ContactosEmergencia { get; }
 
+        public int? UserId { get; set; }
         public AppUser? User { get; set; }
 
     }

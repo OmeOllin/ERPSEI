@@ -18,7 +18,7 @@ namespace ERPSEI.Data.Entities
 
         public bool IsBanned { get; set; }
 
-        public int EmpleadoId { get; set; }
+        public int? EmpleadoId { get; set; }
         public Empleado? Empleado { get; set; }
 
     }

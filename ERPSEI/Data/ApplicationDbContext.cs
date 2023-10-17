@@ -2,7 +2,6 @@
 using ERPSEI.Data.Entities.Empleados;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
 
 namespace ERPSEI.Data
 {
@@ -13,11 +12,13 @@ namespace ERPSEI.Data
 		public DbSet<Empleado> Empleados { get; set; }
 		public DbSet<ContactoEmergencia> ContactosEmergencia { get; set; }
 
-		//Catálogos
-		public DbSet<EstadoCivil> EstadosCiviles { get; set; }
-		public DbSet<Genero> Generos { get; set; }
+		//Catálogos Administrables
 		public DbSet<Puesto> Puestos { get; set; }
 		public DbSet<Area> Areas { get; set; }
+
+		//Catálogos no Administrables
+		public DbSet<EstadoCivil> EstadosCiviles { get; set; }
+		public DbSet<Genero> Generos { get; set; }
 
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
