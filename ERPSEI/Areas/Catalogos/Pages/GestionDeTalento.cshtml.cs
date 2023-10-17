@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 
-namespace ERPSEI.Areas.Pages.Catalogos
+namespace ERPSEI.Areas.Catalogos.Pages
 {
     public class GestionDeTalentoModel : PageModel
     {
@@ -48,12 +48,19 @@ namespace ERPSEI.Areas.Pages.Catalogos
 
         public JsonResult OnGetTalentList()
         {
-            List<string> talent = new List<string>();
+            List<string> talent = new();
             for (int i = 0; i < 20; i++)
             {
                 int rn1 = i + 1;
 				
-                talent.Add("{\"id\": " + rn1 + ",\"nombre\": \"Luis Alberto Linares Hernández\",\"fechaIngreso\": \"07/05/1991\",\"puesto\": \"Desarrollador de software\",\"area\": \"Desarrollo\",\"telefono\": \"5529300993\",\"correo\": \"luis_linares75@hotmail.com\"}");
+                talent.Add("{" +
+                    "\"id\": " + rn1 + "," +
+                    "\"nombre\": \"Luis Alberto Linares Hernández\"," +
+                    "\"fechaIngreso\": \"11/09/2023\"," +
+                    "\"puesto\": \"Desarrollador de software\"," +
+                    "\"area\": \"Desarrollo\"," +
+                    "\"telefono\": \"5529300993\"," +
+                    "\"correo\": \"luis_linares75@hotmail.com\"}");
             }
 
 

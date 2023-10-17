@@ -1,7 +1,7 @@
 ﻿@page "{handler?}"
 @using Microsoft.AspNetCore.Localization;
 @using Microsoft.AspNetCore.Mvc.Localization;
-@using ERPSEI.Areas.Pages.Catalogos;
+@using ERPSEI.Areas.Catalogos.Pages;
 @model GestionDeTalentoModel
 @inject IViewLocalizer Localizer;
 @{
@@ -115,11 +115,6 @@
 		<i class="bi bi-trash"></i> @Localizer["DeleteButton"]
 	</button>
 </div>
-@* 
-	NOTA:
-	Si los datos de la tabla son seteados en el cliente, entonces data-side-pagination debe ser "client".
-	Si los datos de la tabla son seteados con URL (data-url) entonces data-side-pagination debe ser "server" 
-*@
 <table id="table" class="table-sm"
 		data-toolbar="#toolbar"
 		data-search="true"
@@ -173,5 +168,9 @@
 
 	<script type="text/javascript">
 		var cultureName = "@cultureName";
+		var btnImportarText = '@Localizer["ImportButtonText"]';
+		var btnImportarTitle = '@Localizer["ImportButtonTitle"]';
+		var btnVerTitle = '@Localizer["SeeButtonTitle"]';
+		var btnEditarTitle = '@Localizer["EditButtonTitle"]';
 	</script>
 }

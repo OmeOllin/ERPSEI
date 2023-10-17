@@ -129,6 +129,9 @@
   <data name="DeleteButton" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="EditButtonTitle" xml:space="preserve">
+    <value>Edit</value>
+  </data>
   <data name="FechaIngresoPlaceholder" xml:space="preserve">
     <value>Date of admission</value>
   </data>
@@ -138,6 +141,12 @@
   <data name="FilterTitle" xml:space="preserve">
     <value>Search filters</value>
   </data>
+  <data name="ImportButtonText" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="ImportButtonTitle" xml:space="preserve">
+    <value>Import from an excel file</value>
+  </data>
   <data name="NombrePlaceholder" xml:space="preserve">
     <value>Name</value>
   </data>
@@ -146,6 +155,9 @@
   </data>
   <data name="SearchButton" xml:space="preserve">
     <value>Search</value>
+  </data>
+  <data name="SeeButtonTitle" xml:space="preserve">
+    <value>See</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Talent manager</value>

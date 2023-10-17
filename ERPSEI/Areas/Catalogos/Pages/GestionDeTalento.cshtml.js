@@ -14,13 +14,13 @@ document.addEventListener("DOMContentLoaded", function (event) {
 function additionalButtons() {
     return {
         btnImport: {
-            text: 'Importar',
+            text: btnImportarText,
             icon: 'bi-upload',
             event: function () {
                 showInfo("Importar datos", "Esta funcionalidad permitirá agregar datos mediante un archivo excel");
             },
             attributes: {
-                title: 'Importar datos desde un archivo excel'
+                title: btnImportarTitle
             }
         }
     }
@@ -42,16 +42,18 @@ function responseHandler(res) {
 function detailFormatter(index, row) {
     var html = []
     $.each(row, function (key, value) {
-        html.push('<p><b>' + key + ':</b> ' + value + '</p>')
-    })
+        if (key != "state") {
+            html.push('<p><b>' + key + ':</b> ' + value + '</p>')
+        }
+    });
     return html.join('')
 }
 function operateFormatter(value, row, index) {
     return [
-        '<a class="see" href="javascript:void(0)" title="Ver">',
+        '<a class="see" href="javascript:void(0)" title="' + btnVerTitle + '">',
             '<i class="bi bi-search"></i>',
         '</a>  ',
-        '<a class="edit" href="javascript:void(0)" title="Editar">',
+        '<a class="edit" href="javascript:void(0)" title="' + btnEditarTitle + '">',
             '<i class="bi bi-pencil-fill"></i>',
         '</a>'
     ].join('')
@@ -70,21 +72,6 @@ window.operateEvents = {
         //})
     }
 }
-function totalTextFormatter(data) {
-    return 'Total'
-}
-function totalNameFormatter(data) {
-    return data.length
-}
-function totalPriceFormatter(data) {
-    var field = this.field
-    return '$' + data.map(function (row) {
-        return +row[field].substring(1)
-    }).reduce(function (sum, i) {
-        return sum + i
-    }, 0)
-}
-
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
         height: 550,
@@ -156,47 +143,6 @@ function initTable() {
                 formatter: operateFormatter
             }
         ]
-        //columns: [
-        //    [{
-        //        field: 'state',
-        //        checkbox: true,
-        //        rowspan: 2,
-        //        align: 'center',
-        //        valign: 'middle'
-        //    }, {
-        //        title: 'Item ID',
-        //        field: 'id',
-        //        rowspan: 2,
-        //        align: 'center',
-        //        valign: 'middle',
-        //        sortable: true,
-        //        footerFormatter: totalTextFormatter
-        //    }, {
-        //        title: 'Item Detail',
-        //        colspan: 3,
-        //        align: 'center'
-        //    }],
-        //    [{
-        //        field: 'name',
-        //        title: 'Item Name',
-        //        sortable: true,
-        //        footerFormatter: totalNameFormatter,
-        //        align: 'center'
-        //    }, {
-        //        field: 'price',
-        //        title: 'Item Price',
-        //        sortable: true,
-        //        align: 'center',
-        //        footerFormatter: totalPriceFormatter
-        //    }, {
-        //        field: 'operate',
-        //        title: 'Item Operate',
-        //        align: 'center',
-        //        clickToSelect: false,
-        //        events: window.operateEvents,
-        //        formatter: operateFormatter
-        //    }]
-        //]
     })
     table.on('check.bs.table uncheck.bs.table ' +
         'check-all.bs.table uncheck-all.bs.table',
