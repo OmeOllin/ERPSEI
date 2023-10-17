@@ -168,7 +168,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                 ProfilePictureSrc = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/img/default_profile_pic.jpg";
             }
 
-            await LoadUserFilesAsync(user.EmpleadoId);
+            await LoadUserFilesAsync(user.EmpleadoId ?? 0);
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -233,7 +233,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                     {
                         //Si el usuario no subió archivo pero quitó el que estaba asignado, entonces borra el existente y sube uno vacío.
                         await _userFileManager.DeleteByIdAsync(file.FileId);
-                        await saveEmptyFile(user.EmpleadoId, (FileTypes)fileType);
+                        await saveEmptyFile(user.EmpleadoId ?? 0, (FileTypes)fileType);
                     }
 
                     fileType++;
@@ -298,7 +298,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                             Extension = fileExtension,
                             File = memoryStream.ToArray(),
                             FileTypeId = (int)type,
-                            EmpleadoId = user.EmpleadoId
+                            EmpleadoId = user.EmpleadoId ?? 0
                         });
                     }
                 }
