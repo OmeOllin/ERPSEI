@@ -126,12 +126,6 @@
   <data name="EditButtonTitle" xml:space="preserve">
     <value>Editar</value>
   </data>
-  <data name="ImportButtonText" xml:space="preserve">
-    <value>Importar</value>
-  </data>
-  <data name="ImportButtonTitle" xml:space="preserve">
-    <value>Importar desde un archivo excel</value>
-  </data>
   <data name="SeeButtonTitle" xml:space="preserve">
     <value>Ver</value>
   </data>

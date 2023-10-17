@@ -11,20 +11,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
     initTable();
 });
 
-function additionalButtons() {
-    return {
-        btnImport: {
-            text: btnImportarText,
-            icon: 'bi-upload',
-            event: function () {
-                showInfo("Importar datos", "Esta funcionalidad permitirá agregar datos mediante un archivo excel");
-            },
-            attributes: {
-                title: btnImportarTitle
-            }
-        }
-    }
-}
 function getIdSelections() {
     return $.map(table.bootstrapTable('getSelections'), function (row) {
         return row.id
