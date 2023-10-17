@@ -1,4 +1,4 @@
-using ERPSEI.Data.Entities;
+using ERPSEI.Data.Entities.Empleados;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -8,21 +8,21 @@ namespace ERPSEI.Pages
     [Authorize]
     public class FileViewerModel : PageModel
     {
-        private readonly IUserFileManager _userFileManager;
+        private readonly IArchivoEmpleadoManager _userFileManager;
 
         public string iframesrc { get; set; } = string.Empty;
 
-        public FileViewerModel(IUserFileManager userFileManager) { 
+        public FileViewerModel(IArchivoEmpleadoManager userFileManager) { 
             _userFileManager = userFileManager;
         }
 
         public IActionResult OnGet(string id)
         {
             if (id == null) { return RedirectToPage("/404"); }
-            UserFile? file = _userFileManager.GetFileById(id);
+            ArchivoEmpleado? file = _userFileManager.GetFileById(id);
             if (file == null) { return RedirectToPage("/404"); }
 
-            string src = Convert.ToBase64String(file.File);
+            string src = Convert.ToBase64String(file.Archivo);
             if(file.Extension == "pdf")
             {
                 iframesrc = $"data:application/pdf;base64,{src}";

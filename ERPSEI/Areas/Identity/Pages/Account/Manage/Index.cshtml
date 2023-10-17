@@ -1,6 +1,6 @@
 ﻿@page
 @using Microsoft.AspNetCore.Mvc.Localization
-@using ERPSEI.Data.Entities
+@using ERPSEI.Data.Entities.Empleados;
 @inject IViewLocalizer Localizer
 @model IndexModel
 @{
@@ -100,7 +100,7 @@
                 foreach (IndexModel.FileFromGet fd in Model.FilesFromGet)
                 {
                     //Obtiene el nombre del tipo.
-                    string? enumName = Enum.GetName(typeof(FileTypes),fd.TypeId) ?? "";
+                    string? enumName = Enum.GetName(typeof(TipoArchivo),fd.TypeId) ?? "";
                     string containerId = Guid.NewGuid().ToString();
                     string selectorId = Guid.NewGuid().ToString();
 

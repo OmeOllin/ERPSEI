@@ -4,6 +4,7 @@
 
 using ERPSEI.Data;
 using ERPSEI.Data.Entities;
+using ERPSEI.Data.Entities.Empleados;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -18,14 +19,14 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
     {
         private readonly AppUserManager _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        private readonly IUserFileManager _userFileManager;
+        private readonly IArchivoEmpleadoManager _userFileManager;
         private readonly IStringLocalizer<IndexModel> _localizer;
         private readonly ApplicationDbContext _db;
 
         public IndexModel(
             AppUserManager userManager,
             SignInManager<AppUser> signInManager,
-            IUserFileManager userFileManager,
+            IArchivoEmpleadoManager userFileManager,
             IStringLocalizer<IndexModel> localizer,
             ApplicationDbContext db)
         {
@@ -100,10 +101,10 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 
         private async Task LoadUserFilesAsync(int empleadoId) {
             //Carga y recorre los archivos del usuario.
-            List<UserFile> userFiles = await _userFileManager.GetFilesByEmpleadoIdAsync(empleadoId);
+            List<ArchivoEmpleado> userFiles = await _userFileManager.GetFilesByEmpleadoIdAsync(empleadoId);
             //Ordena los archivos del usuario por tipo de archivo de manera ascendente
             userFiles = (from userFile in userFiles
-                         orderby userFile.FileTypeId ascending
+                         orderby userFile.TipoArchivoId ascending
                          select userFile).ToList();
             if(userFiles == null || userFiles.Count == 0)
             {
@@ -118,14 +119,14 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             else
             {
                 //Si el usuario ya tiene archivos, se llena el arreglo de datos a partir de ellos.
-                foreach (UserFile file in userFiles)
+                foreach (ArchivoEmpleado file in userFiles)
                 {
-                    FileFromGet fg = new FileFromGet() { FileId = file.Id, TypeId = file.FileTypeId ?? 0, Src = "" };
+                    FileFromGet fg = new FileFromGet() { FileId = file.Id, TypeId = file.TipoArchivoId ?? 0, Src = "" };
                     //Si el archivo tiene contenido
-                    if (file.File != null && file.File.Length >= 1)
+                    if (file.Archivo != null && file.Archivo.Length >= 1)
                     {
                         //Asigna la información del archivo al arreglo de datos.
-                        string b64 = Convert.ToBase64String(file.File);
+                        string b64 = Convert.ToBase64String(file.Archivo);
                         string imgSrc = $"data:image/png;base64,{b64}";
                         string id = Guid.NewGuid().ToString();
 
@@ -150,17 +151,17 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
             Input.Username = userName;
-            Input.FirstName = user.FirstName;
-            Input.SecondName = user.SecondName;
-            Input.FathersLastName = user.FathersLastName;
-            Input.MothersLastName = user.MothersLastName;
+            Input.FirstName = user.Empleado.PrimerNombre;
+            Input.SecondName = user.Empleado.SegundoNombre;
+            Input.FathersLastName = user.Empleado.ApellidoPaterno;
+            Input.MothersLastName = user.Empleado.ApellidoMaterno;
             Input.PhoneNumber = phoneNumber;
 
             //Si el usuario tiene imagen de perfil
-            if (user.ProfilePicture != null && user.ProfilePicture.Length >= 1)
+            if (user.Empleado.ProfilePicture != null && user.Empleado.ProfilePicture.Length >= 1)
             {
                 //Se usa para mostrarla
-                ProfilePictureSrc = $"data:image/png;base64,{Convert.ToBase64String(user.ProfilePicture)}";
+                ProfilePictureSrc = $"data:image/png;base64,{Convert.ToBase64String(user.Empleado.ProfilePicture)}";
             }
             else
             {
@@ -201,10 +202,10 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             }
 
             //Actualiza información principal del usuario.
-            user.FirstName = Input.FirstName;
-            user.SecondName = Input.SecondName ?? "";
-            user.FathersLastName = Input.FathersLastName;
-            user.MothersLastName = Input.MothersLastName;
+            user.Empleado.PrimerNombre = Input.FirstName;
+            user.Empleado.SegundoNombre = Input.SecondName ?? "";
+            user.Empleado.ApellidoPaterno = Input.FathersLastName;
+            user.Empleado.ApellidoMaterno = Input.MothersLastName;
             user.PhoneNumber = Input.PhoneNumber ?? "";
 
             //Inicia una transacción.
@@ -265,9 +266,9 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
         private async Task saveEmptyFile(int empleadoId, FileTypes type)
         {
             //Se guarda el archivo vacío
-            await _userFileManager.CreateAsync(new UserFile()
+            await _userFileManager.CreateAsync(new ArchivoEmpleado()
             {
-                FileTypeId = (int)type,
+                TipoArchivoId = (int)type,
                 EmpleadoId = empleadoId
 			});
         }
@@ -287,17 +288,17 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                     if (type == FileTypes.ImagenPerfil)
                     {
                         //Se guarda el arreglo de bytes de la imagen.
-                        user.ProfilePicture = memoryStream.ToArray();
+                        user.Empleado.ProfilePicture = memoryStream.ToArray();
                     }
                     else
                     {
                         //Se guarda el arreglo de bytes del archivo
-                        await _userFileManager.CreateAsync(new UserFile()
+                        await _userFileManager.CreateAsync(new ArchivoEmpleado()
                         {
-                            Name = fileName,
+                            Nombre = fileName,
                             Extension = fileExtension,
-                            File = memoryStream.ToArray(),
-                            FileTypeId = (int)type,
+                            Archivo = memoryStream.ToArray(),
+                            TipoArchivoId = (int)type,
                             EmpleadoId = user.EmpleadoId ?? 0
                         });
                     }

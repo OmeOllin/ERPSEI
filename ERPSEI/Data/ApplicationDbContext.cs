@@ -8,7 +8,7 @@ namespace ERPSEI.Data
     public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
 		//Tablas de trabajo
-        public DbSet<UserFile> UserFiles { get; set; }
+        public DbSet<ArchivoEmpleado> ArchivosEmpleado { get; set; }
 		public DbSet<Empleado> Empleados { get; set; }
 		public DbSet<ContactoEmergencia> ContactosEmergencia { get; set; }
 
@@ -30,32 +30,33 @@ namespace ERPSEI.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<UserFile>().HasOne(uf => uf.FileType).WithMany(f => f.UserFiles).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<ArchivoEmpleado>().HasOne(ae => ae.TipoArchivo).WithMany(ta => ta.ArchivosEmpleado).OnDelete(DeleteBehavior.SetNull);
 
 			modelBuilder.Entity<Empleado>().HasOne(e => e.User).WithOne(u => u.Empleado).OnDelete(DeleteBehavior.SetNull);
 			modelBuilder.Entity<Empleado>().HasOne(e => e.EstadoCivil).WithMany(ec => ec.Empleados).OnDelete(DeleteBehavior.SetNull);
 			modelBuilder.Entity<Empleado>().HasOne(e => e.Genero).WithMany(g => g.Empleados).OnDelete(DeleteBehavior.SetNull);
 			modelBuilder.Entity<Empleado>().HasOne(e => e.Puesto).WithMany(p => p.Empleados).OnDelete(DeleteBehavior.SetNull);
 			modelBuilder.Entity<Empleado>().HasOne(e => e.Area).WithMany(a => a.Empleados).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<Empleado>().HasMany(e => e.ContactosEmergencia).WithOne(ce => ce.Empleado).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<Empleado>().HasMany(e => e.ArchivosEmpleado).WithOne(ae => ae.Empleado).OnDelete(DeleteBehavior.SetNull);
 
 
-			modelBuilder.Entity<FileType>()
-				.HasMany(ft => ft.UserFiles)
-				.WithOne(uf => uf.FileType)
+			modelBuilder.Entity<TipoArchivo>()
+				.HasMany(ta => ta.ArchivosEmpleado)
+				.WithOne(ae => ae.TipoArchivo)
 				.OnDelete(DeleteBehavior.SetNull);
-
-			modelBuilder.Entity<FileType>()
+			modelBuilder.Entity<TipoArchivo>()
 				.HasData(
-					new FileType((int)FileTypes.ActaNacimiento, "Acta de nacimiento"),
-					new FileType((int)FileTypes.CURP, "CURP"),
-					new FileType((int)FileTypes.CLABE, "CLABE"),
-					new FileType((int)FileTypes.ComprobanteDomicilio, "Comprobante de domicilio"),
-					new FileType((int)FileTypes.ContactosEmergencia, "Contactos de emergencia"),
-					new FileType((int)FileTypes.CSF, "CSF"),
-					new FileType((int)FileTypes.INE, "INE"),
-					new FileType((int)FileTypes.RFC, "RFC"),
-					new FileType((int)FileTypes.ComprobanteEstudios, "Comprobante de estudios"),
-					new FileType((int)FileTypes.NSS, "NSS")
+					new TipoArchivo((int)FileTypes.ActaNacimiento, "Acta de nacimiento"),
+					new TipoArchivo((int)FileTypes.CURP, "CURP"),
+					new TipoArchivo((int)FileTypes.CLABE, "CLABE"),
+					new TipoArchivo((int)FileTypes.ComprobanteDomicilio, "Comprobante de domicilio"),
+					new TipoArchivo((int)FileTypes.ContactosEmergencia, "Contactos de emergencia"),
+					new TipoArchivo((int)FileTypes.CSF, "CSF"),
+					new TipoArchivo((int)FileTypes.INE, "INE"),
+					new TipoArchivo((int)FileTypes.RFC, "RFC"),
+					new TipoArchivo((int)FileTypes.ComprobanteEstudios, "Comprobante de estudios"),
+					new TipoArchivo((int)FileTypes.NSS, "NSS")
 				);
 
 			modelBuilder.Entity<EstadoCivil>().HasMany(ec => ec.Empleados).WithOne(e => e.EstadoCivil).OnDelete(DeleteBehavior.SetNull);

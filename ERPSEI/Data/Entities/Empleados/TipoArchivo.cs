@@ -1,4 +1,4 @@
-﻿namespace ERPSEI.Data.Entities
+﻿namespace ERPSEI.Data.Entities.Empleados
 {
     public enum FileTypes
     {
@@ -14,15 +14,15 @@
         ComprobanteEstudios,
         NSS
     }
-    public class FileType
+    public class TipoArchivo
     {
         public int Id { get; set; }
 
         public string Description { get; set; }
 
-        public ICollection<UserFile>? UserFiles { get; }
+        public ICollection<ArchivoEmpleado>? ArchivosEmpleado { get; }
 
-        public FileType(int id, string description)
+        public TipoArchivo(int id, string description)
         {
             Id = id;
             Description = description;

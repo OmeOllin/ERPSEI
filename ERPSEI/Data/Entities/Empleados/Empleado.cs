@@ -5,6 +5,12 @@
         //Campos de la entidad
         public int Id { get; set; }
 
+		public byte[] ProfilePicture { get; set; } = new byte[0];
+
+		public string PrimerNombre { get; set; } = string.Empty;
+
+        public string SegundoNombre { get; set; } = string.Empty;
+
         public string ApellidoPaterno { get; set; } = string.Empty;
 
         public string ApellidoMaterno { get; set; } = string.Empty;
@@ -15,15 +21,9 @@
 
 		public DateTime FechaNacimiento { get; set; }
 
-        public string CURP { get; set; } = string.Empty;
-
-        public string RFC { get; set; } = string.Empty;
-
-        public string NSS { get; set; } = string.Empty;
-
         public string Direccion { get; set; } = string.Empty;
 
-        public string TelefonoPersonal { get; set; } = string.Empty;
+        public string Telefono { get; set; } = string.Empty;
 
         public string Email { get; set; } = string.Empty;
 
@@ -42,6 +42,9 @@
 		public EstadoCivil? EstadoCivil { get; set; }
 
 		public ICollection<ContactoEmergencia>? ContactosEmergencia { get; }
+
+        public int? ArchivoEmpleadoId { get; set; }
+        public ICollection<ArchivoEmpleado>? ArchivosEmpleado { get; }
 
         public int? UserId { get; set; }
         public AppUser? User { get; set; }
