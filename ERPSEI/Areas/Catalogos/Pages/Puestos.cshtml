@@ -2,7 +2,7 @@
 @using ERPSEI.Areas.Catalogos.Pages;
 @using Microsoft.AspNetCore.Localization;
 @using Microsoft.AspNetCore.Mvc.Localization;
-@model CatalogoPuestosModel
+@model PuestosModel
 @inject IViewLocalizer Localizer;
 @{
 	ViewData["Title"] = Localizer["Title"];
@@ -49,7 +49,7 @@
 	   data-side-pagination="client"
 	   data-response-handler="responseHandler"
 	   data-buttons-class="primary"
-	   data-url="/Catalogos/CatalogoPuestos/PuestosList"
+	   data-url="/Catalogos/Puestos/PuestosList"
 	   data-buttons="additionalButtons">
 	<thead>
 		<tr align="center" valign="middle" class="bg-primary bg-opacity-10">
@@ -73,7 +73,7 @@
 	<script src="~/lib/bootstrap-table/locale/bootstrap-table-en-US.min.js"></script>
 	<script src="~/lib/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
 
-	<script src="~/../Areas/Catalogos/Pages/CatalogoPuestos.cshtml.js"></script>
+	<script src="~/../Areas/Catalogos/Pages/Puestos.cshtml.js"></script>
 
 	<script type="text/javascript">
 		var cultureName = "@cultureName";
