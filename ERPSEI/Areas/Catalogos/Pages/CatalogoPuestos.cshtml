@@ -1,0 +1,129 @@
+﻿@page "{handler?}"
+@using ERPSEI.Areas.Catalogos.Pages;
+@using Microsoft.AspNetCore.Localization;
+@using Microsoft.AspNetCore.Mvc.Localization;
+@model CatalogoPuestosModel
+@inject IViewLocalizer Localizer;
+@{
+	ViewData["Title"] = Localizer["Title"];
+
+	// Retrieves the requested culture
+	IRequestCultureFeature? rqf = Request.HttpContext.Features.Get<IRequestCultureFeature>();
+
+	// Culture contains the information of the requested culture
+	System.Globalization.CultureInfo? culture = rqf != null ? rqf.RequestCulture.Culture : new System.Globalization.CultureInfo("es-MX");
+
+	string cultureName = culture.Name;
+}
+
+<h3 class="title mb-3">@ViewData["Title"]</h3>
+
+<!-- --------------------------- -->
+<!-- Sección de filtros -------- -->
+<form id="filtros" method="post">
+	<div class="accordion shadow mb-5" id="accordionFiltros">
+		<div class="accordion-item">
+			<h2 class="accordion-header" id="headingOne">
+				<button class="accordion-button p-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+					<h6>@Localizer["FilterTitle"]</h6>
+				</button>
+			</h2>
+			<div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionFiltros">
+				<div class="accordion-body">
+					<div class="row">
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<input  class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+								<label  class="form-label"></label>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<select  class="form-control" placeholder="@Localizer["PuestoPlaceholder"]">
+									<option value="0">Seleccione...</option>
+									<option value="1">Puesto 1</option>
+									<option value="2">Puesto 2</option>
+								</select>
+								<label  class="form-label"></label>
+							</div>
+						</div>
+					</div>
+					<div class="row text-end">
+						<div class="col-12">
+							<button id="btnBuscar" class="btn btn-primary">
+								<i class="bi bi-search"></i> @Localizer["SearchButton"]
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+<!-- --------------------------- -->
+<!-- --------------------------- -->
+<!-- --------------------------- -->
+<!-- Sección tabla de resultados -->
+<div id="toolbar" class="col-xl-12">
+	<button id="btnAgregar" class="btn btn-primary">
+		<i class="bi bi-plus-lg"></i> @Localizer["AddButton"]
+	</button>
+	<button id="remove" class="btn btn-danger" disabled>
+		<i class="bi bi-trash"></i> @Localizer["DeleteButton"]
+	</button>
+</div>
+<table id="table" class="table-sm"
+	   data-toolbar="#toolbar"
+	   data-search="true"
+	   data-show-refresh="true"
+	   data-show-toggle="true"
+	   data-show-fullscreen="true"
+	   data-show-columns="true"
+	   data-show-columns-toggle-all="true"
+	   data-detail-view="true"
+	   data-show-export="true"
+	   data-click-to-select="true"
+	   data-detail-formatter="detailFormatter"
+	   data-minimum-count-columns="2"
+	   data-show-pagination-switch="true"
+	   data-pagination="true"
+	   data-id-field="id"
+	   data-page-list="[10, 25, 50, 100, all]"
+	   data-show-footer="false"
+	   data-side-pagination="client"
+	   data-response-handler="responseHandler"
+	   data-buttons-class="primary"
+	   data-url="/Catalogos/CatalogoPuestos/PuestosList"
+	   data-buttons="additionalButtons">
+	<thead>
+		<tr align="center" valign="middle" class="bg-primary bg-opacity-10">
+			<th scope="col"></th>
+			<th scope="col">Id</th>
+			<th scope="col">Nombre</th>
+		</tr>
+	</thead>
+</table>
+<!-- --------------------------- -->
+<!-- --------------------------- -->
+@section Scripts {
+	@* <link rel="stylesheet" href="~/lib/bootstrap-table/bootstrap-table.min.css"> *@
+
+	@* <script src="~/lib/bootstrap-table/extensions/export/tableExport.min.js"></script>
+	<script src="~/lib/bootstrap-table/extensions/export/jspdf.min.js"></script>
+	<script src="~/lib/bootstrap-table/extensions/export/jspdf.plugin.autotable.js"></script>
+
+	<script src="~/lib/bootstrap-table/bootstrap-table.min.js"></script>
+	<script src="~/lib/bootstrap-table/locale/bootstrap-table-es-MX.min.js"></script>
+	<script src="~/lib/bootstrap-table/locale/bootstrap-table-en-US.min.js"></script>
+	<script src="~/lib/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
+
+	<script src="~/../Areas/Catalogos/Pages/CatalogoPuestos.cshtml.js"></script> *@
+
+	<script type="text/javascript">
+		var cultureName = "@cultureName";
+		var btnImportarText = '@Localizer["ImportButtonText"]';
+		var btnImportarTitle = '@Localizer["ImportButtonTitle"]';
+		var btnVerTitle = '@Localizer["SeeButtonTitle"]';
+		var btnEditarTitle = '@Localizer["EditButtonTitle"]';
+	</script>
+}
