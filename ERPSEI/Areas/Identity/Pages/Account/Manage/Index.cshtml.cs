@@ -5,6 +5,7 @@
 using ERPSEI.Data;
 using ERPSEI.Data.Entities;
 using ERPSEI.Data.Entities.Empleados;
+using ERPSEI.Data.Managers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

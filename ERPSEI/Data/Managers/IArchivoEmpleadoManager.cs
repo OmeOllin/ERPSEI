@@ -1,4 +1,6 @@
-﻿namespace ERPSEI.Data.Entities.Empleados
+﻿using ERPSEI.Data.Entities.Empleados;
+
+namespace ERPSEI.Data.Managers
 {
     public interface IArchivoEmpleadoManager
     {

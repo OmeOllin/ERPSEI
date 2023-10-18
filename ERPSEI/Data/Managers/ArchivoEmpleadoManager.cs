@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ERPSEI.Data.Entities.Empleados;
+using Microsoft.EntityFrameworkCore;
 
-namespace ERPSEI.Data.Entities.Empleados
+namespace ERPSEI.Data.Managers
 {
     public class ArchivoEmpleadoManager : IArchivoEmpleadoManager
     {
