@@ -43,7 +43,8 @@
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                     <a class="dropdown-item @_LayoutPages.GestionDeTalentoNavClass(ViewContext)" asp-area="Catalogos" asp-page="/GestionDeTalento">@Localizer["PersonalCatalogMenu"]</a>
-                                    <a class="dropdown-item @_LayoutPages.CatalogoPuestosNavClass(ViewContext)" asp-area="" asp-page="/Building">@Localizer["PositionsCatalogMenu"]</a>
+                                    <a class="dropdown-item @_LayoutPages.CatalogoPuestosNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Puestos">@Localizer["PositionsCatalogMenu"]</a>
+                                    <a class="dropdown-item @_LayoutPages.CatalogoAreasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Areas">@Localizer["AreasCatalogMenu"]</a>
                                 </div>
                             </li>
                             <li class="nav-item dropdown">

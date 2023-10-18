@@ -22,8 +22,11 @@ namespace ERPSEI.Pages.Shared
         public static string CatalogoPuestos => "CatalogoPuestos";
         public static string CatalogoPuestosNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoPuestos);
 
+		public static string CatalogoAreas => "CatalogoAreas";
+		public static string CatalogoAreasNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoAreas);
 
-        public static string ERP => "ERP";
+
+		public static string ERP => "ERP";
         public static string ERPNavClass(ViewContext viewContext) => PageNavClass(viewContext, ERP);
 
         public static string Organigrama => "Organigrama";
@@ -35,7 +38,7 @@ namespace ERPSEI.Pages.Shared
         public static string Incapacidades => "Incapacidades";
         public static string IncapacidadesNavClass(ViewContext viewContext) => PageNavClass(viewContext, Incapacidades);
 
-        public static string Permisos => "Organigrama";
+        public static string Permisos => "Permisos";
         public static string PermisosNavClass(ViewContext viewContext) => PageNavClass(viewContext, Permisos);
 
 

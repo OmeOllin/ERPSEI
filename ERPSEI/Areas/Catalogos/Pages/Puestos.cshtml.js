@@ -30,9 +30,7 @@ function getIdSelections() {
 }
 function responseHandler(res) {
     $.each(res, function (i, row) {
-        let oRow = JSON.parse(row);
-        row.state = $.inArray(oRow.id, selections) !== -1
-        res[i] = oRow;
+        row.state = $.inArray(row.id, selections) !== -1
     })
     return res
 }
@@ -96,6 +94,14 @@ function initTable() {
                 align: "center",
                 valign: "middle",
                 sortable: true
+            },
+            {
+                field: "operate",
+                title: "Acciones",
+                align: 'center',
+                clickToSelect: false,
+                events: window.operateEvents,
+                formatter: operateFormatter
             }
         ]
     })

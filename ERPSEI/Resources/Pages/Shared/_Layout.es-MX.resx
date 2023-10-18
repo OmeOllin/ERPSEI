@@ -120,6 +120,9 @@
   <data name="AccountingMenu" xml:space="preserve">
     <value>Contabilidad</value>
   </data>
+  <data name="AreasCatalogMenu" xml:space="preserve">
+    <value>Catálogo de áreas</value>
+  </data>
   <data name="CatalogsMenu" xml:space="preserve">
     <value>Catálogos</value>
   </data>
