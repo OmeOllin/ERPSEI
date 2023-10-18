@@ -9,6 +9,8 @@
 document.addEventListener("DOMContentLoaded", async function (event) {
     let modal = document.getElementById('modal');
     if (modal == null) { document.body.innerHTML += loadingHTML; }
+
+    $(document).ajaxStart(showLoading).ajaxStop(hideLoading);
 });
 
 function showLoading() {
