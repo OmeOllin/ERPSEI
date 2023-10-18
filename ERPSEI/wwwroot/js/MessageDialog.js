@@ -6,11 +6,11 @@ const MSG_TYPE_OK = 4;
 
 var messageDialog = null;
 
-const alertIcon = `<i class="bi bi-exclamation-circle-fill me-3" style="font-size: 35px"></i>`;
-const errorIcon = `<i class="bi bi-x-circle-fill me-3" style="font-size: 35px"></i>`;
-const questionIcon = `<i class="bi bi-question-circle-fill me-3" style="font-size: 35px"></i>`;
-const infoIcon = `<i class="bi bi-info-circle-fill me-3" style="font-size: 35px"></i>`;
-const okIcon = `<i class="bi bi-check-circle-fill me-3" style="font-size: 35px"></i>`;
+const alertIcon = `<i class="d-block bi bi-exclamation-circle-fill me-3" style="font-size: 55px"></i>`;
+const errorIcon = `<i class="d-block bi bi-x-circle-fill me-3" style="font-size: 55px"></i>`;
+const questionIcon = `<i class="d-block bi bi-question-circle-fill me-3" style="font-size: 55px"></i>`;
+const infoIcon = `<i class="d-block bi bi-info-circle-fill me-3" style="font-size: 55px"></i>`;
+const okIcon = `<i class="d-block bi bi-check-circle-fill me-3" style="font-size: 55px"></i>`;
 
 const messageDialogHTML = `<div id="messageDialog" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
                              <div class="modal-dialog modal-dialog-centered">
@@ -69,7 +69,7 @@ function showMessage(title, message, type, funcOK, funcCancel) {
             break;
     };
 
-    modalBody.innerHTML = `<div class="w-100 alert alert-${color} align-items-center d-flex">${icon}<div>${message}</div></div>`;
+    modalBody.innerHTML = `<div class="w-100 alert alert-${color} align-items-center"><center>${icon}<div class="d-block">${message}</div></center></div>`;
 
     if (type == MSG_TYPE_QUESTION) {
         buttonsContainer.innerHTML = `<button id="cancelbutton" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
