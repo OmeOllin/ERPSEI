@@ -1,8 +1,8 @@
 ﻿@page "{handler?}"
-@using ERPSEI.Areas.Catalogos.Pages;
+@using ERPSEI.Areas.Catalogos.Pages.Puestos;
 @using Microsoft.AspNetCore.Localization;
 @using Microsoft.AspNetCore.Mvc.Localization;
-@model PuestosModel
+@model ListadoPuestosModel
 @inject IViewLocalizer Localizer;
 @{
 	ViewData["Title"] = Localizer["Title"];
@@ -73,7 +73,7 @@
 	<script src="~/lib/bootstrap-table/locale/bootstrap-table-en-US.min.js"></script>
 	<script src="~/lib/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
 
-	<script src="~/../Areas/Catalogos/Pages/Puestos.cshtml.js"></script>
+	<script src="~/../Areas/Catalogos/Pages/Puestos/ListadoPuestos.cshtml.js"></script>
 
 	<script type="text/javascript">
 		var cultureName = "@cultureName";
