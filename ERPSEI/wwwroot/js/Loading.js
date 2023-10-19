@@ -1,4 +1,4 @@
-﻿let loadingHTML = `<div id="modal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+﻿let loadingHTML = `<div id="modal" class="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
                        <div class="modal-dialog modal-sm modal-dialog-centered">
                            <span class="spinner-border text-info position-fixed" style="left: 50%;"></span>
                        </div>
