@@ -1,6 +1,10 @@
 ﻿var table;
 var buttonRemove;
 var selections = [];
+const NUEVO = 0;
+const EDITAR = 1;
+const VER = 2;
+const postOptions = { headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() } }
 
 document.addEventListener("DOMContentLoaded", function (event) {
     table = $("#table");
@@ -9,20 +13,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     initTable();
 });
 
-function additionalButtons() {
-    return {
-        btnImport: {
-            text: btnImportarText,
-            icon: 'bi-upload',
-            event: function () {
-                showInfo("Importar datos", "Esta funcionalidad permitirá agregar datos mediante un archivo excel");
-            },
-            attributes: {
-                title: btnImportarTitle
-            }
-        }
-    }
-}
+//Funcionalidad Tabla
 function getIdSelections() {
     return $.map(table.bootstrapTable('getSelections'), function (row) {
         return row.id
@@ -34,11 +25,10 @@ function responseHandler(res) {
     })
     return res
 }
-
 function detailFormatter(index, row) {
     var html = []
     $.each(row, function (key, value) {
-        if (key != "state") {
+        if (key != "state" && key != "empleados") {
             html.push('<p><b>' + key + ':</b> ' + value + '</p>')
         }
     });
@@ -46,27 +36,28 @@ function detailFormatter(index, row) {
 }
 function operateFormatter(value, row, index) {
     return [
-        '<a class="see" href="javascript:void(0)" title="' + btnVerTitle + '">',
+        '<a class="see" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgPuesto" title="' + btnVerTitle + '">',
             '<i class="bi bi-search"></i>',
         '</a>  ',
-        '<a class="edit" href="javascript:void(0)" title="' + btnEditarTitle + '">',
+        '<a class="edit" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgPuesto" title="' + btnEditarTitle + '">',
             '<i class="bi bi-pencil-fill"></i>',
         '</a>'
     ].join('')
 }
 window.operateEvents = {
     'click .see': function (e, value, row, index) {
-        let stringJSON = JSON.stringify(row);
-        showInfo("Ver", `Diste clic para ver a: ${row.nombre}`);
+        initPuestoDialog(VER, row);
     },
     'click .edit': function (e, value, row, index) {
-        let stringJSON = JSON.stringify(row);
-        showInfo("Ver", `Diste clic para editar a: ${row.nombre}`);
+        initPuestoDialog(EDITAR, row);
         //table.bootstrapTable('remove', {
         //    field: 'id',
         //    values: [row.id]
         //})
     }
+}
+function onAgregarClick() {
+    initPuestoDialog(NUEVO, { id: "Nuevo", nombre: "" });
 }
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
@@ -128,3 +119,68 @@ function initTable() {
         });
     })
 }
+/////////////////////
+
+//Funcionalidad Diálogo
+function initPuestoDialog(action, row) {
+    let idField = document.getElementById("inpPuestoId");
+    let nombreField = document.getElementById("inpPuestoNombre");
+    let btnGuardar = document.getElementById("dlgPuestoBtnGuardar");
+    let dlgTitle = document.getElementById("dlgPuestoTitle");
+
+    idField.setAttribute("disabled", true);
+
+    switch (action) {
+        case NUEVO:
+            dlgTitle.innerHTML = dlgNuevoTitle;
+
+            nombreField.removeAttribute("disabled");
+            btnGuardar.removeAttribute("disabled");
+            break;
+        case EDITAR:
+            dlgTitle.innerHTML = dlgEditarTitle;
+
+            nombreField.removeAttribute("disabled");
+            btnGuardar.removeAttribute("disabled");
+            break;
+        default:
+            dlgTitle.innerHTML = dlgVerTitle;
+
+            nombreField.setAttribute("disabled", true);
+            btnGuardar.setAttribute("disabled", true);
+            break;
+    }
+
+    idField.value = row.id;
+    nombreField.value = row.nombre;
+}
+function onGuardarClick() {
+    let idField = document.getElementById("inpPuestoId");
+    let nombreField = document.getElementById("inpPuestoNombre");
+    let dlgTitle = document.getElementById("dlgPuestoTitle");
+
+    let oParams = {
+        id: idField.value,
+        nombre: nombreField.value
+    };
+
+    doAjax(
+        "/Catalogos/Puestos/SavePuesto",
+        oParams,
+        function (resp) {
+            if (resp.error) {
+                showError("Error", error);
+                return;
+            }
+
+            let e = document.querySelector("[name='refresh']");
+            e.click();
+
+            showSuccess(dlgTitle.innerHTML, resp.mensaje);
+        }, function (error) {
+            showError("Error", error);
+        },
+        postOptions
+    );
+}
+/////////////////////
