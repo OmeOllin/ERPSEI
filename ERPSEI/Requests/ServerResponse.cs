@@ -2,26 +2,27 @@
 {
 	public class ServerResponse
 	{
-		public bool Error { get; set; }
+		public bool TieneError { get; set; }
 		public string? Mensaje { get; set; }
 		public object? Datos { get; set; }
+		public string[] Errores { get; set; } = Array.Empty<string>();
 
 		public ServerResponse() { 
-			Error = false;
+			TieneError = false;
 			Mensaje = null;
 			Datos = null;
 		}
 
 		public ServerResponse(bool error, string? mensaje)
 		{
-			Error = error;
+			TieneError = error;
 			Mensaje = mensaje;
 			Datos = null;
 		}
 
 		public ServerResponse(bool error, string? mensaje, object? datos)
 		{
-			Error = error;
+			TieneError = error;
 			Mensaje = mensaje;
 			Datos = datos;
 		}
