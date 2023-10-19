@@ -92,17 +92,17 @@ function showMessage(title, message, type, funcOK, funcCancel) {
     messageDialog.show();
 }
 
-function showAlert(title, message, funcOK, funcCancel) {
-    showMessage(title, message, MSG_TYPE_ALERT, funcOK, funcCancel);
+function showAlert(title, message, funcOK) {
+    showMessage(title, message, MSG_TYPE_ALERT, funcOK, null);
 }
-function showError(title, message, funcOK, funcCancel) {
-    showMessage(title, message, MSG_TYPE_ERROR, funcOK, funcCancel);
+function showError(title, message, funcOK) {
+    showMessage(title, message, MSG_TYPE_ERROR, funcOK, null);
 }
-function showInfo(title, message, funcOK, funcCancel) {
-    showMessage(title, message, MSG_TYPE_INFO, funcOK, funcCancel);
+function showInfo(title, message, funcOK) {
+    showMessage(title, message, MSG_TYPE_INFO, funcOK, null);
 }
-function showSuccess(title, message, funcOK, funcCancel) {
-    showMessage(title, message, MSG_TYPE_OK, funcOK, funcCancel);
+function showSuccess(title, message, funcOK) {
+    showMessage(title, message, MSG_TYPE_OK, funcOK, null);
 }
 function askConfirmation(title, message, funcOK, funcCancel) {
     showMessage(title, message, MSG_TYPE_QUESTION, funcOK, funcCancel);
