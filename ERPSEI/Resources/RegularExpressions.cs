@@ -2,7 +2,7 @@
 {
 	public static class RegularExpressions
 	{
-		public const string PersonName = "";
+		public const string PersonName = @"^[A-ZÁÉÍÓÚ][a-záéíóú]+$";
 
 		public const string AlphanumSpace = @"^[áÁéÉíÍóÓúÚñÑ\w ]+$";
 
