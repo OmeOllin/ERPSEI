@@ -12,7 +12,7 @@ const questionIcon = `<i class="d-block bi bi-question-circle-fill me-3" style="
 const infoIcon = `<i class="d-block bi bi-info-circle-fill me-3" style="font-size: 55px"></i>`;
 const okIcon = `<i class="d-block bi bi-check-circle-fill me-3" style="font-size: 55px"></i>`;
 
-const messageDialogHTML = `<div id="messageDialog" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+const messageDialogHTML = `<div id="messageDialog" class="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
                              <div class="modal-dialog modal-dialog-centered">
                                <div class="modal-content">
                                  <div class="modal-header">
