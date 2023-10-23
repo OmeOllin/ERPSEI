@@ -43,7 +43,32 @@ namespace ERPSEI.Data.Managers
             }
         }
 
-        public async Task<List<Puesto>> GetAllAsync()
+		public async Task DeleteMultipleByIdAsync(string[] ids)
+		{
+			//Inicia una transacción.
+			await db.Database.BeginTransactionAsync();
+            try
+            {
+                foreach (string id in ids)
+                {
+                    Puesto? puesto = GetById(int.Parse(id));
+                    if (puesto != null)
+                    {
+                        db.Remove(puesto);
+                        await db.SaveChangesAsync();
+                    }
+                }
+
+                await db.Database.CommitTransactionAsync();
+            }
+            catch (Exception)
+            {
+                await db.Database.RollbackTransactionAsync();
+
+            }
+		}
+
+		public async Task<List<Puesto>> GetAllAsync()
         {
             return await db.Puestos.ToListAsync();
         }

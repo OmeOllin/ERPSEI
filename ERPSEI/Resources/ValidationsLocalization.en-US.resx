@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AlphanumSpace" xml:space="preserve">
+    <value>The {0} field only allows letters, numbers, underscores, and spaces.</value>
+  </data>
   <data name="ConfirmNewPasswordField" xml:space="preserve">
     <value>Confirm new password</value>
   </data>
@@ -143,6 +146,9 @@
   </data>
   <data name="MothersLastNameField" xml:space="preserve">
     <value>Mother's last name</value>
+  </data>
+  <data name="NameField" xml:space="preserve">
+    <value>Name</value>
   </data>
   <data name="NewEmailField" xml:space="preserve">
     <value>Nuevo correo electrónico</value>

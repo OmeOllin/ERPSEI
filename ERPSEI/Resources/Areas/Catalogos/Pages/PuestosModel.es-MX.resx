@@ -123,4 +123,10 @@
   <data name="PositionSavedUnsuccessfully" xml:space="preserve">
     <value>Error al guardar el puesto</value>
   </data>
+  <data name="PositionsDeletedSuccessfully" xml:space="preserve">
+    <value>¡Registros eliminados satisfactoriamente!</value>
+  </data>
+  <data name="PositionsDeletedUnsuccessfully" xml:space="preserve">
+    <value>Error al eliminar los registros</value>
+  </data>
 </root>

@@ -123,4 +123,10 @@
   <data name="PositionSavedUnsuccessfully" xml:space="preserve">
     <value>Error saving position</value>
   </data>
+  <data name="PositionsDeletedSuccessfully" xml:space="preserve">
+    <value>Records deleted succesfully!</value>
+  </data>
+  <data name="PositionsDeletedUnsuccessfully" xml:space="preserve">
+    <value>Error deleting records</value>
+  </data>
 </root>

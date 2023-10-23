@@ -18,8 +18,6 @@
 
 <h3 class="title mb-3">@ViewData["Title"]</h3>
 
-<form id="theForm" method="post"></form>
-
 <!-- --------------------------- -->
 <!-- Sección tabla de resultados -->
 <div id="toolbar" class="col-xl-12">
@@ -31,32 +29,29 @@
 	</button>
 </div>
 <table id="table" class="table-sm"
-	   data-toolbar="#toolbar"
-	   data-search="true"
-	   data-show-refresh="true"
-	   data-show-toggle="true"
-	   data-show-fullscreen="true"
-	   data-show-columns="true"
-	   data-show-columns-toggle-all="true"
-	   data-detail-view="true"
-	   data-show-export="true"
-	   data-click-to-select="true"
-	   data-detail-formatter="detailFormatter"
-	   data-minimum-count-columns="2"
-	   data-show-pagination-switch="true"
-	   data-pagination="true"
-	   data-id-field="id"
-	   data-page-list="[10, 25, 50, 100, all]"
-	   data-show-footer="false"
-	   data-side-pagination="client"
-	   data-response-handler="responseHandler"
-	   data-buttons-class="primary"
-	   data-url="/Catalogos/Puestos/PuestosList">
+		data-toolbar="#toolbar"
+		data-search="true"
+		data-show-refresh="true"
+		data-show-toggle="true"
+		data-show-fullscreen="true"
+		data-show-columns="true"
+		data-show-columns-toggle-all="true"
+		data-detail-view="true"
+		data-show-export="true"
+		data-click-to-select="true"
+		data-detail-formatter="detailFormatter"
+		data-minimum-count-columns="2"
+		data-show-pagination-switch="true"
+		data-pagination="true"
+		data-id-field="id"
+		data-page-list="[10, 25, 50, 100, all]"
+		data-show-footer="false"
+		data-side-pagination="client"
+		data-response-handler="responseHandler"
+		data-buttons-class="primary"
+		data-url="/Catalogos/Puestos/PuestosList">
 	<thead>
 		<tr align="center" valign="middle" class="bg-primary bg-opacity-10">
-			<th scope="col"></th>
-			<th scope="col">Id</th>
-			<th scope="col">Nombre</th>
 		</tr>
 	</thead>
 </table>
@@ -65,52 +60,57 @@
 
 <!-- --------------------------- -->
 <!-- Sección Nuevo/Editar/Ver Registro --- -->
-<div id="dlgPuesto" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 id="dlgPuestoTitle" class="modal-title"></h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-			</div>
-			<div class="modal-body align-items-center">
-				<div class="container-fluid">
-					<div class="row">
-						<div class="col-3">
-							<div class="form-floating mb-3">
-								<input id="inpPuestoId" asp-for="Input.Id" type="text" class="form-control" />
-								<label asp-for="Input.Id" class="form-label"></label>
+<form id="theForm" method="post">
+	<div id="dlgPuesto" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 id="dlgPuestoTitle" class="modal-title"></h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body align-items-center">
+					<div class="container-fluid">
+						<div id="saveValidationSummary" class="text-danger mb-3" role="alert"></div>
+						<div class="row">
+							<div class="col-3">
+								<div class="form-floating mb-3">
+									<input id="inpPuestoId" asp-for="Input.Id" type="text" class="form-control" />
+									<label asp-for="Input.Id" class="form-label"></label>
+									<span asp-validation-for="Input.Id" class="text-danger"></span>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="col-12">
-							<div class="form-floating mb-3">
-								<input id="inpPuestoNombre" asp-for="Input.Nombre" type="text" class="form-control" />
-								<label asp-for="Input.Nombre" class="form-label"></label>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<input id="inpPuestoNombre" asp-for="Input.Nombre" type="text" class="form-control" />
+									<label asp-for="Input.Nombre" class="form-label"></label>
+									<span asp-validation-for="Input.Nombre" class="text-danger"></span>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="modal-footer">
-				<button id="dlgPuestoBtnCancelar" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-					<i class="bi bi-x-lg"></i> Cancelar
-				</button>
-				<button id="dlgPuestoBtnGuardar" type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="onGuardarClick();">
-					<i class="bi bi-floppy"></i> Guardar
-				</button>
+				<div class="modal-footer">
+					<button id="dlgPuestoBtnCancelar" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i> Cancelar
+					</button>
+					<button id="dlgPuestoBtnGuardar" type="button" class="btn btn-primary" onclick="onGuardarClick();">
+						<i class="bi bi-floppy"></i> Guardar
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
+</form>
 <!-- --------------------------- -->
 <!-- --------------------------- -->
 @section Scripts {
 	<link rel="stylesheet" href="~/lib/bootstrap-table/bootstrap-table.min.css">
 
 	<script src="~/lib/bootstrap-table/extensions/export/tableExport.min.js"></script>
-	<script src="~/lib/bootstrap-table/extensions/export/jspdf.min.js"></script>
-	<script src="~/lib/bootstrap-table/extensions/export/jspdf.plugin.autotable.js"></script>
+	@*<script src="~/lib/bootstrap-table/extensions/export/jspdf.min.js"></script>
+	<script src="~/lib/bootstrap-table/extensions/export/jspdf.plugin.autotable.js"></script> *@
 
 	<script src="~/lib/bootstrap-table/bootstrap-table.min.js"></script>
 	<script src="~/lib/bootstrap-table/locale/bootstrap-table-es-MX.min.js"></script>
@@ -128,5 +128,11 @@
 		var dlgEditarTitle = '@Localizer["EditDialogTitle"]';
 		var dlgVerTitle = '@Localizer["SeeDialogTitle"]';
 		var dlgNuevoTitle = '@Localizer["NewDialogTitle"]';
+		var dlgDeleteTitle = '@Localizer["DeletePositionDialogTitle"]';
+		var dlgDeleteQuestion = '@Localizer["DeletePositionDialogQuestion"]';
+		var colNombreHeader = '@Localizer["ColNameHeader"]';
+		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
 	</script>
+
+	<partial name="_ValidationScriptsPartial" />
 }

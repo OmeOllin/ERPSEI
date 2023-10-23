@@ -64,7 +64,7 @@ function initTable() {
         height: 550,
         locale: cultureName,
         exportDataType: 'all',
-        exportTypes: ['excel', 'pdf'],
+        exportTypes: ['excel'],
         columns: [
             {
                 field: "state",
@@ -77,19 +77,21 @@ function initTable() {
                 field: "id",
                 align: "center",
                 valign: "middle",
-                sortable: true
+                sortable: true,
+                width: "80px"
             },
             {
-                title: "Nombre",
+                title: colNombreHeader,
                 field: "nombre",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
+                title: colAccionesHeader,
                 field: "operate",
-                title: "Acciones",
                 align: 'center',
+                width: "100px",
                 clickToSelect: false,
                 events: window.operateEvents,
                 formatter: operateFormatter
@@ -109,13 +111,36 @@ function initTable() {
         console.log(name, args)
     })
     buttonRemove.click(function () {
-        askConfirmation("Eliminar registros", "¿Está seguro que desea eliminar los registros seleccionados?", function () {
+        askConfirmation(dlgDeleteTitle, dlgDeleteQuestion, function () {
             var ids = getIdSelections()
-            table.bootstrapTable('remove', {
-                field: 'id',
-                values: ids
-            })
-            buttonRemove.prop('disabled', true);
+
+            let oParams = { ids: ids };
+
+            doAjax(
+                "/Catalogos/Puestos/DeletePuestos",
+                oParams,
+                function (resp) {
+                    if (resp.tieneError) {
+                        showError("Error", error);
+                        return;
+                    }
+
+                    table.bootstrapTable('remove', {
+                        field: 'id',
+                        values: ids
+                    })
+                    buttonRemove.prop('disabled', true);
+
+                    let e = document.querySelector("[name='refresh']");
+                    e.click();
+
+                    showSuccess(dlgDeleteTitle, resp.mensaje);
+                }, function (error) {
+                    showError("Error", error);
+                },
+                postOptions
+            );
+            
         });
     })
 }
@@ -127,6 +152,8 @@ function initPuestoDialog(action, row) {
     let nombreField = document.getElementById("inpPuestoNombre");
     let btnGuardar = document.getElementById("dlgPuestoBtnGuardar");
     let dlgTitle = document.getElementById("dlgPuestoTitle");
+    let summaryContainer = document.getElementById("saveValidationSummary");
+    summaryContainer.innerHTML = "";
 
     idField.setAttribute("disabled", true);
 
@@ -155,12 +182,22 @@ function initPuestoDialog(action, row) {
     nombreField.value = row.nombre;
 }
 function onGuardarClick() {
+    //Ejecuta la validación
+    $("#theForm").validate();
+    //Determina los errores
+    let valid = $("#theForm").valid();
+    //Si la forma no es válida, entonces finaliza.
+    if (!valid) { return; }
+
+    let btnClose = document.getElementById("dlgPuestoBtnCancelar");
     let idField = document.getElementById("inpPuestoId");
     let nombreField = document.getElementById("inpPuestoNombre");
     let dlgTitle = document.getElementById("dlgPuestoTitle");
+    let summaryContainer = document.getElementById("saveValidationSummary");
+    summaryContainer.innerHTML = "";
 
     let oParams = {
-        id: idField.value,
+        id: idField.value == "Nuevo" ? 0 : idField.value,
         nombre: nombreField.value
     };
 
@@ -168,10 +205,18 @@ function onGuardarClick() {
         "/Catalogos/Puestos/SavePuesto",
         oParams,
         function (resp) {
-            if (resp.error) {
-                showError("Error", error);
+            if (resp.tieneError) {
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    let summary = ``;
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                }
                 return;
             }
+
+            btnClose.click();
 
             let e = document.querySelector("[name='refresh']");
             e.click();

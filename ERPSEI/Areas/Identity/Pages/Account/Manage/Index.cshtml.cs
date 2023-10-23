@@ -6,6 +6,7 @@ using ERPSEI.Data;
 using ERPSEI.Data.Entities;
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Managers;
+using ERPSEI.Resources;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -70,24 +71,24 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 
             [Required(ErrorMessage = "Required")]
             [StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
-            [RegularExpression(@"^[A-ZÁÉÍÓÚ][a-záéíóú]+$", ErrorMessage = "PersonName")]
+            [RegularExpression(RegularExpressions.PersonName, ErrorMessage = "PersonName")]
             [Display(Name = "FirstNameField")]
             public string FirstName { get; set; }
 
             [StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
-            [RegularExpression(@"^[A-ZÁÉÍÓÚ][a-záéíóú]+$", ErrorMessage = "PersonName")]
+            [RegularExpression(RegularExpressions.PersonName, ErrorMessage = "PersonName")]
             [Display(Name = "SecondNameField")]
             public string SecondName {  get; set; }
 
             [Required(ErrorMessage = "Required")]
             [StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
-            [RegularExpression(@"^[A-ZÁÉÍÓÚ][a-záéíóú]+$", ErrorMessage = "PersonName")]
+            [RegularExpression(RegularExpressions.PersonName, ErrorMessage = "PersonName")]
             [Display(Name = "FathersLastNameField")]
             public string FathersLastName {  get; set; }
 
             [Required(ErrorMessage = "Required")]
             [StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
-            [RegularExpression(@"^[A-ZÁÉÍÓÚ][a-záéíóú]+$", ErrorMessage = "PersonName")]
+            [RegularExpression(RegularExpressions.PersonName, ErrorMessage = "PersonName")]
             [Display(Name = "MothersLastNameField")]
             public string MothersLastName { get; set; }
 

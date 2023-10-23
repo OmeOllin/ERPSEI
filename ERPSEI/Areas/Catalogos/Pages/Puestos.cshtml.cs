@@ -1,10 +1,14 @@
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Managers;
 using ERPSEI.Requests;
+using ERPSEI.Resources;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
@@ -22,7 +26,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Display(Name = "Id")]
 			public int Id { get; set; }
 
-			[Display(Name = "Nombre")]
+			[StringLength(50, ErrorMessage = "FieldLength", MinimumLength = 1)]
+			[RegularExpression(RegularExpressions.AlphanumSpace, ErrorMessage = "AlphanumSpace")]
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "NameField")]
 			public string Nombre { get; set; } = string.Empty;
 		}
 
@@ -38,10 +45,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			_logger = logger;
 		}
 
-		public void OnGet()
-        {
-        }
-
 		public JsonResult OnGetPuestosList()
 		{
 			List<Puesto> puestos = _puestoManager.GetAllAsync().Result;
@@ -49,30 +52,52 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			return new JsonResult(puestos);
 		}
 
-		public async Task<JsonResult> OnPostSavePuesto(string id, string nombre)
+		public async Task<JsonResult> OnPostDeletePuestos(string[] ids)
+		{
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["PositionsDeletedUnsuccessfully"]);
+			try
+			{
+				await _puestoManager.DeleteMultipleByIdAsync(ids);
+				resp.TieneError = false;
+				resp.Mensaje = _strLocalizer["PositionsDeletedSuccessfully"];
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+			}
+
+			return new JsonResult(resp);
+		}
+
+		public async Task<JsonResult> OnPostSavePuesto()
 		{
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["PositionSavedUnsuccessfully"]);
 
 			try
 			{
-				int intId = id == "Nuevo" ? 0 : int.Parse(id);
-
-				Puesto? puesto = _puestoManager.GetById(intId);
-
-				if(puesto != null)
+				if (!ModelState.IsValid)
 				{
-					puesto.Nombre = nombre;
-					await _puestoManager.UpdateAsync(puesto);
-
-					resp.Error = false;
-					resp.Mensaje = _strLocalizer["PositionSavedSuccessfully"];
+					resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray();
 				}
 				else
 				{
-					await _puestoManager.CreateAsync(new Puesto() { Nombre = nombre });
+					Puesto? puesto = _puestoManager.GetById(Input.Id);
 
-					resp.Error = false;
-					resp.Mensaje = _strLocalizer["PositionSavedSuccessfully"];
+					if (puesto != null)
+					{
+						puesto.Nombre = Input.Nombre;
+						await _puestoManager.UpdateAsync(puesto);
+
+						resp.TieneError = false;
+						resp.Mensaje = _strLocalizer["PositionSavedSuccessfully"];
+					}
+					else
+					{
+						await _puestoManager.CreateAsync(new Puesto() { Nombre = Input.Nombre });
+
+						resp.TieneError = false;
+						resp.Mensaje = _strLocalizer["PositionSavedSuccessfully"];
+					}
 				}
 			}
 			catch (Exception ex)

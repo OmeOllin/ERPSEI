@@ -120,8 +120,20 @@
   <data name="AddButton" xml:space="preserve">
     <value>Add</value>
   </data>
+  <data name="ColActionsHeader" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="ColNameHeader" xml:space="preserve">
+    <value>Name</value>
+  </data>
   <data name="DeleteButton" xml:space="preserve">
     <value>Delete</value>
+  </data>
+  <data name="DeletePositionDialogQuestion" xml:space="preserve">
+    <value>Are you sure you want to delete selected records?</value>
+  </data>
+  <data name="DeletePositionDialogTitle" xml:space="preserve">
+    <value>Delete position</value>
   </data>
   <data name="EditButtonTitle" xml:space="preserve">
     <value>Edit</value>

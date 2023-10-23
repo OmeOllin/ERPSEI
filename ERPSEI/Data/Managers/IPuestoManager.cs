@@ -11,7 +11,7 @@ namespace ERPSEI.Data.Managers
         public Task DeleteAsync(Puesto puesto);
 
         public Task DeleteByIdAsync(int id);
-
+        public Task DeleteMultipleByIdAsync(string[] ids);
         public Task<List<Puesto>> GetAllAsync();
 
         Puesto? GetById(int id);
