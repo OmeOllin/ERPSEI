@@ -12,6 +12,8 @@ namespace ERPSEI.Data.Managers
 
         public Task DeleteByIdAsync(int id);
 
+		public Task DeleteMultipleByIdAsync(string[] ids);
+
 		public Task<List<Area>> GetAllAsync();
 
 		Area? GetById(int id);

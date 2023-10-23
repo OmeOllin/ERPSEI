@@ -1,6 +1,10 @@
 ﻿var table;
 var buttonRemove;
 var selections = [];
+const NUEVO = 0;
+const EDITAR = 1;
+const VER = 2;
+const postOptions = { headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() } }
 
 document.addEventListener("DOMContentLoaded", function (event) {
     table = $("#table");
@@ -9,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     initTable();
 });
 
+//Funcionalidad Tabla
 function getIdSelections() {
     return $.map(table.bootstrapTable('getSelections'), function (row) {
         return row.id
@@ -24,7 +29,7 @@ function responseHandler(res) {
 function detailFormatter(index, row) {
     var html = []
     $.each(row, function (key, value) {
-        if (key != "state") {
+        if (key != "state" && key != "empleados") {
             html.push('<p><b>' + key + ':</b> ' + value + '</p>')
         }
     });
@@ -32,34 +37,31 @@ function detailFormatter(index, row) {
 }
 function operateFormatter(value, row, index) {
     return [
-        '<a class="see" href="javascript:void(0)" title="' + btnVerTitle + '">',
+        '<a class="see" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgArea" title="' + btnVerTitle + '">',
             '<i class="bi bi-search"></i>',
         '</a>  ',
-        '<a class="edit" href="javascript:void(0)" title="' + btnEditarTitle + '">',
+        '<a class="edit" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgArea" title="' + btnEditarTitle + '">',
             '<i class="bi bi-pencil-fill"></i>',
         '</a>'
     ].join('')
 }
 window.operateEvents = {
     'click .see': function (e, value, row, index) {
-        let stringJSON = JSON.stringify(row);
-        showInfo("Ver", `Diste clic para ver a: ${row.nombre}`);
+        initAreaDialog(VER, row);
     },
     'click .edit': function (e, value, row, index) {
-        let stringJSON = JSON.stringify(row);
-        showInfo("Ver", `Diste clic para editar a: ${row.nombre}`);
-        //table.bootstrapTable('remove', {
-        //    field: 'id',
-        //    values: [row.id]
-        //})
+        initAreaDialog(EDITAR, row);
     }
+}
+function onAgregarClick() {
+    initAreaDialog(NUEVO, { id: "Nuevo", nombre: "" });
 }
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
         height: 550,
         locale: cultureName,
         exportDataType: 'all',
-        exportTypes: ['excel', 'pdf'],
+        exportTypes: ['excel'],
         columns: [
             {
                 field: "state",
@@ -72,19 +74,21 @@ function initTable() {
                 field: "id",
                 align: "center",
                 valign: "middle",
-                sortable: true
+                sortable: true,
+                width: "80px"
             },
             {
-                title: "Nombre",
+                title: colNombreHeader,
                 field: "nombre",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
+                title: colAccionesHeader,
                 field: "operate",
-                title: "Acciones",
                 align: 'center',
+                width: "100px",
                 clickToSelect: false,
                 events: window.operateEvents,
                 formatter: operateFormatter
@@ -104,13 +108,120 @@ function initTable() {
         console.log(name, args)
     })
     buttonRemove.click(function () {
-        askConfirmation("Eliminar registros", "¿Está seguro que desea eliminar los registros seleccionados?", function () {
-            var ids = getIdSelections()
-            table.bootstrapTable('remove', {
-                field: 'id',
-                values: ids
-            })
-            buttonRemove.prop('disabled', true);
+        askConfirmation(dlgDeleteTitle, dlgDeleteQuestion, function () {
+            var ids = getIdSelections();
+
+            let oParams = { ids: ids };
+
+            doAjax(
+                "/Catalogos/Areas/DeleteAreas",
+                oParams,
+                function (resp) {
+                    if (resp.tieneError) {
+                        showError("Error", error);
+                        return;
+                    }
+
+                    table.bootstrapTable('remove', {
+                        field: 'id',
+                        values: ids
+                    })
+                    buttonRemove.prop('disabled', true);
+
+                    let e = document.querySelector("[name='refresh']");
+                    e.click();
+
+                    showSuccess(dlgDeleteTitle, resp.mensaje);
+                }, function (error) {
+                    showError("Error", error);
+                },
+                postOptions
+            );
         });
     })
 }
+/////////////////////
+
+//Funcionalidad Diálogo
+function initAreaDialog(action, row) {
+    let idField = document.getElementById("inpAreaId");
+    let nombreField = document.getElementById("inpAreaNombre");
+    let btnGuardar = document.getElementById("dlgAreaBtnGuardar");
+    let dlgTitle = document.getElementById("dlgAreaTitle");
+    let summaryContainer = document.getElementById("saveValidationSummary");
+    summaryContainer.innerHTML = "";
+
+    idField.setAttribute("disabled", true);
+
+    switch (action) {
+        case NUEVO:
+            dlgTitle.innerHTML = dlgNuevoTitle;
+
+            nombreField.removeAttribute("disabled");
+            btnGuardar.removeAttribute("disabled");
+            break;
+        case EDITAR:
+            dlgTitle.innerHTML = dlgEditarTitle;
+
+            nombreField.removeAttribute("disabled");
+            btnGuardar.removeAttribute("disabled");
+            break;
+        default:
+            dlgTitle.innerHTML = dlgVerTitle;
+
+            nombreField.setAttribute("disabled", true);
+            btnGuardar.setAttribute("disabled", true);
+            break;
+    }
+
+    idField.value = row.id;
+    nombreField.value = row.nombre;
+}
+function onGuardarClick() {
+    //Ejecuta la validación
+    $("#theForm").validate();
+    //Determina los errores
+    let valid = $("#theForm").valid();
+    //Si la forma no es válida, entonces finaliza.
+    if (!valid) { return; }
+
+    let btnClose = document.getElementById("dlgAreaBtnCancelar");
+    let idField = document.getElementById("inpAreaId");
+    let nombreField = document.getElementById("inpAreaNombre");
+    let dlgTitle = document.getElementById("dlgAreaTitle");
+    let summaryContainer = document.getElementById("saveValidationSummary");
+    summaryContainer.innerHTML = "";
+
+    let oParams = {
+        id: idField.value == "Nuevo" ? 0 : idField.value,
+        nombre: nombreField.value
+    };
+
+    doAjax(
+        "/Catalogos/Areas/SaveArea",
+        oParams,
+        function (resp) {
+            if (resp.tieneError) {
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    let summary = ``;
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                }
+                return;
+            }
+
+            btnClose.click();
+
+            let e = document.querySelector("[name='refresh']");
+            e.click();
+
+            showSuccess(dlgTitle.innerHTML, resp.mensaje);
+        }, function (error) {
+            showError("Error", error);
+        },
+        postOptions
+    );
+}
+/////////////////////

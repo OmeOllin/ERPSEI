@@ -117,40 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AddButton" xml:space="preserve">
-    <value>Agregar</value>
+  <data name="AreaSavedSuccessfully" xml:space="preserve">
+    <value>¡Área guardada satisfactoriamente!</value>
   </data>
-  <data name="ColActionsHeader" xml:space="preserve">
-    <value>Acciones</value>
+  <data name="AreaSavedUnsuccessfully" xml:space="preserve">
+    <value>Error al guardar el área</value>
   </data>
-  <data name="ColNameHeader" xml:space="preserve">
-    <value>Nombre</value>
+  <data name="AreasDeletedSuccessfully" xml:space="preserve">
+    <value>¡Registros eliminados satisfactoriamente!</value>
   </data>
-  <data name="DeleteAreaDialogQuestion" xml:space="preserve">
-    <value>¿Está seguro que desea eliminar los registros seleccionados?</value>
-  </data>
-  <data name="DeleteAreaDialogTitle" xml:space="preserve">
-    <value>Eliminar puesto</value>
-  </data>
-  <data name="DeleteButton" xml:space="preserve">
-    <value>Eliminar</value>
-  </data>
-  <data name="EditButtonTitle" xml:space="preserve">
-    <value>Editar</value>
-  </data>
-  <data name="EditDialogTitle" xml:space="preserve">
-    <value>Editar Registro</value>
-  </data>
-  <data name="NewDialogTitle" xml:space="preserve">
-    <value>Nuevo Registro</value>
-  </data>
-  <data name="SeeButtonTitle" xml:space="preserve">
-    <value>Ver</value>
-  </data>
-  <data name="SeeDialogTitle" xml:space="preserve">
-    <value>Ver Registro</value>
-  </data>
-  <data name="Title" xml:space="preserve">
-    <value>Catálogo de Áreas</value>
+  <data name="AreasDeletedUnsuccessfully" xml:space="preserve">
+    <value>Error al eliminar los registros</value>
   </data>
 </root>

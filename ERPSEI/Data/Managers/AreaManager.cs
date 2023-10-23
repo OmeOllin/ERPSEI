@@ -43,6 +43,31 @@ namespace ERPSEI.Data.Managers
             }
         }
 
+		public async Task DeleteMultipleByIdAsync(string[] ids)
+		{
+			//Inicia una transacción.
+			await db.Database.BeginTransactionAsync();
+			try
+			{
+				foreach (string id in ids)
+				{
+					Area? area = GetById(int.Parse(id));
+					if (area != null)
+					{
+						db.Remove(area);
+						await db.SaveChangesAsync();
+					}
+				}
+
+				await db.Database.CommitTransactionAsync();
+			}
+			catch (Exception)
+			{
+				await db.Database.RollbackTransactionAsync();
+
+			}
+		}
+
 		public async Task<List<Area>> GetAllAsync()
 		{
 			return await db.Areas.ToListAsync();

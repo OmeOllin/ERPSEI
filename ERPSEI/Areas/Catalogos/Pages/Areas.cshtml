@@ -21,11 +21,11 @@
 <!-- --------------------------- -->
 <!-- Sección tabla de resultados -->
 <div id="toolbar" class="col-xl-12">
-	<button id="btnAgregar" class="btn btn-primary">
-		<i class="bi bi-plus-lg"></i> @Localizer["AddButton"]
+	<button id="btnAgregar" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dlgArea" onclick="onAgregarClick();">
+		<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
 	</button>
 	<button id="remove" class="btn btn-danger" disabled>
-		<i class="bi bi-trash"></i> @Localizer["DeleteButton"]
+		<i class="bi bi-trash"></i> <span class="d-none d-sm-inline">@Localizer["DeleteButton"]</span>
 	</button>
 </div>
 <table id="table" class="table-sm"
@@ -49,24 +49,66 @@
 	   data-side-pagination="client"
 	   data-response-handler="responseHandler"
 	   data-buttons-class="primary"
-	   data-url="/Catalogos/Areas/AreasList"
-	   data-buttons="additionalButtons">
+	   data-url="/Catalogos/Areas/AreasList">
 	<thead>
 		<tr align="center" valign="middle" class="bg-primary bg-opacity-10">
-			<th scope="col"></th>
-			<th scope="col">Id</th>
-			<th scope="col">Nombre</th>
 		</tr>
 	</thead>
 </table>
+<!-- --------------------------- -->
+<!-- --------------------------- -->
+
+<!-- --------------------------- -->
+<!-- Sección Nuevo/Editar/Ver Registro --- -->
+<form id="theForm" method="post">
+	<div id="dlgArea" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 id="dlgAreaTitle" class="modal-title"></h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body align-items-center">
+					<div class="container-fluid">
+						<div id="saveValidationSummary" class="text-danger mb-3" role="alert"></div>
+						<div class="row">
+							<div class="col-3">
+								<div class="form-floating mb-3">
+									<input id="inpAreaId" asp-for="Input.Id" type="text" class="form-control" />
+									<label asp-for="Input.Id" class="form-label"></label>
+									<span asp-validation-for="Input.Id" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<input id="inpAreaNombre" asp-for="Input.Nombre" type="text" class="form-control" />
+									<label asp-for="Input.Nombre" class="form-label"></label>
+									<span asp-validation-for="Input.Nombre" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button id="dlgAreaBtnCancelar" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i> Cancelar
+					</button>
+					<button id="dlgAreaBtnGuardar" type="button" class="btn btn-primary" onclick="onGuardarClick();">
+						<i class="bi bi-floppy"></i> Guardar
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
 <!-- --------------------------- -->
 <!-- --------------------------- -->
 @section Scripts {
 	<link rel="stylesheet" href="~/lib/bootstrap-table/bootstrap-table.min.css">
 
 	<script src="~/lib/bootstrap-table/extensions/export/tableExport.min.js"></script>
-	<script src="~/lib/bootstrap-table/extensions/export/jspdf.min.js"></script>
-	<script src="~/lib/bootstrap-table/extensions/export/jspdf.plugin.autotable.js"></script>
 
 	<script src="~/lib/bootstrap-table/bootstrap-table.min.js"></script>
 	<script src="~/lib/bootstrap-table/locale/bootstrap-table-es-MX.min.js"></script>
@@ -81,5 +123,14 @@
 		var btnImportarTitle = '@Localizer["ImportButtonTitle"]';
 		var btnVerTitle = '@Localizer["SeeButtonTitle"]';
 		var btnEditarTitle = '@Localizer["EditButtonTitle"]';
+		var dlgEditarTitle = '@Localizer["EditDialogTitle"]';
+		var dlgVerTitle = '@Localizer["SeeDialogTitle"]';
+		var dlgNuevoTitle = '@Localizer["NewDialogTitle"]';
+		var dlgDeleteTitle = '@Localizer["DeleteAreaDialogTitle"]';
+		var dlgDeleteQuestion = '@Localizer["DeleteAreaDialogQuestion"]';
+		var colNombreHeader = '@Localizer["ColNameHeader"]';
+		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
 	</script>
+
+	<partial name="_ValidationScriptsPartial" />
 }
