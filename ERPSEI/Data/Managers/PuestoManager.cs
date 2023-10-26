@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERPSEI.Data.Managers
 {
-    public class PuestoManager : IPuestoManager
+    public class PuestoManager : IRWCatalogoManager<Puesto>
     {
         ApplicationDbContext db { get; set; }
 

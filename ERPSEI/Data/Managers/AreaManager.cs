@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERPSEI.Data.Managers
 {
-    public class AreaManager : IAreaManager
+    public class AreaManager : IRWCatalogoManager<Area>
     {
         ApplicationDbContext db { get; set; }
 

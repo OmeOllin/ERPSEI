@@ -11,7 +11,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 {
     public class AreasModel : PageModel
     {
-		private readonly IAreaManager _areaManager;
+		private readonly IRWCatalogoManager<Area> _areaManager;
 		private readonly IStringLocalizer<AreasModel> _strLocalizer;
 		private readonly ILogger<AreasModel> _logger;
 
@@ -31,7 +31,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 
 		public AreasModel(
-			IAreaManager areaManager,
+			IRWCatalogoManager<Area> areaManager,
 			IStringLocalizer<AreasModel> stringLocalizer,
 			ILogger<AreasModel> logger
 		)

@@ -1,10 +1,10 @@
 ﻿using ERPSEI.Data;
 using ERPSEI.Data.Entities;
+using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Managers;
 using ERPSEI.Email;
 using ERPSEI.Resources;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
@@ -35,8 +35,10 @@ namespace ERPSEI
             _builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             _builder.Services.AddScoped<IArchivoEmpleadoManager, ArchivoEmpleadoManager>();
-			_builder.Services.AddScoped<IPuestoManager, PuestoManager>();
-			_builder.Services.AddScoped<IAreaManager, AreaManager>();
+			_builder.Services.AddScoped<IRWCatalogoManager<Puesto>, PuestoManager>();
+			_builder.Services.AddScoped<IRWCatalogoManager<Area>, AreaManager>();
+			_builder.Services.AddScoped<IRCatalogoManager<Genero>, GeneroManager>();
+			_builder.Services.AddScoped<IRCatalogoManager<EstadoCivil>, EstadoCivilManager>();
 
 		}
 

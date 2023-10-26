@@ -11,7 +11,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 {
     public class PuestosModel : PageModel
     {
-		private readonly IPuestoManager _puestoManager;
+		private readonly IRWCatalogoManager<Puesto> _puestoManager;
 		private readonly IStringLocalizer<PuestosModel> _strLocalizer;
 		private readonly ILogger<PuestosModel> _logger;
 
@@ -31,7 +31,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 
 		public PuestosModel(
-			IPuestoManager puestoManager,
+			IRWCatalogoManager<Puesto> puestoManager,
 			IStringLocalizer<PuestosModel> stringLocalizer,
 			ILogger<PuestosModel> logger
 		)
