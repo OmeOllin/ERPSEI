@@ -39,6 +39,8 @@ namespace ERPSEI.Data
 			modelBuilder.Entity<Empleado>().HasOne(e => e.Genero).WithMany(g => g.Empleados).OnDelete(DeleteBehavior.SetNull);
 			modelBuilder.Entity<Empleado>().HasOne(e => e.Puesto).WithMany(p => p.Empleados).OnDelete(DeleteBehavior.SetNull);
 			modelBuilder.Entity<Empleado>().HasOne(e => e.Area).WithMany(a => a.Empleados).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<Empleado>().HasOne(e => e.Subarea).WithMany(sa => sa.Empleados).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<Empleado>().HasOne(e => e.Oficina).WithMany(o => o.Empleados).OnDelete(DeleteBehavior.SetNull);
 			modelBuilder.Entity<Empleado>().HasMany(e => e.ContactosEmergencia).WithOne(ce => ce.Empleado).OnDelete(DeleteBehavior.SetNull);
 			modelBuilder.Entity<Empleado>().HasMany(e => e.ArchivosEmpleado).WithOne(ae => ae.Empleado).OnDelete(DeleteBehavior.SetNull);
 
@@ -58,14 +60,15 @@ namespace ERPSEI.Data
 					new TipoArchivo((int)FileTypes.INE, "INE"),
 					new TipoArchivo((int)FileTypes.RFC, "RFC"),
 					new TipoArchivo((int)FileTypes.ComprobanteEstudios, "Comprobante de estudios"),
-					new TipoArchivo((int)FileTypes.NSS, "NSS")
+					new TipoArchivo((int)FileTypes.NSS, "NSS"),
+					new TipoArchivo((int)FileTypes.Otro, "Otro")
 				);
 
 			modelBuilder.Entity<EstadoCivil>().HasMany(ec => ec.Empleados).WithOne(e => e.EstadoCivil).OnDelete(DeleteBehavior.SetNull);
 			modelBuilder.Entity<EstadoCivil>()
 				.HasData(
-					new EstadoCivil() { Id = 1, Nombre = "Soltero(a)" },
-					new EstadoCivil() { Id = 2, Nombre = "Casado(a)" }
+					new EstadoCivil() { Id = 1, Nombre = "Soltero" },
+					new EstadoCivil() { Id = 2, Nombre = "Casado" }
 				);
 
 			modelBuilder.Entity<Genero>().HasMany(g => g.Empleados).WithOne(e => e.Genero).OnDelete(DeleteBehavior.SetNull);
@@ -117,7 +120,8 @@ namespace ERPSEI.Data
 				"Expedientes",
 				"Fiscal",
 				"Impuestos",
-				"Legal",
+				"Legal 1",
+				"Legal 2",
 				"Nóminas",
 				"Operaciones",
 				"Recursos Humanos",
@@ -132,6 +136,7 @@ namespace ERPSEI.Data
 			}
 			modelBuilder.Entity<Area>().HasData(dataAreas);
 			modelBuilder.Entity<Area>().HasMany(a => a.Empleados).WithOne(e => e.Area).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<Area>().HasMany(a => a.Subareas).WithOne(sa => sa.Area).OnDelete(DeleteBehavior.SetNull);
 
 			List<string> oficinas = new List<string>()
 			{
@@ -143,8 +148,7 @@ namespace ERPSEI.Data
 				"Cóndor",
 				"Izaguirre",
 				"Lago de Guadalupe",
-				"León",
-				"Los Reyes la Paz",
+				"Los Reyes La Paz",
 				"Pafnuncio",
 				"Pirules",
 				"Polanco",
@@ -180,7 +184,8 @@ namespace ERPSEI.Data
 				l++;
 			}
 			modelBuilder.Entity<Subarea>().HasData(dataSubareas);
-			modelBuilder.Entity<Subarea>().HasMany(o => o.Empleados).WithOne(e => e.Subarea).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<Subarea>().HasMany(sa => sa.Empleados).WithOne(e => e.Subarea).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<Subarea>().HasOne(sa => sa.Area).WithMany(a => a.Subareas).OnDelete(DeleteBehavior.SetNull);
 		}
 
     }

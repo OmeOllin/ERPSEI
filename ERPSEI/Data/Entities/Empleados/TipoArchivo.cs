@@ -12,7 +12,8 @@
         INE,
         RFC,
         ComprobanteEstudios,
-        NSS
+        NSS,
+        Otro
     }
     public class TipoArchivo
     {

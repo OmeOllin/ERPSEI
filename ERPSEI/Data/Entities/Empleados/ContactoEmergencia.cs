@@ -1,8 +1,11 @@
-﻿namespace ERPSEI.Data.Entities.Empleados
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ERPSEI.Data.Entities.Empleados
 {
     public class ContactoEmergencia
     {
-        public int Id { get; set; }
+		[DatabaseGenerated(DatabaseGeneratedOption.None)]
+		public int Id { get; set; }
 
         public string Nombre { get; set; } = string.Empty;
 
