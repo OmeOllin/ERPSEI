@@ -1,9 +1,15 @@
 ﻿@page "{handler?}"
+@using ERPSEI.Data.Managers;
 @using Microsoft.AspNetCore.Localization;
 @using Microsoft.AspNetCore.Mvc.Localization;
 @using ERPSEI.Areas.Catalogos.Pages;
+@using ERPSEI.Data.Entities.Empleados;
 @model GestionDeTalentoModel
 @inject IViewLocalizer Localizer;
+@inject IRWCatalogoManager<Puesto> PuestosManager;
+@inject IRWCatalogoManager<Area> AreasManager;
+@inject IRCatalogoManager<Genero> GenerosManager;
+@inject IRCatalogoManager<EstadoCivil> EstadosCivilesManager;
 @{
 	ViewData["Title"] = Localizer["Title"];
 
@@ -14,8 +20,12 @@
 	System.Globalization.CultureInfo? culture = rqf != null ? rqf.RequestCulture.Culture : new System.Globalization.CultureInfo("es-MX");
 
 	string cultureName = culture.Name;
-}
 
+	List<Puesto> puestos = await PuestosManager.GetAllAsync();
+	List<Area> areas = await AreasManager.GetAllAsync();
+	List<Genero> generos = await GenerosManager.GetAllAsync();
+	List<EstadoCivil> estadosCiviles = await EstadosCivilesManager.GetAllAsync();
+}
 <h3 class="title mb-3">@ViewData["Title"]</h3>
 
 <!-- --------------------------- -->
@@ -33,60 +43,68 @@
 					<div class="row">
 						<div class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<input id="inpFiltroFechaIngresoInicio" type="date" asp-for="Input.FechaIngresoInicio" class="form-control" placeholder="@Localizer["FechaIngresoPlaceholder"]" />
-								<label asp-for="Input.FechaIngresoInicio" class="form-label"></label>
+								<input id="inpFiltroFechaIngresoInicio" type="date" asp-for="InputFiltro.FechaIngresoInicio" class="form-control" placeholder="@Localizer["FechaIngresoPlaceholder"]" />
+								<label asp-for="InputFiltro.FechaIngresoInicio" class="form-label"></label>
 							</div>
 						</div>
 						<div class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<input id="inpFiltroFechaIngresoFin" type="date" asp-for="Input.FechaIngresoFin" class="form-control" placeholder="@Localizer["FechaIngresoPlaceholder"]" />
-								<label asp-for="Input.FechaIngresoFin" class="form-label"></label>
+								<input id="inpFiltroFechaIngresoFin" type="date" asp-for="InputFiltro.FechaIngresoFin" class="form-control" placeholder="@Localizer["FechaIngresoPlaceholder"]" />
+								<label asp-for="InputFiltro.FechaIngresoFin" class="form-label"></label>
 							</div>
 						</div>
 						<div class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<input type="date" asp-for="Input.FechaNacimientoInicio" class="form-control" placeholder="@Localizer["FechaNacimientoPlaceholder"]" />
-								<label asp-for="Input.FechaNacimientoInicio" class="form-label"></label>
+								<input type="date" asp-for="InputFiltro.FechaNacimientoInicio" class="form-control" placeholder="@Localizer["FechaNacimientoPlaceholder"]" />
+								<label asp-for="InputFiltro.FechaNacimientoInicio" class="form-label"></label>
 							</div>
 						</div>
 						<div class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<input type="date" asp-for="Input.FechaNacimientoFin" class="form-control" placeholder="@Localizer["FechaNacimientoPlaceholder"]" />
-								<label asp-for="Input.FechaNacimientoFin" class="form-label"></label>
+								<input type="date" asp-for="InputFiltro.FechaNacimientoFin" class="form-control" placeholder="@Localizer["FechaNacimientoPlaceholder"]" />
+								<label asp-for="InputFiltro.FechaNacimientoFin" class="form-label"></label>
 							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<input asp-for="Input.Nombre" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
-								<label asp-for="Input.Nombre" class="form-label"></label>
+								<input asp-for="InputFiltro.Nombre" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+								<label asp-for="InputFiltro.Nombre" class="form-label"></label>
 							</div>
 						</div>
 						<div class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<select asp-for="Input.Puesto" class="form-control" placeholder="@Localizer["PuestoPlaceholder"]">
+								<select asp-for="InputFiltro.Puesto" class="form-control" placeholder="@Localizer["PuestoPlaceholder"]">
 									<option value="0">Seleccione...</option>
-									<option value="1">Puesto 1</option>
-									<option value="2">Puesto 2</option>
+									@{
+										foreach (Puesto puesto in puestos)
+										{
+											<option value='@puesto.Id'>@puesto.Nombre</option>
+										}
+									}
 								</select>
-								<label asp-for="Input.Puesto" class="form-label"></label>
+								<label asp-for="InputFiltro.Puesto" class="form-label"></label>
 							</div>
 						</div>
 						<div class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<select asp-for="Input.Area" class="form-control" placeholder="@Localizer["AreaPlaceholder"]">
+								<select asp-for="InputFiltro.Area" class="form-control" placeholder="@Localizer["AreaPlaceholder"]">
 									<option value="0">Seleccione...</option>
-									<option value="1">&Aacute;rea 1</option>
-									<option value="2">&Aacute;rea 2</option>
+									@{
+										foreach (Area area in areas)
+										{
+											<option value='@area.Id'>@area.Nombre</option>
+										}
+									}
 								</select>
-								<label asp-for="Input.Area" class="form-label"></label>
+								<label asp-for="InputFiltro.Area" class="form-label"></label>
 							</div>
 						</div>
 						<div class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<input asp-for="Input.CURP" class="form-control" placeholder="@Localizer["CURPPlaceholder"]" />
-								<label asp-for="Input.CURP" class="form-label"></label>
+								<input asp-for="InputFiltro.CURP" class="form-control" placeholder="@Localizer["CURPPlaceholder"]" />
+								<label asp-for="InputFiltro.CURP" class="form-label"></label>
 							</div>
 						</div>
 					</div>
@@ -108,11 +126,11 @@
 <!-- --------------------------- -->
 <!-- Sección tabla de resultados -->
 <div id="toolbar" class="col-xl-12">
-	<button id="btnAgregar" class="btn btn-primary">
-		<i class="bi bi-plus-lg"></i> @Localizer["AddButton"]
+	<button id="btnAgregar" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dlgEmpleado" onclick="onAgregarClick();">
+		<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
 	</button>
 	<button id="remove" class="btn btn-danger" disabled>
-		<i class="bi bi-trash"></i> @Localizer["DeleteButton"]
+		<i class="bi bi-trash"></i> <span class="d-none d-sm-inline">@Localizer["DeleteButton"]</span>
 	</button>
 </div>
 <table id="table" class="table-sm"
@@ -136,28 +154,248 @@
 		data-side-pagination="client"
 		data-response-handler="responseHandler"
 		data-buttons-class="primary"
-		data-url="/Catalogos/GestionDeTalento/TalentList"
-		data-buttons="additionalButtons">
+		data-url="/Catalogos/GestionDeTalento/TalentList">
 	<thead>
 		<tr align="center" valign="middle" class="bg-primary bg-opacity-10">
-			<th scope="col"></th>
-			<th scope="col">Nombre</th>
-			<th scope="col">Fecha de Ingreso</th>
-			<th scope="col">Puesto</th>
-			<th scope="col">&Aacute;rea</th>
-			<th scope="col">Teléfono</th>
-			<th scope="col">Correo Electr&oacute;nico</th>
 		</tr>
 	</thead>
 </table>
+<!-- --------------------------- -->
+<!-- --------------------------- -->
+
+<!-- --------------------------- -->
+<!-- Sección Nuevo/Editar/Ver Registro --- -->
+<div id="dlgEmpleado" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-xl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 id="dlgEmpleadoTitle" class="modal-title"></h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body align-items-center">
+				<form id="theForm" method="post">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-2">
+								<div class="form-floating mb-3">
+									<input id="inpEmpleadoId" asp-for="InputEmpleado.Id" type="text" class="form-control" />
+									<label asp-for="InputEmpleado.Id" class="form-label"></label>
+									<span asp-validation-for="InputEmpleado.Id" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<h5>Información personal</h5>
+						<hr />
+						<div id="saveValidationSummary" class="text-danger mb-3" role="alert"></div>
+						<div class="row">
+							<div class="col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<input asp-for="InputEmpleado.PrimerNombre" type="text" class="form-control" placeholder="@Localizer["FirstNamePlaceholder"]" />
+									<label asp-for="InputEmpleado.PrimerNombre" class="form-label"></label>
+									<span asp-validation-for="InputEmpleado.PrimerNombre" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<input asp-for="InputEmpleado.SegundoNombre" type="text" class="form-control" placeholder="@Localizer["SecondNamePlaceholder"]" />
+									<label asp-for="InputEmpleado.SegundoNombre" class="form-label"></label>
+									<span asp-validation-for="InputEmpleado.SegundoNombre" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<input asp-for="InputEmpleado.ApellidoPaterno" type="text" class="form-control" placeholder="@Localizer["FathersLastNamePlaceholder"]" />
+									<label asp-for="InputEmpleado.ApellidoPaterno" class="form-label"></label>
+									<span asp-validation-for="InputEmpleado.ApellidoPaterno" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<input asp-for="InputEmpleado.ApellidoMaterno" type="text" class="form-control" placeholder="@Localizer["MothersLastNamePlaceholder"]" />
+									<label asp-for="InputEmpleado.ApellidoMaterno" class="form-label"></label>
+									<span asp-validation-for="InputEmpleado.ApellidoMaterno" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<input type="date" asp-for="InputEmpleado.FechaNacimiento" class="form-control" placeholder="@Localizer["FechaNacimientoPlaceholder"]" />
+									<label asp-for="InputEmpleado.FechaNacimiento" class="form-label"></label>
+									<span asp-validation-for="InputEmpleado.FechaNacimiento" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<input asp-for="InputEmpleado.Telefono" type="text" class="form-control" placeholder="@Localizer["PhonePlaceholder"]" />
+									<label asp-for="InputEmpleado.Telefono" class="form-label"></label>
+									<span asp-validation-for="InputEmpleado.Telefono" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<select asp-for="InputEmpleado.Genero" class="form-control" placeholder="@Localizer["PuestoPlaceholder"]">
+										<option value="0">Seleccione...</option>
+										@{
+											foreach (Genero genero in generos)
+											{
+												<option value='@genero.Id'>@genero.Nombre</option>
+											}
+										}
+									</select>
+									<label asp-for="InputEmpleado.Genero" class="form-label"></label>
+								</div>
+							</div>
+							<div class="col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<select asp-for="InputEmpleado.EstadoCivil" class="form-control" placeholder="@Localizer["PuestoPlaceholder"]">
+										<option value="0">Seleccione...</option>
+										@{
+											foreach (EstadoCivil estadoCivil in estadosCiviles)
+											{
+												<option value='@estadoCivil.Id'>@estadoCivil.Nombre</option>
+											}
+										}
+									</select>
+									<label asp-for="InputEmpleado.EstadoCivil" class="form-label"></label>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<textarea maxlength="135" asp-for="InputEmpleado.Direccion" class="form-control dynamic-height" placeholder="@Localizer["AddressPlaceholder"]"></textarea>
+									<label asp-for="InputEmpleado.Direccion" class="form-label"></label>
+									<span asp-validation-for="InputEmpleado.Direccion" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<h5>Información laboral</h5>
+						<hr />
+						<div class="row">
+							<div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<input type="date" asp-for="InputEmpleado.FechaIngreso" class="form-control" placeholder="@Localizer["FechaIngresoPlaceholder"]" />
+									<label asp-for="InputEmpleado.FechaIngreso" class="form-label"></label>
+									<span asp-validation-for="InputEmpleado.FechaIngreso" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<select asp-for="InputEmpleado.Puesto" class="form-control" placeholder="@Localizer["PuestoPlaceholder"]">
+										<option value="0">Seleccione...</option>
+										@{
+											foreach (Puesto puesto in puestos)
+											{
+												<option value='@puesto.Id'>@puesto.Nombre</option>
+											}
+										}
+									</select>
+									<label asp-for="InputEmpleado.Puesto" class="form-label"></label>
+								</div>
+							</div>
+							<div class="col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<select asp-for="InputEmpleado.Area" class="form-control" placeholder="@Localizer["PuestoPlaceholder"]">
+										<option value="0">Seleccione...</option>
+										@{
+											foreach (Area area in areas)
+											{
+												<option value='@area.Id'>@area.Nombre</option>
+											}
+										}
+									</select>
+									<label asp-for="InputEmpleado.Area" class="form-label"></label>
+								</div>
+							</div>
+							<div class="col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<input asp-for="InputEmpleado.Email" type="text" class="form-control" placeholder="@Localizer["EmailPlaceholder"]" />
+									<label asp-for="InputEmpleado.Email" class="form-label"></label>
+									<span asp-validation-for="InputEmpleado.Email" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12 col-md-12 col-lg-6">
+								<div class="row">
+									<h6 class="col-12"><i>Contacto de Emergencia 1</i></h6>
+									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+										<div class="form-floating mb-3">
+											<input asp-for="InputEmpleado.PrimerNombre" type="text" class="form-control" placeholder="@Localizer["FirstNamePlaceholder"]" />
+											<label asp-for="InputEmpleado.PrimerNombre" class="form-label"></label>
+											<span asp-validation-for="InputEmpleado.PrimerNombre" class="text-danger"></span>
+										</div>
+									</div>
+									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+										<div class="form-floating mb-3">
+											<input asp-for="InputEmpleado.Telefono" type="text" class="form-control" placeholder="@Localizer["PhonePlaceholder"]" />
+											<label asp-for="InputEmpleado.Telefono" class="form-label"></label>
+											<span asp-validation-for="InputEmpleado.Telefono" class="text-danger"></span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-12 col-lg-6">
+								<div class="row">
+									<h6 class="col-12"><i>Contacto de Emergencia 2</i></h6>
+									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+										<div class="form-floating mb-3">
+											<input asp-for="InputEmpleado.PrimerNombre" type="text" class="form-control" placeholder="@Localizer["FirstNamePlaceholder"]" />
+											<label asp-for="InputEmpleado.PrimerNombre" class="form-label"></label>
+											<span asp-validation-for="InputEmpleado.PrimerNombre" class="text-danger"></span>
+										</div>
+									</div>
+									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+										<div class="form-floating mb-3">
+											<input asp-for="InputEmpleado.Telefono" type="text" class="form-control" placeholder="@Localizer["PhonePlaceholder"]" />
+											<label asp-for="InputEmpleado.Telefono" class="form-label"></label>
+											<span asp-validation-for="InputEmpleado.Telefono" class="text-danger"></span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<h5>Documentación</h5>
+						<hr />
+						<div class="alert alert-primary d-flex align-items-center mb-3" role="alert">
+							<i class="bi bi-info-circle-fill me-2" style="font-size: x-large"></i>
+							<div>
+								@Localizer["DocumentSuggestion"]
+							</div>
+						</div>
+						<table class="table table-bordered" align="center" style="width:auto;">
+							<thead>
+								<tr align="center">
+									<th scope="col"></th>
+									<th scope="col">Nombre documento</th>
+									<th scope="col">Documento</th>
+									<th scope="col"></th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button id="dlgEmpleadoBtnCancelar" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+					<i class="bi bi-x-lg"></i> Cancelar
+				</button>
+				<button id="dlgEmpleadoBtnGuardar" type="button" class="btn btn-primary" onclick="onGuardarClick();">
+					<i class="bi bi-floppy"></i> Guardar
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
 <!-- --------------------------- -->
 <!-- --------------------------- -->
 @section Scripts {
 	<link rel="stylesheet" href="~/lib/bootstrap-table/bootstrap-table.min.css">
 
 	<script src="~/lib/bootstrap-table/extensions/export/tableExport.min.js"></script>
-	<script src="~/lib/bootstrap-table/extensions/export/jspdf.min.js"></script>
-	<script src="~/lib/bootstrap-table/extensions/export/jspdf.plugin.autotable.js"></script>
 
 	<script src="~/lib/bootstrap-table/bootstrap-table.min.js"></script>
 	<script src="~/lib/bootstrap-table/locale/bootstrap-table-es-MX.min.js"></script>
@@ -172,5 +410,14 @@
 		var btnImportarTitle = '@Localizer["ImportButtonTitle"]';
 		var btnVerTitle = '@Localizer["SeeButtonTitle"]';
 		var btnEditarTitle = '@Localizer["EditButtonTitle"]';
+		var dlgEditarTitle = '@Localizer["EditDialogTitle"]';
+		var dlgVerTitle = '@Localizer["SeeDialogTitle"]';
+		var dlgNuevoTitle = '@Localizer["NewDialogTitle"]';
+		var dlgDeleteTitle = '@Localizer["DeleteAreaDialogTitle"]';
+		var dlgDeleteQuestion = '@Localizer["DeleteAreaDialogQuestion"]';
+		var colNombreHeader = '@Localizer["ColNameHeader"]';
+		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
 	</script>
+
+	<partial name="_ValidationScriptsPartial" />
 }

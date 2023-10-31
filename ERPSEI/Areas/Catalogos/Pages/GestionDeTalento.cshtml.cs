@@ -4,12 +4,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-    public class GestionDeTalentoModel : PageModel
+	public class GestionDeTalentoModel : PageModel
     {
         [BindProperty]
-        public InputModel Input { get; set; }
+        public FiltroModel InputFiltro { get; set; }
 
-        public class InputModel
+        public class FiltroModel
         {
 			[Display(Name = "Fecha ingreso (Inicio)")]
 			public string FechaIngresoInicio { get; set; } = string.Empty;
@@ -23,10 +23,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
             [Display(Name = "Fecha nacimiento (Fin)")]
 			public string FechaNacimientoFin { get; set; } = string.Empty;
 
-            [Display(Name = "Nombre")]
+			[Display(Name = "Nombre")]
 			public string Nombre { get; set; } = string.Empty;
 
-            [Display(Name = "Puesto")]
+			[Display(Name = "Puesto")]
 			public string Puesto { get; set; } = string.Empty;
 
             [Display(Name = "Área")]
@@ -36,9 +36,53 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			public string CURP { get; set; } = string.Empty;
         }
 
+        [BindProperty]
+        public EmpleadoModel InputEmpleado { get; set; }
+
+        public class EmpleadoModel
+        {
+			public int Id { get; set; }
+
+			[Display(Name = "Primer Nombre")]
+			public string PrimerNombre { get; set; } = string.Empty;
+
+			[Display(Name = "Segundo Nombre")]
+			public string SegundoNombre { get; set; } = string.Empty;
+
+			[Display(Name = "Apellido Paterno")]
+			public string ApellidoPaterno { get; set; } = string.Empty;
+
+			[Display(Name = "Apellido Materno")]
+			public string ApellidoMaterno { get; set; } = string.Empty;
+
+			[Display(Name = "Fecha Nacimiento")]
+			public string FechaNacimiento { get; set; } = string.Empty;
+
+			[Display(Name = "Fecha Ingreso")]
+			public string FechaIngreso { get; set; } = string.Empty;
+
+			[Display(Name = "Dirección")]
+			public string Direccion { get; set; } = string.Empty;
+
+			[Display(Name = "Teléfono")]
+			public string Telefono { get; set; } = string.Empty;
+
+			[Display(Name = "Correo Empresarial")]
+			public string Email { get; set; } = string.Empty;
+
+            public string Genero { get; set; } = string.Empty;
+
+            public string EstadoCivil {  get; set; } = string.Empty;
+
+            public string Puesto { get; set; } = string.Empty;
+
+			public string Area { get; set; } = string.Empty;
+		}
+
         public GestionDeTalentoModel()
         {
-            Input = new InputModel();
+            InputFiltro = new FiltroModel();
+            InputEmpleado = new EmpleadoModel();
         }
 
         public IActionResult OnGet()

@@ -1,6 +1,10 @@
 ﻿var table;
 var buttonRemove;
 var selections = [];
+const NUEVO = 0;
+const EDITAR = 1;
+const VER = 2;
+const postOptions = { headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() } }
 
 document.addEventListener("DOMContentLoaded", function (event) {
     initializeDate();
@@ -58,6 +62,11 @@ window.operateEvents = {
         //})
     }
 }
+
+function onAgregarClick() {
+    initEmpleadoDialog(NUEVO, { id: "Nuevo", nombre: "" });
+}
+
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
         height: 550,
@@ -152,6 +161,41 @@ function initTable() {
             buttonRemove.prop('disabled', true);
         });
     })
+}
+
+function initEmpleadoDialog(action, row) {
+    let idField = document.getElementById("inpEmpleadoId");
+    let nombreField = document.getElementById("inpEmpleadoNombre");
+    let btnGuardar = document.getElementById("dlgEmpleadoBtnGuardar");
+    let dlgTitle = document.getElementById("dlgEmpleadoTitle");
+    let summaryContainer = document.getElementById("saveValidationSummary");
+    summaryContainer.innerHTML = "";
+
+    idField.setAttribute("disabled", true);
+
+    switch (action) {
+        case NUEVO:
+            dlgTitle.innerHTML = dlgNuevoTitle;
+
+            nombreField.removeAttribute("disabled");
+            btnGuardar.removeAttribute("disabled");
+            break;
+        case EDITAR:
+            dlgTitle.innerHTML = dlgEditarTitle;
+
+            nombreField.removeAttribute("disabled");
+            btnGuardar.removeAttribute("disabled");
+            break;
+        default:
+            dlgTitle.innerHTML = dlgVerTitle;
+
+            nombreField.setAttribute("disabled", true);
+            btnGuardar.setAttribute("disabled", true);
+            break;
+    }
+
+    idField.value = row.id;
+    nombreField.value = row.nombre;
 }
 
 function initializeDate() {
