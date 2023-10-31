@@ -138,6 +138,9 @@
   <data name="HumanResourcesMenu" xml:space="preserve">
     <value>Recursos Humanos</value>
   </data>
+  <data name="OfficesCatalogMenu" xml:space="preserve">
+    <value>Catálogo de oficinas</value>
+  </data>
   <data name="OrganizationChartMenu" xml:space="preserve">
     <value>Organigrama</value>
   </data>
@@ -155,6 +158,9 @@
   </data>
   <data name="RightFooter" xml:space="preserve">
     <value>Imagenes por &lt;a href="https://www.freepik.com/author/stories"&gt;storyset&lt;/a&gt; en Freepik.com</value>
+  </data>
+  <data name="SubareasCatalogMenu" xml:space="preserve">
+    <value>Catálogo de subareas</value>
   </data>
   <data name="VacationMenu" xml:space="preserve">
     <value>Vacaciones</value>
