@@ -30,11 +30,17 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			public string Puesto { get; set; } = string.Empty;
 
             [Display(Name = "Área")]
-			public string Area { get; set; } = string.Empty;
+            public string Area { get; set; } = string.Empty;
 
-            [Display(Name = "CURP")]
+			[Display(Name = "CURP")]
 			public string CURP { get; set; } = string.Empty;
-        }
+
+			[Display(Name = "Subarea")]
+			public string Subarea { get; set; } = string.Empty;
+
+			[Display(Name = "Oficina")]
+			public string Oficina { get; set; } = string.Empty;
+		}
 
         [BindProperty]
         public EmpleadoModel InputEmpleado { get; set; }

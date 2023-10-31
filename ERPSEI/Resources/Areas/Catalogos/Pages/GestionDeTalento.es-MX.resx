@@ -150,6 +150,9 @@
   <data name="NombrePlaceholder" xml:space="preserve">
     <value>Nombre</value>
   </data>
+  <data name="OficinaPlaceholder" xml:space="preserve">
+    <value>Oficina</value>
+  </data>
   <data name="PuestoPlaceholder" xml:space="preserve">
     <value>Puesto</value>
   </data>
@@ -158,6 +161,9 @@
   </data>
   <data name="SeeButtonTitle" xml:space="preserve">
     <value>Ver</value>
+  </data>
+  <data name="SubareaPlaceholder" xml:space="preserve">
+    <value>Subarea</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Gestión de talento</value>

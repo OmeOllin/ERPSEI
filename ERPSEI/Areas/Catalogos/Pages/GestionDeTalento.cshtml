@@ -8,6 +8,9 @@
 @inject IViewLocalizer Localizer;
 @inject IRWCatalogoManager<Puesto> PuestosManager;
 @inject IRWCatalogoManager<Area> AreasManager;
+@inject IRWCatalogoManager<Oficina> OficinasManager;
+@inject IRWCatalogoManager<Subarea> SubareasManager;
+
 @inject IRCatalogoManager<Genero> GenerosManager;
 @inject IRCatalogoManager<EstadoCivil> EstadosCivilesManager;
 @{
@@ -25,6 +28,8 @@
 	List<Area> areas = await AreasManager.GetAllAsync();
 	List<Genero> generos = await GenerosManager.GetAllAsync();
 	List<EstadoCivil> estadosCiviles = await EstadosCivilesManager.GetAllAsync();
+	List<Subarea> subareas = await SubareasManager.GetAllAsync();
+	List<Oficina> oficinas = await OficinasManager.GetAllAsync();
 }
 <h3 class="title mb-3">@ViewData["Title"]</h3>
 
@@ -69,12 +74,6 @@
 					<div class="row">
 						<div class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<input asp-for="InputFiltro.Nombre" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
-								<label asp-for="InputFiltro.Nombre" class="form-label"></label>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-6 col-lg-3">
-							<div class="form-floating mb-3">
 								<select asp-for="InputFiltro.Puesto" class="form-control" placeholder="@Localizer["PuestoPlaceholder"]">
 									<option value="0">Seleccione...</option>
 									@{
@@ -99,6 +98,42 @@
 									}
 								</select>
 								<label asp-for="InputFiltro.Area" class="form-label"></label>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<select asp-for="InputFiltro.Subarea" class="form-control" placeholder="@Localizer["SubareaPlaceholder"]">
+									<option value="0">Seleccione...</option>
+									@{
+										foreach (Subarea subarea in subareas)
+										{
+											<option value='@subarea.Id'>@subarea.Nombre</option>
+										}
+									}
+								</select>
+								<label asp-for="InputFiltro.Subarea" class="form-label"></label>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<select asp-for="InputFiltro.Oficina" class="form-control" placeholder="@Localizer["OficinaPlaceholder"]">
+									<option value="0">Seleccione...</option>
+									@{
+										foreach (Oficina oficina in oficinas)
+										{
+											<option value='@oficina.Id'>@oficina.Nombre</option>
+										}
+									}
+								</select>
+								<label asp-for="InputFiltro.Oficina" class="form-label"></label>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<input asp-for="InputFiltro.Nombre" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+								<label asp-for="InputFiltro.Nombre" class="form-label"></label>
 							</div>
 						</div>
 						<div class="col-sm-6 col-md-6 col-lg-3">
