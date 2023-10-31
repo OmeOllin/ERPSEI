@@ -42,7 +42,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			_logger = logger;
 		}
 
-		public JsonResult OnGetPuestosList()
+		public JsonResult OnGetOficinasList()
 		{
 			List<Oficina> oficinas = _oficinaManager.GetAllAsync().Result;
 
