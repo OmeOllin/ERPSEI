@@ -35,8 +35,12 @@ namespace ERPSEI
             _builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             _builder.Services.AddScoped<IArchivoEmpleadoManager, ArchivoEmpleadoManager>();
+
 			_builder.Services.AddScoped<IRWCatalogoManager<Puesto>, PuestoManager>();
 			_builder.Services.AddScoped<IRWCatalogoManager<Area>, AreaManager>();
+			_builder.Services.AddScoped<IRWCatalogoManager<Oficina>, OficinaManager>();
+			_builder.Services.AddScoped<IRWCatalogoManager<Subarea>, SubareaManager>();
+
 			_builder.Services.AddScoped<IRCatalogoManager<Genero>, GeneroManager>();
 			_builder.Services.AddScoped<IRCatalogoManager<EstadoCivil>, EstadoCivilManager>();
 

@@ -32,6 +32,12 @@
         public int? GeneroId {  get; set; }
 		public Genero? Genero { get; set; }
 
+        public int? SubareaId { get; set; }
+        public Subarea? Subarea { get; set; }
+
+        public int? OficinaId { get; set; }
+        public Oficina? Oficina { get; set; }
+
         public int? PuestoId { get; set; }
 		public Puesto? Puesto { get; set; }
 

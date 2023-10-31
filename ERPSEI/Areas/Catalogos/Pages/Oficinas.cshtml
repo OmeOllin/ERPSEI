@@ -1,0 +1,136 @@
+﻿@page "{handler?}"
+@using ERPSEI.Areas.Catalogos.Pages;
+@using Microsoft.AspNetCore.Localization;
+@using Microsoft.AspNetCore.Mvc.Localization;
+@model OficinasModel
+@inject IViewLocalizer Localizer;
+@{
+	ViewData["Title"] = Localizer["Title"];
+
+	// Retrieves the requested culture
+	IRequestCultureFeature? rqf = Request.HttpContext.Features.Get<IRequestCultureFeature>();
+
+	// Culture contains the information of the requested culture
+	System.Globalization.CultureInfo? culture = rqf != null ? rqf.RequestCulture.Culture : new System.Globalization.CultureInfo("es-MX");
+
+	string cultureName = culture.Name;
+}
+
+<h3 class="title mb-3">@ViewData["Title"]</h3>
+
+<!-- --------------------------- -->
+<!-- Sección tabla de resultados -->
+<div id="toolbar" class="col-xl-12">
+	<button id="btnAgregar" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dlgOficina" onclick="onAgregarClick();">
+		<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
+	</button>
+	<button id="remove" class="btn btn-danger" disabled>
+		<i class="bi bi-trash"></i> <span class="d-none d-sm-inline">@Localizer["DeleteButton"]</span>
+	</button>
+</div>
+<table id="table" class="table-sm"
+		data-toolbar="#toolbar"
+		data-search="true"
+		data-show-refresh="true"
+		data-show-toggle="true"
+		data-show-fullscreen="true"
+		data-show-columns="true"
+		data-show-columns-toggle-all="true"
+		data-detail-view="true"
+		data-show-export="true"
+		data-click-to-select="true"
+		data-detail-formatter="detailFormatter"
+		data-minimum-count-columns="2"
+		data-show-pagination-switch="true"
+		data-pagination="true"
+		data-id-field="id"
+		data-page-list="[10, 25, 50, 100, all]"
+		data-show-footer="false"
+		data-side-pagination="client"
+		data-response-handler="responseHandler"
+		data-buttons-class="primary"
+		data-url="/Catalogos/Oficinas/OficinasList">
+	<thead>
+		<tr align="center" valign="middle" class="bg-primary bg-opacity-10">
+		</tr>
+	</thead>
+</table>
+<!-- --------------------------- -->
+<!-- --------------------------- -->
+
+<!-- --------------------------- -->
+<!-- Sección Nuevo/Editar/Ver Registro --- -->
+<form id="theForm" method="post">
+	<div id="dlgOficina" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 id="dlgOficinaTitle" class="modal-title"></h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body align-items-center">
+					<div class="container-fluid">
+						<div id="saveValidationSummary" class="text-danger mb-3" role="alert"></div>
+						<div class="row">
+							<div class="col-3">
+								<div class="form-floating mb-3">
+									<input id="inpOficinaId" asp-for="Input.Id" type="text" class="form-control" />
+									<label asp-for="Input.Id" class="form-label"></label>
+									<span asp-validation-for="Input.Id" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<input id="inpOficinaNombre" asp-for="Input.Nombre" type="text" class="form-control" />
+									<label asp-for="Input.Nombre" class="form-label"></label>
+									<span asp-validation-for="Input.Nombre" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button id="dlgOficinaBtnCancelar" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i> @Localizer["CancelButton"]
+					</button>
+					<button id="dlgOficinaBtnGuardar" type="button" class="btn btn-primary" onclick="onGuardarClick();">
+						<i class="bi bi-floppy"></i> @Localizer["SaveButton"]
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+<!-- --------------------------- -->
+<!-- --------------------------- -->
+@section Scripts {
+	<link rel="stylesheet" href="~/lib/bootstrap-table/bootstrap-table.min.css">
+
+	<script src="~/lib/bootstrap-table/extensions/export/tableExport.min.js"></script>
+
+	<script src="~/lib/bootstrap-table/bootstrap-table.min.js"></script>
+	<script src="~/lib/bootstrap-table/locale/bootstrap-table-es-MX.min.js"></script>
+	<script src="~/lib/bootstrap-table/locale/bootstrap-table-en-US.min.js"></script>
+	<script src="~/lib/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
+
+	<script src="~/../Areas/Catalogos/Pages/Oficinas.cshtml.js"></script>
+
+	<script type="text/javascript">
+		var cultureName = "@cultureName";
+		var btnImportarText = '@Localizer["ImportButtonText"]';
+		var btnImportarTitle = '@Localizer["ImportButtonTitle"]';
+		var btnVerTitle = '@Localizer["SeeButtonTitle"]';
+		var btnEditarTitle = '@Localizer["EditButtonTitle"]';
+		var dlgEditarTitle = '@Localizer["EditDialogTitle"]';
+		var dlgVerTitle = '@Localizer["SeeDialogTitle"]';
+		var dlgNuevoTitle = '@Localizer["NewDialogTitle"]';
+		var dlgDeleteTitle = '@Localizer["DeleteOfficeDialogTitle"]';
+		var dlgDeleteQuestion = '@Localizer["DeleteOfficeDialogQuestion"]';
+		var colNombreHeader = '@Localizer["ColNameHeader"]';
+		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
+	</script>
+
+	<partial name="_ValidationScriptsPartial" />
+}
