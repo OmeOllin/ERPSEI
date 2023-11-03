@@ -24,7 +24,7 @@ namespace ERPSEI.Data.Managers
 
 		public async Task CreateAsync(Oficina oficina)
         {
-            oficina.Id = getNextId();
+            oficina.Id = await getNextId();
             db.Oficinas.Add(oficina);
             await db.SaveChangesAsync();
         }
