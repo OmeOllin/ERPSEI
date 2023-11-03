@@ -12,6 +12,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
     public class SubareasModel : PageModel
     {
 		private readonly IRWCatalogoManager<Subarea> _subareaManager;
+		private readonly IRWCatalogoManager<Area> _areaManager;
 		private readonly IStringLocalizer<SubareasModel> _strLocalizer;
 		private readonly ILogger<SubareasModel> _logger;
 
@@ -36,21 +37,33 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public SubareasModel(
 			IRWCatalogoManager<Subarea> subareaManager,
+			IRWCatalogoManager<Area> areaManager,
 			IStringLocalizer<SubareasModel> stringLocalizer,
 			ILogger<SubareasModel> logger
 		)
 		{
 			Input = new InputModel();
 			_subareaManager = subareaManager;
+			_areaManager = areaManager;
 			_strLocalizer = stringLocalizer;
 			_logger = logger;
 		}
 
 		public JsonResult OnGetSubareasList()
 		{
+			string nombreArea;
+			string jsonResponse;
+			List<string> jsonAreas = new List<string>();
 			List<Subarea> subareas = _subareaManager.GetAllAsync().Result;
+			foreach (Subarea sa in subareas)
+			{
+				sa.Area = _areaManager.GetById(sa.AreaId ?? 0);
+				nombreArea = sa.Area != null ? sa.Area.Nombre : "";
+				jsonAreas.Add("{\"id\": " + sa.Id + ", \"nombre\": \"" + sa.Nombre + "\", \"area\": \"" + nombreArea + "\", \"idArea\": " + sa.AreaId + "}");
+			}
 
-			return new JsonResult(subareas);
+			jsonResponse = $"[{String.Join(",", jsonAreas)}]";
+			return new JsonResult(jsonResponse);
 		}
 
 		public async Task<JsonResult> OnPostDeleteSubareas(string[] ids)

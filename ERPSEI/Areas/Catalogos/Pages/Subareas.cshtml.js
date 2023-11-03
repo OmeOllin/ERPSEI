@@ -20,6 +20,7 @@ function getIdSelections() {
     })
 }
 function responseHandler(res) {
+    res = JSON.parse(res);
     $.each(res, function (i, row) {
         row.state = $.inArray(row.id, selections) !== -1
     })
@@ -57,7 +58,7 @@ window.operateEvents = {
     }
 }
 function onAgregarClick() {
-    initSubareaDialog(NUEVO, { id: "Nuevo", nombre: "" });
+    initSubareaDialog(NUEVO, { id: "Nuevo", nombre: "", area: "", idArea: 0 });
 }
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
@@ -190,6 +191,7 @@ function initSubareaDialog(action, row) {
 
     idField.value = row.id;
     nombreField.value = row.nombre;
+    areaField.value = row.idArea;
 }
 function onGuardarClick() {
     //Ejecuta la validación
