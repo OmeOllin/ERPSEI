@@ -88,6 +88,13 @@ function initTable() {
                 sortable: true
             },
             {
+                title: colAreaHeader,
+                field: "area",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
                 title: colAccionesHeader,
                 field: "operate",
                 align: 'center',
@@ -112,9 +119,7 @@ function initTable() {
     })
     buttonRemove.click(function () {
         askConfirmation(dlgDeleteTitle, dlgDeleteQuestion, function () {
-            var ids = getIdSelections()
-
-            let oParams = { ids: ids };
+            let oParams = { ids: selections };
 
             doAjax(
                 "/Catalogos/Subareas/DeleteSubareas",
@@ -127,8 +132,9 @@ function initTable() {
 
                     table.bootstrapTable('remove', {
                         field: 'id',
-                        values: ids
+                        values: selections
                     })
+                    selections = [];
                     buttonRemove.prop('disabled', true);
 
                     let e = document.querySelector("[name='refresh']");
@@ -150,6 +156,7 @@ function initTable() {
 function initSubareaDialog(action, row) {
     let idField = document.getElementById("inpSubareaId");
     let nombreField = document.getElementById("inpSubareaNombre");
+    let areaField = document.getElementById("selSubareaArea");
     let btnGuardar = document.getElementById("dlgSubareaBtnGuardar");
     let dlgTitle = document.getElementById("dlgSubareaTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
@@ -161,18 +168,21 @@ function initSubareaDialog(action, row) {
         case NUEVO:
             dlgTitle.innerHTML = dlgNuevoTitle;
 
+            areaField.removeAttribute("disabled");
             nombreField.removeAttribute("disabled");
             btnGuardar.removeAttribute("disabled");
             break;
         case EDITAR:
             dlgTitle.innerHTML = dlgEditarTitle;
 
+            areaField.removeAttribute("disabled");
             nombreField.removeAttribute("disabled");
             btnGuardar.removeAttribute("disabled");
             break;
         default:
             dlgTitle.innerHTML = dlgVerTitle;
 
+            areaField.setAttribute("disabled", true);
             nombreField.setAttribute("disabled", true);
             btnGuardar.setAttribute("disabled", true);
             break;
@@ -192,13 +202,15 @@ function onGuardarClick() {
     let btnClose = document.getElementById("dlgSubareaBtnCancelar");
     let idField = document.getElementById("inpSubareaId");
     let nombreField = document.getElementById("inpSubareaNombre");
+    let areaField = document.getElementById("selSubareaArea");
     let dlgTitle = document.getElementById("dlgSubareaTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 
     let oParams = {
         id: idField.value == "Nuevo" ? 0 : idField.value,
-        nombre: nombreField.value
+        nombre: nombreField.value,
+        idArea: areaField.value == 0 ? 0 : parseInt(areaField.value)
     };
 
     doAjax(

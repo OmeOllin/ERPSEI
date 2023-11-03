@@ -120,6 +120,9 @@
   <data name="AlphanumSpace" xml:space="preserve">
     <value>The {0} field only allows letters, numbers, underscores, and spaces.</value>
   </data>
+  <data name="AreaField" xml:space="preserve">
+    <value>Area</value>
+  </data>
   <data name="ConfirmNewPasswordField" xml:space="preserve">
     <value>Confirm new password</value>
   </data>

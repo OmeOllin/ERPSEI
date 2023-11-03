@@ -138,7 +138,6 @@ namespace ERPSEI.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IdArea = table.Column<int>(type: "int", nullable: true),
                     AreaId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -357,21 +356,6 @@ namespace ERPSEI.Data.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Subareas",
-                columns: new[] { "Id", "AreaId", "IdArea", "Nombre" },
-                values: new object[,]
-                {
-                    { 1, null, null, "Control Vehicular" },
-                    { 2, null, null, "Externa" },
-                    { 3, null, null, "Facturación" },
-                    { 4, null, null, "IMSS" },
-                    { 5, null, null, "Interna" },
-                    { 6, null, null, "Internas" },
-                    { 7, null, null, "Nóminas" },
-                    { 8, null, null, "Sistemas" }
-                });
-
-            migrationBuilder.InsertData(
                 table: "TipoArchivo",
                 columns: new[] { "Id", "Description" },
                 values: new object[,]
@@ -387,6 +371,21 @@ namespace ERPSEI.Data.Migrations
                     { 9, "Comprobante de estudios" },
                     { 10, "NSS" },
                     { 11, "Otro" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Subareas",
+                columns: new[] { "Id", "AreaId", "Nombre" },
+                values: new object[,]
+                {
+                    { 1, 1, "Sistemas" },
+                    { 2, 4, "Interna" },
+                    { 3, 4, "Externa" },
+                    { 4, 5, "Control Vehicular" },
+                    { 5, 12, "IMSS" },
+                    { 6, 12, "Internas" },
+                    { 7, 12, "Facturación" },
+                    { 8, 12, "Nóminas" }
                 });
 
             migrationBuilder.CreateIndex(

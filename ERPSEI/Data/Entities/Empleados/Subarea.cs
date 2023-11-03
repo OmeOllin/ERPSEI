@@ -9,7 +9,7 @@ namespace ERPSEI.Data.Entities.Empleados
 
         public string Nombre { get; set; } = string.Empty;
 
-        public int? IdArea {  get; set; }
+        public int? AreaId {  get; set; }
         public Area? Area { get; set; }
 
 		public ICollection<Empleado>? Empleados { get; set; }

@@ -1,8 +1,11 @@
 ﻿@page "{handler?}"
+@using ERPSEI.Data.Managers;
 @using ERPSEI.Areas.Catalogos.Pages;
+@using ERPSEI.Data.Entities.Empleados;
 @using Microsoft.AspNetCore.Localization;
 @using Microsoft.AspNetCore.Mvc.Localization;
 @model SubareasModel 
+@inject IRWCatalogoManager<Area> AreasManager;
 @inject IViewLocalizer Localizer;
 @{
 	ViewData["Title"] = Localizer["Title"];
@@ -14,6 +17,8 @@
 	System.Globalization.CultureInfo? culture = rqf != null ? rqf.RequestCulture.Culture : new System.Globalization.CultureInfo("es-MX");
 
 	string cultureName = culture.Name;
+
+	List<Area> areas = await AreasManager.GetAllAsync();
 }
 
 <h3 class="title mb-3">@ViewData["Title"]</h3>
@@ -29,6 +34,7 @@
 	</button>
 </div>
 <table id="table" class="table-sm"
+	    data-unique-id="id"
 		data-toolbar="#toolbar"
 		data-search="true"
 		data-show-refresh="true"
@@ -83,9 +89,26 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpSubareaNombre" asp-for="Input.Nombre" type="text" class="form-control" />
+									<input id="inpSubareaNombre" asp-for="Input.Nombre" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
 									<label asp-for="Input.Nombre" class="form-label"></label>
 									<span asp-validation-for="Input.Nombre" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<select id="selSubareaArea" asp-for="Input.IdArea" class="form-control" placeholder="@Localizer["AreaPlaceholder"]">
+										<option value="0">Seleccione...</option>
+										@{
+											foreach (Area area in areas)
+											{
+												<option value='@area.Id'>@area.Nombre</option>
+											}
+										}
+									</select>
+									<label asp-for="Input.IdArea" class="form-label"></label>
+									<span asp-validation-for="Input.IdArea" class="text-danger"></span>
 								</div>
 							</div>
 						</div>
@@ -129,6 +152,7 @@
 		var dlgDeleteTitle = '@Localizer["DeleteSubareaDialogTitle"]';
 		var dlgDeleteQuestion = '@Localizer["DeleteSubareaDialogQuestion"]';
 		var colNombreHeader = '@Localizer["ColNameHeader"]';
+		var colAreaHeader = '@Localizer["ColAreaHeader"]';
 		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
 	</script>
 

@@ -28,6 +28,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "NameField")]
 			public string Nombre { get; set; } = string.Empty;
+
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "AreaField")]
+			public int IdArea { get; set; }
 		}
 
 		public SubareasModel(
@@ -72,6 +76,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			try
 			{
+				if(Input.IdArea <= 0){ ModelState.AddModelError("IdArea", _strLocalizer["IdAreaIsRequired"]); }
+
 				if (!ModelState.IsValid)
 				{
 					resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray();
@@ -83,6 +89,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					if (subarea != null)
 					{
 						subarea.Nombre = Input.Nombre;
+						subarea.AreaId = Input.IdArea;
 						await _subareaManager.UpdateAsync(subarea);
 
 						resp.TieneError = false;
@@ -90,7 +97,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					}
 					else
 					{
-						await _subareaManager.CreateAsync(new Subarea() { Nombre = Input.Nombre });
+						await _subareaManager.CreateAsync(new Subarea() { Nombre = Input.Nombre, AreaId = Input.IdArea });
 
 						resp.TieneError = false;
 						resp.Mensaje = _strLocalizer["SubareaSavedSuccessfully"];

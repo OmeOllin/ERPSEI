@@ -126,6 +126,9 @@
   <data name="ColActionsHeader" xml:space="preserve">
     <value>Acciones</value>
   </data>
+  <data name="ColAreaHeader" xml:space="preserve">
+    <value>Área</value>
+  </data>
   <data name="ColNameHeader" xml:space="preserve">
     <value>Nombre</value>
   </data>

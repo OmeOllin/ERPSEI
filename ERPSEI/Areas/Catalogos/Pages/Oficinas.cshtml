@@ -29,6 +29,7 @@
 	</button>
 </div>
 <table id="table" class="table-sm"
+		data-unique-id="id"
 		data-toolbar="#toolbar"
 		data-search="true"
 		data-show-refresh="true"
@@ -83,7 +84,7 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpOficinaNombre" asp-for="Input.Nombre" type="text" class="form-control" />
+									<input id="inpOficinaNombre" asp-for="Input.Nombre" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
 									<label asp-for="Input.Nombre" class="form-label"></label>
 									<span asp-validation-for="Input.Nombre" class="text-danger"></span>
 								</div>

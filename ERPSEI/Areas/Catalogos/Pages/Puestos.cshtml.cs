@@ -23,9 +23,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Display(Name = "Id")]
 			public int Id { get; set; }
 
-			[StringLength(50, ErrorMessage = "FieldLength", MinimumLength = 1)]
-			[RegularExpression(RegularExpressions.AlphanumSpace, ErrorMessage = "AlphanumSpace")]
-			[Required(ErrorMessage = "Required")]
 			[Display(Name = "NameField")]
 			public string Nombre { get; set; } = string.Empty;
 		}

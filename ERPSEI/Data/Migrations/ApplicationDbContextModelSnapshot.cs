@@ -586,9 +586,6 @@ namespace ERPSEI.Data.Migrations
                     b.Property<int?>("AreaId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("IdArea")
-                        .HasColumnType("int");
-
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -603,42 +600,50 @@ namespace ERPSEI.Data.Migrations
                         new
                         {
                             Id = 1,
-                            Nombre = "Control Vehicular"
+                            AreaId = 1,
+                            Nombre = "Sistemas"
                         },
                         new
                         {
                             Id = 2,
-                            Nombre = "Externa"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Nombre = "Facturación"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Nombre = "IMSS"
-                        },
-                        new
-                        {
-                            Id = 5,
+                            AreaId = 4,
                             Nombre = "Interna"
                         },
                         new
                         {
+                            Id = 3,
+                            AreaId = 4,
+                            Nombre = "Externa"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AreaId = 5,
+                            Nombre = "Control Vehicular"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AreaId = 12,
+                            Nombre = "IMSS"
+                        },
+                        new
+                        {
                             Id = 6,
+                            AreaId = 12,
                             Nombre = "Internas"
                         },
                         new
                         {
                             Id = 7,
-                            Nombre = "Nóminas"
+                            AreaId = 12,
+                            Nombre = "Facturación"
                         },
                         new
                         {
                             Id = 8,
-                            Nombre = "Sistemas"
+                            AreaId = 12,
+                            Nombre = "Nóminas"
                         });
                 });
 

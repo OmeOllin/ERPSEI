@@ -112,9 +112,7 @@ function initTable() {
     })
     buttonRemove.click(function () {
         askConfirmation(dlgDeleteTitle, dlgDeleteQuestion, function () {
-            var ids = getIdSelections()
-
-            let oParams = { ids: ids };
+            let oParams = { ids: selections };
 
             doAjax(
                 "/Catalogos/Oficinas/DeleteOficinas",
@@ -127,8 +125,9 @@ function initTable() {
 
                     table.bootstrapTable('remove', {
                         field: 'id',
-                        values: ids
+                        values: selections
                     })
+                    selections = [];
                     buttonRemove.prop('disabled', true);
 
                     let e = document.querySelector("[name='refresh']");

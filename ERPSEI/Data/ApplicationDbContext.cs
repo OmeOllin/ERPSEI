@@ -110,33 +110,46 @@ namespace ERPSEI.Data
 			modelBuilder.Entity<Puesto>().HasData(dataPuestos);
 			modelBuilder.Entity<Puesto>().HasMany(p => p.Empleados).WithOne(e => e.Puesto).OnDelete(DeleteBehavior.SetNull);
 
-			List<string> areas = new List<string>()
+			List<KeyValuePair<string, List<string>>> areas = new List<KeyValuePair<string, List<string>>>()
 			{
-				"Administración",
-				"Auditoría",
-				"Bancos",
-				"Contabilidad",
-				"Dirección General",
-				"Expedientes",
-				"Family Office",
-				"Fiscal",
-				"Impuestos",
-				"Legal",
-				"Nóminas",
-				"Operaciones",
-				"Recursos Humanos",
-				"Tesorería"
+				new KeyValuePair<string, List<string>>("Administración", new List<string>(){"Sistemas"}),
+				new KeyValuePair<string, List<string>>("Auditoría", new List<string>(){ }),
+				new KeyValuePair<string, List<string>>("Bancos", new List<string>(){ }),
+				new KeyValuePair<string, List<string>>("Contabilidad", new List<string>(){"Interna", "Externa"}),
+				new KeyValuePair<string, List<string>>("Dirección General", new List<string>(){"Control Vehicular"}),
+				new KeyValuePair<string, List<string>>("Expedientes", new List<string>(){ }),
+				new KeyValuePair<string, List<string>>("Family Office", new List<string>(){ }),
+				new KeyValuePair<string, List<string>>("Fiscal", new List<string>(){ }),
+				new KeyValuePair<string, List<string>>("Impuestos", new List<string>(){ }),
+				new KeyValuePair<string, List<string>>("Legal", new List<string>(){ }),
+				new KeyValuePair<string, List<string>>("Nóminas", new List<string>(){ }),
+				new KeyValuePair<string, List<string>>("Operaciones", new List<string>(){"IMSS", "Internas", "Facturación", "Nóminas"}),
+				new KeyValuePair<string, List<string>>("Recursos Humanos", new List<string>(){ }),
+				new KeyValuePair<string, List<string>>("Tesorería", new List<string>(){ })
 			};
+
 			Area[] dataAreas = new Area[areas.Count];
+			List<Subarea> dataSubareas = new List<Subarea>();
 			int j = 0;
-			foreach (string area in areas)
+			int k = 0;
+			foreach (KeyValuePair<string, List<string>> area in areas)
 			{
-				dataAreas[j] = new Area() { Id = j + 1, Nombre = area };
+				dataAreas[j] = new Area() { Id = j + 1, Nombre = area.Key };
+				//Se agregan las subareas
+				foreach(string subarea in area.Value)
+				{
+					dataSubareas.Add(new Subarea() { Id = k + 1, Nombre = subarea, AreaId = dataAreas[j].Id });
+					k++;
+				}
 				j++;
 			}
 			modelBuilder.Entity<Area>().HasData(dataAreas);
 			modelBuilder.Entity<Area>().HasMany(a => a.Empleados).WithOne(e => e.Area).OnDelete(DeleteBehavior.SetNull);
 			modelBuilder.Entity<Area>().HasMany(a => a.Subareas).WithOne(sa => sa.Area).OnDelete(DeleteBehavior.SetNull);
+
+			modelBuilder.Entity<Subarea>().HasData(dataSubareas.ToArray());
+			modelBuilder.Entity<Subarea>().HasMany(sa => sa.Empleados).WithOne(e => e.Subarea).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<Subarea>().HasOne(sa => sa.Area).WithMany(a => a.Subareas).OnDelete(DeleteBehavior.SetNull);
 
 			List<string> oficinas = new List<string>()
 			{
@@ -156,36 +169,14 @@ namespace ERPSEI.Data
 				"Torre Esmeralda"
 			};
 			Oficina[] dataOficinas = new Oficina[oficinas.Count];
-			int k = 0;
+			int l = 0;
             foreach (string oficina in oficinas)
             {
-				dataOficinas[k] = new Oficina() { Id = k + 1, Nombre = oficina };
-				k++;
+				dataOficinas[l] = new Oficina() { Id = l + 1, Nombre = oficina };
+				l++;
             }
 			modelBuilder.Entity<Oficina>().HasData(dataOficinas);
 			modelBuilder.Entity<Oficina>().HasMany(o => o.Empleados).WithOne(e => e.Oficina).OnDelete(DeleteBehavior.SetNull);
-
-			List<string> subareas = new List<string>()
-			{
-				"Control Vehicular",
-				"Externa",
-				"Facturación",
-				"IMSS",
-				"Interna",
-				"Internas",
-				"Nóminas",
-				"Sistemas"
-			};
-			Subarea[] dataSubareas = new Subarea[subareas.Count];
-			int l = 0;
-			foreach (string subarea in subareas)
-			{
-				dataSubareas[l] = new Subarea() { Id = l + 1, Nombre = subarea };
-				l++;
-			}
-			modelBuilder.Entity<Subarea>().HasData(dataSubareas);
-			modelBuilder.Entity<Subarea>().HasMany(sa => sa.Empleados).WithOne(e => e.Subarea).OnDelete(DeleteBehavior.SetNull);
-			modelBuilder.Entity<Subarea>().HasOne(sa => sa.Area).WithMany(a => a.Subareas).OnDelete(DeleteBehavior.SetNull);
 		}
 
     }
