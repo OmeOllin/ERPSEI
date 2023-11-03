@@ -41,7 +41,7 @@ function showMessage(title, message, type, funcOK, funcCancel) {
     let icon = "";
     let buttonsContainer = document.getElementById('buttonsContainer');
 
-    titleContainer.setHTML(title, { sanitizer: new Sanitizer() });
+    titleContainer.innerHTML = title;
 
     let cancelbutton = null;
     let color = "";
