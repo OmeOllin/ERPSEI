@@ -12,8 +12,19 @@ namespace ERPSEI.Data.Managers
             db = _db;
         }
 
-        public async Task CreateAsync(Area area)
+		private async Task<int> getNextId()
+		{
+			List<Area> registros = await GetAllAsync();
+			Area? last = registros.OrderByDescending(r => r.Id).FirstOrDefault();
+			int lastId = last != null ? last.Id : 0;
+			lastId += 1;
+
+			return lastId;
+		}
+
+		public async Task CreateAsync(Area area)
         {
+            area.Id = await getNextId();
             db.Areas.Add(area);
             await db.SaveChangesAsync();
         }
