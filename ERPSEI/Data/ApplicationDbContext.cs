@@ -43,6 +43,7 @@ namespace ERPSEI.Data
 			modelBuilder.Entity<Empleado>().HasOne(e => e.Oficina).WithMany(o => o.Empleados).OnDelete(DeleteBehavior.SetNull);
 			modelBuilder.Entity<Empleado>().HasMany(e => e.ContactosEmergencia).WithOne(ce => ce.Empleado).OnDelete(DeleteBehavior.SetNull);
 			modelBuilder.Entity<Empleado>().HasMany(e => e.ArchivosEmpleado).WithOne(ae => ae.Empleado).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<Empleado>().HasOne(e => e.Jefe).WithMany(j => j.Empleados).OnDelete(DeleteBehavior.NoAction);
 
 
 			modelBuilder.Entity<TipoArchivo>()
@@ -90,7 +91,6 @@ namespace ERPSEI.Data
 				"Encargado",
 				"Gerente",
 				"Mantenimiento y Limpieza",
-				"Pasante",
 				"Recepcionista",
 				"Seguridad Privada",
 				"Socio Director",
@@ -118,10 +118,10 @@ namespace ERPSEI.Data
 				"Contabilidad",
 				"Dirección General",
 				"Expedientes",
+				"Family Office",
 				"Fiscal",
 				"Impuestos",
-				"Legal 1",
-				"Legal 2",
+				"Legal",
 				"Nóminas",
 				"Operaciones",
 				"Recursos Humanos",

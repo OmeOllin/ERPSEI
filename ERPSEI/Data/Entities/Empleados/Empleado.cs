@@ -49,13 +49,19 @@ namespace ERPSEI.Data.Entities.Empleados
         public int? EstadoCivilId {  get; set; }
 		public EstadoCivil? EstadoCivil { get; set; }
 
+		public int? UserId { get; set; }
+		public AppUser? User { get; set; }
+
 		public ICollection<ContactoEmergencia>? ContactosEmergencia { get; }
 
-        public int? ArchivoEmpleadoId { get; set; }
         public ICollection<ArchivoEmpleado>? ArchivosEmpleado { get; }
 
-        public int? UserId { get; set; }
-        public AppUser? User { get; set; }
+        //Referencia a esta misma tabla para el jefe del empleado
+		public int? JefeId { get; set; }
+		public Empleado? Jefe { get; set; }
 
-    }
+        //Referencia a esta misma tabla para empleados de un jefe
+		public ICollection<Empleado>? Empleados { get; }
+
+	}
 }

@@ -138,10 +138,7 @@ namespace ERPSEI.Data.Migrations
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.Area", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -185,22 +182,22 @@ namespace ERPSEI.Data.Migrations
                         new
                         {
                             Id = 7,
-                            Nombre = "Fiscal"
+                            Nombre = "Family Office"
                         },
                         new
                         {
                             Id = 8,
-                            Nombre = "Impuestos"
+                            Nombre = "Fiscal"
                         },
                         new
                         {
                             Id = 9,
-                            Nombre = "Legal 1"
+                            Nombre = "Impuestos"
                         },
                         new
                         {
                             Id = 10,
-                            Nombre = "Legal 2"
+                            Nombre = "Legal"
                         },
                         new
                         {
@@ -227,10 +224,7 @@ namespace ERPSEI.Data.Migrations
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.ContactoEmergencia", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("EmpleadoId")
                         .HasColumnType("int");
@@ -253,10 +247,7 @@ namespace ERPSEI.Data.Migrations
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.Empleado", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ApellidoMaterno")
                         .IsRequired()
@@ -265,9 +256,6 @@ namespace ERPSEI.Data.Migrations
                     b.Property<string>("ApellidoPaterno")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ArchivoEmpleadoId")
-                        .HasColumnType("int");
 
                     b.Property<int?>("AreaId")
                         .HasColumnType("int");
@@ -290,6 +278,9 @@ namespace ERPSEI.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("GeneroId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("JefeId")
                         .HasColumnType("int");
 
                     b.Property<string>("NombreCompleto")
@@ -332,6 +323,8 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasIndex("GeneroId");
 
+                    b.HasIndex("JefeId");
+
                     b.HasIndex("OficinaId");
 
                     b.HasIndex("PuestoId");
@@ -344,10 +337,7 @@ namespace ERPSEI.Data.Migrations
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.EstadoCivil", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -361,22 +351,19 @@ namespace ERPSEI.Data.Migrations
                         new
                         {
                             Id = 1,
-                            Nombre = "Soltero(a)"
+                            Nombre = "Soltero"
                         },
                         new
                         {
                             Id = 2,
-                            Nombre = "Casado(a)"
+                            Nombre = "Casado"
                         });
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.Genero", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -402,10 +389,7 @@ namespace ERPSEI.Data.Migrations
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.Oficina", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -491,10 +475,7 @@ namespace ERPSEI.Data.Migrations
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.Puesto", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -558,46 +539,41 @@ namespace ERPSEI.Data.Migrations
                         new
                         {
                             Id = 11,
-                            Nombre = "Pasante"
-                        },
-                        new
-                        {
-                            Id = 12,
                             Nombre = "Recepcionista"
                         },
                         new
                         {
-                            Id = 13,
+                            Id = 12,
                             Nombre = "Seguridad Privada"
                         },
                         new
                         {
-                            Id = 14,
+                            Id = 13,
                             Nombre = "Socio Director"
                         },
                         new
                         {
-                            Id = 15,
+                            Id = 14,
                             Nombre = "Subencargado"
                         },
                         new
                         {
-                            Id = 16,
+                            Id = 15,
                             Nombre = "Subgerente"
                         },
                         new
                         {
-                            Id = 17,
+                            Id = 16,
                             Nombre = "Supervisor"
                         },
                         new
                         {
-                            Id = 18,
+                            Id = 17,
                             Nombre = "Técnico"
                         },
                         new
                         {
-                            Id = 19,
+                            Id = 18,
                             Nombre = "Tesorero"
                         });
                 });
@@ -605,10 +581,7 @@ namespace ERPSEI.Data.Migrations
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.Subarea", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("AreaId")
                         .HasColumnType("int");
@@ -735,6 +708,11 @@ namespace ERPSEI.Data.Migrations
                         {
                             Id = 10,
                             Description = "NSS"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Description = "Otro"
                         });
                 });
 
@@ -929,6 +907,11 @@ namespace ERPSEI.Data.Migrations
                         .HasForeignKey("GeneroId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("ERPSEI.Data.Entities.Empleados.Empleado", "Jefe")
+                        .WithMany("Empleados")
+                        .HasForeignKey("JefeId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("ERPSEI.Data.Entities.Empleados.Oficina", "Oficina")
                         .WithMany("Empleados")
                         .HasForeignKey("OficinaId")
@@ -949,6 +932,8 @@ namespace ERPSEI.Data.Migrations
                     b.Navigation("EstadoCivil");
 
                     b.Navigation("Genero");
+
+                    b.Navigation("Jefe");
 
                     b.Navigation("Oficina");
 
@@ -1030,6 +1015,8 @@ namespace ERPSEI.Data.Migrations
                     b.Navigation("ArchivosEmpleado");
 
                     b.Navigation("ContactosEmergencia");
+
+                    b.Navigation("Empleados");
 
                     b.Navigation("User");
                 });
