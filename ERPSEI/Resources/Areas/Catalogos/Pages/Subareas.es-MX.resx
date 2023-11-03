@@ -132,10 +132,10 @@
   <data name="DeleteButton" xml:space="preserve">
     <value>Eliminar</value>
   </data>
-  <data name="DeletePositionDialogQuestion" xml:space="preserve">
+  <data name="DeleteSubareaDialogQuestion" xml:space="preserve">
     <value>¿Está seguro que desea eliminar los registros seleccionados?</value>
   </data>
-  <data name="DeletePositionDialogTitle" xml:space="preserve">
+  <data name="DeleteSubareaDialogTitle" xml:space="preserve">
     <value>Eliminar subarea</value>
   </data>
   <data name="EditButtonTitle" xml:space="preserve">

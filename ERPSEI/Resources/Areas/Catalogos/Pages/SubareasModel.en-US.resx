@@ -117,16 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="PositionSavedSuccessfully" xml:space="preserve">
+  <data name="SubareaSavedSuccessfully" xml:space="preserve">
     <value>Subarea saved successfully!</value>
   </data>
-  <data name="PositionSavedUnsuccessfully" xml:space="preserve">
+  <data name="SubareaSavedUnsuccessfully" xml:space="preserve">
     <value>Error saving subarea</value>
   </data>
-  <data name="PositionsDeletedSuccessfully" xml:space="preserve">
+  <data name="SubareasDeletedSuccessfully" xml:space="preserve">
     <value>Records deleted succesfully!</value>
   </data>
-  <data name="PositionsDeletedUnsuccessfully" xml:space="preserve">
+  <data name="SubareasDeletedUnsuccessfully" xml:space="preserve">
     <value>Error deleting records</value>
   </data>
 </root>
