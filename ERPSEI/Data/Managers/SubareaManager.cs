@@ -22,11 +22,12 @@ namespace ERPSEI.Data.Managers
 			return lastId;
 		}
 
-		public async Task CreateAsync(Subarea subarea)
+        public async Task<int> CreateAsync(Subarea subarea)
         {
             subarea.Id = await getNextId();
             db.Subareas.Add(subarea);
             await db.SaveChangesAsync();
+            return subarea.Id;
         }
         public async Task UpdateAsync(Subarea subarea)
         {

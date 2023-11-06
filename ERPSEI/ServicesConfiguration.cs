@@ -36,6 +36,8 @@ namespace ERPSEI
 
             _builder.Services.AddScoped<IArchivoEmpleadoManager, ArchivoEmpleadoManager>();
 
+			_builder.Services.AddScoped<IRWCatalogoManager<Empleado>, EmpleadoManager>();
+			_builder.Services.AddScoped<IRWCatalogoManager<ContactoEmergencia>, ContactoEmergenciaManager>();
 			_builder.Services.AddScoped<IRWCatalogoManager<Puesto>, PuestoManager>();
 			_builder.Services.AddScoped<IRWCatalogoManager<Area>, AreaManager>();
 			_builder.Services.AddScoped<IRWCatalogoManager<Oficina>, OficinaManager>();
@@ -56,38 +58,40 @@ namespace ERPSEI
 
         public static void ConfigurePagesAndLocalization(WebApplicationBuilder _builder)
         {
+            _builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
             _builder.Services.AddRazorPages()
             .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
-            .AddDataAnnotationsLocalization(options =>
-            {
-                options.DataAnnotationLocalizerProvider = (type, factory) =>
-                {
-                    var assemblyName = new AssemblyName(typeof(ValidationsLocalization).GetTypeInfo().Assembly.FullName ?? "");
+			.AddDataAnnotationsLocalization(options =>
+			{
+				options.DataAnnotationLocalizerProvider = (type, factory) =>
+				{
+					var assemblyName = new AssemblyName(typeof(ValidationsLocalization).GetTypeInfo().Assembly.FullName ?? "");
                     return factory.Create(nameof(ValidationsLocalization), assemblyName.Name ?? "");
                 };
-            });
-            _builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-            _builder.Services.AddMvc(options => {
-				var assemblyName = new AssemblyName(typeof(ModelBindingMessages).GetTypeInfo().Assembly.FullName ?? "");
-				var F = _builder.Services.BuildServiceProvider().GetService<IStringLocalizerFactory>();
-				var L = F.Create(nameof(ModelBindingMessages), assemblyName.Name ?? "");
-
-				options.ModelBindingMessageProvider.SetMissingBindRequiredValueAccessor((x) => L["MissingBindRequiredValueAccessor", x]);
-				options.ModelBindingMessageProvider.SetMissingKeyOrValueAccessor(() => L["MissingKeyOrValueAccessor"]);
-				options.ModelBindingMessageProvider.SetMissingRequestBodyRequiredValueAccessor(() => L["MissingRequestBodyRequiredValueAccessor"]);
-				options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor((x) => L["ValueMustNotBeNullAccessor", x]);
-
-				options.ModelBindingMessageProvider.SetUnknownValueIsInvalidAccessor((x) => L["UnknownValueIsInvalidAccessor", x]);
-				options.ModelBindingMessageProvider.SetNonPropertyUnknownValueIsInvalidAccessor(() => L["NonPropertyUnknownValueIsInvalidAccessor"]);
-				options.ModelBindingMessageProvider.SetValueIsInvalidAccessor((x) => L["ValueIsInvalidAccessor", x]);
-
-				options.ModelBindingMessageProvider.SetValueMustBeANumberAccessor((x) => L["ValueMustBeANumberAccessor", x]);
-				options.ModelBindingMessageProvider.SetNonPropertyValueMustBeANumberAccessor(() => L["NonPropertyValueMustBeANumberAccessor"]);
-
-				options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((x, y) => L["AttemptedValueIsInvalidAccessor", x, y]);
-				options.ModelBindingMessageProvider.SetNonPropertyAttemptedValueIsInvalidAccessor((x) => L["NonPropertyAttemptedValueIsInvalidAccessor", x]);
 			});
-            _builder.Services.Configure<RequestLocalizationOptions>(options =>
+            _builder.Services.AddMvc(options =>
+            {
+                var assemblyName = new AssemblyName(typeof(ModelBindingMessages).GetTypeInfo().Assembly.FullName ?? "");
+                var F = _builder.Services.BuildServiceProvider().GetService<IStringLocalizerFactory>();
+                var L = F.Create(nameof(ModelBindingMessages), assemblyName.Name ?? "");
+
+                options.ModelBindingMessageProvider.SetMissingBindRequiredValueAccessor((x) => L["MissingBindRequiredValueAccessor", x]);
+                options.ModelBindingMessageProvider.SetMissingKeyOrValueAccessor(() => L["MissingKeyOrValueAccessor"]);
+                options.ModelBindingMessageProvider.SetMissingRequestBodyRequiredValueAccessor(() => L["MissingRequestBodyRequiredValueAccessor"]);
+                options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor((x) => L["ValueMustNotBeNullAccessor", x]);
+
+                options.ModelBindingMessageProvider.SetUnknownValueIsInvalidAccessor((x) => L["UnknownValueIsInvalidAccessor", x]);
+                options.ModelBindingMessageProvider.SetNonPropertyUnknownValueIsInvalidAccessor(() => L["NonPropertyUnknownValueIsInvalidAccessor"]);
+                options.ModelBindingMessageProvider.SetValueIsInvalidAccessor((x) => L["ValueIsInvalidAccessor", x]);
+
+                options.ModelBindingMessageProvider.SetValueMustBeANumberAccessor((x) => L["ValueMustBeANumberAccessor", x]);
+                options.ModelBindingMessageProvider.SetNonPropertyValueMustBeANumberAccessor(() => L["NonPropertyValueMustBeANumberAccessor"]);
+
+                options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((x, y) => L["AttemptedValueIsInvalidAccessor", x, y]);
+                options.ModelBindingMessageProvider.SetNonPropertyAttemptedValueIsInvalidAccessor((x) => L["NonPropertyAttemptedValueIsInvalidAccessor", x]);
+            });
+
+			_builder.Services.Configure<RequestLocalizationOptions>(options =>
             {
                 var supportedCultures = new[]
                 {

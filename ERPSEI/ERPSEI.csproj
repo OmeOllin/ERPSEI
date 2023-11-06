@@ -36,6 +36,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Resources\Areas\Catalogos\Pages\GestionDeTalentoModel.es-MX.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\ValidationsLocalization.es-MX.resx">
       <Generator></Generator>
     </EmbeddedResource>

@@ -22,11 +22,12 @@ namespace ERPSEI.Data.Managers
 			return lastId;
 		}
 
-		public async Task CreateAsync(Oficina oficina)
+		public async Task<int> CreateAsync(Oficina oficina)
         {
             oficina.Id = await getNextId();
             db.Oficinas.Add(oficina);
             await db.SaveChangesAsync();
+            return oficina.Id;
         }
         public async Task UpdateAsync(Oficina oficina)
         {

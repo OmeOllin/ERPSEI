@@ -129,14 +129,44 @@
   <data name="ConfirmPasswordField" xml:space="preserve">
     <value>Confirm password</value>
   </data>
+  <data name="CorreoEmpresarialField" xml:space="preserve">
+    <value>Business email</value>
+  </data>
+  <data name="CURPField" xml:space="preserve">
+    <value>UPRC</value>
+  </data>
+  <data name="DireccionField" xml:space="preserve">
+    <value>Address</value>
+  </data>
   <data name="EmailField" xml:space="preserve">
     <value>Email</value>
   </data>
   <data name="EmailFormat" xml:space="preserve">
     <value>The {0} field is not a valid email address.</value>
   </data>
+  <data name="EstadoCivilField" xml:space="preserve">
+    <value>Marital status</value>
+  </data>
   <data name="FathersLastNameField" xml:space="preserve">
     <value>Father's last name</value>
+  </data>
+  <data name="FechaIngresoField" xml:space="preserve">
+    <value>Admission date</value>
+  </data>
+  <data name="FechaIngresoFinField" xml:space="preserve">
+    <value>Admission date (End)</value>
+  </data>
+  <data name="FechaIngresoInicioField" xml:space="preserve">
+    <value>Admission date (Start)</value>
+  </data>
+  <data name="FechaNacimientoField" xml:space="preserve">
+    <value>Birth date</value>
+  </data>
+  <data name="FechaNacimientoFinField" xml:space="preserve">
+    <value>Birth date (End)</value>
+  </data>
+  <data name="FechaNacimientoInicioField" xml:space="preserve">
+    <value>Birth date (Start)</value>
   </data>
   <data name="FieldLength" xml:space="preserve">
     <value>The field {0} must have at least {2} and a maximum of {1} characters.</value>
@@ -146,6 +176,12 @@
   </data>
   <data name="FirstNameField" xml:space="preserve">
     <value>First name</value>
+  </data>
+  <data name="GeneroField" xml:space="preserve">
+    <value>Gender</value>
+  </data>
+  <data name="JefeField" xml:space="preserve">
+    <value>Boss</value>
   </data>
   <data name="MothersLastNameField" xml:space="preserve">
     <value>Mother's last name</value>
@@ -158,6 +194,9 @@
   </data>
   <data name="NewPasswordField" xml:space="preserve">
     <value>New password</value>
+  </data>
+  <data name="OficinaField" xml:space="preserve">
+    <value>Office</value>
   </data>
   <data name="OldPasswordField" xml:space="preserve">
     <value>Old password</value>
@@ -174,6 +213,9 @@
   <data name="PhoneNumberField" xml:space="preserve">
     <value>Phone number</value>
   </data>
+  <data name="PuestoField" xml:space="preserve">
+    <value>Position</value>
+  </data>
   <data name="RememberField" xml:space="preserve">
     <value>Remember me?</value>
   </data>
@@ -182,6 +224,9 @@
   </data>
   <data name="SecondNameField" xml:space="preserve">
     <value>Second name</value>
+  </data>
+  <data name="SubareaField" xml:space="preserve">
+    <value>Subarea</value>
   </data>
   <data name="UserNameField" xml:space="preserve">
     <value>Username</value>

@@ -117,82 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AddButton" xml:space="preserve">
-    <value>Add</value>
+  <data name="EmpleadoSavedSuccessfully" xml:space="preserve">
+    <value>Employee saved successfully!</value>
   </data>
-  <data name="AreaPlaceholder" xml:space="preserve">
-    <value>Area</value>
+  <data name="EmpleadoSavedUnsuccessfully" xml:space="preserve">
+    <value>Error saving employee</value>
   </data>
-  <data name="ColActionsHeader" xml:space="preserve">
-    <value>Actions</value>
+  <data name="EmpleadosDeletedSuccessfully" xml:space="preserve">
+    <value>Records deleted succesfully!</value>
   </data>
-  <data name="ColAreaHeader" xml:space="preserve">
-    <value>Area</value>
-  </data>
-  <data name="ColCorreoHeader" xml:space="preserve">
-    <value>Email</value>
-  </data>
-  <data name="ColFechaIngresoHeader" xml:space="preserve">
-    <value>Admission Date</value>
-  </data>
-  <data name="ColNameHeader" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="ColPuestoHeader" xml:space="preserve">
-    <value>Position</value>
-  </data>
-  <data name="ColTelefonoHeader" xml:space="preserve">
-    <value>Phone Number</value>
-  </data>
-  <data name="CURPPlaceholder" xml:space="preserve">
-    <value>UPRC</value>
-  </data>
-  <data name="DeleteButton" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="DocumentSuggestion" xml:space="preserve">
-    <value>Please note that files should not be larger than 1mb and only files in .pdf, .jpg, .jpeg and .png formats are accepted.</value>
-  </data>
-  <data name="EditButtonTitle" xml:space="preserve">
-    <value>Edit</value>
-  </data>
-  <data name="FechaIngresoPlaceholder" xml:space="preserve">
-    <value>Date of admission</value>
-  </data>
-  <data name="FechaNacimientoPlaceholder" xml:space="preserve">
-    <value>Birth date</value>
-  </data>
-  <data name="FilterTitle" xml:space="preserve">
-    <value>Search filters</value>
-  </data>
-  <data name="ImportButtonText" xml:space="preserve">
-    <value>Import</value>
-  </data>
-  <data name="ImportButtonTitle" xml:space="preserve">
-    <value>Import from an excel file</value>
-  </data>
-  <data name="JefePlaceholder" xml:space="preserve">
-    <value>Boss</value>
-  </data>
-  <data name="NombrePlaceholder" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="OficinaPlaceholder" xml:space="preserve">
-    <value>Office</value>
-  </data>
-  <data name="PuestoPlaceholder" xml:space="preserve">
-    <value>Position</value>
-  </data>
-  <data name="SearchButton" xml:space="preserve">
-    <value>Search</value>
-  </data>
-  <data name="SeeButtonTitle" xml:space="preserve">
-    <value>See</value>
-  </data>
-  <data name="SubareaPlaceholder" xml:space="preserve">
-    <value>Subarea</value>
-  </data>
-  <data name="Title" xml:space="preserve">
-    <value>Talent manager</value>
+  <data name="EmpleadosDeletedUnsuccessfully" xml:space="preserve">
+    <value>Error deleting records</value>
   </data>
 </root>

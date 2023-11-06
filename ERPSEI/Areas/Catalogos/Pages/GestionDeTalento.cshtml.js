@@ -15,24 +15,23 @@ document.addEventListener("DOMContentLoaded", function (event) {
     initTable();
 });
 
+//Funcionalidad Tabla
 function getIdSelections() {
     return $.map(table.bootstrapTable('getSelections'), function (row) {
         return row.id
     })
 }
 function responseHandler(res) {
+    res = JSON.parse(res);
     $.each(res, function (i, row) {
-        let oRow = JSON.parse(row);
-        row.state = $.inArray(oRow.id, selections) !== -1
-        res[i] = oRow;
+        row.state = $.inArray(row.id, selections) !== -1
     })
     return res
 }
-
 function detailFormatter(index, row) {
     var html = []
     $.each(row, function (key, value) {
-        if (key != "state") {
+        if (key != "state" && key != "empleados") {
             html.push('<p><b>' + key + ':</b> ' + value + '</p>')
         }
     });
@@ -40,22 +39,20 @@ function detailFormatter(index, row) {
 }
 function operateFormatter(value, row, index) {
     return [
-        '<a class="see" href="javascript:void(0)" title="' + btnVerTitle + '">',
+        '<a class="see" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgEmpleado" title="' + btnVerTitle + '">',
             '<i class="bi bi-search"></i>',
         '</a>  ',
-        '<a class="edit" href="javascript:void(0)" title="' + btnEditarTitle + '">',
+        '<a class="edit" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgEmpleado" title="' + btnEditarTitle + '">',
             '<i class="bi bi-pencil-fill"></i>',
         '</a>'
     ].join('')
 }
 window.operateEvents = {
     'click .see': function (e, value, row, index) {
-        let stringJSON = JSON.stringify(row);
-        showInfo("Ver", `Diste clic para ver a: ${row.nombre}`);
+        initEmpleadoDialog(VER, row);
     },
     'click .edit': function (e, value, row, index) {
-        let stringJSON = JSON.stringify(row);
-        showInfo("Ver", `Diste clic para editar a: ${row.nombre}`);
+        initEmpleadoDialog(EDITAR, row);
         //table.bootstrapTable('remove', {
         //    field: 'id',
         //    values: [row.id]
@@ -64,7 +61,29 @@ window.operateEvents = {
 }
 
 function onAgregarClick() {
-    initEmpleadoDialog(NUEVO, { id: "Nuevo", nombre: "" });
+    initEmpleadoDialog(NUEVO, {
+        id: "Nuevo",
+        primerNombre: "",
+        segundoNombre: "",
+        apellidoPaterno: "",
+        apellidoMaterno: "",
+        fechaNacimiento: "",
+        fechaIngreso: "",
+        direccion: "",
+        telefono: "",
+        email: "",
+        generoId: 0,
+        estadoCivilId: 0,
+        puestoId: 0,
+        areaId: 0,
+        subareaId: 0,
+        oficinaId: 0,
+        jefeId: 0,
+        nombreContacto1: "",
+        telefonoContacto1: "",
+        nombreContacto2: "",
+        telefonoContacto2: ""
+    });
 }
 
 function initTable() {
@@ -72,7 +91,7 @@ function initTable() {
         height: 550,
         locale: cultureName,
         exportDataType: 'all',
-        exportTypes: ['excel', 'pdf'],
+        exportTypes: ['excel'],
         columns: [
             {
                 field: "state",
@@ -85,54 +104,56 @@ function initTable() {
                 field: "id",
                 align: "center",
                 valign: "middle",
-                sortable: true
+                sortable: true,
+                width: "80px"
             },
             {
-                title: "Nombre",
-                field: "nombre",
+                title: colNombreHeader,
+                field: "nombreCompleto",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: "Fecha de Ingreso",
+                title: colFechaIngresoHeader,
                 field: "fechaIngreso",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: "Puesto",
+                title: colPuestoHeader,
                 field: "puesto",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: "Área",
+                title: colAreaHeader,
                 field: "area",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: "Teléfono",
+                title: colTelefonoHeader,
                 field: "telefono",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: "Correo Electrónico",
+                title: colCorreoHeader,
                 field: "correo",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
+                title: colAccionesHeader,
                 field: "operate",
-                title: "Acciones",
-                align: 'center',
+                align: "center",
+                width: "100px",
                 clickToSelect: false,
                 events: window.operateEvents,
                 formatter: operateFormatter
@@ -152,52 +173,224 @@ function initTable() {
         console.log(name, args)
     })
     buttonRemove.click(function () {
-        askConfirmation("Eliminar registros", "¿Está seguro que desea eliminar los registros seleccionados?", function () {
-            var ids = getIdSelections()
-            table.bootstrapTable('remove', {
-                field: 'id',
-                values: ids
-            })
-            buttonRemove.prop('disabled', true);
+        askConfirmation(dlgDeleteTitle, dlgDeleteQuestion, function () {
+            let oParams = { ids: selections };
+
+            doAjax(
+                "/Catalogos/GestionDeTalento/DeleteEmpleados",
+                oParams,
+                function (resp) {
+                    if (resp.tieneError) {
+                        showError("Error", error);
+                        return;
+                    }
+
+                    table.bootstrapTable('remove', {
+                        field: 'id',
+                        values: selections
+                    })
+                    selections = [];
+                    buttonRemove.prop('disabled', true);
+
+                    let e = document.querySelector("[name='refresh']");
+                    e.click();
+
+                    showSuccess(dlgDeleteTitle, resp.mensaje);
+                }, function (error) {
+                    showError("Error", error);
+                },
+                postOptions
+            );
+
         });
     })
 }
+/////////////////////
+
+//Funcionalidad Diálogo
 
 function initEmpleadoDialog(action, row) {
     let idField = document.getElementById("inpEmpleadoId");
-    let nombreField = document.getElementById("inpEmpleadoNombre");
+    let primerNombreField = document.getElementById("inpEmpleadoPrimerNombre");
+    let segundoNombreField = document.getElementById("inpEmpleadoSegundoNombre");
+    let apellidoPaternoField = document.getElementById("inpEmpleadoApellidoPaterno");
+    let apellidoMaternoField = document.getElementById("inpEmpleadoApellidoMaterno");
+    let fechaNacimientoField = document.getElementById("inpEmpleadoFechaNacimiento");
+    let telefonoField = document.getElementById("inpEmpleadoTelefono");
+    let generoField = document.getElementById("selEmpleadoGeneroId");
+    let estadoCivilIdField = document.getElementById("selEmpleadoEstadoCivilId");
+    let direccionField = document.getElementById("txtEmpleadoDireccion");
+    let puestoField = document.getElementById("selEmpleadoPuestoId");
+    let areaField = document.getElementById("selEmpleadoAreaId");
+    let subareaField = document.getElementById("selEmpleadoSubareaId");
+    let oficinaField = document.getElementById("selEmpleadoOficinaId");
+    let jefeField = document.getElementById("selEmpleadoJefeId");
+    let fechaIngresoField = document.getElementById("inpEmpleadoFechaIngreso");
+    let emailField = document.getElementById("inpEmpleadoEmail");
+    let nombreContacto1Field = document.getElementById("inpEmpleadoNombreContacto1");
+    let telefonoContacto1Field = document.getElementById("inpEmpleadoTelefonoContacto1");
+    let nombreContacto2Field = document.getElementById("inpEmpleadoNombreContacto2");
+    let telefonoContacto2Field = document.getElementById("inpEmpleadoTelefonoContacto2");
+
     let btnGuardar = document.getElementById("dlgEmpleadoBtnGuardar");
     let dlgTitle = document.getElementById("dlgEmpleadoTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 
-    idField.setAttribute("disabled", true);
-
     switch (action) {
         case NUEVO:
-            dlgTitle.innerHTML = dlgNuevoTitle;
-
-            nombreField.removeAttribute("disabled");
-            btnGuardar.removeAttribute("disabled");
-            break;
         case EDITAR:
-            dlgTitle.innerHTML = dlgEditarTitle;
+            if (action == NUEVO) {
+                dlgTitle.innerHTML = dlgNuevoTitle;
+            }
+            else {
+                dlgTitle.innerHTML = dlgEditarTitle;
+            }
 
-            nombreField.removeAttribute("disabled");
+            idField.setAttribute("disabled", true);
+            primerNombreField.removeAttribute("disabled");
+            segundoNombreField.removeAttribute("disabled");
+            apellidoPaternoField.removeAttribute("disabled");
+            apellidoMaternoField.removeAttribute("disabled");
+            fechaNacimientoField.removeAttribute("disabled");
+            telefonoField.removeAttribute("disabled");
+            generoField.removeAttribute("disabled");
+            estadoCivilIdField.removeAttribute("disabled");
+            direccionField.removeAttribute("disabled");
+            puestoField.removeAttribute("disabled");
+            areaField.removeAttribute("disabled");
+            subareaField.removeAttribute("disabled");
+            oficinaField.removeAttribute("disabled");
+            jefeField.removeAttribute("disabled");
+            fechaIngresoField.removeAttribute("disabled");
+            emailField.removeAttribute("disabled");
+            nombreContacto1Field.removeAttribute("disabled");
+            telefonoContacto1Field.removeAttribute("disabled");
+            nombreContacto2Field.removeAttribute("disabled");
+            telefonoContacto2Field.removeAttribute("disabled");
             btnGuardar.removeAttribute("disabled");
             break;
         default:
             dlgTitle.innerHTML = dlgVerTitle;
 
-            nombreField.setAttribute("disabled", true);
+            primerNombreField.setAttribute("disabled", true);
+            segundoNombreField.setAttribute("disabled", true);
+            apellidoPaternoField.setAttribute("disabled", true);
+            apellidoMaternoField.setAttribute("disabled", true);
+            fechaNacimientoField.setAttribute("disabled", true);
+            telefonoField.setAttribute("disabled", true);
+            generoField.setAttribute("disabled", true);
+            estadoCivilIdField.setAttribute("disabled", true);
+            direccionField.setAttribute("disabled", true);
+            puestoField.setAttribute("disabled", true);
+            areaField.setAttribute("disabled", true);
+            subareaField.setAttribute("disabled", true);
+            oficinaField.setAttribute("disabled", true);
+            jefeField.setAttribute("disabled", true);
+            fechaIngresoField.setAttribute("disabled", true);
+            emailField.setAttribute("disabled", true);
+            nombreContacto1Field.setAttribute("disabled", true);
+            telefonoContacto1Field.setAttribute("disabled", true);
+            nombreContacto2Field.setAttribute("disabled", true);
+            telefonoContacto2Field.setAttribute("disabled", true);
             btnGuardar.setAttribute("disabled", true);
             break;
     }
 
     idField.value = row.id;
-    nombreField.value = row.nombre;
+    primerNombreField.value = row.primerNombre;
+    segundoNombreField.value = row.segundoNombre
+    apellidoPaternoField.value = row.apellidoPaterno
+    apellidoMaternoField.value = row.apellidoMaterno
+    fechaNacimientoField.value = row.fechaNacimiento
+    telefonoField.value = row.telefono
+    generoField.value = row.generoId
+    estadoCivilIdField.value = row.estadoCivilId
+    direccionField.value = row.direccion
+    puestoField.value = row.puestoId
+    areaField.value = row.areaId
+    subareaField.value = row.subareaId
+    oficinaField.value = row.oficinaId
+    jefeField.value = row.jefeId
+    fechaIngresoField.value = row.fechaIngreso
+    emailField.value = row.email
+    nombreContacto1Field.value = row.nombreContacto1
+    telefonoContacto1Field.value = row.telefonoContacto1
+    nombreContacto2Field.value = row.nombreContacto2
+    telefonoContacto2Field.value = row.telefonoContacto2
 }
 
+function onGuardarClick() {
+    //Ejecuta la validación
+    $("#theForm").validate();
+    //Determina los errores
+    let valid = $("#theForm").valid();
+    //Si la forma no es válida, entonces finaliza.
+    if (!valid) { return; }
+
+    let btnClose = document.getElementById("dlgEmpleadoBtnCancelar");
+
+    let idField = document.getElementById("inpEmpleadoId");
+    let primerNombreField = document.getElementById("inpEmpleadoPrimerNombre");
+    let segundoNombreField = document.getElementById("inpEmpleadoSegundoNombre");
+    let apellidoPaternoField = document.getElementById("inpEmpleadoApellidoPaterno");
+    let apellidoMaternoField = document.getElementById("inpEmpleadoApellidoMaterno");
+    let fechaNacimientoField = document.getElementById("inpEmpleadoFechaNacimiento");
+    let telefonoField = document.getElementById("inpEmpleadoTelefono");
+    let generoField = document.getElementById("selEmpleadoGeneroId");
+    let estadoCivilIdField = document.getElementById("selEmpleadoEstadoCivilId");
+    let direccionField = document.getElementById("txtEmpleadoDireccion");
+    let puestoField = document.getElementById("selEmpleadoPuestoId");
+    let areaField = document.getElementById("selEmpleadoAreaId");
+    let subareaField = document.getElementById("selEmpleadoSubareaId");
+    let oficinaField = document.getElementById("selEmpleadoOficinaId");
+    let jefeField = document.getElementById("selEmpleadoJefeId");
+    let fechaIngresoField = document.getElementById("inpEmpleadoFechaIngreso");
+    let emailField = document.getElementById("inpEmpleadoEmail");
+    let nombreContacto1Field = document.getElementById("inpEmpleadoNombreContacto1");
+    let telefonoContacto1Field = document.getElementById("inpEmpleadoTelefonoContacto1");
+    let nombreContacto2Field = document.getElementById("inpEmpleadoNombreContacto2");
+    let telefonoContacto2Field = document.getElementById("inpEmpleadoTelefonoContacto2");
+
+    let dlgTitle = document.getElementById("dlgEmpleadoTitle");
+    let summaryContainer = document.getElementById("saveValidationSummary");
+    summaryContainer.innerHTML = "";
+
+    let oParams = {
+        id: idField.value == "Nuevo" ? 0 : idField.value,
+        primerNombre: primerNombreField.value,
+        segundoNombre: segundoNombreField.value,
+        idArea: areaField.value == 0 ? 0 : parseInt(areaField.value)
+    };
+
+    doAjax(
+        "/Catalogos/GestionDeTalento/SaveEmpleado",
+        oParams,
+        function (resp) {
+            if (resp.tieneError) {
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    let summary = ``;
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                }
+                return;
+            }
+
+            btnClose.click();
+
+            let e = document.querySelector("[name='refresh']");
+            e.click();
+
+            showSuccess(dlgTitle.innerHTML, resp.mensaje);
+        }, function (error) {
+            showError("Error", error);
+        },
+        postOptions
+    );
+}
+/////////////////////
 function initializeDate() {
     var now = new Date();
     var day = ("0" + now.getDate()).slice(-2);

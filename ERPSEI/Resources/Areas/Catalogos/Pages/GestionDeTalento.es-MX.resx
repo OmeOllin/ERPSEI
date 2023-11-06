@@ -123,11 +123,35 @@
   <data name="AreaPlaceholder" xml:space="preserve">
     <value>Área</value>
   </data>
+  <data name="ColActionsHeader" xml:space="preserve">
+    <value>Acciones</value>
+  </data>
+  <data name="ColAreaHeader" xml:space="preserve">
+    <value>Área</value>
+  </data>
+  <data name="ColCorreoHeader" xml:space="preserve">
+    <value>Correo</value>
+  </data>
+  <data name="ColFechaIngresoHeader" xml:space="preserve">
+    <value>Fecha Ingreso</value>
+  </data>
+  <data name="ColNameHeader" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="ColPuestoHeader" xml:space="preserve">
+    <value>Puesto</value>
+  </data>
+  <data name="ColTelefonoHeader" xml:space="preserve">
+    <value>Teléfono</value>
+  </data>
   <data name="CURPPlaceholder" xml:space="preserve">
     <value>CURP</value>
   </data>
   <data name="DeleteButton" xml:space="preserve">
     <value>Eliminar</value>
+  </data>
+  <data name="DocumentSuggestion" xml:space="preserve">
+    <value>Tenga en cuenta que los archivos no deben tener más de 1 MB y solo se aceptan archivos en formatos .pdf, .jpg, .jpeg y .png.</value>
   </data>
   <data name="EditButtonTitle" xml:space="preserve">
     <value>Editar</value>
@@ -146,6 +170,9 @@
   </data>
   <data name="ImportButtonTitle" xml:space="preserve">
     <value>Importar desde un archivo excel</value>
+  </data>
+  <data name="JefePlaceholder" xml:space="preserve">
+    <value>Jefe</value>
   </data>
   <data name="NombrePlaceholder" xml:space="preserve">
     <value>Nombre</value>

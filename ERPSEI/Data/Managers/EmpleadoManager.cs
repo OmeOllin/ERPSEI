@@ -3,54 +3,54 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERPSEI.Data.Managers
 {
-    public class AreaManager : IRWCatalogoManager<Area>
+    public class EmpleadoManager : IRWCatalogoManager<Empleado>
     {
         ApplicationDbContext db { get; set; }
 
-        public AreaManager(ApplicationDbContext _db)
+        public EmpleadoManager(ApplicationDbContext _db)
         {
             db = _db;
         }
 
 		private async Task<int> getNextId()
 		{
-			List<Area> registros = await GetAllAsync();
-			Area? last = registros.OrderByDescending(r => r.Id).FirstOrDefault();
+			List<Empleado> registros = await GetAllAsync();
+			Empleado? last = registros.OrderByDescending(r => r.Id).FirstOrDefault();
 			int lastId = last != null ? last.Id : 0;
 			lastId += 1;
 
 			return lastId;
 		}
 
-		public async Task<int> CreateAsync(Area area)
+		public async Task<int> CreateAsync(Empleado empleado)
         {
-            area.Id = await getNextId();
-            db.Areas.Add(area);
+            empleado.Id = await getNextId();
+            db.Empleados.Add(empleado);
             await db.SaveChangesAsync();
-            return area.Id;
+            return empleado.Id;
         }
-        public async Task UpdateAsync(Area area)
+        public async Task UpdateAsync(Empleado empleado)
         {
-            Area? a = db.Find<Area>(area.Id);
+			Empleado? a = db.Find<Empleado>(empleado.Id);
             if (a != null)
             {
-                a.Nombre = area.Nombre;
+                //a.Nombre = empleado.Nombre;
                 await db.SaveChangesAsync();
             }
         }
 
-        public async Task DeleteAsync(Area area)
+        public async Task DeleteAsync(Empleado empleado)
         {
-            db.Areas.Remove(area);
+            db.Empleados.Remove(empleado);
             await db.SaveChangesAsync();
         }
 
         public async Task DeleteByIdAsync(int id)
         {
-            Area? area = GetById(id);
-            if (area != null)
+			Empleado? empleado = GetById(id);
+            if (empleado != null)
             {
-                db.Remove(area);
+                db.Remove(empleado);
                 await db.SaveChangesAsync();
             }
         }
@@ -63,10 +63,10 @@ namespace ERPSEI.Data.Managers
 			{
 				foreach (string id in ids)
 				{
-					Area? area = GetById(int.Parse(id));
-					if (area != null)
+					Empleado? empleado = GetById(int.Parse(id));
+					if (empleado != null)
 					{
-						db.Remove(area);
+						db.Remove(empleado);
 						await db.SaveChangesAsync();
 					}
 				}
@@ -80,14 +80,14 @@ namespace ERPSEI.Data.Managers
 			}
 		}
 
-		public async Task<List<Area>> GetAllAsync()
+		public async Task<List<Empleado>> GetAllAsync()
 		{
-			return await db.Areas.ToListAsync();
+			return await db.Empleados.ToListAsync();
 		}
 
-		public Area? GetById(int id)
+		public Empleado? GetById(int id)
         {
-            return db.Areas.Where(a => a.Id == id).FirstOrDefault();
+            return db.Empleados.Where(a => a.Id == id).FirstOrDefault();
         }
 
     }

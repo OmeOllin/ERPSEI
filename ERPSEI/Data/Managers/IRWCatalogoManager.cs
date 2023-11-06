@@ -2,7 +2,7 @@
 {
 	public interface IRWCatalogoManager<T>
 	{
-		public Task CreateAsync(T element);
+		public Task<int> CreateAsync(T element);
 
 		public Task UpdateAsync(T element);
 
@@ -14,6 +14,6 @@
 
 		public Task<List<T>> GetAllAsync();
 
-		T? GetById(int id);
+		public T? GetById(int id);
 	}
 }

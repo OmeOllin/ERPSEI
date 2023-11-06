@@ -21,11 +21,12 @@ namespace ERPSEI.Data.Managers
 
 			return lastId;
 		}
-		public async Task CreateAsync(Puesto puesto)
+		public async Task<int> CreateAsync(Puesto puesto)
         {
             puesto.Id = await getNextId();
             db.Puestos.Add(puesto);
             await db.SaveChangesAsync();
+            return puesto.Id;
         }
         public async Task UpdateAsync(Puesto puesto)
         {

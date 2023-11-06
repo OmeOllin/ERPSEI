@@ -12,10 +12,11 @@ namespace ERPSEI.Data.Managers
             db = _db;
         }
 
-        public async Task CreateAsync(ArchivoEmpleado file)
+        public async Task<string> CreateAsync(ArchivoEmpleado file)
         {
             db.ArchivosEmpleado.Add(file);
             await db.SaveChangesAsync();
+            return file.Id;
         }
         public async Task UpdateAsync(ArchivoEmpleado file)
         {

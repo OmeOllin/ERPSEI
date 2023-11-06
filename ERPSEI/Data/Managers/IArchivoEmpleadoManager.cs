@@ -5,7 +5,7 @@ namespace ERPSEI.Data.Managers
     public interface IArchivoEmpleadoManager
     {
 
-        public Task CreateAsync(ArchivoEmpleado file);
+        public Task<string> CreateAsync(ArchivoEmpleado file);
 
         public Task UpdateAsync(ArchivoEmpleado file);
 
