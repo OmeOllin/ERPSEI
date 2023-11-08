@@ -1,3 +1,4 @@
+using ERPSEI.Data;
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Managers;
 using ERPSEI.Requests;
@@ -22,6 +23,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		private readonly IContactoEmergenciaManager _contactoEmergenciaManager;
 		private readonly IStringLocalizer<GestionDeTalentoModel> _strLocalizer;
 		private readonly ILogger<GestionDeTalentoModel> _logger;
+		private readonly ApplicationDbContext _db;
 
 		[BindProperty]
         public FiltroModel InputFiltro { get; set; }
@@ -186,7 +188,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			IRCatalogoManager<EstadoCivil> estadoCivilManager,
 			IContactoEmergenciaManager contactoEmergenciaManager,
 			IStringLocalizer<GestionDeTalentoModel> stringLocalizer,
-			ILogger<GestionDeTalentoModel> logger
+			ILogger<GestionDeTalentoModel> logger,
+			ApplicationDbContext db
 		)
 		{
 			_empleadoManager = empleadoManager;
@@ -199,6 +202,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			_contactoEmergenciaManager = contactoEmergenciaManager;
 			_strLocalizer = stringLocalizer;
 			_logger = logger;
+			_db = db;
 
             InputFiltro = new FiltroModel();
             InputEmpleado = new EmpleadoModel();
@@ -301,94 +305,84 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		{
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadoSavedUnsuccessfully"]);
 
+			if (!ModelState.IsValid)
+			{
+				resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray();
+				return new JsonResult(resp);
+			}
+
+			await _db.Database.BeginTransactionAsync();
 			try
 			{
-				if (!ModelState.IsValid)
+				Empleado? empleado = _empleadoManager.GetById(InputEmpleado.Id);
+				int idEmpleado = 0;
+				if (empleado != null)
 				{
-					resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray();
+					idEmpleado = empleado.Id;
+
+					empleado.ApellidoMaterno = InputEmpleado.ApellidoMaterno;
+					empleado.ApellidoPaterno = InputEmpleado.ApellidoPaterno;
+					empleado.AreaId = InputEmpleado.AreaId;
+					empleado.Direccion = InputEmpleado.Direccion ?? "";
+					empleado.Email = InputEmpleado.Email;
+					empleado.EstadoCivilId = InputEmpleado.EstadoCivilId;
+					empleado.FechaIngreso = InputEmpleado.FechaIngreso;
+					empleado.FechaNacimiento = InputEmpleado.FechaNacimiento;
+					empleado.GeneroId = InputEmpleado.GeneroId;
+					empleado.JefeId = InputEmpleado.JefeId;
+					empleado.NombreCompleto = $"{InputEmpleado.PrimerNombre} {InputEmpleado.SegundoNombre} {InputEmpleado.ApellidoPaterno} {InputEmpleado.ApellidoMaterno}";
+					empleado.OficinaId = InputEmpleado.OficinaId;
+					empleado.PrimerNombre = InputEmpleado.PrimerNombre;
+					empleado.PuestoId = InputEmpleado.PuestoId;
+					empleado.SegundoNombre = InputEmpleado.SegundoNombre ?? "";
+					empleado.SubareaId = InputEmpleado.SubareaId;
+					empleado.Telefono = InputEmpleado.Telefono;
+
+					await _empleadoManager.UpdateAsync(empleado);
+
+					//Elimina los contactos del empleado.
+					await _contactoEmergenciaManager.DeleteByEmpleadoIdAsync(empleado.Id);
 				}
 				else
 				{
-					Empleado? empleado = _empleadoManager.GetById(InputEmpleado.Id);
-
-					if (empleado != null)
-					{
-						empleado.ApellidoMaterno = InputEmpleado.ApellidoMaterno;
-						empleado.ApellidoPaterno = InputEmpleado.ApellidoPaterno;
-						empleado.AreaId = InputEmpleado.AreaId;
-						empleado.Direccion = InputEmpleado.Direccion ?? "";
-						empleado.Email = InputEmpleado.Email;
-						empleado.EstadoCivilId = InputEmpleado.EstadoCivilId;
-						empleado.FechaIngreso = InputEmpleado.FechaIngreso;
-						empleado.FechaNacimiento = InputEmpleado.FechaNacimiento;
-						empleado.GeneroId = InputEmpleado.GeneroId;
-						empleado.JefeId = InputEmpleado.JefeId;
-						empleado.NombreCompleto = $"{InputEmpleado.PrimerNombre} {InputEmpleado.SegundoNombre} {InputEmpleado.ApellidoPaterno} {InputEmpleado.ApellidoMaterno}";
-						empleado.OficinaId = InputEmpleado.OficinaId;
-						empleado.PrimerNombre = InputEmpleado.PrimerNombre;
-						empleado.PuestoId = InputEmpleado.PuestoId;
-						empleado.SegundoNombre = InputEmpleado.SegundoNombre ?? "";
-						empleado.SubareaId = InputEmpleado.SubareaId;
-						empleado.Telefono = InputEmpleado.Telefono;
-
-						await _empleadoManager.UpdateAsync(empleado);
-
-						//Elimina los contactos del empleado.
-						ICollection<ContactoEmergencia>? contactos = empleado.ContactosEmergencia;
-						if (contactos != null)
-						{
-                            foreach (ContactoEmergencia c in contactos){ await _contactoEmergenciaManager.DeleteAsync(c); }
-						}
-
-						//Crea dos nuevos contactos para el empleado.
-						await _contactoEmergenciaManager.CreateAsync(
-							new ContactoEmergencia() { Nombre = InputEmpleado.NombreContacto1 ?? "", Telefono = InputEmpleado.TelefonoContacto1 ?? "", EmpleadoId = empleado.Id }
-						);
-						await _contactoEmergenciaManager.CreateAsync(
-							new ContactoEmergencia() { Nombre = InputEmpleado.NombreContacto2 ?? "", Telefono = InputEmpleado.TelefonoContacto2 ?? "", EmpleadoId = empleado.Id }
-						);
-
-						resp.TieneError = false;
-						resp.Mensaje = _strLocalizer["EmpleadoSavedSuccessfully"];
-					}
-					else
-					{
-						//Crea al empleado y obtiene su id.
-						int idEmpleado = await _empleadoManager.CreateAsync(new Empleado() {
-											ApellidoMaterno = InputEmpleado.ApellidoMaterno,
-											ApellidoPaterno = InputEmpleado.ApellidoPaterno,
-											AreaId = InputEmpleado.AreaId,
-											Direccion = InputEmpleado.Direccion ?? "",
-											Email = InputEmpleado.Email,
-											EstadoCivilId = InputEmpleado.EstadoCivilId,
-											FechaIngreso = InputEmpleado.FechaIngreso,
-											FechaNacimiento = InputEmpleado.FechaNacimiento,
-											GeneroId = InputEmpleado.GeneroId,
-											JefeId = InputEmpleado.JefeId,
-											NombreCompleto = $"{InputEmpleado.PrimerNombre} {InputEmpleado.SegundoNombre} {InputEmpleado.ApellidoPaterno} {InputEmpleado.ApellidoMaterno}",
-											OficinaId = InputEmpleado.OficinaId,
-											PrimerNombre = InputEmpleado.PrimerNombre,
-											PuestoId = InputEmpleado.PuestoId,
-											SegundoNombre = InputEmpleado.SegundoNombre ?? "",
-											SubareaId = InputEmpleado.SubareaId,
-											Telefono = InputEmpleado.Telefono
-										});
-
-						//Crea dos nuevos contactos para el empleado.
-						await _contactoEmergenciaManager.CreateAsync(
-							new ContactoEmergencia() { Nombre = InputEmpleado.NombreContacto1 ?? "", Telefono = InputEmpleado.TelefonoContacto1	?? "", EmpleadoId = idEmpleado }
-						);
-						await _contactoEmergenciaManager.CreateAsync(
-							new ContactoEmergencia() { Nombre = InputEmpleado.NombreContacto2 ?? "", Telefono = InputEmpleado.TelefonoContacto2 ?? "", EmpleadoId = idEmpleado }
-						);
-
-						resp.TieneError = false;
-						resp.Mensaje = _strLocalizer["EmpleadoSavedSuccessfully"];
-					}
+					//Crea al empleado y obtiene su id.
+					idEmpleado = await _empleadoManager.CreateAsync(new Empleado() {
+																		ApellidoMaterno = InputEmpleado.ApellidoMaterno,
+																		ApellidoPaterno = InputEmpleado.ApellidoPaterno,
+																		AreaId = InputEmpleado.AreaId,
+																		Direccion = InputEmpleado.Direccion ?? "",
+																		Email = InputEmpleado.Email,
+																		EstadoCivilId = InputEmpleado.EstadoCivilId,
+																		FechaIngreso = InputEmpleado.FechaIngreso,
+																		FechaNacimiento = InputEmpleado.FechaNacimiento,
+																		GeneroId = InputEmpleado.GeneroId,
+																		JefeId = InputEmpleado.JefeId,
+																		NombreCompleto = $"{InputEmpleado.PrimerNombre} {InputEmpleado.SegundoNombre} {InputEmpleado.ApellidoPaterno} {InputEmpleado.ApellidoMaterno}",
+																		OficinaId = InputEmpleado.OficinaId,
+																		PrimerNombre = InputEmpleado.PrimerNombre,
+																		PuestoId = InputEmpleado.PuestoId,
+																		SegundoNombre = InputEmpleado.SegundoNombre ?? "",
+																		SubareaId = InputEmpleado.SubareaId,
+																		Telefono = InputEmpleado.Telefono
+																	});
 				}
+
+				//Crea dos nuevos contactos para el empleado.
+				await _contactoEmergenciaManager.CreateAsync(
+					new ContactoEmergencia() { Nombre = InputEmpleado.NombreContacto1 ?? "", Telefono = InputEmpleado.TelefonoContacto1 ?? "", EmpleadoId = idEmpleado }
+				);
+				await _contactoEmergenciaManager.CreateAsync(
+					new ContactoEmergencia() { Nombre = InputEmpleado.NombreContacto2 ?? "", Telefono = InputEmpleado.TelefonoContacto2 ?? "", EmpleadoId = idEmpleado }
+				);
+
+				await _db.Database.CommitTransactionAsync();
+
+				resp.TieneError = false;
+				resp.Mensaje = _strLocalizer["EmpleadoSavedSuccessfully"];
 			}
 			catch (Exception ex)
 			{
+				await _db.Database.RollbackTransactionAsync();
 				_logger.LogError(ex.Message);
 			}
 

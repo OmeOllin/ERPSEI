@@ -13,6 +13,8 @@ namespace ERPSEI.Data.Managers
 
         public Task DeleteByIdAsync(int contactoId);
 
+        public Task DeleteByEmpleadoIdAsync(int empleadoId);
+
         public Task<ICollection<ContactoEmergencia>> GetContactosByEmpleadoIdAsync(int contactoId);
 
 		ContactoEmergencia? GetById(int id);
