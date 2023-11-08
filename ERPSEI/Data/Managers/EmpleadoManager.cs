@@ -82,7 +82,16 @@ namespace ERPSEI.Data.Managers
 
 		public async Task<List<Empleado>> GetAllAsync()
 		{
-			return await db.Empleados.ToListAsync();
+			return await db.Empleados
+				.Include(e => e.Oficina)
+				.Include(e => e.Puesto)
+				.Include(e => e.Area)
+				.Include(e => e.Subarea)
+				.Include(e => e.Genero)
+				.Include(e => e.EstadoCivil)
+				.Include(e => e.Jefe)
+				.Include(e => e.ContactosEmergencia)
+				.ToListAsync();
 		}
 
 		public Empleado? GetById(int id)

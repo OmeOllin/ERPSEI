@@ -98,8 +98,7 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<select id="selSubareaArea" asp-for="Input.IdArea" class="form-control" placeholder="@Localizer["AreaPlaceholder"]">
-										<option value="0">Seleccione...</option>
+									<select id="selSubareaArea" asp-for="Input.IdArea" class="form-select" placeholder="@Localizer["AreaPlaceholder"]">
 										@{
 											foreach (Area area in areas)
 											{
@@ -115,7 +114,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button id="dlgSubareaBtnCancelar" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+					<button id="dlgSubareaBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarClick();" data-bs-dismiss="modal">
 						<i class="bi bi-x-lg"></i> @Localizer["CancelButton"]
 					</button>
 					<button id="dlgSubareaBtnGuardar" type="button" class="btn btn-primary" onclick="onGuardarClick();">

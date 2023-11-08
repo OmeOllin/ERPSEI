@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERPSEI.Data.Managers
 {
-    public class ContactoEmergenciaManager : IRWCatalogoManager<ContactoEmergencia>
+    public class ContactoEmergenciaManager : IContactoEmergenciaManager
     {
         ApplicationDbContext db { get; set; }
 
@@ -14,7 +14,7 @@ namespace ERPSEI.Data.Managers
 
 		private async Task<int> getNextId()
 		{
-			List<ContactoEmergencia> registros = await GetAllAsync();
+			List<ContactoEmergencia> registros = await db.ContactosEmergencia.ToListAsync();
 			ContactoEmergencia? last = registros.OrderByDescending(r => r.Id).FirstOrDefault();
 			int lastId = last != null ? last.Id : 0;
 			lastId += 1;
@@ -29,6 +29,7 @@ namespace ERPSEI.Data.Managers
             await db.SaveChangesAsync();
             return contacto.Id;
         }
+
         public async Task UpdateAsync(ContactoEmergencia contacto)
         {
 			ContactoEmergencia? a = db.Find<ContactoEmergencia>(contacto.Id);
@@ -55,34 +56,9 @@ namespace ERPSEI.Data.Managers
             }
         }
 
-		public async Task DeleteMultipleByIdAsync(string[] ids)
-		{
-			//Inicia una transacción.
-			await db.Database.BeginTransactionAsync();
-			try
-			{
-				foreach (string id in ids)
-				{
-					ContactoEmergencia? contacto = GetById(int.Parse(id));
-					if (contacto != null)
-					{
-						db.Remove(contacto);
-						await db.SaveChangesAsync();
-					}
-				}
-
-				await db.Database.CommitTransactionAsync();
-			}
-			catch (Exception)
-			{
-				await db.Database.RollbackTransactionAsync();
-
-			}
-		}
-
-		public async Task<List<ContactoEmergencia>> GetAllAsync()
-		{
-			return await db.ContactosEmergencia.ToListAsync();
+		public async Task<ICollection<ContactoEmergencia>> GetContactosByEmpleadoIdAsync(int contactoId)
+        {
+			return await db.ContactosEmergencia.Where(c => c.EmpleadoId == contactoId).ToListAsync();
 		}
 
 		public ContactoEmergencia? GetById(int id)

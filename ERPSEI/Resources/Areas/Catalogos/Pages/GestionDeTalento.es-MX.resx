@@ -123,6 +123,9 @@
   <data name="AreaPlaceholder" xml:space="preserve">
     <value>Área</value>
   </data>
+  <data name="CancelButtonTitle" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
   <data name="ColActionsHeader" xml:space="preserve">
     <value>Acciones</value>
   </data>
@@ -150,11 +153,32 @@
   <data name="DeleteButton" xml:space="preserve">
     <value>Eliminar</value>
   </data>
+  <data name="DeleteEmpleadoDialogQuestion" xml:space="preserve">
+    <value>¿Está seguro que desea eliminar los registros seleccionados?</value>
+  </data>
+  <data name="DeleteEmpleadoDialogTitle" xml:space="preserve">
+    <value>Eliminar empleado</value>
+  </data>
   <data name="DocumentSuggestion" xml:space="preserve">
     <value>Tenga en cuenta que los archivos no deben tener más de 1 MB y solo se aceptan archivos en formatos .pdf, .jpg, .jpeg y .png.</value>
   </data>
   <data name="EditButtonTitle" xml:space="preserve">
     <value>Editar</value>
+  </data>
+  <data name="EditDialogTitle" xml:space="preserve">
+    <value>Editar Registro</value>
+  </data>
+  <data name="EmpleadoContactoTitle" xml:space="preserve">
+    <value>Contacto de Emergencia</value>
+  </data>
+  <data name="EmpleadoPrimerSeccionTitle" xml:space="preserve">
+    <value>Información Personal</value>
+  </data>
+  <data name="EmpleadoSegundaSeccionTitle" xml:space="preserve">
+    <value>Información Laboral</value>
+  </data>
+  <data name="EmpleadoTercerSeccionTitle" xml:space="preserve">
+    <value>Documentos</value>
   </data>
   <data name="FechaIngresoPlaceholder" xml:space="preserve">
     <value>Fecha de ingreso</value>
@@ -174,6 +198,9 @@
   <data name="JefePlaceholder" xml:space="preserve">
     <value>Jefe</value>
   </data>
+  <data name="NewDialogTitle" xml:space="preserve">
+    <value>Nuevo Registro</value>
+  </data>
   <data name="NombrePlaceholder" xml:space="preserve">
     <value>Nombre</value>
   </data>
@@ -183,11 +210,17 @@
   <data name="PuestoPlaceholder" xml:space="preserve">
     <value>Puesto</value>
   </data>
+  <data name="SaveButtonTitle" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
   <data name="SearchButton" xml:space="preserve">
     <value>Buscar</value>
   </data>
   <data name="SeeButtonTitle" xml:space="preserve">
     <value>Ver</value>
+  </data>
+  <data name="SeeDialogTitle" xml:space="preserve">
+    <value>Ver Registro</value>
   </data>
   <data name="SubareaPlaceholder" xml:space="preserve">
     <value>Subarea</value>

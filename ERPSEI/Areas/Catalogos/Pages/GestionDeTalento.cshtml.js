@@ -22,7 +22,9 @@ function getIdSelections() {
     })
 }
 function responseHandler(res) {
-    res = JSON.parse(res);
+    if (typeof res == "string" && res.length >= 1) {
+        res = JSON.parse(res);
+    }
     $.each(res, function (i, row) {
         row.state = $.inArray(row.id, selections) !== -1
     })
@@ -59,6 +61,20 @@ window.operateEvents = {
         //})
     }
 }
+function additionalButtons() {
+    return {
+        btnImport: {
+            text: 'Importar',
+            icon: 'bi-upload',
+            event: function () {
+                alert("Importar datos");
+            },
+            attributes: {
+                title: 'Importar datos desde un archivo excel'
+            }
+        }
+    }
+}
 
 function onAgregarClick() {
     initEmpleadoDialog(NUEVO, {
@@ -67,8 +83,8 @@ function onAgregarClick() {
         segundoNombre: "",
         apellidoPaterno: "",
         apellidoMaterno: "",
-        fechaNacimiento: "",
-        fechaIngreso: "",
+        fechaNacimiento: null,
+        fechaIngreso: null,
         direccion: "",
         telefono: "",
         email: "",
@@ -144,7 +160,7 @@ function initTable() {
             },
             {
                 title: colCorreoHeader,
-                field: "correo",
+                field: "email",
                 align: "center",
                 valign: "middle",
                 sortable: true
@@ -237,6 +253,7 @@ function initEmpleadoDialog(action, row) {
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 
+    idField.setAttribute("disabled", true);
     switch (action) {
         case NUEVO:
         case EDITAR:
@@ -247,7 +264,6 @@ function initEmpleadoDialog(action, row) {
                 dlgTitle.innerHTML = dlgEditarTitle;
             }
 
-            idField.setAttribute("disabled", true);
             primerNombreField.removeAttribute("disabled");
             segundoNombreField.removeAttribute("disabled");
             apellidoPaternoField.removeAttribute("disabled");
@@ -299,25 +315,39 @@ function initEmpleadoDialog(action, row) {
 
     idField.value = row.id;
     primerNombreField.value = row.primerNombre;
-    segundoNombreField.value = row.segundoNombre
-    apellidoPaternoField.value = row.apellidoPaterno
-    apellidoMaternoField.value = row.apellidoMaterno
-    fechaNacimientoField.value = row.fechaNacimiento
-    telefonoField.value = row.telefono
-    generoField.value = row.generoId
-    estadoCivilIdField.value = row.estadoCivilId
-    direccionField.value = row.direccion
-    puestoField.value = row.puestoId
-    areaField.value = row.areaId
-    subareaField.value = row.subareaId
-    oficinaField.value = row.oficinaId
-    jefeField.value = row.jefeId
-    fechaIngresoField.value = row.fechaIngreso
-    emailField.value = row.email
-    nombreContacto1Field.value = row.nombreContacto1
-    telefonoContacto1Field.value = row.telefonoContacto1
-    nombreContacto2Field.value = row.nombreContacto2
-    telefonoContacto2Field.value = row.telefonoContacto2
+    segundoNombreField.value = row.segundoNombre || "";
+    apellidoPaternoField.value = row.apellidoPaterno;
+    apellidoMaternoField.value = row.apellidoMaterno;
+    fechaNacimientoField.value = row.fechaNacimientoJS;
+    telefonoField.value = row.telefono;
+    generoField.value = row.generoId;
+    estadoCivilIdField.value = row.estadoCivilId;
+    direccionField.value = row.direccion;
+    puestoField.value = row.puestoId;
+    areaField.value = row.areaId;
+    subareaField.value = row.subareaId;
+    oficinaField.value = row.oficinaId;
+    jefeField.value = row.jefeId;
+    fechaIngresoField.value = row.fechaIngresoJS;
+    emailField.value = row.email;
+    nombreContacto1Field.value = row.nombreContacto1 || "";
+    telefonoContacto1Field.value = row.telefonoContacto1 || "";
+    nombreContacto2Field.value = row.nombreContacto2 || "";
+    telefonoContacto2Field.value = row.telefonoContacto2 || "";
+}
+
+function onCerrarClick() {
+    //Removes validation from input-fields
+    $('.input-validation-error').addClass('input-validation-valid');
+    $('.input-validation-error').removeClass('input-validation-error');
+    //Removes validation message after input-fields
+    $('.field-validation-error').addClass('field-validation-valid');
+    $('.field-validation-error').removeClass('field-validation-error');
+    //Removes validation summary 
+    $('.validation-summary-errors').addClass('validation-summary-valid');
+    $('.validation-summary-errors').removeClass('validation-summary-errors');
+    //Removes danger text from fields
+    $(".text-danger").children().remove()
 }
 
 function onGuardarClick() {
@@ -360,7 +390,24 @@ function onGuardarClick() {
         id: idField.value == "Nuevo" ? 0 : idField.value,
         primerNombre: primerNombreField.value,
         segundoNombre: segundoNombreField.value,
-        idArea: areaField.value == 0 ? 0 : parseInt(areaField.value)
+        apellidoPaterno: apellidoPaternoField.value,
+        apellidoMaterno: apellidoMaternoField.value,
+        fechaNacimiento: fechaNacimientoField.value,
+        telefono: telefonoField.value,
+        generoId: generoField.value == 0 ? null : parseInt(generoField.value),
+        estadoCivilId: estadoCivilIdField.value == 0 ? null : parseInt(estadoCivilIdField.value),
+        direccion: direccionField.value,
+        puestoId: puestoField.value == 0 ? null : parseInt(puestoField.value),
+        areaId: areaField.value == 0 ? null : parseInt(areaField.value),
+        subareaId: subareaField.value == 0 ? null : parseInt(subareaField.value),
+        oficinaId: oficinaField.value == 0 ? null : parseInt(oficinaField.value),
+        jefeId: jefeField.value == 0 ? null : parseInt(jefeField.value),
+        fechaIngreso: fechaIngresoField.value,
+        email: emailField.value,
+        nombreContacto1: nombreContacto1Field.value,
+        telefonoContacto1: telefonoContacto1Field.value,
+        nombreContacto2: nombreContacto2Field.value,
+        telefonoContacto2: telefonoContacto2Field.value
     };
 
     doAjax(
