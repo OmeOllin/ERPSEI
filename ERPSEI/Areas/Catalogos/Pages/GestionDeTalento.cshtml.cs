@@ -206,9 +206,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
             InputFiltro = new FiltroModel();
             InputEmpleado = new EmpleadoModel();
-        }
+		}
 
-        public IActionResult OnGet()
+		public IActionResult OnGet()
         {
             return Page();
 		}
@@ -226,6 +226,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			string jsonResponse;
 			List<string> jsonEmpleados = new List<string>();
 			List<string> jsonContactosEmergencia = new List<string>();
+			List<string> jsonArchivos = new List<string>();
 			List<Empleado> empleados = _empleadoManager.GetAllAsync().Result;
 
 			foreach (Empleado e in empleados)
@@ -240,9 +241,70 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 				if (e.ContactosEmergencia != null)
 				{
-					foreach (ContactoEmergencia c in e.ContactosEmergencia)
+					List<ContactoEmergencia> contactos = (from c in e.ContactosEmergencia
+														   orderby c.Id ascending
+														   select c).ToList();
+					foreach (ContactoEmergencia c in contactos)
 					{
 						jsonContactosEmergencia.Add($"{{\"nombre\": \"{c.Nombre}\", \"telefono\": \"{c.Telefono}\"}}");   
+					}
+				}
+
+				if (e.ArchivosEmpleado != null)
+				{
+					//Si el usuario ya tiene archivos, se llena el arreglo de datos a partir de ellos.					
+					List<ArchivoEmpleado> userFiles = (from userFile in e.ArchivosEmpleado
+														orderby userFile.TipoArchivoId ascending
+														select userFile).ToList();
+
+					foreach (ArchivoEmpleado a in userFiles)
+					{
+						string file = "";
+						//Si el archivo tiene contenido
+						if (a.Archivo != null && a.Archivo.Length >= 1)
+						{
+							//Asigna la información del archivo al arreglo de datos.
+							string b64 = Convert.ToBase64String(a.Archivo);
+							string imgSrc = $"data:image/png;base64,{b64}";
+							string id = Guid.NewGuid().ToString();
+
+							if (a.Extension == "pdf")
+							{
+								file = $"<canvas id = '{id}' b64 = '{b64}' class = 'canvaspdf'></canvas>";
+							}
+							else
+							{
+								file = $"<img id = '{id}' src = '{imgSrc}' style='min-height: 200px;'/>";
+							}
+						}
+
+						jsonArchivos.Add(
+							"{" +
+								$"\"id\": {a.Id}," +
+								$"\"nombre\": \"{a.Nombre}\"," +
+								$"\"tipoArchivoId\": {a.TipoArchivoId}," +
+								$"\"extension\": \"{a.Extension}\"," +
+								$"\"archivo\": \"{file}\"" +
+							"}"
+						);
+					}
+				}
+				else
+				{
+					//Si el usuario no tiene archivos, se llena el arreglo de datos a partir del enum.
+					foreach (FileTypes i in Enum.GetValues(typeof(FileTypes)))
+					{
+						//Omite el tipo imagen de perfil.
+						if ((int)i == 0) { continue; }
+						jsonArchivos.Add(
+							"{" +
+								$"\"id\": \"{Guid.NewGuid()}\"," +
+								$"\"nombre\": \"\"," +
+								$"\"tipoArchivoId\": {(int)i}," +
+								$"\"extension\": \"\"," +
+								$"\"archivo\": \"\"" +
+							"}"
+						);
 					}
 				}
 
@@ -275,7 +337,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						$"\"estadoCivil\": \"{nombreEstadoCivil}\", " +
 						$"\"idJefe\": {e.JefeId ?? 0}, " +
 						$"\"jefe\": \"{nombreJefe}\", " +
-						$"\"ContactosEmergencia\": [{string.Join(",", jsonContactosEmergencia)}] " +
+						$"\"contactosEmergencia\": [{string.Join(",", jsonContactosEmergencia)}], " +
+						$"\"archivos\": [{string.Join(",", jsonArchivos)}] " +
 					"}"
 				);
 			}

@@ -118,13 +118,13 @@
                                 <input type="hidden" name="FilesFromGet[@fd.FileId].FileId" value="@fd.FileId" />
                                 <input type="hidden" name="FilesFromGet[@fd.FileId].TypeId" value="@fd.TypeId" />
                                 <input name="FilesFromGet[@fd.FileId].File" type="file" id="@selectorId" containerName="@containerId" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-                                <a class="btn btn-primary mb-1" onclick="onEditDocumentClick(this);" inputName="@selectorId">
+                                <a class="btn mb-1" onclick="onEditDocumentClick(this);" inputName="@selectorId">
                                     <i class="bi bi-pencil-fill"></i>
                                 </a>
-                                <a class="btn btn-primary disableable mb-1" asp-page="/FileViewer" asp-route-id="@fd.FileId" target="_blank" sourceLength="@fd.Src.Length">
+                                <a class="btn disableable mb-1" asp-page="/FileViewer" asp-route-id="@fd.FileId" target="_blank" sourceLength="@fd.Src.Length">
                                     <i class="bi bi-search"></i>
                                 </a>
-                                <a class="btn btn-danger disableable mb-1" onclick="onDeleteClick(this);" sourceId="@selectorId" sourceLength="@fd.Src.Length">
+                                <a class="btn disableable mb-1" onclick="onDeleteClick(this);" sourceId="@selectorId" sourceLength="@fd.Src.Length">
                                     <i class="bi bi-x-lg"></i>
                                 </a>
                             </div>
@@ -134,16 +134,6 @@
             }
         </tbody>
     </table>
-    @* la siguiente sección deberá retirarse cuando se tenga el catálogo de personal
-    para que la desactivación del perfil se realice desde allá.
-    *@
-    @* <div class="col-md-6">
-    </div>
-    <div class="col-md-6">
-        <div class="mb-6">
-            <a id="delete" asp-page="DeletePersonalData" class="w-100 btn btn-lg btn-danger">@Localizer["DeactivateButton"]</a>
-        </div>
-    </div> *@
 </form>
 
 @section Scripts {

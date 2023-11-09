@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ActaNacimiento" xml:space="preserve">
+    <value>Acta de nacimiento</value>
+  </data>
   <data name="AddButton" xml:space="preserve">
     <value>Agregar</value>
   </data>
@@ -125,6 +128,9 @@
   </data>
   <data name="CancelButtonTitle" xml:space="preserve">
     <value>Cancelar</value>
+  </data>
+  <data name="CLABE" xml:space="preserve">
+    <value>CLABE</value>
   </data>
   <data name="ColActionsHeader" xml:space="preserve">
     <value>Acciones</value>
@@ -147,8 +153,26 @@
   <data name="ColTelefonoHeader" xml:space="preserve">
     <value>Teléfono</value>
   </data>
+  <data name="ComprobanteDomicilio" xml:space="preserve">
+    <value>Comprobante de domicilio</value>
+  </data>
+  <data name="ComprobanteEstudios" xml:space="preserve">
+    <value>Comprobante de estudios</value>
+  </data>
+  <data name="ContactosEmergencia" xml:space="preserve">
+    <value>Contactos de emergencia</value>
+  </data>
+  <data name="CSF" xml:space="preserve">
+    <value>CSF</value>
+  </data>
+  <data name="CURP" xml:space="preserve">
+    <value>CURP</value>
+  </data>
   <data name="CURPPlaceholder" xml:space="preserve">
     <value>CURP</value>
+  </data>
+  <data name="DeactivateButton" xml:space="preserve">
+    <value>Dar de baja</value>
   </data>
   <data name="DeleteButton" xml:space="preserve">
     <value>Eliminar</value>
@@ -195,6 +219,9 @@
   <data name="ImportButtonTitle" xml:space="preserve">
     <value>Importar desde un archivo excel</value>
   </data>
+  <data name="INE" xml:space="preserve">
+    <value>INE</value>
+  </data>
   <data name="JefePlaceholder" xml:space="preserve">
     <value>Jefe</value>
   </data>
@@ -204,11 +231,20 @@
   <data name="NombrePlaceholder" xml:space="preserve">
     <value>Nombre</value>
   </data>
+  <data name="NSS" xml:space="preserve">
+    <value>NSS</value>
+  </data>
   <data name="OficinaPlaceholder" xml:space="preserve">
     <value>Oficina</value>
   </data>
+  <data name="Otro" xml:space="preserve">
+    <value>Otro</value>
+  </data>
   <data name="PuestoPlaceholder" xml:space="preserve">
     <value>Puesto</value>
+  </data>
+  <data name="RFC" xml:space="preserve">
+    <value>RFC</value>
   </data>
   <data name="SaveButtonTitle" xml:space="preserve">
     <value>Guardar</value>

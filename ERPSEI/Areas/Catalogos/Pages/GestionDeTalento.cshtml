@@ -461,19 +461,28 @@
 									<th scope="col"></th>
 								</tr>
 							</thead>
-							<tbody>
+							<tbody id="bodyArchivos">
 							</tbody>
 						</table>
 					</div>
 				</form>
 			</div>
-			<div class="modal-footer">
-				<button id="dlgEmpleadoBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarClick();" data-bs-dismiss="modal">
-					<i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
-				</button>
-				<button id="dlgEmpleadoBtnGuardar" type="button" class="btn btn-primary" onclick="onGuardarClick();">
-					<i class="bi bi-floppy"></i> @Localizer["SaveButtonTitle"]
-				</button>
+			<div class="modal-footer" style="display: inline !important;">
+				<div class="container row">
+					<div class="col-5">
+						<button id="dlgEmpleadoBtnDesactivar" type="button" class="btn btn-danger" data-bs-dismiss="modal">
+							<i class="bi bi-ban"></i> @Localizer["DeactivateButton"]
+						</button>
+					</div>
+					<div class="col-7 text-end">
+						<button id="dlgEmpleadoBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarClick();" data-bs-dismiss="modal">
+							<i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
+						</button>
+						<button id="dlgEmpleadoBtnGuardar" type="button" class="btn btn-primary" onclick="onGuardarClick();" disabled="true">
+							<i class="bi bi-floppy"></i> @Localizer["SaveButtonTitle"]
+						</button>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -510,6 +519,19 @@
 		var colTelefonoHeader = '@Localizer["ColTelefonoHeader"]';
 		var colCorreoHeader = '@Localizer["ColCorreoHeader"]';
 		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
+		var arrTiposDocumentos = {
+			"1": '@Localizer["ActaNacimiento"]',
+			"2": '@Localizer["CLABE"]',
+			"3": '@Localizer["ComprobanteDomicilio"]',
+			"4": '@Localizer["ComprobanteEstudios"]',
+			"5": '@Localizer["ContactosEmergencia"]',
+			"6": '@Localizer["CSF"]',
+			"7": '@Localizer["CURP"]',
+			"8": '@Localizer["INE"]',
+			"9": '@Localizer["NSS"]',
+			"10": '@Localizer["RFC"]',
+			"11": '@Localizer["Otros"]'
+		};
 	</script>
 
 	<partial name="_ValidationScriptsPartial" />

@@ -41,10 +41,10 @@ function detailFormatter(index, row) {
 }
 function operateFormatter(value, row, index) {
     return [
-        '<a class="see" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgEmpleado" title="' + btnVerTitle + '">',
+        '<a class="see btn" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgEmpleado" title="' + btnVerTitle + '">',
             '<i class="bi bi-search"></i>',
         '</a>  ',
-        '<a class="edit" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgEmpleado" title="' + btnEditarTitle + '">',
+        '<a class="edit btn" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgEmpleado" title="' + btnEditarTitle + '">',
             '<i class="bi bi-pencil-fill"></i>',
         '</a>'
     ].join('')
@@ -248,12 +248,14 @@ function initEmpleadoDialog(action, row) {
     let nombreContacto2Field = document.getElementById("inpEmpleadoNombreContacto2");
     let telefonoContacto2Field = document.getElementById("inpEmpleadoTelefonoContacto2");
 
+    let btnDesactivar = document.getElementById("dlgEmpleadoBtnDesactivar");
     let btnGuardar = document.getElementById("dlgEmpleadoBtnGuardar");
     let dlgTitle = document.getElementById("dlgEmpleadoTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 
     idField.setAttribute("disabled", true);
+    btnDesactivar.hidden = true;
     switch (action) {
         case NUEVO:
         case EDITAR:
@@ -261,6 +263,7 @@ function initEmpleadoDialog(action, row) {
                 dlgTitle.innerHTML = dlgNuevoTitle;
             }
             else {
+                btnDesactivar.hidden = false;
                 dlgTitle.innerHTML = dlgEditarTitle;
             }
 
@@ -330,10 +333,49 @@ function initEmpleadoDialog(action, row) {
     jefeField.value = row.jefeId;
     fechaIngresoField.value = row.fechaIngresoJS;
     emailField.value = row.email;
-    nombreContacto1Field.value = row.nombreContacto1 || "";
-    telefonoContacto1Field.value = row.telefonoContacto1 || "";
-    nombreContacto2Field.value = row.nombreContacto2 || "";
-    telefonoContacto2Field.value = row.telefonoContacto2 || "";
+
+    row.contactosEmergencia = row.contactosEmergencia || [];
+    if (row.contactosEmergencia.length >= 1) {
+        nombreContacto1Field.value = row.contactosEmergencia[0].nombre || "";
+        telefonoContacto1Field.value = row.contactosEmergencia[0].telefono || "";
+    }
+    if (row.contactosEmergencia.length >= 2) {
+        nombreContacto2Field.value = row.contactosEmergencia[1].nombre || "";
+        telefonoContacto2Field.value = row.contactosEmergencia[1].telefono || "";
+    }
+
+    $("#bodyArchivos").html("");
+    row.archivos = row.archivos || [];
+    let i = 1;
+    row.archivos.forEach(function (a) {
+        //Obtiene el nombre del tipo.
+        $("#bodyArchivos").append(
+            `<tr valign="middle" align="center">
+			    <th scope="row">${a.tipoArchivoId}</th>
+			    <td><b>${arrTiposDocumentos[a.tipoArchivoId]}</b></td>
+			    <td>
+				    <div id="container${i}" class="document-container">
+					    ${a.archivo}
+				    </div>
+			    </td>
+			    <td align="left">
+				    <div style="width:auto;">
+					    <input type="file" id="selector${i}" containerName="container${i}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+					    <a class="btn mb-1" onclick="onEditDocumentClick(this);" inputName="selector${i}">
+						    <i class="bi bi-pencil-fill"></i>
+					    </a>
+					    <a class="btn disableable mb-1" asp-page="/FileViewer" asp-route-id="${a.id}" target="_blank" sourceLength="${a.archivo.length}">
+						    <i class="bi bi-search"></i>
+					    </a>
+					    <a class="btn disableable mb-1" onclick="onDeleteClick(this);" sourceId="selector${i}" sourceLength="${a.archivo.length}">
+						    <i class="bi bi-x-lg"></i>
+					    </a>
+				    </div>
+			    </td>
+		    </tr>`
+        );
+        i++;
+    });
 }
 
 function onCerrarClick() {

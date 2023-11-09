@@ -37,10 +37,10 @@ function detailFormatter(index, row) {
 }
 function operateFormatter(value, row, index) {
     return [
-        '<a class="see" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgArea" title="' + btnVerTitle + '">',
+        '<a class="see btn" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgArea" title="' + btnVerTitle + '">',
             '<i class="bi bi-search"></i>',
         '</a>  ',
-        '<a class="edit" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgArea" title="' + btnEditarTitle + '">',
+        '<a class="edit btn" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgArea" title="' + btnEditarTitle + '">',
             '<i class="bi bi-pencil-fill"></i>',
         '</a>'
     ].join('')
