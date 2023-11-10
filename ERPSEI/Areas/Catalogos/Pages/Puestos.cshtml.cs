@@ -75,7 +75,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				}
 				else
 				{
-					Puesto? puesto = _puestoManager.GetById(Input.Id);
+					Puesto? puesto = await _puestoManager.GetByIdAsync(Input.Id);
 
 					if (puesto != null)
 					{

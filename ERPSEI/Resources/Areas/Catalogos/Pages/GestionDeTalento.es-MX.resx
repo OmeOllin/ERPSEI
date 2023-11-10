@@ -219,8 +219,23 @@
   <data name="ImportButtonTitle" xml:space="preserve">
     <value>Importar desde un archivo excel</value>
   </data>
+  <data name="ImportExcelDialogTitle" xml:space="preserve">
+    <value>Importar empleados</value>
+  </data>
+  <data name="ImportExcelSuggestionA" xml:space="preserve">
+    <value>Descargue la plantilla y rellénela con su información para cargar datos correctamente.</value>
+  </data>
+  <data name="ImportExcelSuggestionB" xml:space="preserve">
+    <value>Seleccione el archivo que rellenó con su información e importe los datos.</value>
+  </data>
   <data name="INE" xml:space="preserve">
     <value>INE</value>
+  </data>
+  <data name="InvalidFormatMsg" xml:space="preserve">
+    <value>El formato del archivo debe ser .xlsx, por favor elija otro archivo. Puede descargar la plantilla proporcionada para cargar su información.</value>
+  </data>
+  <data name="InvalidFormatTitle" xml:space="preserve">
+    <value>Formato de archivo inválido</value>
   </data>
   <data name="JefePlaceholder" xml:space="preserve">
     <value>Jefe</value>
@@ -239,6 +254,9 @@
   </data>
   <data name="Otro" xml:space="preserve">
     <value>Otro</value>
+  </data>
+  <data name="PlantillaButtonTitle" xml:space="preserve">
+    <value>Descargar plantilla</value>
   </data>
   <data name="PuestoPlaceholder" xml:space="preserve">
     <value>Puesto</value>

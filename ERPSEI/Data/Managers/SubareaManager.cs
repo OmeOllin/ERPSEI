@@ -47,7 +47,7 @@ namespace ERPSEI.Data.Managers
 
         public async Task DeleteByIdAsync(int id)
         {
-			Subarea? subarea = GetById(id);
+			Subarea? subarea = await GetByIdAsync(id);
             if (subarea != null)
             {
                 db.Remove(subarea);
@@ -63,7 +63,7 @@ namespace ERPSEI.Data.Managers
             {
                 foreach (string id in ids)
                 {
-                    Subarea? subarea = GetById(int.Parse(id));
+                    Subarea? subarea = await GetByIdAsync(int.Parse(id));
                     if (subarea != null)
                     {
                         db.Remove(subarea);
@@ -85,9 +85,9 @@ namespace ERPSEI.Data.Managers
             return await db.Subareas.ToListAsync();
         }
 
-        public Subarea? GetById(int id)
+        public async Task<Subarea?> GetByIdAsync(int id)
         {
-            return db.Subareas.Where(p => p.Id == id).FirstOrDefault();
+            return await db.Subareas.Where(p => p.Id == id).FirstOrDefaultAsync();
         }
 
     }

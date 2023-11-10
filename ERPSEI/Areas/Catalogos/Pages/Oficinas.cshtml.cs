@@ -78,7 +78,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				}
 				else
 				{
-					Oficina? oficina = _oficinaManager.GetById(Input.Id);
+					Oficina? oficina = await _oficinaManager.GetByIdAsync(Input.Id);
 
 					if (oficina != null)
 					{

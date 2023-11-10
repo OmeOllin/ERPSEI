@@ -49,7 +49,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			_logger = logger;
 		}
 
-		public JsonResult OnGetSubareasList()
+		public async Task<JsonResult> OnGetSubareasList()
 		{
 			string nombreArea;
 			string jsonResponse;
@@ -57,7 +57,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			List<Subarea> subareas = _subareaManager.GetAllAsync().Result;
 			foreach (Subarea sa in subareas)
 			{
-				sa.Area = _areaManager.GetById(sa.AreaId ?? 0);
+				sa.Area = await _areaManager.GetByIdAsync(sa.AreaId ?? 0);
 				nombreArea = sa.Area != null ? sa.Area.Nombre : "";
 				jsonAreas.Add("{\"id\": " + sa.Id + ", \"nombre\": \"" + sa.Nombre + "\", \"area\": \"" + nombreArea + "\", \"idArea\": " + sa.AreaId + "}");
 			}
@@ -97,7 +97,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				}
 				else
 				{
-					Subarea? subarea = _subareaManager.GetById(Input.Id);
+					Subarea? subarea = await _subareaManager.GetByIdAsync(Input.Id);
 
 					if (subarea != null)
 					{

@@ -78,7 +78,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				}
 				else
 				{
-					Area? area = _areaManager.GetById(Input.Id);
+					Area? area = await _areaManager.GetByIdAsync(Input.Id);
 
 					if (area != null)
 					{

@@ -47,7 +47,7 @@ namespace ERPSEI.Data.Managers
 
         public async Task DeleteByIdAsync(int id)
         {
-            Area? area = GetById(id);
+            Area? area = await GetByIdAsync(id);
             if (area != null)
             {
                 db.Remove(area);
@@ -63,7 +63,7 @@ namespace ERPSEI.Data.Managers
 			{
 				foreach (string id in ids)
 				{
-					Area? area = GetById(int.Parse(id));
+					Area? area = await GetByIdAsync(int.Parse(id));
 					if (area != null)
 					{
 						db.Remove(area);
@@ -85,9 +85,9 @@ namespace ERPSEI.Data.Managers
 			return await db.Areas.ToListAsync();
 		}
 
-		public Area? GetById(int id)
+		public async Task<Area?> GetByIdAsync(int id)
         {
-            return db.Areas.Where(a => a.Id == id).FirstOrDefault();
+            return await db.Areas.Where(a => a.Id == id).FirstOrDefaultAsync();
         }
 
     }

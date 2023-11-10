@@ -66,15 +66,16 @@ function additionalButtons() {
         btnImport: {
             text: 'Importar',
             icon: 'bi-upload',
-            event: function () {
-                alert("Importar datos");
-            },
+            event: function () { },
             attributes: {
-                title: 'Importar datos desde un archivo excel'
+                "title": 'Importar datos desde un archivo excel',
+                "data-bs-toggle": "modal",
+                "data-bs-target": "#dlgImportarExcel"
             }
         }
     }
 }
+
 
 function onAgregarClick() {
     initEmpleadoDialog(NUEVO, {
@@ -101,7 +102,6 @@ function onAgregarClick() {
         telefonoContacto2: ""
     });
 }
-
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
         height: 550,
@@ -223,8 +223,7 @@ function initTable() {
 }
 /////////////////////
 
-//Funcionalidad Diálogo
-
+//Funcionalidad Diálogo Empleado
 function initEmpleadoDialog(action, row) {
     let idField = document.getElementById("inpEmpleadoId");
     let primerNombreField = document.getElementById("inpEmpleadoPrimerNombre");
@@ -377,7 +376,6 @@ function initEmpleadoDialog(action, row) {
         i++;
     });
 }
-
 function onCerrarClick() {
     //Removes validation from input-fields
     $('.input-validation-error').addClass('input-validation-valid');
@@ -391,7 +389,6 @@ function onCerrarClick() {
     //Removes danger text from fields
     $(".text-danger").children().remove()
 }
-
 function onGuardarClick() {
     //Ejecuta la validación
     $("#theForm").validate();
@@ -491,3 +488,65 @@ function initializeDate() {
     document.getElementById("inpFiltroFechaIngresoInicio").setAttribute("value", monthStart);
     document.getElementById("inpFiltroFechaIngresoFin").setAttribute("value", today);
 }
+
+//Funcionalidad Diálogo importar
+function onImportarClick() {
+    let form = new FormData();
+    let btnClose = document.getElementById("dlgExcelBtnCancelar");
+    let dlgTitle = document.getElementById("dlgExcelTitle");
+    let fileField = document.getElementById("excelFile");
+    fileField = fileField != null ? fileField.files : null;
+
+    if (fileField) { fileField = fileField.length > 0 ? fileField[0] : null; }
+
+    if (fileField) { form.append("plantilla", fileField); }
+
+    let extendedOptions = {
+        headers: postOptions.headers,
+        data: form,
+        contentType: false,
+        processData: false
+    }
+
+    doAjax(
+        "/Catalogos/GestionDeTalento/ImportarEmpleados",
+        {},
+        function (resp) {
+            if (resp.tieneError) {
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    let summary = ``;
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                }
+                return;
+            }
+
+            btnClose.click();
+
+            showSuccess(dlgTitle.innerHTML, resp.mensaje);
+        },
+        function (error) {
+            showError("Error", error);
+        },
+        extendedOptions
+    );
+}
+function onCerrarImportarClick() {
+    let fileField = document.getElementById("excelFile");
+    fileField.value = null;
+}
+function onExcelSelectorChanged(input) {
+    //Validación para seleccionar archivos excel solamente.
+    if (input.files && (input.files.length || 0) >= 1) {
+        let docType = input.files[0].type;
+        let isExcel = docType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || docType == "application/vnd.ms-excel";
+
+        if(!isExcel){
+            input.value = null;
+            showAlert(invalidFormatTitle, invalidFormatMsg);
+        }
+    }
+}
+/////////////////////

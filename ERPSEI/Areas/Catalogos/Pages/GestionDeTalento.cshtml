@@ -10,7 +10,7 @@
 @inject IRWCatalogoManager<Area> AreasManager;
 @inject IRWCatalogoManager<Oficina> OficinasManager;
 @inject IRWCatalogoManager<Subarea> SubareasManager;
-@inject IRWCatalogoManager<Empleado> EmpleadosManager;
+@inject IEmpleadoManager EmpleadosManager;
 
 @inject IRCatalogoManager<Genero> GenerosManager;
 @inject IRCatalogoManager<EstadoCivil> EstadosCivilesManager;
@@ -478,7 +478,7 @@
 						<button id="dlgEmpleadoBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarClick();" data-bs-dismiss="modal">
 							<i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
 						</button>
-						<button id="dlgEmpleadoBtnGuardar" type="button" class="btn btn-primary" onclick="onGuardarClick();" disabled="true">
+						<button id="dlgEmpleadoBtnGuardar" type="button" class="btn btn-primary" onclick="onGuardarClick();">
 							<i class="bi bi-floppy"></i> @Localizer["SaveButtonTitle"]
 						</button>
 					</div>
@@ -489,6 +489,56 @@
 </div>
 <!-- --------------------------- -->
 <!-- --------------------------- -->
+
+<!-- --------------------------- -->
+<!-- Sección Importar Excel ---- -->
+<div id="dlgImportarExcel" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 id="dlgExcelTitle" class="modal-title">@Localizer["ImportExcelDialogTitle"]</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body align-items-center">
+				<div class="alert d-flex align-items-center" role="alert">
+					<i class="bi bi-1-circle-fill me-2" style="font-size: x-large"></i>
+					<div>@Localizer["ImportExcelSuggestionA"]</div>
+				</div>
+                <div class="container">
+                    <div class="row">
+						<div class="col-12 text-center mb-3">
+							<a id="dlgExcelBtnPlantilla" href="@Url.Page("GestionDeTalento", "DownloadPlantilla")" class="btn btn-primary">
+								<i class="bi bi-file-earmark-ruled"></i> @Localizer["PlantillaButtonTitle"]
+							</a>
+						</div>
+                    </div>
+                </div>
+				<div class="alert d-flex align-items-center" role="alert">
+					<i class="bi bi-2-circle-fill me-2" style="font-size: x-large"></i>
+                    <div>@Localizer["ImportExcelSuggestionB"]</div>
+				</div>
+				<div class="container">
+					<div class="row">
+						<div class="col-12">
+							<input id="excelFile" onchange="onExcelSelectorChanged(this);" class="form-control" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button id="dlgExcelBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarImportarClick();" data-bs-dismiss="modal">
+					<i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
+				</button>
+				<button id="dlgExcelBtnImportar" type="button" class="btn btn-primary" onclick="onImportarClick();">
+					<i class="bi bi-upload"></i> @Localizer["ImportButtonText"]
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- --------------------------- -->
+<!-- --------------------------- -->
+
 @section Scripts {
 	<link rel="stylesheet" href="~/lib/bootstrap-table/bootstrap-table.min.css">
 
@@ -532,6 +582,8 @@
 			"10": '@Localizer["RFC"]',
 			"11": '@Localizer["Otros"]'
 		};
+		var invalidFormatTitle = '@Localizer["InvalidFormatTitle"]';
+		var invalidFormatMsg = '@Localizer["InvalidFormatMsg"]';
 	</script>
 
 	<partial name="_ValidationScriptsPartial" />

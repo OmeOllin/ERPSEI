@@ -47,7 +47,7 @@ namespace ERPSEI.Data.Managers
 
         public async Task DeleteByIdAsync(int id)
         {
-            Oficina? oficina = GetById(id);
+            Oficina? oficina = await GetByIdAsync(id);
             if (oficina != null)
             {
                 db.Remove(oficina);
@@ -63,7 +63,7 @@ namespace ERPSEI.Data.Managers
             {
                 foreach (string id in ids)
                 {
-                    Oficina? oficina = GetById(int.Parse(id));
+                    Oficina? oficina = await GetByIdAsync(int.Parse(id));
                     if (oficina != null)
                     {
                         db.Remove(oficina);
@@ -85,9 +85,9 @@ namespace ERPSEI.Data.Managers
             return await db.Oficinas.ToListAsync();
         }
 
-        public Oficina? GetById(int id)
+        public async Task<Oficina?> GetByIdAsync(int id)
         {
-            return db.Oficinas.Where(p => p.Id == id).FirstOrDefault();
+            return await db.Oficinas.Where(p => p.Id == id).FirstOrDefaultAsync();
         }
 
     }

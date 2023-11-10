@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERPSEI.Data.Managers
 {
-    public class EmpleadoManager : IRWCatalogoManager<Empleado>
+    public class EmpleadoManager : IEmpleadoManager
     {
         ApplicationDbContext db { get; set; }
 
@@ -47,7 +47,7 @@ namespace ERPSEI.Data.Managers
 
         public async Task DeleteByIdAsync(int id)
         {
-			Empleado? empleado = GetById(id);
+			Empleado? empleado = await GetByIdAsync(id);
             if (empleado != null)
             {
                 db.Remove(empleado);
@@ -63,7 +63,7 @@ namespace ERPSEI.Data.Managers
 			{
 				foreach (string id in ids)
 				{
-					Empleado? empleado = GetById(int.Parse(id));
+					Empleado? empleado = await GetByIdAsync(int.Parse(id));
 					if (empleado != null)
 					{
 						db.Remove(empleado);
@@ -94,10 +94,15 @@ namespace ERPSEI.Data.Managers
 				.ToListAsync();
 		}
 
-		public Empleado? GetById(int id)
+		public async Task<Empleado?> GetByIdAsync(int id)
         {
-            return db.Empleados.Where(a => a.Id == id).FirstOrDefault();
+            return await db.Empleados.Where(a => a.Id == id).FirstOrDefaultAsync();
         }
+
+		public async Task<Empleado?> GetByCURPAsync(string curp)
+		{
+			return await db.Empleados.Where(e => e.CURP == curp).FirstOrDefaultAsync();
+		}
 
     }
 }

@@ -29,6 +29,13 @@ namespace ERPSEI.Data.Entities.Empleados
 
         public string Email { get; set; } = string.Empty;
 
+        public string CURP { get; set; } = string.Empty;
+
+        public string RFC {  get; set; } = string.Empty;
+
+        public string NSS { get; set; } = string.Empty;
+
+
         
         //Relaciones de la entidad
         public int? GeneroId {  get; set; }
