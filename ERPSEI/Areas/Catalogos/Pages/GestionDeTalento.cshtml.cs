@@ -471,8 +471,12 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						using(var reader = ExcelReaderFactory.CreateReader(s)) 
 						{
 							DataSet result = reader.AsDataSet(new ExcelDataSetConfiguration() { FilterSheet = (tableReader, sheetIndex) => sheetIndex == 0 });
+							foreach (DataRow row in result.Tables[0].Rows) {
+								//Omite el procesamiento del row de encabezado
+								if(result.Tables[0].Rows.IndexOf(row) == 0) { continue; }
 
-							foreach (DataRow row in result.Tables[0].Rows) { await CreateEmployeeFromExcelRow(row); }
+								await CreateEmployeeFromExcelRow(row);
+							}
 						}
 					}
 				}
