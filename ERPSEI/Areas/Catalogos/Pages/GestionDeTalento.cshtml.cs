@@ -5,10 +5,8 @@ using ERPSEI.Requests;
 using ERPSEI.Resources;
 using ExcelDataReader;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
-using NuGet.Packaging.Signing;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Net.Mime;
@@ -80,7 +78,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			public int Id { get; set; }
 
 			[Required(ErrorMessage = "Required")]
-			[StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
+			[StringLength(30, ErrorMessage = "FieldLength", MinimumLength = 2)]
 			[RegularExpression(RegularExpressions.PersonName, ErrorMessage = "PersonName")]
 			[DataType(DataType.Text)]
 			[Display(Name = "NameField")]
@@ -153,7 +151,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			public int? JefeId { get; set; }
 
 			[DataType(DataType.Text)]
-			[StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
+			[StringLength(60, ErrorMessage = "FieldLength", MinimumLength = 2)]
 			[RegularExpression(RegularExpressions.PersonName, ErrorMessage = "PersonName")]
 			[Display(Name = "NameField")]
 			public string? NombreContacto1 { get; set; } = string.Empty;
@@ -165,7 +163,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			public string? TelefonoContacto1 { get; set; } = string.Empty;
 
 			[DataType(DataType.Text)]
-			[StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
+			[StringLength(60, ErrorMessage = "FieldLength", MinimumLength = 2)]
 			[RegularExpression(RegularExpressions.PersonName, ErrorMessage = "PersonName")]
 			[Display(Name = "NameField")]
 			public string? NombreContacto2 { get; set; } = string.Empty;

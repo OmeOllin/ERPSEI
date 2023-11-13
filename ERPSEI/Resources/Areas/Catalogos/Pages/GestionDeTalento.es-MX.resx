@@ -123,6 +123,12 @@
   <data name="AddButton" xml:space="preserve">
     <value>Agregar</value>
   </data>
+  <data name="ApellidoMaternoPlaceholder" xml:space="preserve">
+    <value>Apellido Materno</value>
+  </data>
+  <data name="ApellidoPaternoPlaceholder" xml:space="preserve">
+    <value>Apellido Paterno</value>
+  </data>
   <data name="AreaPlaceholder" xml:space="preserve">
     <value>Área</value>
   </data>
@@ -183,6 +189,9 @@
   <data name="DeleteEmpleadoDialogTitle" xml:space="preserve">
     <value>Eliminar empleado</value>
   </data>
+  <data name="DireccionPlaceholder" xml:space="preserve">
+    <value>Dirección</value>
+  </data>
   <data name="DocumentSuggestion" xml:space="preserve">
     <value>Tenga en cuenta que los archivos no deben tener más de 1 MB y solo se aceptan archivos en formatos .pdf, .jpg, .jpeg y .png.</value>
   </data>
@@ -191,6 +200,9 @@
   </data>
   <data name="EditDialogTitle" xml:space="preserve">
     <value>Editar Registro</value>
+  </data>
+  <data name="EmailPlaceholder" xml:space="preserve">
+    <value>Correo Empresarial</value>
   </data>
   <data name="EmpleadoContactoTitle" xml:space="preserve">
     <value>Contacto de Emergencia</value>
@@ -204,6 +216,9 @@
   <data name="EmpleadoTercerSeccionTitle" xml:space="preserve">
     <value>Documentos</value>
   </data>
+  <data name="EstadoCivilPlaceholder" xml:space="preserve">
+    <value>Estado Civil</value>
+  </data>
   <data name="FechaIngresoPlaceholder" xml:space="preserve">
     <value>Fecha de ingreso</value>
   </data>
@@ -212,6 +227,9 @@
   </data>
   <data name="FilterTitle" xml:space="preserve">
     <value>Filtros de búsqueda</value>
+  </data>
+  <data name="GeneroPlaceholder" xml:space="preserve">
+    <value>Género</value>
   </data>
   <data name="ImportButtonText" xml:space="preserve">
     <value>Importar</value>
@@ -278,6 +296,9 @@
   </data>
   <data name="SubareaPlaceholder" xml:space="preserve">
     <value>Subarea</value>
+  </data>
+  <data name="TelefonoPlaceholder" xml:space="preserve">
+    <value>Teléfono</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Gestión de talento</value>

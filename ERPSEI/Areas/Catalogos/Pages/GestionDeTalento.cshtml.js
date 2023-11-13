@@ -423,26 +423,25 @@ function onGuardarClick() {
 
     let oParams = {
         id: idField.value == "Nuevo" ? 0 : idField.value,
-        primerNombre: primerNombreField.value,
-        segundoNombre: segundoNombreField.value,
-        apellidoPaterno: apellidoPaternoField.value,
-        apellidoMaterno: apellidoMaternoField.value,
+        nombre: primerNombreField.value.trim(),
+        apellidoPaterno: apellidoPaternoField.value.trim(),
+        apellidoMaterno: apellidoMaternoField.value.trim(),
         fechaNacimiento: fechaNacimientoField.value,
-        telefono: telefonoField.value,
+        telefono: telefonoField.value.trim(),
         generoId: generoField.value == 0 ? null : parseInt(generoField.value),
         estadoCivilId: estadoCivilIdField.value == 0 ? null : parseInt(estadoCivilIdField.value),
-        direccion: direccionField.value,
+        direccion: direccionField.value.trim(),
         puestoId: puestoField.value == 0 ? null : parseInt(puestoField.value),
         areaId: areaField.value == 0 ? null : parseInt(areaField.value),
         subareaId: subareaField.value == 0 ? null : parseInt(subareaField.value),
         oficinaId: oficinaField.value == 0 ? null : parseInt(oficinaField.value),
         jefeId: jefeField.value == 0 ? null : parseInt(jefeField.value),
         fechaIngreso: fechaIngresoField.value,
-        email: emailField.value,
-        nombreContacto1: nombreContacto1Field.value,
-        telefonoContacto1: telefonoContacto1Field.value,
-        nombreContacto2: nombreContacto2Field.value,
-        telefonoContacto2: telefonoContacto2Field.value
+        email: emailField.value.trim(),
+        nombreContacto1: nombreContacto1Field.value.trim(),
+        telefonoContacto1: telefonoContacto1Field.value.trim(),
+        nombreContacto2: nombreContacto2Field.value.trim(),
+        telefonoContacto2: telefonoContacto2Field.value.trim()
     };
 
     doAjax(
