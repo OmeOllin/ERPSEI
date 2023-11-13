@@ -227,18 +227,11 @@
 						<hr />
 						<div id="saveValidationSummary" class="text-danger mb-3" role="alert"></div>
 						<div class="row">
-							<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="col-sm-12 col-md-12 col-lg-6">
 								<div class="form-floating mb-3">
-									<input id="inpEmpleadoPrimerNombre" asp-for="InputEmpleado.PrimerNombre" type="text" class="form-control" placeholder="@Localizer["FirstNamePlaceholder"]" />
-									<label for="inpEmpleadoPrimerNombre" asp-for="InputEmpleado.PrimerNombre" class="form-label"></label>
-									<span asp-validation-for="InputEmpleado.PrimerNombre" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-sm-6 col-md-6 col-lg-3">
-								<div class="form-floating mb-3">
-									<input id="inpEmpleadoSegundoNombre" asp-for="InputEmpleado.SegundoNombre" type="text" class="form-control" placeholder="@Localizer["SecondNamePlaceholder"]" />
-									<label for="inpEmpleadoSegundoNombre" asp-for="InputEmpleado.SegundoNombre" class="form-label"></label>
-									<span asp-validation-for="InputEmpleado.SegundoNombre" class="text-danger"></span>
+									<input id="inpEmpleadoPrimerNombre" asp-for="InputEmpleado.Nombre" type="text" class="form-control" placeholder="@Localizer["FirstNamePlaceholder"]" />
+									<label for="inpEmpleadoPrimerNombre" asp-for="InputEmpleado.Nombre" class="form-label"></label>
+									<span asp-validation-for="InputEmpleado.Nombre" class="text-danger"></span>
 								</div>
 							</div>
 							<div class="col-sm-6 col-md-6 col-lg-3">
@@ -381,7 +374,7 @@
 										@{
 											foreach (Empleado jefe in jefes)
 											{
-												<option value='@jefe.Id'>@jefe.PrimerNombre</option>
+												<option value='@jefe.Id'>@jefe.Nombre</option>
 											}
 										}
 									</select>

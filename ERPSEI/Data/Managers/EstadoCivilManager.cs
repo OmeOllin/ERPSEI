@@ -17,10 +17,15 @@ namespace ERPSEI.Data.Managers
 			return await db.EstadosCiviles.ToListAsync();
 		}
 
-		public EstadoCivil? GetById(int id)
+		public async Task<EstadoCivil?> GetByIdAsync(int id)
         {
-            return db.EstadosCiviles.Where(a => a.Id == id).FirstOrDefault();
+            return await db.EstadosCiviles.Where(a => a.Id == id).FirstOrDefaultAsync();
         }
 
-    }
+		public async Task<EstadoCivil?> GetByNameAsync(string name)
+		{
+			return await db.EstadosCiviles.Where(a => a.Nombre.ToLower() == name.ToLower()).FirstOrDefaultAsync();
+		}
+
+	}
 }

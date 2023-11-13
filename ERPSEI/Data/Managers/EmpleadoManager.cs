@@ -104,5 +104,10 @@ namespace ERPSEI.Data.Managers
 			return await db.Empleados.Where(e => e.CURP == curp).FirstOrDefaultAsync();
 		}
 
-    }
+		public async Task<Empleado?> GetByNameAsync(string name)
+		{
+			return await db.Empleados.Where(e => e.NombreCompleto.ToLower() == name.ToLower()).FirstOrDefaultAsync();
+		}
+
+	}
 }

@@ -21,6 +21,8 @@ namespace ERPSEI.Data.Managers
 
         public Task<Empleado?> GetByCURPAsync(string curp);
 
+        public Task<Empleado?> GetByNameAsync(string name);
+
 
     }
 }

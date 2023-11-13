@@ -227,7 +227,6 @@ function initTable() {
 function initEmpleadoDialog(action, row) {
     let idField = document.getElementById("inpEmpleadoId");
     let primerNombreField = document.getElementById("inpEmpleadoPrimerNombre");
-    let segundoNombreField = document.getElementById("inpEmpleadoSegundoNombre");
     let apellidoPaternoField = document.getElementById("inpEmpleadoApellidoPaterno");
     let apellidoMaternoField = document.getElementById("inpEmpleadoApellidoMaterno");
     let fechaNacimientoField = document.getElementById("inpEmpleadoFechaNacimiento");
@@ -267,7 +266,6 @@ function initEmpleadoDialog(action, row) {
             }
 
             primerNombreField.removeAttribute("disabled");
-            segundoNombreField.removeAttribute("disabled");
             apellidoPaternoField.removeAttribute("disabled");
             apellidoMaternoField.removeAttribute("disabled");
             fechaNacimientoField.removeAttribute("disabled");
@@ -292,7 +290,6 @@ function initEmpleadoDialog(action, row) {
             dlgTitle.innerHTML = dlgVerTitle;
 
             primerNombreField.setAttribute("disabled", true);
-            segundoNombreField.setAttribute("disabled", true);
             apellidoPaternoField.setAttribute("disabled", true);
             apellidoMaternoField.setAttribute("disabled", true);
             fechaNacimientoField.setAttribute("disabled", true);
@@ -317,7 +314,6 @@ function initEmpleadoDialog(action, row) {
 
     idField.value = row.id;
     primerNombreField.value = row.primerNombre;
-    segundoNombreField.value = row.segundoNombre || "";
     apellidoPaternoField.value = row.apellidoPaterno;
     apellidoMaternoField.value = row.apellidoMaterno;
     fechaNacimientoField.value = row.fechaNacimientoJS;
@@ -524,6 +520,9 @@ function onImportarClick() {
             }
 
             btnClose.click();
+
+            let e = document.querySelector("[name='refresh']");
+            e.click();
 
             showSuccess(dlgTitle.innerHTML, resp.mensaje);
         },

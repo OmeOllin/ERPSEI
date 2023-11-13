@@ -89,5 +89,10 @@ namespace ERPSEI.Data.Managers
             return await db.Puestos.Where(p => p.Id == id).FirstOrDefaultAsync();
         }
 
-    }
+		public async Task<Puesto?> GetByNameAsync(string name)
+		{
+			return await db.Puestos.Where(a => a.Nombre.ToLower() == name.ToLower()).FirstOrDefaultAsync();
+		}
+
+	}
 }

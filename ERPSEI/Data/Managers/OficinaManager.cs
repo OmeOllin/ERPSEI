@@ -90,5 +90,10 @@ namespace ERPSEI.Data.Managers
             return await db.Oficinas.Where(p => p.Id == id).FirstOrDefaultAsync();
         }
 
-    }
+		public async Task<Oficina?> GetByNameAsync(string name)
+		{
+			return await db.Oficinas.Where(a => a.Nombre.ToLower() == name.ToLower()).FirstOrDefaultAsync();
+		}
+
+	}
 }

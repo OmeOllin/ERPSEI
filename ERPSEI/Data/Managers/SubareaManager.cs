@@ -90,5 +90,10 @@ namespace ERPSEI.Data.Managers
             return await db.Subareas.Where(p => p.Id == id).FirstOrDefaultAsync();
         }
 
-    }
+		public async Task<Subarea?> GetByNameAsync(string name)
+		{
+			return await db.Subareas.Where(a => a.Nombre.ToLower() == name.ToLower()).FirstOrDefaultAsync();
+		}
+
+	}
 }

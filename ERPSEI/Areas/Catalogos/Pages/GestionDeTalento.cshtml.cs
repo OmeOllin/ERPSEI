@@ -83,14 +83,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
 			[RegularExpression(RegularExpressions.PersonName, ErrorMessage = "PersonName")]
 			[DataType(DataType.Text)]
-			[Display(Name = "FirstNameField")]
-			public string PrimerNombre { get; set; } = string.Empty;
-
-			[StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
-			[RegularExpression(RegularExpressions.PersonName, ErrorMessage = "PersonName")]
-			[DataType(DataType.Text)]
-			[Display(Name = "SecondNameField")]
-			public string? SegundoNombre { get; set; } = string.Empty;
+			[Display(Name = "NameField")]
+			public string Nombre { get; set; } = string.Empty;
 
 			[Required(ErrorMessage = "Required")]
 			[StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
@@ -233,12 +227,13 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			string nombreJefe;
 			string jsonResponse;
 			List<string> jsonEmpleados = new List<string>();
-			List<string> jsonContactosEmergencia = new List<string>();
-			List<string> jsonArchivos = new List<string>();
 			List<Empleado> empleados = await _empleadoManager.GetAllAsync();
 
 			foreach (Empleado e in empleados)
 			{
+				List<string> jsonContactosEmergencia = new List<string>();
+				List<string> jsonArchivos = new List<string>();
+
 				nombreArea = e.Area != null ? e.Area.Nombre : "";
 				nombreSubarea = e.Subarea != null ? e.Subarea.Nombre : "";
 				nombrePuesto = e.Puesto != null ? e.Puesto.Nombre : "";
@@ -319,8 +314,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				jsonEmpleados.Add(
 					"{" +
 						$"\"id\": {e.Id}," +
-						$"\"primerNombre\": \"{e.PrimerNombre}\", " +
-						$"\"segundoNombre\": \"{e.SegundoNombre}\", " +
+						$"\"nombre\": \"{e.Nombre}\", " +
 						$"\"apellidoPaterno\": \"{e.ApellidoPaterno}\", " +
 						$"\"apellidoMaterno\": \"{e.ApellidoMaterno}\", " +
 						$"\"nombreCompleto\": \"{e.NombreCompleto}\", " +
@@ -331,20 +325,23 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						$"\"direccion\": \"{e.Direccion}\", " +
 						$"\"telefono\": \"{e.Telefono}\", " +
 						$"\"email\": \"{e.Email}\", " +
-						$"\"idGenero\": {e.GeneroId ?? 0}, " +
+						$"\"generoId\": {e.GeneroId ?? 0}, " +
 						$"\"genero\": \"{nombreGenero}\", " +
-						$"\"idSubarea\": {e.SubareaId ?? 0}, " +
+						$"\"subareaId\": {e.SubareaId ?? 0}, " +
 						$"\"subarea\": \"{nombreSubarea}\", " +
-						$"\"idOficina\": {e.OficinaId ?? 0}, " +
+						$"\"oficinaId\": {e.OficinaId ?? 0}, " +
 						$"\"oficina\": \"{nombreOficina}\", " +
-						$"\"idPuesto\": {e.PuestoId ?? 0}, " +
+						$"\"puestoId\": {e.PuestoId ?? 0}, " +
 						$"\"puesto\": \"{nombrePuesto}\", " +
-						$"\"idArea\": {e.AreaId ?? 0}, " +
+						$"\"areaId\": {e.AreaId ?? 0}, " +
 						$"\"area\": \"{nombreArea}\", " +
-						$"\"idEstadoCivil\": {e.EstadoCivilId ?? 0}, " +
+						$"\"estadoCivilId\": {e.EstadoCivilId ?? 0}, " +
 						$"\"estadoCivil\": \"{nombreEstadoCivil}\", " +
-						$"\"idJefe\": {e.JefeId ?? 0}, " +
+						$"\"jefeId\": {e.JefeId ?? 0}, " +
 						$"\"jefe\": \"{nombreJefe}\", " +
+						$"\"curp\": \"{e.CURP}\", " +
+						$"\"rfc\": \"{e.RFC}\", " +
+						$"\"nss\": \"{e.NSS}\", " +
 						$"\"contactosEmergencia\": [{string.Join(",", jsonContactosEmergencia)}], " +
 						$"\"archivos\": [{string.Join(",", jsonArchivos)}] " +
 					"}"
@@ -400,11 +397,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					empleado.FechaNacimiento = InputEmpleado.FechaNacimiento;
 					empleado.GeneroId = InputEmpleado.GeneroId;
 					empleado.JefeId = InputEmpleado.JefeId;
-					empleado.NombreCompleto = $"{InputEmpleado.PrimerNombre} {InputEmpleado.SegundoNombre} {InputEmpleado.ApellidoPaterno} {InputEmpleado.ApellidoMaterno}";
+					empleado.NombreCompleto = $"{InputEmpleado.Nombre} {InputEmpleado.ApellidoPaterno} {InputEmpleado.ApellidoMaterno}";
 					empleado.OficinaId = InputEmpleado.OficinaId;
-					empleado.PrimerNombre = InputEmpleado.PrimerNombre;
+					empleado.Nombre = InputEmpleado.Nombre;
 					empleado.PuestoId = InputEmpleado.PuestoId;
-					empleado.SegundoNombre = InputEmpleado.SegundoNombre ?? "";
 					empleado.SubareaId = InputEmpleado.SubareaId;
 					empleado.Telefono = InputEmpleado.Telefono;
 
@@ -427,11 +423,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 																		FechaNacimiento = InputEmpleado.FechaNacimiento,
 																		GeneroId = InputEmpleado.GeneroId,
 																		JefeId = InputEmpleado.JefeId,
-																		NombreCompleto = $"{InputEmpleado.PrimerNombre} {InputEmpleado.SegundoNombre} {InputEmpleado.ApellidoPaterno} {InputEmpleado.ApellidoMaterno}",
+																		NombreCompleto = $"{InputEmpleado.Nombre} {InputEmpleado.ApellidoPaterno} {InputEmpleado.ApellidoMaterno}",
 																		OficinaId = InputEmpleado.OficinaId,
-																		PrimerNombre = InputEmpleado.PrimerNombre,
+																		Nombre = InputEmpleado.Nombre,
 																		PuestoId = InputEmpleado.PuestoId,
-																		SegundoNombre = InputEmpleado.SegundoNombre ?? "",
 																		SubareaId = InputEmpleado.SubareaId,
 																		Telefono = InputEmpleado.Telefono
 																	});
@@ -500,26 +495,33 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				//Se busca el empleado por su nombre completo.
 				Empleado? empleado = await _empleadoManager.GetByCURPAsync(row[20].ToString() ?? "");
 				int idEmpleado = 0;
+				Area? area = await _areaManager.GetByNameAsync(row[10].ToString() ?? "");
+				EstadoCivil? estadoCivil = await _estadoCivilManager.GetByNameAsync(row[7].ToString() ?? "");
+				Genero? genero = await _generoManager.GetByNameAsync(row[6].ToString() ?? "");
+				Empleado? jefe = await _empleadoManager.GetByNameAsync(row[13].ToString() ?? "");
+				Oficina? oficina = await _oficinaManager.GetByNameAsync(row[12].ToString() ?? "");
+				Puesto? puesto = await _puestoManager.GetByNameAsync(row[9].ToString() ?? "");
+				Subarea? subarea = await _subareaManager.GetByNameAsync(row[11].ToString() ?? "");
+
 				if (empleado != null)
 				{
 					idEmpleado = empleado.Id;
 
 					empleado.ApellidoMaterno = row[3].ToString() ?? "";
 					empleado.ApellidoPaterno = row[2].ToString() ?? "";
-					empleado.AreaId = (int)row[10];
+					empleado.AreaId = area != null ? area.Id : null;
 					empleado.Direccion = row[8].ToString() ?? "";
 					empleado.Email = row[15].ToString() ?? "";
-					empleado.EstadoCivilId = (int)row[7];
+					empleado.EstadoCivilId = estadoCivil != null ? estadoCivil.Id : null;
 					empleado.FechaIngreso = DateTime.Parse(row[14].ToString() ?? "");
 					empleado.FechaNacimiento = DateTime.Parse(row[4].ToString() ?? "");
-					empleado.GeneroId = (int)row[6];
-					empleado.JefeId = (int)row[13];
+					empleado.GeneroId = genero != null ? genero.Id : null;
+					empleado.JefeId = jefe != null ? jefe.Id : null;
 					empleado.NombreCompleto = $"{row[0].ToString() ?? ""} {row[1].ToString() ?? ""} {row[2].ToString() ?? ""} {row[3].ToString() ?? ""}";
-					empleado.OficinaId = (int)row[12];
-					empleado.PrimerNombre = row[0].ToString() ?? "";
-					empleado.PuestoId = (int)row[9];
-					empleado.SegundoNombre = row[1].ToString() ?? "";
-					empleado.SubareaId = (int)row[11];
+					empleado.OficinaId = oficina != null ? oficina.Id : null;
+					empleado.Nombre = row[0].ToString() ?? "";
+					empleado.PuestoId = puesto != null ? puesto.Id : null;
+					empleado.SubareaId = subarea != null ? subarea.Id : null;
 					empleado.Telefono = row[5].ToString() ?? "";
 					empleado.CURP = row[20].ToString() ?? "";
 					empleado.RFC = row[21].ToString() ?? "";
@@ -537,20 +539,19 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					{
 						ApellidoMaterno = row[3].ToString() ?? "",
 						ApellidoPaterno = row[2].ToString() ?? "",
-						AreaId = (int)row[10],
+						AreaId = area != null ? area.Id : null,
 						Direccion = row[8].ToString() ?? "",
 						Email = row[15].ToString() ?? "",
-						EstadoCivilId = (int)row[7],
+						EstadoCivilId = estadoCivil != null ? estadoCivil.Id : null,
 						FechaIngreso = DateTime.Parse(row[14].ToString() ?? ""),
 						FechaNacimiento = DateTime.Parse(row[4].ToString() ?? ""),
-						GeneroId = (int)row[6],
-						JefeId = (int)row[13],
+						GeneroId = genero != null ? genero.Id : null,
+						JefeId = jefe != null ? jefe.Id : null,
 						NombreCompleto = $"{row[0].ToString() ?? ""} {row[1].ToString() ?? ""} {row[2].ToString() ?? ""} {row[3].ToString() ?? ""}",
-						OficinaId = (int)row[12],
-						PrimerNombre = row[0].ToString() ?? "",
-						PuestoId = (int)row[9],
-						SegundoNombre = row[1].ToString() ?? "",
-						SubareaId = (int)row[11],
+						OficinaId = oficina != null ? oficina.Id : null,
+						Nombre = row[0].ToString() ?? "",
+						PuestoId = puesto != null ? puesto.Id : null,
+						SubareaId = subarea != null ? subarea.Id : null,
 						Telefono = row[5].ToString() ?? "",
 						CURP = row[20].ToString() ?? "",
 						RFC = row[21].ToString() ?? "",

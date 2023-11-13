@@ -205,7 +205,7 @@
     <value>Contraseña</value>
   </data>
   <data name="PersonName" xml:space="preserve">
-    <value>El campo {0} debe tener solo letras. La primera letra debe estar en mayúscula y debe haber mínimo dos letras.</value>
+    <value>El campo {0} debe tener solo letras. Se permiten los espacios en blanco. La primera letra debe estar en mayúscula y debe haber mínimo dos letras.</value>
   </data>
   <data name="PhoneFormat" xml:space="preserve">
     <value>El campo {0} no es un número de teléfono válido</value>

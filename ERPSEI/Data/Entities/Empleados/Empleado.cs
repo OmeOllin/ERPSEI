@@ -9,9 +9,7 @@ namespace ERPSEI.Data.Entities.Empleados
 
 		public byte[] ProfilePicture { get; set; } = new byte[0];
 
-		public string PrimerNombre { get; set; } = string.Empty;
-
-        public string SegundoNombre { get; set; } = string.Empty;
+		public string Nombre { get; set; } = string.Empty;
 
         public string ApellidoPaterno { get; set; } = string.Empty;
 

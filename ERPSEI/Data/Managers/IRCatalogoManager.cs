@@ -4,6 +4,8 @@
 	{
 		public Task<List<T>> GetAllAsync();
 
-		T? GetById(int id);
+		public Task<T?> GetByIdAsync(int id);
+
+		public Task<T?> GetByNameAsync(string name);
 	}
 }

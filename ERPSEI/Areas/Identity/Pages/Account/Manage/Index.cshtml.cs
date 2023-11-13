@@ -153,8 +153,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
             Input.Username = userName;
-            Input.FirstName = user.Empleado.PrimerNombre;
-            Input.SecondName = user.Empleado.SegundoNombre;
+            Input.FirstName = user.Empleado.Nombre;
             Input.FathersLastName = user.Empleado.ApellidoPaterno;
             Input.MothersLastName = user.Empleado.ApellidoMaterno;
             Input.PhoneNumber = phoneNumber;
@@ -204,8 +203,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             }
 
             //Actualiza información principal del usuario.
-            user.Empleado.PrimerNombre = Input.FirstName;
-            user.Empleado.SegundoNombre = Input.SecondName ?? "";
+            user.Empleado.Nombre = Input.FirstName;
             user.Empleado.ApellidoPaterno = Input.FathersLastName;
             user.Empleado.ApellidoMaterno = Input.MothersLastName;
             user.PhoneNumber = Input.PhoneNumber ?? "";

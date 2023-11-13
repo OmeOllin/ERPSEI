@@ -90,5 +90,10 @@ namespace ERPSEI.Data.Managers
             return await db.Areas.Where(a => a.Id == id).FirstOrDefaultAsync();
         }
 
-    }
+		public async Task<Area?> GetByNameAsync(string name)
+		{
+			return await db.Areas.Where(a => a.Nombre.ToLower() == name.ToLower()).FirstOrDefaultAsync();
+		}
+
+	}
 }

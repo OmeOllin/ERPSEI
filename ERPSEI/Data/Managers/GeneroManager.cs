@@ -17,10 +17,14 @@ namespace ERPSEI.Data.Managers
 			return await db.Generos.ToListAsync();
 		}
 
-		public Genero? GetById(int id)
+		public async Task<Genero?> GetByIdAsync(int id)
         {
-            return db.Generos.Where(a => a.Id == id).FirstOrDefault();
+            return await db.Generos.Where(a => a.Id == id).FirstOrDefaultAsync();
         }
 
-    }
+		public async Task<Genero?> GetByNameAsync(string name)
+		{
+			return await db.Generos.Where(a => a.Nombre.ToLower() == name.ToLower()).FirstOrDefaultAsync();
+		}
+	}
 }
