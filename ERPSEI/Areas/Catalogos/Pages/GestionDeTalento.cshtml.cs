@@ -140,9 +140,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Display(Name = "AreaField")]
 			public int AreaId { get; set; }
 
-			[Required(ErrorMessage = "Required")]
 			[Display(Name = "SubareaField")]
-			public int SubareaId { get; set; }
+			public int? SubareaId { get; set; }
 
 			[Display(Name = "OficinaField")]
 			public int? OficinaId { get; set; }

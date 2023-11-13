@@ -313,7 +313,7 @@ function initEmpleadoDialog(action, row) {
     }
 
     idField.value = row.id;
-    primerNombreField.value = row.primerNombre;
+    primerNombreField.value = row.nombre;
     apellidoPaternoField.value = row.apellidoPaterno;
     apellidoMaternoField.value = row.apellidoMaterno;
     fechaNacimientoField.value = row.fechaNacimientoJS;
@@ -397,7 +397,6 @@ function onGuardarClick() {
 
     let idField = document.getElementById("inpEmpleadoId");
     let primerNombreField = document.getElementById("inpEmpleadoPrimerNombre");
-    let segundoNombreField = document.getElementById("inpEmpleadoSegundoNombre");
     let apellidoPaternoField = document.getElementById("inpEmpleadoApellidoPaterno");
     let apellidoMaternoField = document.getElementById("inpEmpleadoApellidoMaterno");
     let fechaNacimientoField = document.getElementById("inpEmpleadoFechaNacimiento");
@@ -433,7 +432,7 @@ function onGuardarClick() {
         direccion: direccionField.value.trim(),
         puestoId: puestoField.value == 0 ? null : parseInt(puestoField.value),
         areaId: areaField.value == 0 ? null : parseInt(areaField.value),
-        subareaId: subareaField.value == 0 ? null : parseInt(subareaField.value),
+        /*subareaId: subareaField.value == 0 ? null : parseInt(subareaField.value),*/
         oficinaId: oficinaField.value == 0 ? null : parseInt(oficinaField.value),
         jefeId: jefeField.value == 0 ? null : parseInt(jefeField.value),
         fechaIngreso: fechaIngresoField.value,
@@ -455,6 +454,7 @@ function onGuardarClick() {
                         summary += `<li>${error}</li>`;
                     });
                     summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                    showError(dlgTitle.innerHTML, resp.mensaje);
                 }
                 return;
             }
