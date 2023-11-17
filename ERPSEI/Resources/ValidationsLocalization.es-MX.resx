@@ -187,7 +187,7 @@
     <value>Segundo apellido</value>
   </data>
   <data name="NameField" xml:space="preserve">
-    <value>Nombre</value>
+    <value>Nombre(s)</value>
   </data>
   <data name="NewEmailField" xml:space="preserve">
     <value>Nuevo correo electrónico</value>

@@ -37,7 +37,6 @@
 
 <!-- --------------------------- -->
 <!-- Sección de filtros -------- -->
-<form id="filtros" method="post">
 	<div class="accordion shadow mb-5" id="accordionFiltros">
 		<div class="accordion-item">
 			<h2 class="accordion-header" id="headingOne">
@@ -47,107 +46,95 @@
 			</h2>
 			<div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionFiltros">
 				<div class="accordion-body">
-					<div class="row">
-						<div class="col-sm-6 col-md-6 col-lg-3">
-							<div class="form-floating mb-3">
-								<input id="inpFiltroFechaIngresoInicio" type="date" asp-for="InputFiltro.FechaIngresoInicio" class="form-control" placeholder="@Localizer["FechaIngresoPlaceholder"]" />
-								<label for="inpFiltroFechaIngresoInicio" asp-for="InputFiltro.FechaIngresoInicio" class="form-label"></label>
+					<form id="filtros" method="post">
+						<div class="row">
+							<div class="col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<input id="inpFiltroFechaIngresoInicio" type="date" asp-for="InputFiltro.FechaIngresoInicio" class="form-control" placeholder="@Localizer["FechaIngresoPlaceholder"]" />
+									<label for="inpFiltroFechaIngresoInicio" asp-for="InputFiltro.FechaIngresoInicio" class="form-label"></label>
+								</div>
+							</div>
+							<div class="col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<input id="inpFiltroFechaIngresoFin" type="date" asp-for="InputFiltro.FechaIngresoFin" class="form-control" placeholder="@Localizer["FechaIngresoPlaceholder"]" />
+									<label for="inpFiltroFechaIngresoFin" asp-for="InputFiltro.FechaIngresoFin" class="form-label"></label>
+								</div>
+							</div>
+							<div class="col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<input id="inpFiltroFechaNacimientoInicio" type="date" asp-for="InputFiltro.FechaNacimientoInicio" class="form-control" placeholder="@Localizer["FechaNacimientoPlaceholder"]" />
+									<label for="inpFiltroFechaNacimientoInicio" asp-for="InputFiltro.FechaNacimientoInicio" class="form-label"></label>
+								</div>
+							</div>
+							<div class="col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<input id="inpFiltroFechaNacimientoFin" type="date" asp-for="InputFiltro.FechaNacimientoFin" class="form-control" placeholder="@Localizer["FechaNacimientoPlaceholder"]" />
+									<label for="inpFiltroFechaNacimientoFin" asp-for="InputFiltro.FechaNacimientoFin" class="form-label"></label>
+								</div>
 							</div>
 						</div>
-						<div class="col-sm-6 col-md-6 col-lg-3">
-							<div class="form-floating mb-3">
-								<input id="inpFiltroFechaIngresoFin" type="date" asp-for="InputFiltro.FechaIngresoFin" class="form-control" placeholder="@Localizer["FechaIngresoPlaceholder"]" />
-								<label for="inpFiltroFechaIngresoFin" asp-for="InputFiltro.FechaIngresoFin" class="form-label"></label>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-6 col-lg-3">
-							<div class="form-floating mb-3">
-								<input id="inpFiltroFechaNacimientoInicio" type="date" asp-for="InputFiltro.FechaNacimientoInicio" class="form-control" placeholder="@Localizer["FechaNacimientoPlaceholder"]" />
-								<label for="inpFiltroFechaNacimientoInicio" asp-for="InputFiltro.FechaNacimientoInicio" class="form-label"></label>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-6 col-lg-3">
-							<div class="form-floating mb-3">
-								<input id="inpFiltroFechaNacimientoFin" type="date" asp-for="InputFiltro.FechaNacimientoFin" class="form-control" placeholder="@Localizer["FechaNacimientoPlaceholder"]" />
-								<label for="inpFiltroFechaNacimientoFin" asp-for="InputFiltro.FechaNacimientoFin" class="form-label"></label>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-sm-6 col-md-6 col-lg-3">
-							<div class="form-floating mb-3">
-								<select id="selFiltroPuesto" asp-for="InputFiltro.PuestoId" class="form-select" placeholder="@Localizer["PuestoPlaceholder"]">
-									<option value="0">Seleccione...</option>
-									@{
-										foreach (Puesto puesto in puestos)
-										{
-											<option value='@puesto.Id'>@puesto.Nombre</option>
+						<div class="row">
+							<div class="col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<select id="selFiltroPuesto" asp-for="InputFiltro.PuestoId" class="form-select" placeholder="@Localizer["PuestoPlaceholder"]">
+										<option value="0">Seleccione...</option>
+										@{
+											foreach (Puesto puesto in puestos)
+											{
+												<option value='@puesto.Id'>@puesto.Nombre</option>
+											}
 										}
-									}
-								</select>
-								<label for="selFiltroPuesto" asp-for="InputFiltro.PuestoId" class="form-label"></label>
+									</select>
+									<label for="selFiltroPuesto" asp-for="InputFiltro.PuestoId" class="form-label"></label>
+								</div>
 							</div>
-						</div>
-						<div class="col-sm-6 col-md-6 col-lg-3">
-							<div class="form-floating mb-3">
-								<select id="selFiltroArea" asp-for="InputFiltro.AreaId" class="form-select" placeholder="@Localizer["AreaPlaceholder"]">
-									<option value="0">Seleccione...</option>
-									@{
-										foreach (Area area in areas)
-										{
-											<option value='@area.Id'>@area.Nombre</option>
+							<div class="col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<select id="selFiltroArea" asp-for="InputFiltro.AreaId" class="form-select" placeholder="@Localizer["AreaPlaceholder"]">
+										<option value="0">Seleccione...</option>
+										@{
+											foreach (Area area in areas)
+											{
+												<option value='@area.Id'>@area.Nombre</option>
+											}
 										}
-									}
-								</select>
-								<label for="selFiltroArea" asp-for="InputFiltro.AreaId" class="form-label"></label>
+									</select>
+									<label for="selFiltroArea" asp-for="InputFiltro.AreaId" class="form-label"></label>
+								</div>
 							</div>
-						</div>
-						<div class="col-sm-6 col-md-6 col-lg-3">
-							<div class="form-floating mb-3">
-								<select id="selFiltroSubarea" InputFiltro.SubareaId" class="form-select" placeholder="@Localizer["SubareaPlaceholder"]">
-									<option value="0">Seleccione...</option>
-									@{
-										foreach (Subarea subarea in subareas)
-										{
-											<option value='@subarea.Id'>@subarea.Nombre</option>
+							<div class="col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<select id="selFiltroSubarea" InputFiltro.SubareaId" class="form-select" placeholder="@Localizer["SubareaPlaceholder"]">
+										<option value="0">Seleccione...</option>
+										@{
+											foreach (Subarea subarea in subareas)
+											{
+												<option value='@subarea.Id'>@subarea.Nombre</option>
+											}
 										}
-									}
-								</select>
-								<label for="selFiltroSubarea" asp-for="InputFiltro.SubareaId" class="form-label"></label>
+									</select>
+									<label for="selFiltroSubarea" asp-for="InputFiltro.SubareaId" class="form-label"></label>
+								</div>
 							</div>
-						</div>
-						<div class="col-sm-6 col-md-6 col-lg-3">
-							<div class="form-floating mb-3">
-								<select id="selFiltroOficina" asp-for="InputFiltro.OficinaId" class="form-select" placeholder="@Localizer["OficinaPlaceholder"]">
-									<option value="0">Seleccione...</option>
-									@{
-										foreach (Oficina oficina in oficinas)
-										{
-											<option value='@oficina.Id'>@oficina.Nombre</option>
+							<div class="col-sm-6 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<select id="selFiltroOficina" asp-for="InputFiltro.OficinaId" class="form-select" placeholder="@Localizer["OficinaPlaceholder"]">
+										<option value="0">Seleccione...</option>
+										@{
+											foreach (Oficina oficina in oficinas)
+											{
+												<option value='@oficina.Id'>@oficina.Nombre</option>
+											}
 										}
-									}
-								</select>
-								<label for="selFiltroOficina" asp-for="InputFiltro.OficinaId" class="form-label"></label>
+									</select>
+									<label for="selFiltroOficina" asp-for="InputFiltro.OficinaId" class="form-label"></label>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="col-sm-6 col-md-6 col-lg-3">
-							<div class="form-floating mb-3">
-								<input id="inpFiltroNombre" asp-for="InputFiltro.Nombre" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
-								<label for="inpFiltroNombre" asp-for="InputFiltro.Nombre" class="form-label"></label>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-6 col-lg-3">
-							<div class="form-floating mb-3">
-								<input id="inpFiltroCURP" asp-for="InputFiltro.CURP" class="form-control" placeholder="@Localizer["CURPPlaceholder"]" />
-								<label for="inpFiltroCURP" asp-for="InputFiltro.CURP" class="form-label"></label>
-							</div>
-						</div>
-					</div>
+					</form>
 					<div class="row text-end">
 						<div class="col-12">
-							<button id="btnBuscar" class="btn btn-primary">
+							<button id="btnBuscar" class="btn btn-primary" onclick="onBuscarClick();">
 								<i class="bi bi-search"></i> @Localizer["SearchButton"]
 							</button>
 						</div>
@@ -156,7 +143,6 @@
 			</div>
 		</div>
 	</div>
-</form>
 <!-- --------------------------- -->
 <!-- --------------------------- -->
 
@@ -174,7 +160,6 @@
 		data-unique-id="id"
 		data-toolbar="#toolbar"
 		data-search="true"
-		data-show-refresh="true"
 		data-show-toggle="true"
 		data-show-fullscreen="true"
 		data-show-columns="true"
@@ -192,8 +177,7 @@
 		data-side-pagination="client"
 		data-response-handler="responseHandler"
 		data-buttons-class="primary"
-		data-buttons="additionalButtons"
-		data-url="/Catalogos/GestionDeTalento/TalentList">
+		data-buttons="additionalButtons">
 	<thead>
 		<tr align="center" valign="middle" class="bg-primary bg-opacity-10">
 		</tr>
@@ -513,7 +497,10 @@
 				<div class="container">
 					<div class="row">
 						<div class="col-12">
-							<input id="excelFile" onchange="onExcelSelectorChanged(this);" class="form-control" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+							<form id="importForm" method="post">
+								<input asp-for="InputImportar.Plantilla" id="excelFile" onchange="onExcelSelectorChanged(this);" class="form-control" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+								<span asp-validation-for="InputImportar.Plantilla" class="text-danger"></span>
+							</form>
 						</div>
 					</div>
 				</div>

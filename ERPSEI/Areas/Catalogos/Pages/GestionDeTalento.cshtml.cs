@@ -14,7 +14,7 @@ using System.Net.Mime;
 namespace ERPSEI.Areas.Catalogos.Pages
 {
 	public class GestionDeTalentoModel : PageModel
-    {
+	{
 		private readonly IEmpleadoManager _empleadoManager;
 		private readonly IRWCatalogoManager<Area> _areaManager;
 		private readonly IRWCatalogoManager<Subarea> _subareaManager;
@@ -29,52 +29,44 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		private readonly ApplicationDbContext _db;
 
 		[BindProperty]
-        public FiltroModel InputFiltro { get; set; }
+		public FiltroModel InputFiltro { get; set; }
 
-        public class FiltroModel
-        {
+		public class FiltroModel
+		{
 			[DataType(DataType.DateTime)]
 			[Display(Name = "FechaIngresoInicioField")]
-			public string FechaIngresoInicio { get; set; } = string.Empty;
+			public DateTime? FechaIngresoInicio { get; set; }
 
 			[DataType(DataType.DateTime)]
 			[Display(Name = "FechaIngresoFinField")]
-			public string FechaIngresoFin { get; set; } = string.Empty;
+			public DateTime? FechaIngresoFin { get; set; }
 
 			[DataType(DataType.DateTime)]
 			[Display(Name = "FechaNacimientoInicioField")]
-			public string FechaNacimientoInicio { get; set; } = string.Empty;
+			public DateTime? FechaNacimientoInicio { get; set; }
 
 			[DataType(DataType.DateTime)]
 			[Display(Name = "FechaNacimientoFinField")]
-			public string FechaNacimientoFin { get; set; } = string.Empty;
-
-			[DataType(DataType.Text)]
-			[Display(Name = "NameField")]
-			public string Nombre { get; set; } = string.Empty;
+			public DateTime? FechaNacimientoFin { get; set; }
 
 			[Display(Name = "PuestoField")]
-			public int PuestoId { get; set; }
+			public int? PuestoId { get; set; }
 
-            [Display(Name = "AreaField")]
-            public int AreaId { get; set; }
-
-			[DataType(DataType.Text)]
-			[Display(Name = "CURPField")]
-			public string CURP { get; set; } = string.Empty;
+			[Display(Name = "AreaField")]
+			public int? AreaId { get; set; }
 
 			[Display(Name = "SubareaField")]
-			public int SubareaId { get; set; }
+			public int? SubareaId { get; set; }
 
 			[Display(Name = "OficinaField")]
-			public int OficinaId { get; set; }
+			public int? OficinaId { get; set; }
 		}
 
-        [BindProperty]
-        public EmpleadoModel InputEmpleado { get; set; }
+		[BindProperty]
+		public EmpleadoModel InputEmpleado { get; set; }
 
-        public class EmpleadoModel
-        {
+		public class EmpleadoModel
+		{
 			public int Id { get; set; }
 
 			[Required(ErrorMessage = "Required")]
@@ -174,7 +166,15 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			public string? TelefonoContacto2 { get; set; } = string.Empty;
 		}
 
-        public GestionDeTalentoModel(
+		[BindProperty]
+		public ImportarModel InputImportar { get; set; }
+		public class ImportarModel
+		{
+			[Required(ErrorMessage = "Required")]
+			public IFormFile? Plantilla { get; set; }
+		}
+
+		public GestionDeTalentoModel(
 			IEmpleadoManager empleadoManager,
 			IRWCatalogoManager<Area> areaManager,
 			IRWCatalogoManager<Subarea> subareaManager,
@@ -200,21 +200,13 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			_logger = logger;
 			_db = db;
 
-            InputFiltro = new FiltroModel();
-            InputEmpleado = new EmpleadoModel();
+			InputFiltro = new FiltroModel();
+			InputEmpleado = new EmpleadoModel();
+			InputImportar = new ImportarModel();
 		}
 
-		public IActionResult OnGet()
-        {
-            return Page();
-		}
-		public ActionResult OnGetDownloadPlantilla()
+		private async Task<string> GetTalentList(FiltroModel? filtro = null)
 		{
-			return File("/templates/PlantillaEmpleados.xlsx", MediaTypeNames.Application.Octet, "PlantillaEmpleados.xlsx");
-		}
-		public async Task<JsonResult> OnGetTalentList()
-        {
-
 			string nombreArea;
 			string nombreSubarea;
 			string nombrePuesto;
@@ -225,6 +217,18 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			string jsonResponse;
 			List<string> jsonEmpleados = new List<string>();
 			List<Empleado> empleados = await _empleadoManager.GetAllAsync();
+
+			if(filtro != null)
+			{
+				if(filtro.FechaIngresoInicio != null) { empleados = empleados.Where(e => e.FechaIngreso >= filtro.FechaIngresoInicio).ToList(); }
+				if (filtro.FechaIngresoFin != null) { empleados = empleados.Where(e => e.FechaIngreso <= filtro.FechaIngresoFin).ToList(); }
+				if (filtro.FechaNacimientoInicio != null) { empleados = empleados.Where(e => e.FechaNacimiento >= filtro.FechaNacimientoInicio).ToList(); }
+				if (filtro.FechaNacimientoFin != null) { empleados = empleados.Where(e => e.FechaNacimiento <= filtro.FechaNacimientoFin).ToList(); }
+				if (filtro.PuestoId != null) { empleados = empleados.Where(e => e.PuestoId == filtro.PuestoId).ToList(); }
+				if (filtro.AreaId != null) { empleados = empleados.Where(e => e.AreaId == filtro.AreaId).ToList(); }
+				if (filtro.SubareaId != null) { empleados = empleados.Where(e => e.SubareaId == filtro.SubareaId).ToList(); }
+				if (filtro.OficinaId != null) { empleados = empleados.Where(e => e.OficinaId == filtro.OficinaId).ToList(); }
+			}
 
 			foreach (Empleado e in empleados)
 			{
@@ -242,11 +246,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				if (e.ContactosEmergencia != null)
 				{
 					List<ContactoEmergencia> contactos = (from c in e.ContactosEmergencia
-														   orderby c.Id ascending
-														   select c).ToList();
+														  orderby c.Id ascending
+														  select c).ToList();
 					foreach (ContactoEmergencia c in contactos)
 					{
-						jsonContactosEmergencia.Add($"{{\"nombre\": \"{c.Nombre}\", \"telefono\": \"{c.Telefono}\"}}");   
+						jsonContactosEmergencia.Add($"{{\"nombre\": \"{c.Nombre}\", \"telefono\": \"{c.Telefono}\"}}");
 					}
 				}
 
@@ -254,8 +258,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				{
 					//Si el usuario ya tiene archivos, se llena el arreglo de datos a partir de ellos.					
 					List<ArchivoEmpleado> userFiles = (from userFile in e.ArchivosEmpleado
-														orderby userFile.TipoArchivoId ascending
-														select userFile).ToList();
+													   orderby userFile.TipoArchivoId ascending
+													   select userFile).ToList();
 
 					foreach (ArchivoEmpleado a in userFiles)
 					{
@@ -346,9 +350,36 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			}
 
 			jsonResponse = $"[{string.Join(",", jsonEmpleados)}]";
-			return new JsonResult(jsonResponse);
+
+			return jsonResponse;
 		}
 
+		public IActionResult OnGet()
+		{
+
+			return Page();
+		}
+		public ActionResult OnGetDownloadPlantilla()
+		{
+			return File("/templates/PlantillaEmpleados.xlsx", MediaTypeNames.Application.Octet, "PlantillaEmpleados.xlsx");
+		}
+
+		public async Task<JsonResult> OnPostFiltrarEmpleados()
+		{
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadosFiltradosUnsuccessfully"]);
+			try
+			{
+				resp.Datos = await GetTalentList(InputFiltro);
+				resp.TieneError = false;
+				resp.Mensaje = _strLocalizer["EmpleadosFiltradosSuccessfully"];
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+			}
+
+			return new JsonResult(resp);
+		}
 		public async Task<JsonResult> OnPostDeleteEmpleados(string[] ids)
 		{
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadosDeletedUnsuccessfully"]);
@@ -483,46 +514,45 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resp);
 		}
-
 		private async Task CreateEmployeeFromExcelRow(DataRow row)
 		{
 			await _db.Database.BeginTransactionAsync();
 			try
 			{
 				//Se busca el empleado por su nombre completo.
-				Empleado? empleado = await _empleadoManager.GetByCURPAsync(row[20].ToString() ?? "");
+				Empleado? empleado = await _empleadoManager.GetByCURPAsync(row[19].ToString() ?? "");
 				int idEmpleado = 0;
-				Area? area = await _areaManager.GetByNameAsync(row[10].ToString() ?? "");
-				EstadoCivil? estadoCivil = await _estadoCivilManager.GetByNameAsync(row[7].ToString() ?? "");
-				Genero? genero = await _generoManager.GetByNameAsync(row[6].ToString() ?? "");
-				Empleado? jefe = await _empleadoManager.GetByNameAsync(row[13].ToString() ?? "");
-				Oficina? oficina = await _oficinaManager.GetByNameAsync(row[12].ToString() ?? "");
-				Puesto? puesto = await _puestoManager.GetByNameAsync(row[9].ToString() ?? "");
-				Subarea? subarea = await _subareaManager.GetByNameAsync(row[11].ToString() ?? "");
+				Area? area = await _areaManager.GetByNameAsync(row[9].ToString() ?? "");
+				EstadoCivil? estadoCivil = await _estadoCivilManager.GetByNameAsync(row[6].ToString() ?? "");
+				Genero? genero = await _generoManager.GetByNameAsync(row[5].ToString() ?? "");
+				Empleado? jefe = await _empleadoManager.GetByNameAsync(row[12].ToString() ?? "");
+				Oficina? oficina = await _oficinaManager.GetByNameAsync(row[11].ToString() ?? "");
+				Puesto? puesto = await _puestoManager.GetByNameAsync(row[8].ToString() ?? "");
+				Subarea? subarea = await _subareaManager.GetByNameAsync(row[10].ToString() ?? "");
 
 				if (empleado != null)
 				{
 					idEmpleado = empleado.Id;
 
-					empleado.ApellidoMaterno = row[3].ToString() ?? "";
-					empleado.ApellidoPaterno = row[2].ToString() ?? "";
+					empleado.ApellidoMaterno = row[2].ToString() ?? "";
+					empleado.ApellidoPaterno = row[1].ToString() ?? "";
 					empleado.AreaId = area != null ? area.Id : null;
-					empleado.Direccion = row[8].ToString() ?? "";
-					empleado.Email = row[15].ToString() ?? "";
+					empleado.Direccion = row[7].ToString() ?? "";
+					empleado.Email = row[14].ToString() ?? "";
 					empleado.EstadoCivilId = estadoCivil != null ? estadoCivil.Id : null;
-					empleado.FechaIngreso = DateTime.Parse(row[14].ToString() ?? "");
-					empleado.FechaNacimiento = DateTime.Parse(row[4].ToString() ?? "");
+					empleado.FechaIngreso = DateTime.Parse(row[13].ToString() ?? "");
+					empleado.FechaNacimiento = DateTime.Parse(row[3].ToString() ?? "");
 					empleado.GeneroId = genero != null ? genero.Id : null;
 					empleado.JefeId = jefe != null ? jefe.Id : null;
-					empleado.NombreCompleto = $"{row[0].ToString() ?? ""} {row[1].ToString() ?? ""} {row[2].ToString() ?? ""} {row[3].ToString() ?? ""}";
+					empleado.NombreCompleto = $"{row[0].ToString() ?? ""} {row[1].ToString() ?? ""} {row[2].ToString() ?? ""}";
 					empleado.OficinaId = oficina != null ? oficina.Id : null;
 					empleado.Nombre = row[0].ToString() ?? "";
 					empleado.PuestoId = puesto != null ? puesto.Id : null;
 					empleado.SubareaId = subarea != null ? subarea.Id : null;
-					empleado.Telefono = row[5].ToString() ?? "";
-					empleado.CURP = row[20].ToString() ?? "";
-					empleado.RFC = row[21].ToString() ?? "";
-					empleado.NSS = row[22].ToString() ?? "";
+					empleado.Telefono = row[4].ToString() ?? "";
+					empleado.CURP = row[19].ToString() ?? "";
+					empleado.RFC = row[20].ToString() ?? "";
+					empleado.NSS = row[21].ToString() ?? "";
 
 					await _empleadoManager.UpdateAsync(empleado);
 
@@ -534,34 +564,34 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					//Crea al empleado y obtiene su id.
 					idEmpleado = await _empleadoManager.CreateAsync(new Empleado()
 					{
-						ApellidoMaterno = row[3].ToString() ?? "",
-						ApellidoPaterno = row[2].ToString() ?? "",
+						ApellidoMaterno = row[2].ToString() ?? "",
+						ApellidoPaterno = row[1].ToString() ?? "",
 						AreaId = area != null ? area.Id : null,
-						Direccion = row[8].ToString() ?? "",
-						Email = row[15].ToString() ?? "",
+						Direccion = row[7].ToString() ?? "",
+						Email = row[14].ToString() ?? "",
 						EstadoCivilId = estadoCivil != null ? estadoCivil.Id : null,
-						FechaIngreso = DateTime.Parse(row[14].ToString() ?? ""),
-						FechaNacimiento = DateTime.Parse(row[4].ToString() ?? ""),
+						FechaIngreso = DateTime.Parse(row[13].ToString() ?? ""),
+						FechaNacimiento = DateTime.Parse(row[3].ToString() ?? ""),
 						GeneroId = genero != null ? genero.Id : null,
 						JefeId = jefe != null ? jefe.Id : null,
-						NombreCompleto = $"{row[0].ToString() ?? ""} {row[1].ToString() ?? ""} {row[2].ToString() ?? ""} {row[3].ToString() ?? ""}",
+						NombreCompleto = $"{row[0].ToString() ?? ""} {row[1].ToString() ?? ""} {row[2].ToString() ?? ""}",
 						OficinaId = oficina != null ? oficina.Id : null,
 						Nombre = row[0].ToString() ?? "",
 						PuestoId = puesto != null ? puesto.Id : null,
 						SubareaId = subarea != null ? subarea.Id : null,
-						Telefono = row[5].ToString() ?? "",
-						CURP = row[20].ToString() ?? "",
-						RFC = row[21].ToString() ?? "",
-						NSS = row[22].ToString() ?? ""
+						Telefono = row[4].ToString() ?? "",
+						CURP = row[19].ToString() ?? "",
+						RFC = row[20].ToString() ?? "",
+						NSS = row[21].ToString() ?? ""
 					});
 				}
 
 				//Crea dos nuevos contactos para el empleado.
 				await _contactoEmergenciaManager.CreateAsync(
-					new ContactoEmergencia() { Nombre = row[16].ToString() ?? "", Telefono = row[17].ToString() ?? "", EmpleadoId = idEmpleado }
+					new ContactoEmergencia() { Nombre = row[15].ToString() ?? "", Telefono = row[16].ToString() ?? "", EmpleadoId = idEmpleado }
 				);
 				await _contactoEmergenciaManager.CreateAsync(
-					new ContactoEmergencia() { Nombre = row[18].ToString() ?? "", Telefono = row[19].ToString() ?? "", EmpleadoId = idEmpleado }
+					new ContactoEmergencia() { Nombre = row[17].ToString() ?? "", Telefono = row[18].ToString() ?? "", EmpleadoId = idEmpleado }
 				);
 
 				await _db.Database.CommitTransactionAsync();

@@ -7,7 +7,8 @@ const VER = 2;
 const postOptions = { headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() } }
 
 document.addEventListener("DOMContentLoaded", function (event) {
-    initializeDate();
+    let btnBuscar = document.getElementById("btnBuscar");
+    btnBuscar.click();
 
     table = $("#table");
     buttonRemove = $("#remove");
@@ -27,7 +28,10 @@ function responseHandler(res) {
     }
     $.each(res, function (i, row) {
         row.state = $.inArray(row.id, selections) !== -1
-    })
+    });
+
+
+
     return res
 }
 function detailFormatter(index, row) {
@@ -76,11 +80,10 @@ function additionalButtons() {
     }
 }
 
-
 function onAgregarClick() {
     initEmpleadoDialog(NUEVO, {
         id: "Nuevo",
-        primerNombre: "",
+        nombre: "",
         segundoNombre: "",
         apellidoPaterno: "",
         apellidoMaterno: "",
@@ -208,8 +211,7 @@ function initTable() {
                     selections = [];
                     buttonRemove.prop('disabled', true);
 
-                    let e = document.querySelector("[name='refresh']");
-                    e.click();
+                    onBuscarClick();
 
                     showSuccess(dlgDeleteTitle, resp.mensaje);
                 }, function (error) {
@@ -222,6 +224,58 @@ function initTable() {
     })
 }
 /////////////////////
+
+//Funcionalidad Filtrar
+function onBuscarClick() {
+    let btnBuscar = document.getElementById("btnBuscar");
+    let inpFechaIngresoIni = document.getElementById("inpFiltroFechaIngresoInicio");
+    let inpFechaIngresoFin = document.getElementById("inpFiltroFechaIngresoFin");
+    let inpFechaNacimientoIni = document.getElementById("inpFiltroFechaNacimientoInicio");
+    let inpFechaNacimientoFin = document.getElementById("inpFiltroFechaNacimientoFin");
+    let selPuesto = document.getElementById("selFiltroPuesto");
+    let selArea = document.getElementById("selFiltroArea");
+    let selSubarea = document.getElementById("selFiltroSubarea");
+    let selOficina = document.getElementById("selFiltroOficina");
+
+    let oParams = {
+        FechaIngresoInicio: inpFechaIngresoIni.value,
+        FechaIngresoFin: inpFechaIngresoFin.value,
+        FechaNacimientoInicio: inpFechaNacimientoIni.value,
+        FechaNacimientoFin: inpFechaNacimientoFin.value,
+        PuestoId: selPuesto.value == 0 ? null : parseInt(selPuesto.value),
+        AreaId: selArea.value == 0 ? null : parseInt(selArea.value),
+        SubareaId: selSubarea.value == 0 ? null : parseInt(selSubarea.value),
+        OficinaId: selOficina.value == 0 ? null : parseInt(selOficina.value)
+    };
+
+    //Resetea el valor de los filtros.
+    document.querySelectorAll("#filtros .form-control").forEach(function (e) { e.value = ""; });
+    document.querySelectorAll("#filtros .form-select").forEach(function (e) { e.value = 0; });
+
+    doAjax(
+        "/Catalogos/GestionDeTalento/FiltrarEmpleados",
+        oParams,
+        function (resp) {
+            if (resp.tieneError) {
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    let summary = ``;
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                    showError(btnBuscar.innerHTML, resp.mensaje);
+                }
+                return;
+            }
+
+            table.bootstrapTable('load', responseHandler(resp.datos));
+        }, function (error) {
+            showError("Error", error);
+        },
+        postOptions
+    );
+}
+////////////////////////////////
 
 //Funcionalidad Diálogo Empleado
 function initEmpleadoDialog(action, row) {
@@ -432,7 +486,7 @@ function onGuardarClick() {
         direccion: direccionField.value.trim(),
         puestoId: puestoField.value == 0 ? null : parseInt(puestoField.value),
         areaId: areaField.value == 0 ? null : parseInt(areaField.value),
-        /*subareaId: subareaField.value == 0 ? null : parseInt(subareaField.value),*/
+        subareaId: subareaField.value == 0 ? null : parseInt(subareaField.value),
         oficinaId: oficinaField.value == 0 ? null : parseInt(oficinaField.value),
         jefeId: jefeField.value == 0 ? null : parseInt(jefeField.value),
         fechaIngreso: fechaIngresoField.value,
@@ -461,8 +515,7 @@ function onGuardarClick() {
 
             btnClose.click();
 
-            let e = document.querySelector("[name='refresh']");
-            e.click();
+            onBuscarClick();
 
             showSuccess(dlgTitle.innerHTML, resp.mensaje);
         }, function (error) {
@@ -472,20 +525,16 @@ function onGuardarClick() {
     );
 }
 /////////////////////
-function initializeDate() {
-    var now = new Date();
-    var day = ("0" + now.getDate()).slice(-2);
-    var month = ("0" + (now.getMonth() + 1)).slice(-2);
-
-    let monthStart = now.getFullYear() + "-" + (month) + "-" + "01";
-    var today = now.getFullYear() + "-" + (month) + "-" + (day);
-
-    document.getElementById("inpFiltroFechaIngresoInicio").setAttribute("value", monthStart);
-    document.getElementById("inpFiltroFechaIngresoFin").setAttribute("value", today);
-}
 
 //Funcionalidad Diálogo importar
 function onImportarClick() {
+    //Ejecuta la validación
+    $("#importForm").validate();
+    //Determina los errores
+    let valid = $("#importForm").valid();
+    //Si la forma no es válida, entonces finaliza.
+    if (!valid) { return; }
+
     let form = new FormData();
     let btnClose = document.getElementById("dlgExcelBtnCancelar");
     let dlgTitle = document.getElementById("dlgExcelTitle");
@@ -520,8 +569,7 @@ function onImportarClick() {
 
             btnClose.click();
 
-            let e = document.querySelector("[name='refresh']");
-            e.click();
+            onBuscarClick();
 
             showSuccess(dlgTitle.innerHTML, resp.mensaje);
         },
@@ -534,6 +582,7 @@ function onImportarClick() {
 function onCerrarImportarClick() {
     let fileField = document.getElementById("excelFile");
     fileField.value = null;
+    onCerrarClick();
 }
 function onExcelSelectorChanged(input) {
     //Validación para seleccionar archivos excel solamente.
