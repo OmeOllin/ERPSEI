@@ -76,8 +76,9 @@ namespace ERPSEI.Data.Managers
             catch (Exception)
             {
                 await db.Database.RollbackTransactionAsync();
+				throw;
 
-            }
+			}
 		}
 
 		public async Task<List<Oficina>> GetAllAsync()

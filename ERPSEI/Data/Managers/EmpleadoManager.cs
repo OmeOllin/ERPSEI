@@ -76,6 +76,7 @@ namespace ERPSEI.Data.Managers
 			catch (Exception)
 			{
 				await db.Database.RollbackTransactionAsync();
+				throw;
 
 			}
 		}
