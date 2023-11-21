@@ -530,6 +530,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				Puesto? puesto = await _puestoManager.GetByNameAsync(row[8].ToString() ?? "");
 				Subarea? subarea = await _subareaManager.GetByNameAsync(row[10].ToString() ?? "");
 
+				DateTime fi;
+				DateTime fn;
+				DateTime.TryParse(row[13].ToString(), out fi);
+				DateTime.TryParse(row[3].ToString(), out fn);
+
 				if (empleado != null)
 				{
 					idEmpleado = empleado.Id;
@@ -540,8 +545,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					empleado.Direccion = row[7].ToString() ?? "";
 					empleado.Email = row[14].ToString() ?? "";
 					empleado.EstadoCivilId = estadoCivil != null ? estadoCivil.Id : null;
-					empleado.FechaIngreso = DateTime.Parse(row[13].ToString() ?? "");
-					empleado.FechaNacimiento = DateTime.Parse(row[3].ToString() ?? "");
+					empleado.FechaIngreso = fi;
+					empleado.FechaNacimiento = fn;
 					empleado.GeneroId = genero != null ? genero.Id : null;
 					empleado.JefeId = jefe != null ? jefe.Id : null;
 					empleado.NombreCompleto = $"{row[0].ToString() ?? ""} {row[1].ToString() ?? ""} {row[2].ToString() ?? ""}";
@@ -559,7 +564,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					//Elimina los contactos del empleado.
 					await _contactoEmergenciaManager.DeleteByEmpleadoIdAsync(empleado.Id);
 				}
-				else 
+				else
 				{
 					//Crea al empleado y obtiene su id.
 					idEmpleado = await _empleadoManager.CreateAsync(new Empleado()
@@ -570,8 +575,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						Direccion = row[7].ToString() ?? "",
 						Email = row[14].ToString() ?? "",
 						EstadoCivilId = estadoCivil != null ? estadoCivil.Id : null,
-						FechaIngreso = DateTime.Parse(row[13].ToString() ?? ""),
-						FechaNacimiento = DateTime.Parse(row[3].ToString() ?? ""),
+						FechaNacimiento = fn,
+						FechaIngreso = fi,
 						GeneroId = genero != null ? genero.Id : null,
 						JefeId = jefe != null ? jefe.Id : null,
 						NombreCompleto = $"{row[0].ToString() ?? ""} {row[1].ToString() ?? ""} {row[2].ToString() ?? ""}",
