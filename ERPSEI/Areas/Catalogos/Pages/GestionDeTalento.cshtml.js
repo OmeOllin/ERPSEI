@@ -200,7 +200,7 @@ function initTable() {
                 oParams,
                 function (resp) {
                     if (resp.tieneError) {
-                        showError("Error", error);
+                        showError(dlgDeleteTitle, resp.mensaje);
                         return;
                     }
 
@@ -215,7 +215,7 @@ function initTable() {
 
                     showSuccess(dlgDeleteTitle, resp.mensaje);
                 }, function (error) {
-                    showError("Error", error);
+                    showError(dlgDeleteTitle, error);
                 },
                 postOptions
             );
