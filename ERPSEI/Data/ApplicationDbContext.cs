@@ -32,26 +32,26 @@ namespace ERPSEI.Data
         {
             base.OnModelCreating(modelBuilder);
 
-			modelBuilder.Entity<AppUser>().HasOne(u => u.Empleado).WithOne(e => e.User).OnDelete(DeleteBehavior.SetNull);
-            modelBuilder.Entity<ArchivoEmpleado>().HasOne(ae => ae.TipoArchivo).WithMany(ta => ta.ArchivosEmpleado).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<AppUser>().HasOne(u => u.Empleado).WithOne(e => e.User).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<ArchivoEmpleado>().HasOne(ae => ae.TipoArchivo).WithMany(ta => ta.ArchivosEmpleado).OnDelete(DeleteBehavior.NoAction);
 
-			modelBuilder.Entity<Empleado>().HasOne(e => e.User).WithOne(u => u.Empleado).OnDelete(DeleteBehavior.SetNull);
-			modelBuilder.Entity<Empleado>().HasOne(e => e.EstadoCivil).WithMany(ec => ec.Empleados).OnDelete(DeleteBehavior.SetNull);
-			modelBuilder.Entity<Empleado>().HasOne(e => e.Genero).WithMany(g => g.Empleados).OnDelete(DeleteBehavior.SetNull);
-			modelBuilder.Entity<Empleado>().HasOne(e => e.Puesto).WithMany(p => p.Empleados).OnDelete(DeleteBehavior.SetNull);
-			modelBuilder.Entity<Empleado>().HasOne(e => e.Area).WithMany(a => a.Empleados).OnDelete(DeleteBehavior.SetNull);
-			modelBuilder.Entity<Empleado>().HasOne(e => e.Subarea).WithMany(sa => sa.Empleados).OnDelete(DeleteBehavior.SetNull);
-			modelBuilder.Entity<Empleado>().HasOne(e => e.Oficina).WithMany(o => o.Empleados).OnDelete(DeleteBehavior.SetNull);
-			modelBuilder.Entity<Empleado>().HasMany(e => e.ContactosEmergencia).WithOne(ce => ce.Empleado).OnDelete(DeleteBehavior.SetNull);
-			modelBuilder.Entity<Empleado>().HasMany(e => e.ArchivosEmpleado).WithOne(ae => ae.Empleado).OnDelete(DeleteBehavior.SetNull);
-			modelBuilder.Entity<Empleado>().HasOne(e => e.Jefe).WithMany(j => j.Empleados).OnDelete(DeleteBehavior.SetNull);
-			modelBuilder.Entity<Empleado>().HasOne(e => e.User).WithOne(u => u.Empleado).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<Empleado>().HasOne(e => e.User).WithOne(u => u.Empleado).OnDelete(DeleteBehavior.NoAction);
+			modelBuilder.Entity<Empleado>().HasOne(e => e.EstadoCivil).WithMany(ec => ec.Empleados).OnDelete(DeleteBehavior.NoAction);
+			modelBuilder.Entity<Empleado>().HasOne(e => e.Genero).WithMany(g => g.Empleados).OnDelete(DeleteBehavior.NoAction);
+			modelBuilder.Entity<Empleado>().HasOne(e => e.Puesto).WithMany(p => p.Empleados).OnDelete(DeleteBehavior.NoAction);
+			modelBuilder.Entity<Empleado>().HasOne(e => e.Area).WithMany(a => a.Empleados).OnDelete(DeleteBehavior.NoAction);
+			modelBuilder.Entity<Empleado>().HasOne(e => e.Subarea).WithMany(sa => sa.Empleados).OnDelete(DeleteBehavior.NoAction);
+			modelBuilder.Entity<Empleado>().HasOne(e => e.Oficina).WithMany(o => o.Empleados).OnDelete(DeleteBehavior.NoAction);
+			modelBuilder.Entity<Empleado>().HasMany(e => e.ContactosEmergencia).WithOne(ce => ce.Empleado).OnDelete(DeleteBehavior.NoAction);
+			modelBuilder.Entity<Empleado>().HasMany(e => e.ArchivosEmpleado).WithOne(ae => ae.Empleado).OnDelete(DeleteBehavior.NoAction);
+			modelBuilder.Entity<Empleado>().HasOne(e => e.Jefe).WithMany(j => j.Empleados).OnDelete(DeleteBehavior.NoAction);
+			modelBuilder.Entity<Empleado>().HasOne(e => e.User).WithOne(u => u.Empleado).OnDelete(DeleteBehavior.NoAction);
 
 
 			modelBuilder.Entity<TipoArchivo>()
 				.HasMany(ta => ta.ArchivosEmpleado)
 				.WithOne(ae => ae.TipoArchivo)
-				.OnDelete(DeleteBehavior.SetNull);
+				.OnDelete(DeleteBehavior.NoAction);
 			modelBuilder.Entity<TipoArchivo>()
 				.HasData(
 					new TipoArchivo((int)FileTypes.ActaNacimiento, "Acta de nacimiento"),
@@ -67,14 +67,14 @@ namespace ERPSEI.Data
 					new TipoArchivo((int)FileTypes.Otro, "Otro")
 				);
 
-			modelBuilder.Entity<EstadoCivil>().HasMany(ec => ec.Empleados).WithOne(e => e.EstadoCivil).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<EstadoCivil>().HasMany(ec => ec.Empleados).WithOne(e => e.EstadoCivil).OnDelete(DeleteBehavior.NoAction);
 			modelBuilder.Entity<EstadoCivil>()
 				.HasData(
 					new EstadoCivil() { Id = 1, Nombre = "Soltero" },
 					new EstadoCivil() { Id = 2, Nombre = "Casado" }
 				);
 
-			modelBuilder.Entity<Genero>().HasMany(g => g.Empleados).WithOne(e => e.Genero).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<Genero>().HasMany(g => g.Empleados).WithOne(e => e.Genero).OnDelete(DeleteBehavior.NoAction);
 			modelBuilder.Entity<Genero>()
 				.HasData(
 					new Genero() { Id = 1, Nombre = "Masculino" },
@@ -110,14 +110,14 @@ namespace ERPSEI.Data
 				i++;
 			}
 			modelBuilder.Entity<Puesto>().HasData(dataPuestos);
-			modelBuilder.Entity<Puesto>().HasMany(p => p.Empleados).WithOne(e => e.Puesto).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<Puesto>().HasMany(p => p.Empleados).WithOne(e => e.Puesto).OnDelete(DeleteBehavior.NoAction);
 
 			List<KeyValuePair<string, List<string>>> areas = new List<KeyValuePair<string, List<string>>>()
 			{
 				new KeyValuePair<string, List<string>>("Administración", new List<string>(){"Sistemas"}),
 				new KeyValuePair<string, List<string>>("Auditoría", new List<string>(){ }),
 				new KeyValuePair<string, List<string>>("Bancos", new List<string>(){ }),
-				new KeyValuePair<string, List<string>>("Contabilidad", new List<string>(){"Interna", "Externa"}),
+				new KeyValuePair<string, List<string>>("Contabilidad", new List<string>(){"Interna", "Externa", "Impuestos"}),
 				new KeyValuePair<string, List<string>>("Dirección General", new List<string>(){"Control Vehicular"}),
 				new KeyValuePair<string, List<string>>("Expedientes", new List<string>(){ }),
 				new KeyValuePair<string, List<string>>("Family Office", new List<string>(){ }),
@@ -146,12 +146,12 @@ namespace ERPSEI.Data
 				j++;
 			}
 			modelBuilder.Entity<Area>().HasData(dataAreas);
-			modelBuilder.Entity<Area>().HasMany(a => a.Empleados).WithOne(e => e.Area).OnDelete(DeleteBehavior.SetNull);
-			modelBuilder.Entity<Area>().HasMany(a => a.Subareas).WithOne(sa => sa.Area).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<Area>().HasMany(a => a.Empleados).WithOne(e => e.Area).OnDelete(DeleteBehavior.NoAction);
+			modelBuilder.Entity<Area>().HasMany(a => a.Subareas).WithOne(sa => sa.Area).OnDelete(DeleteBehavior.NoAction);
 
 			modelBuilder.Entity<Subarea>().HasData(dataSubareas.ToArray());
-			modelBuilder.Entity<Subarea>().HasMany(sa => sa.Empleados).WithOne(e => e.Subarea).OnDelete(DeleteBehavior.SetNull);
-			modelBuilder.Entity<Subarea>().HasOne(sa => sa.Area).WithMany(a => a.Subareas).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<Subarea>().HasMany(sa => sa.Empleados).WithOne(e => e.Subarea).OnDelete(DeleteBehavior.NoAction);
+			modelBuilder.Entity<Subarea>().HasOne(sa => sa.Area).WithMany(a => a.Subareas).OnDelete(DeleteBehavior.NoAction);
 
 			List<string> oficinas = new List<string>()
 			{
@@ -163,6 +163,7 @@ namespace ERPSEI.Data
 				"Cóndor",
 				"Izaguirre",
 				"Lago de Guadalupe",
+				"León",
 				"Los Reyes La Paz",
 				"Pafnuncio",
 				"Pirules",
@@ -178,7 +179,7 @@ namespace ERPSEI.Data
 				l++;
             }
 			modelBuilder.Entity<Oficina>().HasData(dataOficinas);
-			modelBuilder.Entity<Oficina>().HasMany(o => o.Empleados).WithOne(e => e.Oficina).OnDelete(DeleteBehavior.SetNull);
+			modelBuilder.Entity<Oficina>().HasMany(o => o.Empleados).WithOne(e => e.Oficina).OnDelete(DeleteBehavior.NoAction);
 		}
 
     }
