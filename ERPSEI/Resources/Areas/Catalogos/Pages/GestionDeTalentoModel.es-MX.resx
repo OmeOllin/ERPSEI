@@ -129,6 +129,12 @@
   <data name="EmpleadosDeletedUnsuccessfully" xml:space="preserve">
     <value>Error al eliminar los registros</value>
   </data>
+  <data name="EmpleadosFiltrtadosSuccessfully" xml:space="preserve">
+    <value>¡Empleados filtrados satisfactoriamente!</value>
+  </data>
+  <data name="EmpleadosFiltrtadosUnsuccessfully" xml:space="preserve">
+    <value>Error al filtrtar los empleados</value>
+  </data>
   <data name="EmpleadosImportadosSuccessfully" xml:space="preserve">
     <value>¡Empleados importados satisfactoriamente!</value>
   </data>
