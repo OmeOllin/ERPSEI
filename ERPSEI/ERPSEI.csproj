@@ -27,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\ERP\" />
     <Folder Include="wwwroot\img\" />
     <Folder Include="wwwroot\templates\" />
   </ItemGroup>

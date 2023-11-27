@@ -1,0 +1,89 @@
+﻿@page "{handler?}"
+@using Microsoft.AspNetCore.Localization;
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using ERPSEI.Areas.ERP.Pages;
+@using ERPSEI.Data.Managers;
+@using ERPSEI.Data.Entities.Empleados;
+@model OrganigramaModel
+@inject IViewLocalizer Localizer;
+@inject IRWCatalogoManager<Area> AreasManager;
+@inject IRWCatalogoManager<Subarea> SubareasManager;
+@{
+    ViewData["Title"] = Localizer["Title"];
+
+    List<Area> areas = await AreasManager.GetAllAsync();
+    List<Subarea> subareas = await SubareasManager.GetAllAsync();
+}
+<h3 class="title mb-3">@ViewData["Title"]</h3>
+
+<!-- --------------------------- -->
+<!-- Sección de filtros -------- -->
+<div class="accordion shadow mb-5" id="accordionFiltros">
+	<div class="accordion-item">
+		<h2 class="accordion-header" id="headingOne">
+			<button class="accordion-button p-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+				<h6>@Localizer["FilterTitle"]</h6>
+			</button>
+		</h2>
+		<div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionFiltros">
+			<div class="accordion-body">
+				<form id="filtros" method="post">
+				    <div class="row">
+						<div class="col-sm-12 col-md-6 col-lg-6">
+							<div class="form-floating mb-3">
+								<select id="selFiltroArea" asp-for="InputFiltro.AreaId" class="form-select" placeholder="@Localizer["AreaPlaceholder"]">
+									<option value="0">Seleccione...</option>
+									@{
+										foreach (Area area in areas)
+										{
+											<option value='@area.Id'>@area.Nombre</option>
+										}
+									}
+								</select>
+								<label for="selFiltroArea" asp-for="InputFiltro.AreaId" class="form-label"></label>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-6 col-lg-6">
+							<div class="form-floating mb-3">
+								<select id="selFiltroSubarea" InputFiltro.SubareaId" class="form-select" placeholder="@Localizer["SubareaPlaceholder"]">
+									<option value="0">Seleccione...</option>
+									@{
+										foreach (Subarea subarea in subareas)
+										{
+											<option value='@subarea.Id'>@subarea.Nombre</option>
+										}
+									}
+								</select>
+								<label for="selFiltroSubarea" asp-for="InputFiltro.SubareaId" class="form-label"></label>
+							</div>
+						</div>
+					</div>
+					<div class="row text-end">
+						<div class="col-12">
+                            <button id="btnOrganigrama" type="button" class="btn btn-primary" onclick="onCargarOrganigrama();">
+                                <i class="bi bi-search"></i> @Localizer["SeeButton"]
+                            </button>
+                        </div>
+			        </div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- --------------------------- -->
+<!-- --------------------------- -->
+
+<!-- --------------------------- -->
+<!-- Sección de organigramas -------- -->
+<div id="divCharts" class="row"></div>
+<!-- --------------------------- -->
+<!-- --------------------------- -->
+
+@section Scripts
+{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/orgchart/3.8.0/css/jquery.orgchart.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/orgchart/3.8.0/js/jquery.orgchart.min.js"></script>
+
+    <link rel="stylesheet" href="~/css/Organigrama.css" />
+    <script src="~/../Areas/ERP/Pages/Organigrama.cshtml.js"></script>
+}

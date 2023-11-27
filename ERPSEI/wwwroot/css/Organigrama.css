@@ -1,0 +1,52 @@
+﻿#divCharts {
+    text-align: center;
+    min-height: 480px;
+}
+.orgchart {
+    background: #fff;
+}
+
+.orgchart td.left, .orgchart td.right, .orgchart td.top {
+    border-color: #aaa;
+}
+
+.orgchart td > .down {
+    background-color: #aaa;
+}
+
+.orgchart .node .title {
+    /*height: unset;
+    text-align: left;
+    line-height: 40px;*/
+    background-color: #0d6efd;
+}
+
+.orgchart .node .content {
+    /*text-align: left;
+    padding: 0px 5px;*/
+    border-color: #0d6efd;
+}
+
+.orgchart .node .content .symbol {
+    color: #aaa;
+    margin-right: 20px;
+}
+
+.orgchart .node .second-menu {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: -157px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px 1px #999;
+    background-color: #e7f1ff;
+    z-index: 1;
+    width: 200px;
+    font-size: 13px;
+    padding:10px;
+}
+
+.orgchart .node .second-menu .avatar {
+    border-radius: 300px;
+    margin: 5px;
+}
