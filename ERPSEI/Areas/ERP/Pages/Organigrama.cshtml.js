@@ -41,7 +41,7 @@ function onCargarOrganigrama() {
                     'verticalLevel': vLevel,
                     'createNode': function ($node, data) {
                         /*$node.find('.title').append(`<img class="avatar" src="https://dabeng.github.io/OrgChart/img/avatar/8.jpg" crossorigin="anonymous">`);*/
-                        //$node.find('.title').append(`<img class="avatar" src="/img/default_profile_pic.jpg" crossorigin="anonymous" />`);
+                        //$node.find('.title').append(`<img class="avatar" src="/img/default_profile_pic.png" crossorigin="anonymous" />`);
                         //$node.find('.content').prepend($node.find('.symbol'));
                         let formattedPhone = data.telefono;
                         if (data.telefono.length >= 10) {
@@ -52,7 +52,7 @@ function onCargarOrganigrama() {
                         let divOficina = data.oficina.length >= 1 ? `<div><i class="bi bi-building-fill"></i> ${data.oficina}</div>` : ``;
                         $node.find('.content').append(`
                                                         <div class="second-menu">
-                                                            <img class="avatar" src="https://dabeng.github.io/OrgChart/img/avatar/8.jpg">
+                                                            <img class="avatar" src="/img/default_profile_pic.png">
                                                             ${divEmail}
                                                             ${divTelefono}
                                                             ${divOficina}
@@ -76,7 +76,7 @@ function onCargarOrganigrama() {
 
             //var nodeTemplate = function (data) {
             //    return `
-            //            <div class="title">${data.name} <img class="avatar" src="/img/default_profile_pic.jpg" crossorigin="anonymous" /></div>
+            //            <div class="title">${data.name} <img class="avatar" src="/img/default_profile_pic.png" crossorigin="anonymous" /></div>
             //            <div class="content"><b>${data.title}</b></div>
             //          `;
             //};

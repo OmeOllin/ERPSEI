@@ -15,15 +15,10 @@
 }
 
 .orgchart .node .title {
-    /*height: unset;
-    text-align: left;
-    line-height: 40px;*/
     background-color: #0d6efd;
 }
 
 .orgchart .node .content {
-    /*text-align: left;
-    padding: 0px 5px;*/
     border-color: #0d6efd;
 }
 
@@ -49,4 +44,6 @@
 .orgchart .node .second-menu .avatar {
     border-radius: 300px;
     margin: 5px;
+    width: 100px;
+    height: 100px;
 }
