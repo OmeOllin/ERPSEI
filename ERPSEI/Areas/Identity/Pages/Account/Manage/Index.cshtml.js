@@ -23,7 +23,15 @@ function onEditDocumentClick(button) {
 //Función para mostrar la foto de perfil seleccionada.
 function onProfilePicSelectorChanged(input) {
     if (input.files && (input.files.length || 0) >= 1) {
-        if (input.files[0].size >= maxFileSizeInBytes) { return; }
+        if (input.files[0].size >= maxFileSizeInBytes) {
+            input.value = null;
+            showAlert(
+                "Tama&ntilde;o de archivo inv&aacute;lido",
+                `El tama&ntilde;o del archivo no debe superar ${maxFileSizeInBytes / 1000000}Mb. Por favor elija otro archivo.`,
+                MSG_TYPE_ALERT
+            );
+            return;
+        }
         let imgType = input.files[0].type;
         if (imgType == "image/png" || imgType == "image/jpg" || imgType == "image/jpeg") {
             document.getElementById("profilePicContainer").src = window.URL.createObjectURL(input.files[0]);

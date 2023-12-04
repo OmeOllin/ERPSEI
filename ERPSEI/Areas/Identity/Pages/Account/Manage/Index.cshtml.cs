@@ -159,16 +159,16 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             Input.PhoneNumber = phoneNumber;
 
             //Si el usuario tiene imagen de perfil
-            if (user.Empleado.ProfilePicture != null && user.Empleado.ProfilePicture.Length >= 1)
-            {
-                //Se usa para mostrarla
-                ProfilePictureSrc = $"data:image/png;base64,{Convert.ToBase64String(user.Empleado.ProfilePicture)}";
-            }
-            else
-            {
-                //De lo contrario, se usa la imagen default.
-                ProfilePictureSrc = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/img/default_profile_pic.jpg";
-            }
+            //if (user.Empleado.ProfilePicture != null && user.Empleado.ProfilePicture.Length >= 1)
+            //{
+            //    //Se usa para mostrarla
+            //    ProfilePictureSrc = $"data:image/png;base64,{Convert.ToBase64String(user.Empleado.ProfilePicture)}";
+            //}
+            //else
+            //{
+            //    //De lo contrario, se usa la imagen default.
+            //    ProfilePictureSrc = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/img/default_profile_pic.png";
+            //}
 
             await LoadUserFilesAsync(user.EmpleadoId ?? 0);
         }
@@ -288,7 +288,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                     if (type == FileTypes.ImagenPerfil)
                     {
                         //Se guarda el arreglo de bytes de la imagen.
-                        user.Empleado.ProfilePicture = memoryStream.ToArray();
+                        //user.Empleado.ProfilePicture = memoryStream.ToArray();
                     }
                     else
                     {
