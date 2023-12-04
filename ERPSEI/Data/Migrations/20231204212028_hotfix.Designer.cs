@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERPSEI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231103190523_hotfix")]
+    [Migration("20231204212028_hotfix")]
     partial class hotfix
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace ERPSEI.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.12")
+                .HasAnnotation("ProductVersion", "7.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -221,6 +221,11 @@ namespace ERPSEI.Data.Migrations
                         {
                             Id = 14,
                             Nombre = "Tesorería"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Nombre = "Socio"
                         });
                 });
 
@@ -263,6 +268,10 @@ namespace ERPSEI.Data.Migrations
                     b.Property<int?>("AreaId")
                         .HasColumnType("int");
 
+                    b.Property<string>("CURP")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Direccion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -286,25 +295,29 @@ namespace ERPSEI.Data.Migrations
                     b.Property<int?>("JefeId")
                         .HasColumnType("int");
 
+                    b.Property<string>("NSS")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("NombreCompleto")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NombrePreferido")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("OficinaId")
                         .HasColumnType("int");
 
-                    b.Property<string>("PrimerNombre")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("ProfilePicture")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
                     b.Property<int?>("PuestoId")
                         .HasColumnType("int");
 
-                    b.Property<string>("SegundoNombre")
+                    b.Property<string>("RFC")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -431,46 +444,61 @@ namespace ERPSEI.Data.Migrations
                         new
                         {
                             Id = 6,
-                            Nombre = "Cóndor"
+                            Nombre = "Centro Urbano"
                         },
                         new
                         {
                             Id = 7,
-                            Nombre = "Izaguirre"
+                            Nombre = "Cóndor"
                         },
                         new
                         {
                             Id = 8,
-                            Nombre = "Lago de Guadalupe"
+                            Nombre = "Izaguirre"
                         },
                         new
                         {
                             Id = 9,
-                            Nombre = "Los Reyes La Paz"
+                            Nombre = "Lago de Guadalupe"
                         },
                         new
                         {
                             Id = 10,
-                            Nombre = "Pafnuncio"
+                            Nombre = "León"
                         },
                         new
                         {
                             Id = 11,
-                            Nombre = "Pirules"
+                            Nombre = "Lomas Verdes"
                         },
                         new
                         {
                             Id = 12,
-                            Nombre = "Polanco"
+                            Nombre = "Los Reyes La Paz"
                         },
                         new
                         {
                             Id = 13,
-                            Nombre = "Santa Mónica"
+                            Nombre = "Pafnuncio"
                         },
                         new
                         {
                             Id = 14,
+                            Nombre = "Pirules"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Nombre = "Polanco"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Nombre = "Santa Mónica"
+                        },
+                        new
+                        {
+                            Id = 17,
                             Nombre = "Torre Esmeralda"
                         });
                 });
@@ -527,56 +555,66 @@ namespace ERPSEI.Data.Migrations
                         new
                         {
                             Id = 8,
-                            Nombre = "Encargado"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Nombre = "Gerente"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Nombre = "Mantenimiento y Limpieza"
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Nombre = "Recepcionista"
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Nombre = "Seguridad Privada"
-                        },
-                        new
-                        {
-                            Id = 13,
                             Nombre = "Socio Director"
                         },
                         new
                         {
+                            Id = 9,
+                            Nombre = "Encargado"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Nombre = "Gerente"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Nombre = "Mantenimiento y Limpieza"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Nombre = "Recepcionista"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Nombre = "Recepcionista Coordinadora"
+                        },
+                        new
+                        {
                             Id = 14,
-                            Nombre = "Subencargado"
+                            Nombre = "Seguridad Privada"
                         },
                         new
                         {
                             Id = 15,
-                            Nombre = "Subgerente"
+                            Nombre = "Socio"
                         },
                         new
                         {
                             Id = 16,
-                            Nombre = "Supervisor"
+                            Nombre = "Subencargado"
                         },
                         new
                         {
                             Id = 17,
-                            Nombre = "Técnico"
+                            Nombre = "Subgerente"
                         },
                         new
                         {
                             Id = 18,
+                            Nombre = "Supervisor"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Nombre = "Técnico"
+                        },
+                        new
+                        {
+                            Id = 20,
                             Nombre = "Tesorero"
                         });
                 });
@@ -621,30 +659,36 @@ namespace ERPSEI.Data.Migrations
                         new
                         {
                             Id = 4,
+                            AreaId = 4,
+                            Nombre = "Impuestos"
+                        },
+                        new
+                        {
+                            Id = 5,
                             AreaId = 5,
                             Nombre = "Control Vehicular"
                         },
                         new
                         {
-                            Id = 5,
+                            Id = 6,
                             AreaId = 12,
                             Nombre = "IMSS"
                         },
                         new
                         {
-                            Id = 6,
+                            Id = 7,
                             AreaId = 12,
                             Nombre = "Internas"
                         },
                         new
                         {
-                            Id = 7,
+                            Id = 8,
                             AreaId = 12,
                             Nombre = "Facturación"
                         },
                         new
                         {
-                            Id = 8,
+                            Id = 9,
                             AreaId = 12,
                             Nombre = "Nóminas"
                         });
@@ -670,56 +714,61 @@ namespace ERPSEI.Data.Migrations
                         new
                         {
                             Id = 1,
-                            Description = "Acta de nacimiento"
+                            Description = "Imagen de perfil"
                         },
                         new
                         {
                             Id = 2,
-                            Description = "CURP"
+                            Description = "Acta de nacimiento"
                         },
                         new
                         {
                             Id = 3,
-                            Description = "CLABE"
+                            Description = "CURP"
                         },
                         new
                         {
                             Id = 4,
-                            Description = "Comprobante de domicilio"
+                            Description = "CLABE"
                         },
                         new
                         {
                             Id = 5,
-                            Description = "Contactos de emergencia"
+                            Description = "Comprobante de domicilio"
                         },
                         new
                         {
                             Id = 6,
-                            Description = "CSF"
+                            Description = "Contactos de emergencia"
                         },
                         new
                         {
                             Id = 7,
-                            Description = "INE"
+                            Description = "CSF"
                         },
                         new
                         {
                             Id = 8,
-                            Description = "RFC"
+                            Description = "INE"
                         },
                         new
                         {
                             Id = 9,
-                            Description = "Comprobante de estudios"
+                            Description = "RFC"
                         },
                         new
                         {
                             Id = 10,
-                            Description = "NSS"
+                            Description = "Comprobante de estudios"
                         },
                         new
                         {
                             Id = 11,
+                            Description = "NSS"
+                        },
+                        new
+                        {
+                            Id = 12,
                             Description = "Otro"
                         });
                 });
@@ -866,7 +915,7 @@ namespace ERPSEI.Data.Migrations
                     b.HasOne("ERPSEI.Data.Entities.Empleados.Empleado", "Empleado")
                         .WithOne("User")
                         .HasForeignKey("ERPSEI.Data.Entities.AppUser", "EmpleadoId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Empleado");
                 });
@@ -876,12 +925,12 @@ namespace ERPSEI.Data.Migrations
                     b.HasOne("ERPSEI.Data.Entities.Empleados.Empleado", "Empleado")
                         .WithMany("ArchivosEmpleado")
                         .HasForeignKey("EmpleadoId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("ERPSEI.Data.Entities.Empleados.TipoArchivo", "TipoArchivo")
                         .WithMany("ArchivosEmpleado")
                         .HasForeignKey("TipoArchivoId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Empleado");
 
@@ -893,7 +942,7 @@ namespace ERPSEI.Data.Migrations
                     b.HasOne("ERPSEI.Data.Entities.Empleados.Empleado", "Empleado")
                         .WithMany("ContactosEmergencia")
                         .HasForeignKey("EmpleadoId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Empleado");
                 });
@@ -903,17 +952,17 @@ namespace ERPSEI.Data.Migrations
                     b.HasOne("ERPSEI.Data.Entities.Empleados.Area", "Area")
                         .WithMany("Empleados")
                         .HasForeignKey("AreaId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("ERPSEI.Data.Entities.Empleados.EstadoCivil", "EstadoCivil")
                         .WithMany("Empleados")
                         .HasForeignKey("EstadoCivilId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("ERPSEI.Data.Entities.Empleados.Genero", "Genero")
                         .WithMany("Empleados")
                         .HasForeignKey("GeneroId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("ERPSEI.Data.Entities.Empleados.Empleado", "Jefe")
                         .WithMany("Empleados")
@@ -923,17 +972,17 @@ namespace ERPSEI.Data.Migrations
                     b.HasOne("ERPSEI.Data.Entities.Empleados.Oficina", "Oficina")
                         .WithMany("Empleados")
                         .HasForeignKey("OficinaId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("ERPSEI.Data.Entities.Empleados.Puesto", "Puesto")
                         .WithMany("Empleados")
                         .HasForeignKey("PuestoId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("ERPSEI.Data.Entities.Empleados.Subarea", "Subarea")
                         .WithMany("Empleados")
                         .HasForeignKey("SubareaId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Area");
 
@@ -955,7 +1004,7 @@ namespace ERPSEI.Data.Migrations
                     b.HasOne("ERPSEI.Data.Entities.Empleados.Area", "Area")
                         .WithMany("Subareas")
                         .HasForeignKey("AreaId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Area");
                 });

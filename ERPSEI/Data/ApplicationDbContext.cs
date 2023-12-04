@@ -54,6 +54,7 @@ namespace ERPSEI.Data
 				.OnDelete(DeleteBehavior.NoAction);
 			modelBuilder.Entity<TipoArchivo>()
 				.HasData(
+					new TipoArchivo((int)FileTypes.ImagenPerfil, "Imagen de perfil"),
 					new TipoArchivo((int)FileTypes.ActaNacimiento, "Acta de nacimiento"),
 					new TipoArchivo((int)FileTypes.CURP, "CURP"),
 					new TipoArchivo((int)FileTypes.CLABE, "CLABE"),
@@ -90,12 +91,14 @@ namespace ERPSEI.Data
 				"Chofer",
 				"Desarrollador",
 				"Director",
+				"Socio Director",
 				"Encargado",
 				"Gerente",
 				"Mantenimiento y Limpieza",
 				"Recepcionista",
+				"Recepcionista Coordinadora",
 				"Seguridad Privada",
-				"Socio Director",
+				"Socio",
 				"Subencargado",
 				"Subgerente",
 				"Supervisor",
@@ -127,7 +130,8 @@ namespace ERPSEI.Data
 				new KeyValuePair<string, List<string>>("Nóminas", new List<string>(){ }),
 				new KeyValuePair<string, List<string>>("Operaciones", new List<string>(){"IMSS", "Internas", "Facturación", "Nóminas"}),
 				new KeyValuePair<string, List<string>>("Recursos Humanos", new List<string>(){ }),
-				new KeyValuePair<string, List<string>>("Tesorería", new List<string>(){ })
+				new KeyValuePair<string, List<string>>("Tesorería", new List<string>(){ }),
+				new KeyValuePair<string, List<string>>("Socio", new List<string>() { })
 			};
 
 			Area[] dataAreas = new Area[areas.Count];
@@ -160,10 +164,12 @@ namespace ERPSEI.Data
 				"Big Ben",
 				"Cancún",
 				"Capri",
+				"Centro Urbano",
 				"Cóndor",
 				"Izaguirre",
 				"Lago de Guadalupe",
 				"León",
+				"Lomas Verdes",
 				"Los Reyes La Paz",
 				"Pafnuncio",
 				"Pirules",

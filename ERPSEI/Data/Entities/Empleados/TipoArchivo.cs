@@ -2,7 +2,7 @@
 {
     public enum FileTypes
     {
-        ImagenPerfil,
+        ImagenPerfil = 1,
         ActaNacimiento,
         CURP,
         CLABE,

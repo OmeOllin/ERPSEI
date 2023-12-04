@@ -147,8 +147,7 @@ namespace ERPSEI.Data.Migrations
                         name: "FK_Subareas_Areas_AreaId",
                         column: x => x.AreaId,
                         principalTable: "Areas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -156,9 +155,8 @@ namespace ERPSEI.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    ProfilePicture = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    PrimerNombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SegundoNombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NombrePreferido = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ApellidoPaterno = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ApellidoMaterno = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NombreCompleto = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -167,6 +165,9 @@ namespace ERPSEI.Data.Migrations
                     Direccion = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Telefono = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CURP = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RFC = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NSS = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GeneroId = table.Column<int>(type: "int", nullable: true),
                     SubareaId = table.Column<int>(type: "int", nullable: true),
                     OficinaId = table.Column<int>(type: "int", nullable: true),
@@ -183,8 +184,7 @@ namespace ERPSEI.Data.Migrations
                         name: "FK_Empleados_Areas_AreaId",
                         column: x => x.AreaId,
                         principalTable: "Areas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Empleados_Empleados_JefeId",
                         column: x => x.JefeId,
@@ -194,32 +194,27 @@ namespace ERPSEI.Data.Migrations
                         name: "FK_Empleados_EstadosCiviles_EstadoCivilId",
                         column: x => x.EstadoCivilId,
                         principalTable: "EstadosCiviles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Empleados_Generos_GeneroId",
                         column: x => x.GeneroId,
                         principalTable: "Generos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Empleados_Oficinas_OficinaId",
                         column: x => x.OficinaId,
                         principalTable: "Oficinas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Empleados_Puestos_PuestoId",
                         column: x => x.PuestoId,
                         principalTable: "Puestos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Empleados_Subareas_SubareaId",
                         column: x => x.SubareaId,
                         principalTable: "Subareas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -240,14 +235,12 @@ namespace ERPSEI.Data.Migrations
                         name: "FK_ArchivosEmpleado_Empleados_EmpleadoId",
                         column: x => x.EmpleadoId,
                         principalTable: "Empleados",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ArchivosEmpleado_TipoArchivo_TipoArchivoId",
                         column: x => x.TipoArchivoId,
                         principalTable: "TipoArchivo",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -266,8 +259,7 @@ namespace ERPSEI.Data.Migrations
                         name: "FK_ContactosEmergencia_Empleados_EmpleadoId",
                         column: x => x.EmpleadoId,
                         principalTable: "Empleados",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.InsertData(
@@ -288,7 +280,8 @@ namespace ERPSEI.Data.Migrations
                     { 11, "Nóminas" },
                     { 12, "Operaciones" },
                     { 13, "Recursos Humanos" },
-                    { 14, "Tesorería" }
+                    { 14, "Tesorería" },
+                    { 15, "Socio" }
                 });
 
             migrationBuilder.InsertData(
@@ -319,15 +312,18 @@ namespace ERPSEI.Data.Migrations
                     { 3, "Big Ben" },
                     { 4, "Cancún" },
                     { 5, "Capri" },
-                    { 6, "Cóndor" },
-                    { 7, "Izaguirre" },
-                    { 8, "Lago de Guadalupe" },
-                    { 9, "Los Reyes La Paz" },
-                    { 10, "Pafnuncio" },
-                    { 11, "Pirules" },
-                    { 12, "Polanco" },
-                    { 13, "Santa Mónica" },
-                    { 14, "Torre Esmeralda" }
+                    { 6, "Centro Urbano" },
+                    { 7, "Cóndor" },
+                    { 8, "Izaguirre" },
+                    { 9, "Lago de Guadalupe" },
+                    { 10, "León" },
+                    { 11, "Lomas Verdes" },
+                    { 12, "Los Reyes La Paz" },
+                    { 13, "Pafnuncio" },
+                    { 14, "Pirules" },
+                    { 15, "Polanco" },
+                    { 16, "Santa Mónica" },
+                    { 17, "Torre Esmeralda" }
                 });
 
             migrationBuilder.InsertData(
@@ -342,17 +338,19 @@ namespace ERPSEI.Data.Migrations
                     { 5, "Chofer" },
                     { 6, "Desarrollador" },
                     { 7, "Director" },
-                    { 8, "Encargado" },
-                    { 9, "Gerente" },
-                    { 10, "Mantenimiento y Limpieza" },
-                    { 11, "Recepcionista" },
-                    { 12, "Seguridad Privada" },
-                    { 13, "Socio Director" },
-                    { 14, "Subencargado" },
-                    { 15, "Subgerente" },
-                    { 16, "Supervisor" },
-                    { 17, "Técnico" },
-                    { 18, "Tesorero" }
+                    { 8, "Socio Director" },
+                    { 9, "Encargado" },
+                    { 10, "Gerente" },
+                    { 11, "Mantenimiento y Limpieza" },
+                    { 12, "Recepcionista" },
+                    { 13, "Recepcionista Coordinadora" },
+                    { 14, "Seguridad Privada" },
+                    { 15, "Socio" },
+                    { 16, "Subencargado" },
+                    { 17, "Subgerente" },
+                    { 18, "Supervisor" },
+                    { 19, "Técnico" },
+                    { 20, "Tesorero" }
                 });
 
             migrationBuilder.InsertData(
@@ -360,17 +358,18 @@ namespace ERPSEI.Data.Migrations
                 columns: new[] { "Id", "Description" },
                 values: new object[,]
                 {
-                    { 1, "Acta de nacimiento" },
-                    { 2, "CURP" },
-                    { 3, "CLABE" },
-                    { 4, "Comprobante de domicilio" },
-                    { 5, "Contactos de emergencia" },
-                    { 6, "CSF" },
-                    { 7, "INE" },
-                    { 8, "RFC" },
-                    { 9, "Comprobante de estudios" },
-                    { 10, "NSS" },
-                    { 11, "Otro" }
+                    { 1, "Imagen de perfil" },
+                    { 2, "Acta de nacimiento" },
+                    { 3, "CURP" },
+                    { 4, "CLABE" },
+                    { 5, "Comprobante de domicilio" },
+                    { 6, "Contactos de emergencia" },
+                    { 7, "CSF" },
+                    { 8, "INE" },
+                    { 9, "RFC" },
+                    { 10, "Comprobante de estudios" },
+                    { 11, "NSS" },
+                    { 12, "Otro" }
                 });
 
             migrationBuilder.InsertData(
@@ -381,11 +380,12 @@ namespace ERPSEI.Data.Migrations
                     { 1, 1, "Sistemas" },
                     { 2, 4, "Interna" },
                     { 3, 4, "Externa" },
-                    { 4, 5, "Control Vehicular" },
-                    { 5, 12, "IMSS" },
-                    { 6, 12, "Internas" },
-                    { 7, 12, "Facturación" },
-                    { 8, 12, "Nóminas" }
+                    { 4, 4, "Impuestos" },
+                    { 5, 5, "Control Vehicular" },
+                    { 6, 12, "IMSS" },
+                    { 7, 12, "Internas" },
+                    { 8, 12, "Facturación" },
+                    { 9, 12, "Nóminas" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -455,8 +455,7 @@ namespace ERPSEI.Data.Migrations
                 table: "AspNetUsers",
                 column: "EmpleadoId",
                 principalTable: "Empleados",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.SetNull);
+                principalColumn: "Id");
         }
 
         /// <inheritdoc />
