@@ -4,6 +4,7 @@ var selections = [];
 const NUEVO = 0;
 const EDITAR = 1;
 const VER = 2;
+var maxFileSizeInBytes = 1000000;
 const postOptions = { headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() } }
 
 document.addEventListener("DOMContentLoaded", function (event) {
@@ -84,6 +85,7 @@ function onAgregarClick() {
     initEmpleadoDialog(NUEVO, {
         id: "Nuevo",
         nombre: "",
+        nombrePreferido: "",
         segundoNombre: "",
         apellidoPaterno: "",
         apellidoMaterno: "",
@@ -102,7 +104,18 @@ function onAgregarClick() {
         nombreContacto1: "",
         telefonoContacto1: "",
         nombreContacto2: "",
-        telefonoContacto2: ""
+        telefonoContacto2: "",
+        contactosEmergencia: [],
+        archivos: [
+            {
+                id: 0,
+                nombre: "",
+                tipoArchivoId: 0,
+                extension: "",
+                imgSrc: "/img/default_profile_pic.png",
+                htmlContainer: ""
+            }
+        ]
     });
 }
 function initTable() {
@@ -280,7 +293,10 @@ function onBuscarClick() {
 //Funcionalidad Diálogo Empleado
 function initEmpleadoDialog(action, row) {
     let idField = document.getElementById("inpEmpleadoId");
+    let picField = document.getElementById("profilePicContainer");
+    let editPicLink = document.getElementById("editProfilePicLink");
     let primerNombreField = document.getElementById("inpEmpleadoPrimerNombre");
+    let nombrePreferidoField = document.getElementById("inpEmpleadoNombrePreferido");
     let apellidoPaternoField = document.getElementById("inpEmpleadoApellidoPaterno");
     let apellidoMaternoField = document.getElementById("inpEmpleadoApellidoMaterno");
     let fechaNacimientoField = document.getElementById("inpEmpleadoFechaNacimiento");
@@ -319,7 +335,9 @@ function initEmpleadoDialog(action, row) {
                 dlgTitle.innerHTML = dlgEditarTitle;
             }
 
+            editPicLink.removeAttribute("disabled");
             primerNombreField.removeAttribute("disabled");
+            nombrePreferidoField.removeAttribute("disabled");
             apellidoPaternoField.removeAttribute("disabled");
             apellidoMaternoField.removeAttribute("disabled");
             fechaNacimientoField.removeAttribute("disabled");
@@ -343,7 +361,9 @@ function initEmpleadoDialog(action, row) {
         default:
             dlgTitle.innerHTML = dlgVerTitle;
 
+            editPicLink.setAttribute("disabled", true);
             primerNombreField.setAttribute("disabled", true);
+            nombrePreferidoField.setAttribute("disabled", true);
             apellidoPaternoField.setAttribute("disabled", true);
             apellidoMaternoField.setAttribute("disabled", true);
             fechaNacimientoField.setAttribute("disabled", true);
@@ -368,6 +388,7 @@ function initEmpleadoDialog(action, row) {
 
     idField.value = row.id;
     primerNombreField.value = row.nombre;
+    nombrePreferidoField.value = row.nombrePreferido;
     apellidoPaternoField.value = row.apellidoPaterno;
     apellidoMaternoField.value = row.apellidoMaterno;
     fechaNacimientoField.value = row.fechaNacimientoJS;
@@ -397,34 +418,63 @@ function initEmpleadoDialog(action, row) {
     row.archivos = row.archivos || [];
     let i = 1;
     row.archivos.forEach(function (a) {
-        //Obtiene el nombre del tipo.
-        $("#bodyArchivos").append(
-            `<tr valign="middle" align="center">
-			    <th scope="row">${a.tipoArchivoId}</th>
-			    <td><b>${arrTiposDocumentos[a.tipoArchivoId]}</b></td>
-			    <td>
-				    <div id="container${i}" class="document-container">
-					    ${a.archivo}
-				    </div>
-			    </td>
-			    <td align="left">
-				    <div style="width:auto;">
-					    <input type="file" id="selector${i}" containerName="container${i}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-					    <a class="btn mb-1" onclick="onEditDocumentClick(this);" inputName="selector${i}">
-						    <i class="bi bi-pencil-fill"></i>
-					    </a>
-					    <a class="btn disableable mb-1" asp-page="/FileViewer" asp-route-id="${a.id}" target="_blank" sourceLength="${a.archivo.length}">
-						    <i class="bi bi-search"></i>
-					    </a>
-					    <a class="btn disableable mb-1" onclick="onDeleteClick(this);" sourceId="selector${i}" sourceLength="${a.archivo.length}">
-						    <i class="bi bi-x-lg"></i>
-					    </a>
-				    </div>
-			    </td>
-		    </tr>`
-        );
+        if (a.tipoArchivoId == 0) {
+            //Si el tipo de archivo es la foto de perfil, la establece en el contenedor.
+            picField.setAttribute('src', a.imgSrc);
+        }
+        else {
+            //De lo contrario, agrega un archivo al DOM.
+            $("#bodyArchivos").append(
+                `<tr valign="middle" align="center">
+			        <th scope="row">${a.tipoArchivoId}</th>
+			        <td><b>${arrTiposDocumentos[a.tipoArchivoId]}</b></td>
+			        <td>
+				        <div id="container${a.tipoArchivoId}" class="document-container">
+					        ${a.htmlContainer}
+				        </div>
+			        </td>
+			        <td align="left">
+				        <div style="width:auto;">
+					        <input type="file" id="selector${a.tipoArchivoId}" tipo="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+					        <a class="btn mb-1" onclick="onEditDocumentClick(this);" inputName="selector${a.tipoArchivoId}">
+						        <i class="bi bi-pencil-fill"></i>
+					        </a>
+					        <a class="btn disableable mb-1" asp-page="/FileViewer" asp-route-id="${a.id}" target="_blank" sourceLength="${a.archivo.length}">
+						        <i class="bi bi-search"></i>
+					        </a>
+					        <a class="btn disableable mb-1" onclick="onDeleteClick(this);" sourceId="selector${a.tipoArchivoId}" sourceLength="${a.archivo.length}">
+						        <i class="bi bi-x-lg"></i>
+					        </a>
+				        </div>
+			        </td>
+		        </tr>`
+            );
+        }
         i++;
     });
+}
+//Función para capturar el clic en el botón de edición, que dispara la apertura del selector de archivo.
+function onEditDocumentClick(button) {
+    let inputName = button.getAttribute("inputName");
+    document.getElementById(inputName).click();
+}
+//Función para mostrar la foto de perfil seleccionada.
+function onProfilePicSelectorChanged(input) {
+    if (input.files && (input.files.length || 0) >= 1) {
+        if (input.files[0].size >= maxFileSizeInBytes) {
+            input.value = null;
+            showAlert(
+                "Tama&ntilde;o de archivo inv&aacute;lido",
+                `El tama&ntilde;o del archivo no debe superar ${maxFileSizeInBytes / 1000000}Mb. Por favor elija otro archivo.`,
+                MSG_TYPE_ALERT
+            );
+            return;
+        }
+        let imgType = input.files[0].type;
+        if (imgType == "image/png" || imgType == "image/jpg" || imgType == "image/jpeg") {
+            document.getElementById("profilePicContainer").src = window.URL.createObjectURL(input.files[0]);
+        }
+    }
 }
 function onCerrarClick() {
     //Removes validation from input-fields
@@ -451,6 +501,7 @@ function onGuardarClick() {
 
     let idField = document.getElementById("inpEmpleadoId");
     let primerNombreField = document.getElementById("inpEmpleadoPrimerNombre");
+    let nombrePreferidoField = document.getElementById("inpEmpleadoNombrePreferido");
     let apellidoPaternoField = document.getElementById("inpEmpleadoApellidoPaterno");
     let apellidoMaternoField = document.getElementById("inpEmpleadoApellidoMaterno");
     let fechaNacimientoField = document.getElementById("inpEmpleadoFechaNacimiento");
@@ -474,9 +525,11 @@ function onGuardarClick() {
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 
+    let form = new FormData();
     let oParams = {
         id: idField.value == "Nuevo" ? 0 : idField.value,
         nombre: primerNombreField.value.trim(),
+        nombrePreferido: nombrePreferidoField.value.trim(),
         apellidoPaterno: apellidoPaternoField.value.trim(),
         apellidoMaterno: apellidoMaternoField.value.trim(),
         fechaNacimiento: fechaNacimientoField.value,
@@ -496,6 +549,21 @@ function onGuardarClick() {
         nombreContacto2: nombreContacto2Field.value.trim(),
         telefonoContacto2: telefonoContacto2Field.value.trim()
     };
+    form.append('oParams', JSON.stringify(oParams));
+    form.append('profilePic', getFile("profilePicSelector"));
+
+    let extendedOptions = {
+        headers: postOptions.headers,
+        data: form,
+        contentType: false,
+        processData: false
+    }
+
+
+    $("#bodyArchivos input").each(function (a) {
+        let id = a.getAttribute("id");
+        form.append(id, getFile(id));
+    });
 
     doAjax(
         "/Catalogos/GestionDeTalento/SaveEmpleado",
@@ -521,8 +589,16 @@ function onGuardarClick() {
         }, function (error) {
             showError("Error", error);
         },
-        postOptions
+        extendedOptions
     );
+}
+function getFile(inputId) {
+    let fileField = document.getElementById(inputId);
+    fileField = fileField != null ? fileField.files : null;
+
+    if (fileField) { fileField = fileField.length > 0 ? fileField[0] : null; }
+
+    return fileField;
 }
 /////////////////////
 

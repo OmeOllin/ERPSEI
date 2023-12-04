@@ -211,7 +211,10 @@
     <value>The {0} field is not a valid phone number.</value>
   </data>
   <data name="PhoneNumberField" xml:space="preserve">
-    <value>Phone number</value>
+    <value>Phone</value>
+  </data>
+  <data name="PreferredNameField" xml:space="preserve">
+    <value>Preferred name</value>
   </data>
   <data name="PuestoField" xml:space="preserve">
     <value>Position</value>

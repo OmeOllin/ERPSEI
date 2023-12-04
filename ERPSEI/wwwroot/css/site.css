@@ -43,13 +43,13 @@ select {
 
 @media (min-width: 1201px) {
     .dynamic-height {
-        height: 80px !important;
+        height: 156px !important;
     }
 }
 
 @media (max-width: 1200px) {
     .dynamic-height {
-        height: 80px !important;
+        height: 180px !important;
     }
 }
 

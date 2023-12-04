@@ -7,9 +7,9 @@ namespace ERPSEI.Data.Entities.Empleados
 		[DatabaseGenerated(DatabaseGeneratedOption.None)]
 		public int Id { get; set; }
 
-		public byte[] ProfilePicture { get; set; } = new byte[0];
-
 		public string Nombre { get; set; } = string.Empty;
+
+        public string NombrePreferido { get; set; } = string.Empty;
 
         public string ApellidoPaterno { get; set; } = string.Empty;
 

@@ -201,6 +201,9 @@
   <data name="EditDialogTitle" xml:space="preserve">
     <value>Editar Registro</value>
   </data>
+  <data name="EditLink" xml:space="preserve">
+    <value>Editar</value>
+  </data>
   <data name="EmailPlaceholder" xml:space="preserve">
     <value>Correo Empresarial</value>
   </data>
@@ -264,6 +267,9 @@
   <data name="NombrePlaceholder" xml:space="preserve">
     <value>Nombre</value>
   </data>
+  <data name="NombrePreferidoPlaceholder" xml:space="preserve">
+    <value>Nombre preferido</value>
+  </data>
   <data name="NSS" xml:space="preserve">
     <value>NSS</value>
   </data>
@@ -275,6 +281,9 @@
   </data>
   <data name="PlantillaButtonTitle" xml:space="preserve">
     <value>Descargar plantilla</value>
+  </data>
+  <data name="ProfilePicSuggestion" xml:space="preserve">
+    <value>Considere subir una foto de perfil profesional para que el resto de las personas puedan reconocerle.</value>
   </data>
   <data name="PuestoPlaceholder" xml:space="preserve">
     <value>Puesto</value>
