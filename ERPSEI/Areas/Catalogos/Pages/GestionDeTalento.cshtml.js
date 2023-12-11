@@ -7,22 +7,27 @@ const VER = 2;
 var maxFileSizeInBytes = 1000000;
 const postOptions = { headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() } }
 
+//Función para inicializar el módulo.
 document.addEventListener("DOMContentLoaded", function (event) {
-    let btnBuscar = document.getElementById("btnBuscar");
-    btnBuscar.click();
-
     table = $("#table");
     buttonRemove = $("#remove");
 
     initTable();
+
+    let btnBuscar = document.getElementById("btnBuscar");
+    btnBuscar.click();
 });
 
+////////////////////////////////
 //Funcionalidad Tabla
+////////////////////////////////
+//Función para obtener los identificadores de los registros seleccionados
 function getIdSelections() {
     return $.map(table.bootstrapTable('getSelections'), function (row) {
         return row.id
     })
 }
+//Función para procesar la respuesta del servidor al consultar datos
 function responseHandler(res) {
     if (typeof res == "string" && res.length >= 1) {
         res = JSON.parse(res);
@@ -35,6 +40,7 @@ function responseHandler(res) {
 
     return res
 }
+//Función para dar formato al detalle de empleado
 function detailFormatter(index, row) {
     var html = []
     $.each(row, function (key, value) {
@@ -44,6 +50,7 @@ function detailFormatter(index, row) {
     });
     return html.join('')
 }
+//Función para dar formato a los iconos de operación de los registros
 function operateFormatter(value, row, index) {
     return [
         '<a class="see btn" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgEmpleado" title="' + btnVerTitle + '">',
@@ -54,6 +61,7 @@ function operateFormatter(value, row, index) {
         '</a>'
     ].join('')
 }
+//Eventos de los iconos de operación
 window.operateEvents = {
     'click .see': function (e, value, row, index) {
         initEmpleadoDialog(VER, row);
@@ -66,6 +74,7 @@ window.operateEvents = {
         //})
     }
 }
+//Función para añadir botones a la cinta de botones de la tabla
 function additionalButtons() {
     return {
         btnImport: {
@@ -80,9 +89,9 @@ function additionalButtons() {
         }
     }
 }
-
+//Función para agregar empleados
 function onAgregarClick() {
-    initEmpleadoDialog(NUEVO, {
+    let oEmpleadoNuevo = {
         id: "Nuevo",
         nombre: "",
         nombrePreferido: "",
@@ -106,18 +115,23 @@ function onAgregarClick() {
         nombreContacto2: "",
         telefonoContacto2: "",
         contactosEmergencia: [],
-        archivos: [
-            {
-                id: 0,
-                nombre: "",
-                tipoArchivoId: 0,
-                extension: "",
-                imgSrc: "/img/default_profile_pic.png",
-                htmlContainer: ""
-            }
-        ]
-    });
+        archivos: []
+    };
+
+    for (let a in arrTiposDocumentos) {
+        oEmpleadoNuevo.archivos.push({
+            nombre: "",
+            tipoArchivoId: a,
+            extension: "",
+            imgSrc: a == 1 ? "/img/default_profile_pic.png" : "",
+            htmlContainer: a != 1 ? "" : ""
+
+        });
+    }
+
+    initEmpleadoDialog(NUEVO, oEmpleadoNuevo);
 }
+//Función para inicializar la tabla
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
         height: 550,
@@ -236,9 +250,11 @@ function initTable() {
         });
     })
 }
-/////////////////////
+////////////////////////////////
 
 //Funcionalidad Filtrar
+
+//Función para filtrar los datos de la tabla.
 function onBuscarClick() {
     let btnBuscar = document.getElementById("btnBuscar");
     let inpFechaIngresoIni = document.getElementById("inpFiltroFechaIngresoInicio");
@@ -290,10 +306,14 @@ function onBuscarClick() {
 }
 ////////////////////////////////
 
+////////////////////////////////
 //Funcionalidad Diálogo Empleado
+////////////////////////////////
+//Función para inicializar el cuadro de diálogo
 function initEmpleadoDialog(action, row) {
     let idField = document.getElementById("inpEmpleadoId");
     let picField = document.getElementById("profilePicContainer");
+    let picSelector = document.getElementById("profilePicSelector");
     let editPicLink = document.getElementById("editProfilePicLink");
     let primerNombreField = document.getElementById("inpEmpleadoPrimerNombre");
     let nombrePreferidoField = document.getElementById("inpEmpleadoNombrePreferido");
@@ -418,45 +438,94 @@ function initEmpleadoDialog(action, row) {
     row.archivos = row.archivos || [];
     let i = 1;
     row.archivos.forEach(function (a) {
-        if (a.tipoArchivoId == 0) {
-            //Si el tipo de archivo es la foto de perfil, la establece en el contenedor.
+        let srcElements = (a.imgSrc || "").split(",");
+        let b64 = srcElements.length >= 1 ? srcElements[1]||"" : "";
+
+        if (a.tipoArchivoId == 1) {
+            //Si el tipo de archivo es la foto de perfil, se establece en el contenedor directamente.
             picField.setAttribute('src', a.imgSrc);
+            picSelector.setAttribute('sourceLength', a.imgSrc.length);
+            picSelector.setAttribute('sourceName', `${a.nombre}.${a.extension}`);
+            picSelector.setAttribute('b64', b64);
         }
         else {
             //De lo contrario, agrega un archivo al DOM.
             $("#bodyArchivos").append(
-                `<tr valign="middle" align="center">
-			        <th scope="row">${a.tipoArchivoId}</th>
-			        <td><b>${arrTiposDocumentos[a.tipoArchivoId]}</b></td>
-			        <td>
-				        <div id="container${a.tipoArchivoId}" class="document-container">
-					        ${a.htmlContainer}
-				        </div>
-			        </td>
-			        <td align="left">
-				        <div style="width:auto;">
-					        <input type="file" id="selector${a.tipoArchivoId}" tipo="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-					        <a class="btn mb-1" onclick="onEditDocumentClick(this);" inputName="selector${a.tipoArchivoId}">
-						        <i class="bi bi-pencil-fill"></i>
-					        </a>
-					        <a class="btn disableable mb-1" asp-page="/FileViewer" asp-route-id="${a.id}" target="_blank" sourceLength="${a.archivo.length}">
-						        <i class="bi bi-search"></i>
-					        </a>
-					        <a class="btn disableable mb-1" onclick="onDeleteClick(this);" sourceId="selector${a.tipoArchivoId}" sourceLength="${a.archivo.length}">
-						        <i class="bi bi-x-lg"></i>
-					        </a>
-				        </div>
-			        </td>
-		        </tr>`
+                `<div class="col-12 col-xl-6">
+                    <div><b>${arrTiposDocumentos[a.tipoArchivoId]}</b></div>
+                    <div id="container${a.tipoArchivoId}" class="alert mb-2 mt-2 document-container-empty row me-0">
+                        <div id="fileIcon${a.tipoArchivoId}" class="align-self-center col-1 opacity-25"><i class='bi bi-file-image' style='font-size:25px'></i></div>
+                        <div id="fileName${a.tipoArchivoId}" class="align-self-center col-10 p-2 opacity-25" style="display:flex; color:dimgray"><div class="overflowed-text">Seleccione...</div></div>
+                        <div class="align-self-center col-1">
+                            <input type="file" id="selector${a.tipoArchivoId}" b64="${b64}" sourceName="${a.nombre}.${a.extension}" sourceLength="${(a.archivo || []).length}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                            <a class='btn btn-sm btn-primary mb-1' onclick='onEditDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-pencil-fill'></i></a>
+                            <a class="btn btn-sm btn-primary disableable mb-1" inputName="selector${a.tipoArchivoId}" asp-page="/FileViewer" asp-route-id="${a.id}" target="_blank" sourceLength="${(a.archivo || []).length}"><i class="bi bi-search"></i></a>
+                            <a class="btn btn-sm btn-primary disableable mb-1" inputName="selector${a.tipoArchivoId}" onclick="onDeleteClick(this);" sourceId="selector${a.tipoArchivoId}" sourceLength="${(a.archivo || []).length}"><i class="bi bi-x-lg"></i></a>
+                        </div>
+                    </div>
+                </div>`
             );
         }
         i++;
     });
+
+    initializeDisableableButtons();
+}
+//Función para habilitar/deshabilitar los botones de visualización en base a si existe contenido o no para visualizar.
+function initializeDisableableButtons() {
+    //Botones de acción de editar y eliminar
+    let buttons = document.getElementsByClassName("disableable");
+
+    //Se inicializan los botones de edición
+    if (buttons.length >= 1) {
+        for (let i = 0; i < buttons.length; i++) {
+            let button = buttons[i];
+            let inputName = button.getAttribute("inputName");
+            let input = document.getElementById(inputName);
+            let sourceLength = (input.getAttribute("b64")||"").length;
+            let hasFile = sourceLength >= 1;
+            if (hasFile) {
+                button.classList.remove("disabled");
+            }
+            else {
+                button.classList.add("disabled");
+            }
+        }
+    }
 }
 //Función para capturar el clic en el botón de edición, que dispara la apertura del selector de archivo.
 function onEditDocumentClick(button) {
     let inputName = button.getAttribute("inputName");
     document.getElementById(inputName).click();
+}
+//Función para capturar el clic en el botón quitar, que elimina el archivo seleccionado.
+function onDeleteClick(button) {
+    let sourceId = button.getAttribute("sourceId") || "";
+
+    if (sourceId.length >= 1) {
+        let fileInput = document.getElementById(sourceId);
+        let containerName = fileInput.getAttribute("containerName") || "";
+        let fileIconName = fileInput.getAttribute("fileIconName");
+        let fileNameName = fileInput.getAttribute("fileNameName");
+        let container = document.getElementById(containerName);
+        let fileIcon = document.getElementById(fileIconName);
+        let fileName = document.getElementById(fileNameName);
+
+        fileInput.files = null;
+        fileInput.setAttribute("b64", "");
+
+        container.classList.remove("document-container-filled");
+        container.classList.add("document-container-empty");
+
+        fileIcon.classList.remove("document-icon-filled");
+        fileIcon.classList.add("opacity-25");
+
+        fileName.classList.remove("document-name-filled");
+        fileName.classList.add("opacity-25");
+        fileName.innerHTML = `<div class="overflowed-text">Seleccione...</div>`;
+    }
+
+    initializeDisableableButtons();
 }
 //Función para mostrar la foto de perfil seleccionada.
 function onProfilePicSelectorChanged(input) {
@@ -465,17 +534,122 @@ function onProfilePicSelectorChanged(input) {
             input.value = null;
             showAlert(
                 "Tama&ntilde;o de archivo inv&aacute;lido",
-                `El tama&ntilde;o del archivo no debe superar ${maxFileSizeInBytes / 1000000}Mb. Por favor elija otro archivo.`,
-                MSG_TYPE_ALERT
+                `El tama&ntilde;o del archivo no debe superar ${maxFileSizeInBytes / 1000000}Mb. Por favor elija otro archivo.`
             );
             return;
         }
         let imgType = input.files[0].type;
         if (imgType == "image/png" || imgType == "image/jpg" || imgType == "image/jpeg") {
             document.getElementById("profilePicContainer").src = window.URL.createObjectURL(input.files[0]);
+            var reader = new FileReader();
+            reader.onload = function () {
+
+                var arrayBuffer = this.result,
+                    binary = '',
+                    bytes = new Uint8Array(arrayBuffer),
+                    len = bytes.byteLength;
+
+                for (var i = 0; i < len; i++) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+                document.getElementById("profilePicSelector").setAttribute("b64", window.btoa(binary));
+                document.getElementById("profilePicSelector").setAttribute("sourceLength", "0");
+            }
+            reader.readAsArrayBuffer(input.files[0]);
+        }
+        else {
+            showAlert(
+                "Formato de archivo inv&aacute;lido",
+                `El formato del archivo no es permitido. Por favor elija archivos en formato png, jpg o jpeg.`
+            );
         }
     }
 }
+//Función para mostrar cualquiera de los documentos seleccionados.
+function onDocumentSelectorChanged(input) {
+    if (input.files && (input.files.length || 0) >= 1) {
+        if (input.files[0].size >= maxFileSizeInBytes) {
+            input.value = null;
+            showAlert(
+                "Tama&ntilde;o de archivo inv&aacute;lido",
+                `El tama&ntilde;o del archivo no debe superar ${maxFileSizeInBytes / 1000000}Mb. Por favor elija otro archivo.`
+            );
+            return;
+        }
+        let docType = input.files[0].type;
+        let docParts = input.files[0].name.split(".");
+        let fName = docParts.length >= 1 ? docParts[0] || "" : "";
+        let fExt = docParts.length >= 2 ? docParts[1] || "" : "";
+        /*let fileSize = (input.files[0].size / 1000000).toFixed(2);*/
+        let isImg = docType == "image/png" || docType == "image/jpg" || docType == "image/jpeg";
+        let isPDF = docType == "application/pdf";
+        let containerName = input.getAttribute("containerName");
+        let fileIconName = input.getAttribute("fileIconName");
+        let fileNameName = input.getAttribute("fileNameName");
+        /*let showerName = containerName + "_children";*/
+        let container = document.getElementById(containerName);
+        let fileIcon = document.getElementById(fileIconName);
+        let fileName = document.getElementById(fileNameName);
+
+        if (isImg || isPDF) {
+            var reader = new FileReader();
+            reader.onload = function () {
+
+                var arrayBuffer = this.result,
+                    binary = '',
+                    bytes = new Uint8Array(arrayBuffer),
+                    len = bytes.byteLength;
+
+                for (var i = 0; i < len; i++) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+                input.setAttribute("b64", window.btoa(binary));
+                input.setAttribute("sourceLength", "0");
+
+                initializeDisableableButtons();
+            }
+            reader.readAsArrayBuffer(input.files[0]);
+
+            container.classList.remove("document-container-empty");
+            container.classList.add("document-container-filled");
+
+            fileIcon.classList.remove("opacity-25");
+            fileIcon.classList.add("document-icon-filled");
+
+            fileName.classList.remove("opacity-25");
+            fileName.classList.add("document-name-filled");
+            fileName.innerHTML = `<div class="overflowed-text">${fName}</div>.<div>${fExt}</div>`;
+        }
+        else {
+            input.value = null;
+            showAlert(
+                "Formato de archivo inv&aacute;lido",
+                `El formato del archivo debe ser .pdf, .jpg, .jpeg o .png. Por favor elija otro archivo.`
+            );
+
+            return;
+        }
+
+        //if (isImg) {
+        //    let src = window.URL.createObjectURL(input.files[0]);
+        //    container.innerHTML = `<img id="${showerName}" src="${src}" style="max-height: 200px;" />`;
+        //}
+        //else if (isPDF) {
+        //    showLoading();
+        //    container.innerHTML = `<canvas id="${showerName}" class="canvaspdf"></canvas>`;
+        //    await loadPDFFromFileAsync(input.files[0], showerName);
+        //    hideLoading();
+        //}
+        //else {
+        //    input.value = null;
+        //    showAlert(
+        //        "Formato de archivo inv&aacute;lido",
+        //        `El formato del archivo debe ser .pdf, .jpg, .jpeg o .png. Por favor elija otro archivo.`
+        //    );
+        //}
+    }
+}
+//Función para el cierre del cuadro de diálogo
 function onCerrarClick() {
     //Removes validation from input-fields
     $('.input-validation-error').addClass('input-validation-valid');
@@ -489,6 +663,7 @@ function onCerrarClick() {
     //Removes danger text from fields
     $(".text-danger").children().remove()
 }
+//Función para el guardado de información del empleado
 function onGuardarClick() {
     //Ejecuta la validación
     $("#theForm").validate();
@@ -525,7 +700,15 @@ function onGuardarClick() {
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 
-    let form = new FormData();
+    let files = [];
+    let profilePic = getFile("profilePicSelector");
+    if (profilePic) { files.push(profilePic); }
+    $("#bodyArchivos input").each(function (i, a) {
+        let id = a.getAttribute("id");
+        let file = getFile(id);
+        if (file) { files.push(file); }
+    });
+
     let oParams = {
         id: idField.value == "Nuevo" ? 0 : idField.value,
         nombre: primerNombreField.value.trim(),
@@ -547,23 +730,9 @@ function onGuardarClick() {
         nombreContacto1: nombreContacto1Field.value.trim(),
         telefonoContacto1: telefonoContacto1Field.value.trim(),
         nombreContacto2: nombreContacto2Field.value.trim(),
-        telefonoContacto2: telefonoContacto2Field.value.trim()
+        telefonoContacto2: telefonoContacto2Field.value.trim(),
+        archivos: files
     };
-    form.append('oParams', JSON.stringify(oParams));
-    form.append('profilePic', getFile("profilePicSelector"));
-
-    let extendedOptions = {
-        headers: postOptions.headers,
-        data: form,
-        contentType: false,
-        processData: false
-    }
-
-
-    $("#bodyArchivos input").each(function (a) {
-        let id = a.getAttribute("id");
-        form.append(id, getFile(id));
-    });
 
     doAjax(
         "/Catalogos/GestionDeTalento/SaveEmpleado",
@@ -589,20 +758,58 @@ function onGuardarClick() {
         }, function (error) {
             showError("Error", error);
         },
-        extendedOptions
+        postOptions
     );
 }
+//Función para obtener el archivo de un input
 function getFile(inputId) {
-    let fileField = document.getElementById(inputId);
-    fileField = fileField != null ? fileField.files : null;
+    let fileField = document.getElementById(inputId),
+        file = null,
+        tipoArchivo = fileField.getAttribute("tipoArchivoId"),
+        b64 = fileField.getAttribute("b64")||"",
+        sourceLength = parseInt(fileField.getAttribute("sourceLength") || "0");
 
-    if (fileField) { fileField = fileField.length > 0 ? fileField[0] : null; }
+    file = fileField != null ? fileField.files : null;
+    if (file) { file = file.length > 0 ? file[0] : null; }
 
-    return fileField;
+    
+    if (file) {
+        //Si se estableció archivo en pantalla, crea el json con el archivo.
+        let fileParts = (file.name||"").split(".");
+        return {
+            nombre: fileParts.length >= 1 ? fileParts[0] : "",
+            tipoArchivoId: tipoArchivo,
+            extension: fileParts.length >= 2 ? fileParts[1] : "",
+            imgSrc: b64
+        };
+    }
+    else if (sourceLength >= 1) {
+        //De lo contrario, verifica si ya venía archivo guardado en base y construye el json con dichos datos.
+        let fileParts = (fileField.getAttribute("sourceName") || "").split(".");
+        return {
+            nombre: fileParts.length >= 1 ? fileParts[0] : "",
+            tipoArchivoId: tipoArchivo,
+            extension: fileParts.length >= 2 ? fileParts[1] : "",
+            imgSrc: b64
+        };
+    }
+    else {
+        //De lo contrario, devuelve un objeto de archvio vacío, indicando solamente el tipo de archvio.
+        return {
+            nombre: "",
+            tipoArchivoId: tipoArchivo,
+            extension: "",
+            imgSrc: ""
+        }
+;
+    }
 }
-/////////////////////
+////////////////////////////////
 
-//Funcionalidad Diálogo importar
+////////////////////////////////
+//Funcionalidad Diálogo Importar
+////////////////////////////////
+//Función para el importado del archivo con información de empleados
 function onImportarClick() {
     //Ejecuta la validación
     $("#importForm").validate();
@@ -655,11 +862,13 @@ function onImportarClick() {
         extendedOptions
     );
 }
+//Función para el cierre del cuadro de diálogo
 function onCerrarImportarClick() {
     let fileField = document.getElementById("excelFile");
     fileField.value = null;
     onCerrarClick();
 }
+//Función para procesar el cambio de archivo a exportar
 function onExcelSelectorChanged(input) {
     //Validación para seleccionar archivos excel solamente.
     if (input.files && (input.files.length || 0) >= 1) {
@@ -672,4 +881,4 @@ function onExcelSelectorChanged(input) {
         }
     }
 }
-/////////////////////
+////////////////////////////////

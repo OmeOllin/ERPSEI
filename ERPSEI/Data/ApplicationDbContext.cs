@@ -59,7 +59,6 @@ namespace ERPSEI.Data
 					new TipoArchivo((int)FileTypes.CURP, "CURP"),
 					new TipoArchivo((int)FileTypes.CLABE, "CLABE"),
 					new TipoArchivo((int)FileTypes.ComprobanteDomicilio, "Comprobante de domicilio"),
-					new TipoArchivo((int)FileTypes.ContactosEmergencia, "Contactos de emergencia"),
 					new TipoArchivo((int)FileTypes.CSF, "CSF"),
 					new TipoArchivo((int)FileTypes.INE, "INE"),
 					new TipoArchivo((int)FileTypes.RFC, "RFC"),

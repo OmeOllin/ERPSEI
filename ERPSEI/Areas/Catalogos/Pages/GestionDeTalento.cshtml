@@ -217,7 +217,7 @@
 										<img id="profilePicContainer" class="profile-pic mb-3" />
 									</div>
 									<div style="width:auto;" class="mb-3">
-										<input asp-for="InputEmpleado.ProfilePicture" type="file" id="profilePicSelector" onchange="onProfilePicSelectorChanged(this);" accept="image/png, image/jpeg" hidden />
+										<input asp-for="InputEmpleado.ProfilePicture" type="file" id="profilePicSelector" tipoArchivoId="1" onchange="onProfilePicSelectorChanged(this);" accept="image/png, image/jpeg" hidden />
 										<a id="editProfilePicLink" class="btn btn-primary" onclick="onEditDocumentClick(this);" inputName="profilePicSelector">
 											<i class="bi bi-pencil-fill"></i> @Localizer["EditLink"]
 										</a>
@@ -455,18 +455,7 @@
 								@Localizer["DocumentSuggestion"]
 							</div>
 						</div>
-						<table class="table table-bordered" align="center" style="width:auto;">
-							<thead>
-								<tr align="center">
-									<th scope="col"></th>
-									<th scope="col">Nombre documento</th>
-									<th scope="col">Documento</th>
-									<th scope="col"></th>
-								</tr>
-							</thead>
-							<tbody id="bodyArchivos">
-							</tbody>
-						</table>
+						<div id="bodyArchivos" class="row"></div>
 					</div>
 				</form>
 			</div>
@@ -577,17 +566,18 @@
 		var colCorreoHeader = '@Localizer["ColCorreoHeader"]';
 		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
 		var arrTiposDocumentos = {
-			"1": '@Localizer["ActaNacimiento"]',
-			"2": '@Localizer["CLABE"]',
-			"3": '@Localizer["ComprobanteDomicilio"]',
-			"4": '@Localizer["ComprobanteEstudios"]',
-			"5": '@Localizer["ContactosEmergencia"]',
-			"6": '@Localizer["CSF"]',
-			"7": '@Localizer["CURP"]',
-			"8": '@Localizer["INE"]',
-			"9": '@Localizer["NSS"]',
-			"10": '@Localizer["RFC"]',
-			"11": '@Localizer["Otros"]'
+			"1": '@Localizer["FotoPerfil"]',
+			"2": '@Localizer["ActaNacimiento"]',
+			"3": '@Localizer["CLABE"]',
+			"4": '@Localizer["ComprobanteDomicilio"]',
+			"5": '@Localizer["ComprobanteEstudios"]',
+			"6": '@Localizer["ContactosEmergencia"]',
+			"7": '@Localizer["CSF"]',
+			"8": '@Localizer["CURP"]',
+			"9": '@Localizer["INE"]',
+			"10": '@Localizer["NSS"]',
+			"11": '@Localizer["RFC"]',
+			"12": '@Localizer["Otros"]'
 		};
 		var invalidFormatTitle = '@Localizer["InvalidFormatTitle"]';
 		var invalidFormatMsg = '@Localizer["InvalidFormatMsg"]';

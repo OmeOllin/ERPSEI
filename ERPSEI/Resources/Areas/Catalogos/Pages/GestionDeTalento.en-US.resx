@@ -231,6 +231,9 @@
   <data name="FilterTitle" xml:space="preserve">
     <value>Search filters</value>
   </data>
+  <data name="FotoPerfil" xml:space="preserve">
+    <value>Profile picture</value>
+  </data>
   <data name="GeneroPlaceholder" xml:space="preserve">
     <value>Gender</value>
   </data>

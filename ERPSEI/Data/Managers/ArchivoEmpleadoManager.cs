@@ -12,8 +12,9 @@ namespace ERPSEI.Data.Managers
             db = _db;
         }
 
-        public async Task<string> CreateAsync(ArchivoEmpleado file)
+		public async Task<string> CreateAsync(ArchivoEmpleado file)
         {
+            if (file.Id.Length <= 0) { file.Id = Guid.NewGuid().ToString(); }
             db.ArchivosEmpleado.Add(file);
             await db.SaveChangesAsync();
             return file.Id;
@@ -48,9 +49,14 @@ namespace ERPSEI.Data.Managers
             }
         }
 
-        public async Task<List<ArchivoEmpleado>> GetFilesByEmpleadoIdAsync(int empleadoId)
-        {
+		public async Task DeleteByEmpleadoIdAsync(int empleadoId)
+		{
+			List<ArchivoEmpleado> archivos = await db.ArchivosEmpleado.Where(a => a.EmpleadoId == empleadoId).ToListAsync();
+			if (archivos != null && archivos.Count >= 1) { db.ArchivosEmpleado.RemoveRange(archivos); }
+		}
 
+		public async Task<List<ArchivoEmpleado>> GetFilesByEmpleadoIdAsync(int empleadoId)
+        {
             return await db.ArchivosEmpleado.Where(uf => uf.EmpleadoId == empleadoId).ToListAsync();
         }
 

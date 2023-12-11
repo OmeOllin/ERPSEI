@@ -92,6 +92,7 @@ namespace ERPSEI.Data.Managers
 				.Include(e => e.EstadoCivil)
 				.Include(e => e.Jefe)
 				.Include(e => e.ContactosEmergencia)
+				.Include(e => e.ArchivosEmpleado)
 				.ToListAsync();
 		}
 

@@ -7,6 +7,7 @@ using ExcelDataReader;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Net.Mime;
@@ -24,6 +25,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		private readonly IRCatalogoManager<Genero> _generoManager;
 		private readonly IRCatalogoManager<EstadoCivil> _estadoCivilManager;
 		private readonly IContactoEmergenciaManager _contactoEmergenciaManager;
+		private readonly IArchivoEmpleadoManager _archivoEmpleadoManager;
 		private readonly IStringLocalizer<GestionDeTalentoModel> _strLocalizer;
 		private readonly ILogger<GestionDeTalentoModel> _logger;
 		private readonly ApplicationDbContext _db;
@@ -82,7 +84,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[RegularExpression(RegularExpressions.PersonName, ErrorMessage = "PersonName")]
 			[DataType(DataType.Text)]
 			[Display(Name = "PreferredNameField")]
-			public string NombrePreferido { get; set; } = string.Empty;
+			public string? NombrePreferido { get; set; } = string.Empty;
 
 			[Required(ErrorMessage = "Required")]
 			[StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
@@ -172,6 +174,22 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[DataType(DataType.PhoneNumber)]
 			[Display(Name = "PhoneNumberField")]
 			public string? TelefonoContacto2 { get; set; } = string.Empty;
+
+			public string? CURP { get; set; } = string.Empty;
+
+			public string? RFC { get; set; } = string.Empty;
+
+			public string? NSS { get; set; } = string.Empty;
+
+			public ArchivoModel?[] Archivos { get; set; } = Array.Empty<ArchivoModel>();
+		}
+
+		public class ArchivoModel
+		{
+			public string? nombre { get; set; } = string.Empty;
+			public int? tipoArchivoId { get; set; }
+			public string? extension { get; set; } = string.Empty;
+			public string? imgSrc { get; set; } = string.Empty;
 		}
 
 		[BindProperty]
@@ -191,6 +209,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			IRCatalogoManager<Genero> generoManager,
 			IRCatalogoManager<EstadoCivil> estadoCivilManager,
 			IContactoEmergenciaManager contactoEmergenciaManager,
+			IArchivoEmpleadoManager archivoEmpleadoManager,
 			IStringLocalizer<GestionDeTalentoModel> stringLocalizer,
 			ILogger<GestionDeTalentoModel> logger,
 			ApplicationDbContext db
@@ -204,6 +223,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			_generoManager = generoManager;
 			_estadoCivilManager = estadoCivilManager;
 			_contactoEmergenciaManager = contactoEmergenciaManager;
+			_archivoEmpleadoManager = archivoEmpleadoManager;
 			_strLocalizer = stringLocalizer;
 			_logger = logger;
 			_db = db;
@@ -327,37 +347,38 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				{
 					string htmlContainer = string.Empty;
 					string imgSrc = string.Empty;
+					string id = Guid.NewGuid().ToString();
 					//Si el archivo tiene contenido
 					if (a.Archivo != null && a.Archivo.Length >= 1)
 					{
 						//Asigna la información del archivo al arreglo de datos.
 						string b64 = Convert.ToBase64String(a.Archivo);
-						string id = Guid.NewGuid().ToString();
 						bool isJPG = a.Extension == "jpg" || a.Extension == "jpeg";
 						bool isPNG = a.Extension == "png";
 						bool isPDF = a.Extension == "pdf";
 
 						if (isPDF)
 						{
+							imgSrc = $"data:application/pdf;base64,{b64}";
 							htmlContainer = $"<canvas id = '{id}' b64 = '{b64}' class = 'canvaspdf'></canvas>";
 						}
-						else if(isJPG || isPNG)
+						else if (isJPG || isPNG)
 						{
-							if(isJPG)
+							if (isJPG)
 							{
 								imgSrc = $"data:image/jpeg;base64,{b64}";
 							}
-							else if(isPNG )
+							else if (isPNG)
 							{
 								imgSrc = $"data:image/png;base64,{b64}";
 							}
-							htmlContainer = $"<img id = '{id}' src = '{imgSrc}' style='min-height: 200px;'/>";
+							htmlContainer = $"<img id = '{id}' src = '{imgSrc}' style='max-height: 200px;'/>";
 						}
 					}
 
 					jsonArchivos.Add(
 						"{" +
-							$"\"id\": {a.Id}," +
+							$"\"id\": \"{a.Id}\"," +
 							$"\"nombre\": \"{a.Nombre}\"," +
 							$"\"tipoArchivoId\": {a.TipoArchivoId}," +
 							$"\"extension\": \"{a.Extension}\"," +
@@ -373,8 +394,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				foreach (FileTypes i in Enum.GetValues(typeof(FileTypes)))
 				{
 					string imgSrc = string.Empty;
+					string htmlContainer = string.Empty;
 					//Si el tipo de archivo es Imagen de perfil, entonces agrega valor default.
 					if ((int)i == 0) { imgSrc = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/img/default_profile_pic.png"; }
+					if ((int)i != 0) { htmlContainer = "<i class='bi bi-file-image opacity-50' style='font-size:105px'></i>"; }
 					jsonArchivos.Add(
 						"{" +
 							$"\"id\": \"{Guid.NewGuid()}\"," +
@@ -382,7 +405,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 							$"\"tipoArchivoId\": {(int)i}," +
 							$"\"extension\": \"\"," +
 							$"\"imgSrc\": \"{imgSrc}\"," +
-							$"\"htmlContainer\": \"\"" +
+							$"\"htmlContainer\": \"{htmlContainer}\"" +
 						"}"
 					);
 				}
@@ -391,11 +414,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			return jsonArchivos;
 		}
 
-		public IActionResult OnGet()
-		{
-
-			return Page();
-		}
 		public ActionResult OnGetDownloadPlantilla()
 		{
 			return File("/templates/PlantillaEmpleados.xlsx", MediaTypeNames.Application.Octet, "PlantillaEmpleados.xlsx");
@@ -417,109 +435,144 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resp);
 		}
+		
 		public async Task<JsonResult> OnPostDeleteEmpleados(string[] ids)
 		{
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadosDeletedUnsuccessfully"]);
+			await _db.Database.BeginTransactionAsync();
 			try
 			{
-				await _empleadoManager.DeleteMultipleByIdAsync(ids);
+                foreach (string id in ids)
+                {
+					int intId = Convert.ToInt32(id);
+					//Elimina dependencias y posteriormente el empleado.
+					await _contactoEmergenciaManager.DeleteByEmpleadoIdAsync(intId);
+					await _archivoEmpleadoManager.DeleteByEmpleadoIdAsync(intId);
+					await _empleadoManager.DeleteByIdAsync(intId);
+                }
+
 				resp.TieneError = false;
 				resp.Mensaje = _strLocalizer["EmpleadosDeletedSuccessfully"];
+
+				await _db.Database.CommitTransactionAsync();
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex.Message);
+				await _db.Database.RollbackTransactionAsync();
 			}
 
 			return new JsonResult(resp);
 		}
+		
 		public async Task<JsonResult> OnPostSaveEmpleado()
 		{
+
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadoSavedUnsuccessfully"]);
+
+			//Se remueve el campo Plantilla para que no sea validado ya que no pertenece a este proceso.
+			ModelState.Remove("Plantilla");
 
 			if (!ModelState.IsValid)
 			{
 				resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray();
 				return new JsonResult(resp);
 			}
-
-			await _db.Database.BeginTransactionAsync();
 			try
 			{
-				Empleado? empleado = await _empleadoManager.GetByIdAsync(InputEmpleado.Id);
-				int idEmpleado = 0;
-				if (empleado != null)
-				{
-					idEmpleado = empleado.Id;
-
-					empleado.ApellidoMaterno = InputEmpleado.ApellidoMaterno;
-					empleado.ApellidoPaterno = InputEmpleado.ApellidoPaterno;
-					empleado.AreaId = InputEmpleado.AreaId;
-					empleado.Direccion = InputEmpleado.Direccion ?? "";
-					empleado.Email = InputEmpleado.Email;
-					empleado.EstadoCivilId = InputEmpleado.EstadoCivilId;
-					empleado.FechaIngreso = InputEmpleado.FechaIngreso;
-					empleado.FechaNacimiento = InputEmpleado.FechaNacimiento;
-					empleado.GeneroId = InputEmpleado.GeneroId;
-					empleado.JefeId = InputEmpleado.JefeId;
-					empleado.NombreCompleto = $"{InputEmpleado.Nombre} {InputEmpleado.ApellidoPaterno} {InputEmpleado.ApellidoMaterno}";
-					empleado.OficinaId = InputEmpleado.OficinaId;
-					empleado.Nombre = InputEmpleado.Nombre;
-					empleado.NombrePreferido = InputEmpleado.NombrePreferido;
-					empleado.PuestoId = InputEmpleado.PuestoId;
-					empleado.SubareaId = InputEmpleado.SubareaId;
-					empleado.Telefono = InputEmpleado.Telefono;
-
-					await _empleadoManager.UpdateAsync(empleado);
-
-					//Elimina los contactos del empleado.
-					await _contactoEmergenciaManager.DeleteByEmpleadoIdAsync(empleado.Id);
-				}
-				else
-				{
-					//Crea al empleado y obtiene su id.
-					idEmpleado = await _empleadoManager.CreateAsync(new Empleado() {
-																		ApellidoMaterno = InputEmpleado.ApellidoMaterno,
-																		ApellidoPaterno = InputEmpleado.ApellidoPaterno,
-																		AreaId = InputEmpleado.AreaId,
-																		Direccion = InputEmpleado.Direccion ?? "",
-																		Email = InputEmpleado.Email,
-																		EstadoCivilId = InputEmpleado.EstadoCivilId,
-																		FechaIngreso = InputEmpleado.FechaIngreso,
-																		FechaNacimiento = InputEmpleado.FechaNacimiento,
-																		GeneroId = InputEmpleado.GeneroId,
-																		JefeId = InputEmpleado.JefeId,
-																		NombreCompleto = $"{InputEmpleado.Nombre} {InputEmpleado.ApellidoPaterno} {InputEmpleado.ApellidoMaterno}",
-																		OficinaId = InputEmpleado.OficinaId,
-																		Nombre = InputEmpleado.Nombre,
-																		NombrePreferido = InputEmpleado.NombrePreferido,
-																		PuestoId = InputEmpleado.PuestoId,
-																		SubareaId = InputEmpleado.SubareaId,
-																		Telefono = InputEmpleado.Telefono
-																	});
-				}
-
-				//Crea dos nuevos contactos para el empleado.
-				await _contactoEmergenciaManager.CreateAsync(
-					new ContactoEmergencia() { Nombre = InputEmpleado.NombreContacto1 ?? "", Telefono = InputEmpleado.TelefonoContacto1 ?? "", EmpleadoId = idEmpleado }
-				);
-				await _contactoEmergenciaManager.CreateAsync(
-					new ContactoEmergencia() { Nombre = InputEmpleado.NombreContacto2 ?? "", Telefono = InputEmpleado.TelefonoContacto2 ?? "", EmpleadoId = idEmpleado }
-				);
-
-				await _db.Database.CommitTransactionAsync();
+				await createEmployee(InputEmpleado);
 
 				resp.TieneError = false;
 				resp.Mensaje = _strLocalizer["EmpleadoSavedSuccessfully"];
 			}
 			catch (Exception ex)
 			{
-				await _db.Database.RollbackTransactionAsync();
 				_logger.LogError(ex.Message);
 			}
 
 			return new JsonResult(resp);
 		}
+		private async Task createEmployee(EmpleadoModel e)
+		{
+			await _db.Database.BeginTransactionAsync();
+			try
+			{
+				int idEmpleado = 0;
+				//Se busca empleado por id
+				Empleado? empleado = await _empleadoManager.GetByIdAsync(e.Id);
+				//Si no se encontró empleado por id, se busca el empleado por su CURP.
+				if (empleado == null) { empleado = await _empleadoManager.GetByCURPAsync(e.CURP ?? string.Empty); }
+				//Si no se encontró empleado, crea uno nuevo. De lo contrario, obtiene su Id.
+				if (empleado == null) { empleado = new Empleado(); } else { idEmpleado = empleado.Id; }
+
+				//Llena los datos del empleado.
+				empleado.ApellidoMaterno = e.ApellidoMaterno;
+				empleado.ApellidoPaterno = e.ApellidoPaterno;
+				empleado.AreaId = e.AreaId;
+				empleado.Direccion = e.Direccion ?? string.Empty;
+				empleado.Email = e.Email;
+				empleado.EstadoCivilId = e.EstadoCivilId;
+				empleado.FechaIngreso = e.FechaIngreso;
+				empleado.FechaNacimiento = e.FechaNacimiento;
+				empleado.GeneroId = e.GeneroId;
+				empleado.JefeId = e.JefeId;
+				empleado.NombreCompleto = $"{e.Nombre} {e.ApellidoPaterno} {e.ApellidoMaterno}";
+				empleado.OficinaId = e.OficinaId;
+				empleado.Nombre = e.Nombre;
+				empleado.NombrePreferido = e.NombrePreferido ?? string.Empty;
+				empleado.PuestoId = e.PuestoId;
+				empleado.SubareaId = e.SubareaId;
+				empleado.Telefono = e.Telefono;
+				empleado.CURP = e.CURP ?? string.Empty;
+				empleado.RFC = e.RFC ?? string.Empty;
+				empleado.NSS = e.NSS ?? string.Empty;
+
+				if (idEmpleado >= 1)
+				{
+					//Si el empleado ya existía, lo actualiza.
+					await _empleadoManager.UpdateAsync(empleado);
+
+					//Elimina los contactos del empleado.
+					await _contactoEmergenciaManager.DeleteByEmpleadoIdAsync(idEmpleado);
+
+					//Elimina los archivos del usuario.
+					await _archivoEmpleadoManager.DeleteByEmpleadoIdAsync(idEmpleado);
+				}
+				else
+				{
+					//De lo contrario, crea al empleado y obtiene su id.
+					idEmpleado = await _empleadoManager.CreateAsync(empleado);
+				}
+
+				//Crea dos nuevos contactos para el empleado.
+				await _contactoEmergenciaManager.CreateAsync(
+					new ContactoEmergencia() { Nombre = e.NombreContacto1 ?? string.Empty, Telefono = e.TelefonoContacto1 ?? string.Empty, EmpleadoId = idEmpleado }
+				);
+				await _contactoEmergenciaManager.CreateAsync(
+					new ContactoEmergencia() { Nombre = e.NombreContacto2 ?? string.Empty, Telefono = e.TelefonoContacto2 ?? string.Empty, EmpleadoId = idEmpleado }
+				);
+
+				//Crea los archivos del usuario.
+				foreach (ArchivoModel? a in e.Archivos)
+				{
+					if (a != null)
+					{
+						await _archivoEmpleadoManager.CreateAsync(
+							new ArchivoEmpleado() { Archivo = (a.imgSrc ?? string.Empty).Length >= 1 ? Convert.FromBase64String(a.imgSrc ?? string.Empty) : Array.Empty<byte>(), EmpleadoId = idEmpleado, Extension = a.extension ?? string.Empty, Nombre = a.nombre ?? string.Empty, TipoArchivoId = a.tipoArchivoId }
+						);
+					}
+				}
+
+
+				await _db.Database.CommitTransactionAsync();
+			}
+			catch (Exception)
+			{
+				await _db.Database.RollbackTransactionAsync();
+				throw;
+			}
+		}
+
 		public async Task<JsonResult> OnPostImportarEmpleados()
 		{
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadosImportadosUnsuccessfully"]);
@@ -555,98 +608,55 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 		private async Task CreateEmployeeFromExcelRow(DataRow row)
 		{
-			await _db.Database.BeginTransactionAsync();
-			try
+			Genero? genero = await _generoManager.GetByNameAsync(row[5].ToString() ?? string.Empty);
+			EstadoCivil? estadoCivil = await _estadoCivilManager.GetByNameAsync(row[6].ToString() ?? string.Empty);
+			Puesto? puesto = await _puestoManager.GetByNameAsync(row[8].ToString() ?? string.Empty);
+			Area? area = await _areaManager.GetByNameAsync(row[9].ToString() ?? string.Empty);
+			Subarea? subarea = await _subareaManager.GetByNameAsync(row[10].ToString() ?? string.Empty);
+			Oficina? oficina = await _oficinaManager.GetByNameAsync(row[11].ToString() ?? string.Empty);
+			Empleado? jefe = await _empleadoManager.GetByNameAsync(row[12].ToString() ?? string.Empty);
+
+			DateTime fn;
+			DateTime fi;
+			DateTime.TryParse(row[3].ToString(), out fn);
+			DateTime.TryParse(row[13].ToString(), out fi);
+
+			EmpleadoModel e = new EmpleadoModel() {
+				Nombre = row[0].ToString() ?? string.Empty,
+				ApellidoPaterno = row[1].ToString() ?? string.Empty,
+				ApellidoMaterno = row[2].ToString() ?? string.Empty,
+				FechaNacimiento = fn,
+				Telefono = row[4].ToString() ?? string.Empty,
+				GeneroId = genero != null ? genero.Id : null,
+				EstadoCivilId = estadoCivil != null ? estadoCivil.Id : null,
+				Direccion = row[7].ToString() ?? string.Empty,
+				PuestoId = puesto != null ? puesto.Id : 0,
+				AreaId = area != null ? area.Id : 0,
+				SubareaId = subarea != null ? subarea.Id : null,
+				OficinaId = oficina != null ? oficina.Id : null,
+				JefeId = jefe != null ? jefe.Id : null,
+				FechaIngreso = fi,
+				Email = row[14].ToString() ?? string.Empty,
+				NombreContacto1 = row[15].ToString() ?? string.Empty,
+				TelefonoContacto1 = row[16].ToString() ?? string.Empty,
+				NombreContacto2 = row[17].ToString() ?? string.Empty,
+				TelefonoContacto2 = row[18].ToString() ?? string.Empty,
+				CURP = row[19].ToString() ?? string.Empty,
+				RFC = row[20].ToString() ?? string.Empty,
+				NSS = row[21].ToString() ?? string.Empty,
+				NombrePreferido = row[22].ToString() ?? string.Empty,
+			};
+
+			List<ArchivoModel> archivos = new List<ArchivoModel>();
+			//Crea los archivos del usuario.
+			foreach (FileTypes i in Enum.GetValues(typeof(FileTypes)))
 			{
-				//Se busca el empleado por su nombre completo.
-				Empleado? empleado = await _empleadoManager.GetByCURPAsync(row[19].ToString() ?? "");
-				int idEmpleado = 0;
-				Area? area = await _areaManager.GetByNameAsync(row[9].ToString() ?? "");
-				EstadoCivil? estadoCivil = await _estadoCivilManager.GetByNameAsync(row[6].ToString() ?? "");
-				Genero? genero = await _generoManager.GetByNameAsync(row[5].ToString() ?? "");
-				Empleado? jefe = await _empleadoManager.GetByNameAsync(row[12].ToString() ?? "");
-				Oficina? oficina = await _oficinaManager.GetByNameAsync(row[11].ToString() ?? "");
-				Puesto? puesto = await _puestoManager.GetByNameAsync(row[8].ToString() ?? "");
-				Subarea? subarea = await _subareaManager.GetByNameAsync(row[10].ToString() ?? "");
-
-				DateTime fi;
-				DateTime fn;
-				DateTime.TryParse(row[13].ToString(), out fi);
-				DateTime.TryParse(row[3].ToString(), out fn);
-
-				if (empleado != null)
-				{
-					idEmpleado = empleado.Id;
-
-					empleado.ApellidoMaterno = row[2].ToString() ?? "";
-					empleado.ApellidoPaterno = row[1].ToString() ?? "";
-					empleado.AreaId = area != null ? area.Id : null;
-					empleado.Direccion = row[7].ToString() ?? "";
-					empleado.Email = row[14].ToString() ?? "";
-					empleado.EstadoCivilId = estadoCivil != null ? estadoCivil.Id : null;
-					empleado.FechaIngreso = fi;
-					empleado.FechaNacimiento = fn;
-					empleado.GeneroId = genero != null ? genero.Id : null;
-					empleado.JefeId = jefe != null ? jefe.Id : null;
-					empleado.NombreCompleto = $"{row[0].ToString() ?? ""} {row[1].ToString() ?? ""} {row[2].ToString() ?? ""}";
-					empleado.OficinaId = oficina != null ? oficina.Id : null;
-					empleado.Nombre = row[0].ToString() ?? "";
-					empleado.NombrePreferido = row[22].ToString() ?? "";
-					empleado.PuestoId = puesto != null ? puesto.Id : null;
-					empleado.SubareaId = subarea != null ? subarea.Id : null;
-					empleado.Telefono = row[4].ToString() ?? "";
-					empleado.CURP = row[19].ToString() ?? "";
-					empleado.RFC = row[20].ToString() ?? "";
-					empleado.NSS = row[21].ToString() ?? "";
-
-					await _empleadoManager.UpdateAsync(empleado);
-
-					//Elimina los contactos del empleado.
-					await _contactoEmergenciaManager.DeleteByEmpleadoIdAsync(empleado.Id);
-				}
-				else
-				{
-					//Crea al empleado y obtiene su id.
-					idEmpleado = await _empleadoManager.CreateAsync(new Empleado()
-					{
-						ApellidoMaterno = row[2].ToString() ?? "",
-						ApellidoPaterno = row[1].ToString() ?? "",
-						AreaId = area != null ? area.Id : null,
-						Direccion = row[7].ToString() ?? "",
-						Email = row[14].ToString() ?? "",
-						EstadoCivilId = estadoCivil != null ? estadoCivil.Id : null,
-						FechaNacimiento = fn,
-						FechaIngreso = fi,
-						GeneroId = genero != null ? genero.Id : null,
-						JefeId = jefe != null ? jefe.Id : null,
-						NombreCompleto = $"{row[0].ToString() ?? ""} {row[1].ToString() ?? ""} {row[2].ToString() ?? ""}",
-						OficinaId = oficina != null ? oficina.Id : null,
-						Nombre = row[0].ToString() ?? "",
-						NombrePreferido = row[22].ToString() ?? "",
-						PuestoId = puesto != null ? puesto.Id : null,
-						SubareaId = subarea != null ? subarea.Id : null,
-						Telefono = row[4].ToString() ?? "",
-						CURP = row[19].ToString() ?? "",
-						RFC = row[20].ToString() ?? "",
-						NSS = row[21].ToString() ?? ""
-					});
-				}
-
-				//Crea dos nuevos contactos para el empleado.
-				await _contactoEmergenciaManager.CreateAsync(
-					new ContactoEmergencia() { Nombre = row[15].ToString() ?? "", Telefono = row[16].ToString() ?? "", EmpleadoId = idEmpleado }
-				);
-				await _contactoEmergenciaManager.CreateAsync(
-					new ContactoEmergencia() { Nombre = row[17].ToString() ?? "", Telefono = row[18].ToString() ?? "", EmpleadoId = idEmpleado }
-				);
-
-				await _db.Database.CommitTransactionAsync();
+				archivos.Add(new ArchivoModel() { extension = "", imgSrc = "", nombre = "", tipoArchivoId = (int)i });
 			}
-			catch (Exception)
-			{
-				await _db.Database.RollbackTransactionAsync();
-				throw;
-			}
+
+			e.Archivos = archivos.ToArray();
+
+			await createEmployee(e);
 		}
 	}
 }
