@@ -9,6 +9,8 @@ using Microsoft.Extensions.Localization;
 using static ERPSEI.Areas.Catalogos.Pages.GestionDeTalentoModel;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.CodeAnalysis.Elfie.Model.Strings;
+using ERPSEI.Data.Migrations;
+using System.Collections.Generic;
 
 namespace ERPSEI.Areas.ERP.Pages
 {
@@ -53,13 +55,12 @@ namespace ERPSEI.Areas.ERP.Pages
             string nombreSubarea = emp.Subarea != null ? emp.Subarea.Nombre : "";
             string nombrePuesto = emp.Puesto != null ? emp.Puesto.Nombre : "";
             string nombreOficina = emp.Oficina != null ? emp.Oficina.Nombre : "";
-            string nombreGenero = emp.Genero != null ? emp.Genero.Nombre : "";
-            string nombreEstadoCivil = emp.EstadoCivil != null ? emp.EstadoCivil.Nombre : "";
             string nombreJefe = emp.Jefe != null ? emp.Jefe.NombreCompleto : "";
             List<string> jsonChildren = new List<string>();
-            string firstName = string.Empty;
+            string nombre = string.Empty;
             string firstApellido = string.Empty;
-
+            ArchivoEmpleado? profilePicFile = null;
+            string profilePic = string.Empty;
 
             //Crea los nodos hijos del empleado.
             bool loff = true;
@@ -70,33 +71,57 @@ namespace ERPSEI.Areas.ERP.Pages
 
             //Quita al empleado procesado del listado de referencias para ya no volver procesarlo en el recorrido del listado principal.
             empleadosRef.Remove(emp);
-
-            firstName = emp.Nombre.Split(' ')[0];
+            if (emp.NombrePreferido != null && emp.NombrePreferido.Length >= 1)
+            {
+                //Si el usuario tiene nombre preferido, lo usa para mostrar.
+                nombre = emp.NombrePreferido;
+            }
+            else
+            {
+                //De lo contrario, por default usa siempre el primer nombre en caso de tener más de uno, o usa el único nombre en caso de solo tener 1
+                string[] nombres = emp.Nombre.Split(" ");
+                nombre = nombres.Length >= 1 ? nombres[0] : emp.Nombre;
+            }
             firstApellido = emp.ApellidoPaterno.Split(" ")[0];
+            if (emp.ArchivosEmpleado != null)
+            {
+                profilePicFile = emp.ArchivosEmpleado.Where(a => a.TipoArchivoId == (int)FileTypes.ImagenPerfil).FirstOrDefault();
+
+                //Si el archivo tiene contenido
+                if (profilePicFile != null && profilePicFile.Archivo.Length >= 1)
+                {
+                    //Asigna la información del archivo al arreglo de datos.
+                    string b64 = Convert.ToBase64String(profilePicFile.Archivo);
+                    bool isJPG = profilePicFile.Extension == "jpg" || profilePicFile.Extension == "jpeg";
+                    bool isPNG = profilePicFile.Extension == "png";
+
+                    if (isJPG)
+                    {
+                        profilePic = $"data:image/jpeg;base64,{b64}";
+                    }
+                    else if (isPNG)
+                    {
+                        profilePic = $"data:image/png;base64,{b64}";
+                    }
+                }
+            }
 
             return Task.FromResult("{" +
                         $"\"id\": {emp.Id}, " +
 						$"\"levelOffset\": {levelOffset}, " +
-						$"\"name\": \"{firstName + ' ' + firstApellido}\", " +
+						$"\"name\": \"{ + ' ' + firstApellido}\", " +
                         $"\"title\": \"{nombrePuesto}\", " +
                         $"\"children\": [{string.Join(",", jsonChildren)}], " +
-                        $"\"nombre\": \"{emp.Nombre}\", " +
-                        $"\"apellidoPaterno\": \"{emp.ApellidoPaterno}\", " +
-                        $"\"apellidoMaterno\": \"{emp.ApellidoMaterno}\", " +
-                        $"\"nombreCompleto\": \"{emp.NombreCompleto}\", " +
-                        $"\"fechaIngreso\": \"{emp.FechaIngreso:dd/MM/yyyy}\", " +
                         $"\"fechaIngresoJS\": \"{emp.FechaIngreso:yyyy-MM-dd}\", " +
-                        $"\"fechaNacimiento\": \"{emp.FechaNacimiento:dd/MM/yyyy}\", " +
                         $"\"fechaNacimientoJS\": \"{emp.FechaNacimiento:yyyy-MM-dd}\", " +
                         $"\"telefono\": \"{emp.Telefono}\", " +
                         $"\"email\": \"{emp.Email}\", " +
-                        $"\"genero\": \"{nombreGenero}\", " +
                         $"\"subarea\": \"{nombreSubarea}\", " +
                         $"\"oficina\": \"{nombreOficina}\", " +
                         $"\"puesto\": \"{nombrePuesto}\", " +
                         $"\"area\": \"{nombreArea}\", " +
-                        $"\"estadoCivil\": \"{nombreEstadoCivil}\", " +
-                        $"\"jefe\": \"{nombreJefe}\" " +
+                        $"\"jefe\": \"{nombreJefe}\", " +
+                        $"\"profilePic\": \"{profilePic}\" " +
                     "}");
         }
 

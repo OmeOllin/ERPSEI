@@ -52,7 +52,7 @@ function onCargarOrganigrama() {
                         let divOficina = data.oficina.length >= 1 ? `<div><i class="bi bi-building-fill"></i> ${data.oficina}</div>` : ``;
                         $node.find('.content').append(`
                                                         <div class="second-menu">
-                                                            <img class="avatar" src="/img/default_profile_pic.png">
+                                                            <img class="avatar" src="${data.profilePic}">
                                                             ${divEmail}
                                                             ${divTelefono}
                                                             ${divOficina}
