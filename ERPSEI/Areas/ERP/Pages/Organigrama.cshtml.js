@@ -40,9 +40,6 @@ function onCargarOrganigrama() {
                     'zoom': true,
                     'verticalLevel': vLevel,
                     'createNode': function ($node, data) {
-                        /*$node.find('.title').append(`<img class="avatar" src="https://dabeng.github.io/OrgChart/img/avatar/8.jpg" crossorigin="anonymous">`);*/
-                        //$node.find('.title').append(`<img class="avatar" src="/img/default_profile_pic.png" crossorigin="anonymous" />`);
-                        //$node.find('.content').prepend($node.find('.symbol'));
                         let formattedPhone = data.telefono;
                         if (data.telefono.length >= 10) {
                             formattedPhone = `${data.telefono.slice(0, 2)} ${data.telefono.slice(2, 6)} ${data.telefono.slice(6, 10)}`;
@@ -50,6 +47,7 @@ function onCargarOrganigrama() {
                         let divEmail = data.email.length >= 1 ? `<div><i class="bi bi-envelope-at-fill"></i> ${data.email}</div>` : ``;
                         let divTelefono = data.telefono.length >= 1 ? `<div><i class="bi bi-telephone-fill"></i> ${formattedPhone}</div>` : ``;
                         let divOficina = data.oficina.length >= 1 ? `<div><i class="bi bi-building-fill"></i> ${data.oficina}</div>` : ``;
+                        data.profilePic = data.profilePic || "/img/default_profile_pic.png";
                         $node.find('.content').append(`
                                                         <div class="second-menu">
                                                             <img class="avatar" src="${data.profilePic}">

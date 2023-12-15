@@ -109,7 +109,7 @@ namespace ERPSEI.Areas.ERP.Pages
             return Task.FromResult("{" +
                         $"\"id\": {emp.Id}, " +
 						$"\"levelOffset\": {levelOffset}, " +
-						$"\"name\": \"{ + ' ' + firstApellido}\", " +
+						$"\"name\": \"{ nombre + ' ' + firstApellido}\", " +
                         $"\"title\": \"{nombrePuesto}\", " +
                         $"\"children\": [{string.Join(",", jsonChildren)}], " +
                         $"\"fechaIngresoJS\": \"{emp.FechaIngreso:yyyy-MM-dd}\", " +
