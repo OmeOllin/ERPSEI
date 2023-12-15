@@ -8,6 +8,10 @@
 
 		public const string AlphanumNoSpace = @"^[áÁéÉíÍóÓúÚñÑ\w]+$";
 
+		public const string AlphanumNoSpaceNoUnderscore = @"^[A-Za-zñÑ\d]+$";
+
 		public const string Numeric = @"^[1-9][\d]+$";
+
+		public const string NumericNoRestriction = @"^[\d]+$";
 	}
 }
