@@ -172,10 +172,10 @@
     <value>Proof of tax situation</value>
   </data>
   <data name="CURP" xml:space="preserve">
-    <value>UPRC</value>
+    <value>CURP</value>
   </data>
   <data name="CURPPlaceholder" xml:space="preserve">
-    <value>UPRC</value>
+    <value>CURP</value>
   </data>
   <data name="DeactivateButton" xml:space="preserve">
     <value>Unsubscribe</value>
@@ -193,7 +193,7 @@
     <value>Address</value>
   </data>
   <data name="DocumentSuggestion" xml:space="preserve">
-    <value>Please note that files should not be larger than 1mb and only files in .pdf, .jpg, .jpeg and .png formats are accepted.</value>
+    <value>Please note that files should not be larger than 5mb and only files in .pdf, .jpg, .jpeg and .png formats are accepted. To reduce size of mentioned files, visit: </value>
   </data>
   <data name="EditButtonTitle" xml:space="preserve">
     <value>Edit</value>
@@ -274,7 +274,10 @@
     <value>Preferred name</value>
   </data>
   <data name="NSS" xml:space="preserve">
-    <value>Social security number</value>
+    <value>NSS</value>
+  </data>
+  <data name="NSSPlaceholder" xml:space="preserve">
+    <value>NSS</value>
   </data>
   <data name="OficinaPlaceholder" xml:space="preserve">
     <value>Office</value>
@@ -292,7 +295,10 @@
     <value>Position</value>
   </data>
   <data name="RFC" xml:space="preserve">
-    <value>Federal taxpayer registration</value>
+    <value>RFC</value>
+  </data>
+  <data name="RFCPlaceholder" xml:space="preserve">
+    <value>RFC</value>
   </data>
   <data name="SaveButtonTitle" xml:space="preserve">
     <value>Save</value>

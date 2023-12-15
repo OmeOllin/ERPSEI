@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AlphanumNoSpaceNoUnderscore" xml:space="preserve">
+    <value>The {0} field must have only letters and numbers.</value>
+  </data>
   <data name="AlphanumSpace" xml:space="preserve">
     <value>The {0} field only allows letters, numbers, underscores, and spaces.</value>
   </data>
@@ -133,7 +136,7 @@
     <value>Business email</value>
   </data>
   <data name="CURPField" xml:space="preserve">
-    <value>UPRC</value>
+    <value>CURP</value>
   </data>
   <data name="DireccionField" xml:space="preserve">
     <value>Address</value>
@@ -177,6 +180,9 @@
   <data name="FirstNameField" xml:space="preserve">
     <value>First name</value>
   </data>
+  <data name="FullNameField" xml:space="preserve">
+    <value>Name</value>
+  </data>
   <data name="GeneroField" xml:space="preserve">
     <value>Gender</value>
   </data>
@@ -194,6 +200,12 @@
   </data>
   <data name="NewPasswordField" xml:space="preserve">
     <value>New password</value>
+  </data>
+  <data name="NSSField" xml:space="preserve">
+    <value>NSS</value>
+  </data>
+  <data name="Numeric" xml:space="preserve">
+    <value>The {0} field must have only numbers.</value>
   </data>
   <data name="OficinaField" xml:space="preserve">
     <value>Office</value>
@@ -224,6 +236,9 @@
   </data>
   <data name="Required" xml:space="preserve">
     <value>The {0} field is required.</value>
+  </data>
+  <data name="RFCField" xml:space="preserve">
+    <value>RFC</value>
   </data>
   <data name="SecondNameField" xml:space="preserve">
     <value>Second name</value>

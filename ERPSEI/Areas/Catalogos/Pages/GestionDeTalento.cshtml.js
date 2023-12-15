@@ -4,7 +4,8 @@ var selections = [];
 const NUEVO = 0;
 const EDITAR = 1;
 const VER = 2;
-var maxFileSizeInBytes = 1000000;
+//5mb = (5 * 1024) * 1024;
+var maxFileSizeInBytes = 5242880;
 const postOptions = { headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() } }
 
 //Función para inicializar el módulo.
@@ -110,6 +111,9 @@ function onAgregarClick() {
         subareaId: 0,
         oficinaId: 0,
         jefeId: 0,
+        curp: "",
+        rfc: "",
+        nss: "",
         nombreContacto1: "",
         telefonoContacto1: "",
         nombreContacto2: "",
@@ -123,8 +127,8 @@ function onAgregarClick() {
             nombre: "",
             tipoArchivoId: a,
             extension: "",
-            imgSrc: a == 1 ? "/img/default_profile_pic.png" : "",
-            htmlContainer: a != 1 ? "" : ""
+            imgSrc: "",
+            htmlContainer: ""
 
         });
     }
@@ -292,8 +296,8 @@ function onBuscarClick() {
                         summary += `<li>${error}</li>`;
                     });
                     summaryContainer.innerHTML += `<ul>${summary}</ul>`;
-                    showError(btnBuscar.innerHTML, resp.mensaje);
                 }
+                showError(btnBuscar.innerHTML, resp.mensaje);
                 return;
             }
 
@@ -314,7 +318,6 @@ function initEmpleadoDialog(action, row) {
     let idField = document.getElementById("inpEmpleadoId");
     let picField = document.getElementById("profilePicContainer");
     let picSelector = document.getElementById("profilePicSelector");
-    let editPicLink = document.getElementById("editProfilePicLink");
     let primerNombreField = document.getElementById("inpEmpleadoPrimerNombre");
     let nombrePreferidoField = document.getElementById("inpEmpleadoNombrePreferido");
     let apellidoPaternoField = document.getElementById("inpEmpleadoApellidoPaterno");
@@ -331,23 +334,25 @@ function initEmpleadoDialog(action, row) {
     let jefeField = document.getElementById("selEmpleadoJefeId");
     let fechaIngresoField = document.getElementById("inpEmpleadoFechaIngreso");
     let emailField = document.getElementById("inpEmpleadoEmail");
+    let curpField = document.getElementById("inpEmpleadoCURP");
+    let rfcField = document.getElementById("inpEmpleadoRFC");
+    let nssField = document.getElementById("inpEmpleadoNSS");
     let nombreContacto1Field = document.getElementById("inpEmpleadoNombreContacto1");
     let telefonoContacto1Field = document.getElementById("inpEmpleadoTelefonoContacto1");
     let nombreContacto2Field = document.getElementById("inpEmpleadoNombreContacto2");
     let telefonoContacto2Field = document.getElementById("inpEmpleadoTelefonoContacto2");
 
     let btnDesactivar = document.getElementById("dlgEmpleadoBtnDesactivar");
-    let btnGuardar = document.getElementById("dlgEmpleadoBtnGuardar");
     let dlgTitle = document.getElementById("dlgEmpleadoTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 
     idField.setAttribute("disabled", true);
-    btnDesactivar.hidden = true;
     switch (action) {
         case NUEVO:
         case EDITAR:
             if (action == NUEVO) {
+                btnDesactivar.hidden = true;
                 dlgTitle.innerHTML = dlgNuevoTitle;
             }
             else {
@@ -355,54 +360,16 @@ function initEmpleadoDialog(action, row) {
                 dlgTitle.innerHTML = dlgEditarTitle;
             }
 
-            editPicLink.removeAttribute("disabled");
-            primerNombreField.removeAttribute("disabled");
-            nombrePreferidoField.removeAttribute("disabled");
-            apellidoPaternoField.removeAttribute("disabled");
-            apellidoMaternoField.removeAttribute("disabled");
-            fechaNacimientoField.removeAttribute("disabled");
-            telefonoField.removeAttribute("disabled");
-            generoField.removeAttribute("disabled");
-            estadoCivilIdField.removeAttribute("disabled");
-            direccionField.removeAttribute("disabled");
-            puestoField.removeAttribute("disabled");
-            areaField.removeAttribute("disabled");
-            subareaField.removeAttribute("disabled");
-            oficinaField.removeAttribute("disabled");
-            jefeField.removeAttribute("disabled");
-            fechaIngresoField.removeAttribute("disabled");
-            emailField.removeAttribute("disabled");
-            nombreContacto1Field.removeAttribute("disabled");
-            telefonoContacto1Field.removeAttribute("disabled");
-            nombreContacto2Field.removeAttribute("disabled");
-            telefonoContacto2Field.removeAttribute("disabled");
-            btnGuardar.removeAttribute("disabled");
+            document.querySelectorAll(".formButton").forEach(function (btn) { btn.classList.remove("disabled"); });
+            document.querySelectorAll(".formInput, .formSelect").forEach(function (e) { e.removeAttribute("disabled"); });
+            
+
             break;
         default:
             dlgTitle.innerHTML = dlgVerTitle;
 
-            editPicLink.setAttribute("disabled", true);
-            primerNombreField.setAttribute("disabled", true);
-            nombrePreferidoField.setAttribute("disabled", true);
-            apellidoPaternoField.setAttribute("disabled", true);
-            apellidoMaternoField.setAttribute("disabled", true);
-            fechaNacimientoField.setAttribute("disabled", true);
-            telefonoField.setAttribute("disabled", true);
-            generoField.setAttribute("disabled", true);
-            estadoCivilIdField.setAttribute("disabled", true);
-            direccionField.setAttribute("disabled", true);
-            puestoField.setAttribute("disabled", true);
-            areaField.setAttribute("disabled", true);
-            subareaField.setAttribute("disabled", true);
-            oficinaField.setAttribute("disabled", true);
-            jefeField.setAttribute("disabled", true);
-            fechaIngresoField.setAttribute("disabled", true);
-            emailField.setAttribute("disabled", true);
-            nombreContacto1Field.setAttribute("disabled", true);
-            telefonoContacto1Field.setAttribute("disabled", true);
-            nombreContacto2Field.setAttribute("disabled", true);
-            telefonoContacto2Field.setAttribute("disabled", true);
-            btnGuardar.setAttribute("disabled", true);
+            document.querySelectorAll(".formButton").forEach(function (btn) { btn.classList.add("disabled"); });
+            document.querySelectorAll(".formInput, .formSelect").forEach(function (e) { e.setAttribute("disabled", true); });
             break;
     }
 
@@ -423,8 +390,15 @@ function initEmpleadoDialog(action, row) {
     jefeField.value = row.jefeId;
     fechaIngresoField.value = row.fechaIngresoJS;
     emailField.value = row.email;
+    curpField.value = row.curp;
+    rfcField.value = row.rfc;
+    nssField.value = row.nss;
 
     row.contactosEmergencia = row.contactosEmergencia || [];
+    nombreContacto1Field.value = "";
+    telefonoContacto1Field.value = "";
+    nombreContacto2Field.value = "";
+    telefonoContacto2Field.value = "";
     if (row.contactosEmergencia.length >= 1) {
         nombreContacto1Field.value = row.contactosEmergencia[0].nombre || "";
         telefonoContacto1Field.value = row.contactosEmergencia[0].telefono || "";
@@ -443,23 +417,36 @@ function initEmpleadoDialog(action, row) {
 
         if (a.tipoArchivoId == 1) {
             //Si el tipo de archivo es la foto de perfil, se establece en el contenedor directamente.
+            if ((a.imgSrc||"").length <= 0) { a.imgSrc = "/img/default_profile_pic.png"; }
             picField.setAttribute('src', a.imgSrc);
             picSelector.setAttribute('sourceLength', a.imgSrc.length);
             picSelector.setAttribute('sourceName', `${a.nombre}.${a.extension}`);
             picSelector.setAttribute('b64', b64);
         }
         else {
-            //De lo contrario, agrega un archivo al DOM.
+            let containerClass = "document-container-empty";
+            let iconClass = "opacity-25";
+            let nameClass = "opacity-25";
+            let nameHTML = `<div class="overflowed-text">Seleccione...</div>`;
+            let editDisabled = action == VER ? "disabled" : "";
+
+            if (b64.length >= 1) {
+                //Si trae base64, agrega un archivo al DOM con la información.
+                containerClass = "document-container-filled";
+                iconClass = "document-icon-filled";
+                nameClass = "document-name-filled";
+                nameHTML = `<div class="overflowed-text">${a.nombre}</div>.<div>${a.extension}</div>`;
+            }
+
             $("#bodyArchivos").append(
                 `<div class="col-12 col-xl-6">
                     <div><b>${arrTiposDocumentos[a.tipoArchivoId]}</b></div>
-                    <div id="container${a.tipoArchivoId}" class="alert mb-2 mt-2 document-container-empty row me-0">
-                        <div id="fileIcon${a.tipoArchivoId}" class="align-self-center col-1 opacity-25"><i class='bi bi-file-image' style='font-size:25px'></i></div>
-                        <div id="fileName${a.tipoArchivoId}" class="align-self-center col-10 p-2 opacity-25" style="display:flex; color:dimgray"><div class="overflowed-text">Seleccione...</div></div>
+                    <div id="container${a.tipoArchivoId}" class="alert mb-2 mt-2 ${containerClass} row me-0">
+                        <div id="fileIcon${a.tipoArchivoId}" class="align-self-center col-1 ${iconClass}"><i class='bi bi-file-image' style='font-size:25px'></i></div>
+                        <div id="fileName${a.tipoArchivoId}" class="align-self-center col-10 ${nameClass} p-2" style="display:flex; color:dimgray">${nameHTML}</div>
                         <div class="align-self-center col-1">
-                            <input type="file" id="selector${a.tipoArchivoId}" b64="${b64}" sourceName="${a.nombre}.${a.extension}" sourceLength="${(a.archivo || []).length}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-                            <a class='btn btn-sm btn-primary mb-1' onclick='onEditDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-pencil-fill'></i></a>
-                            <a class="btn btn-sm btn-primary disableable mb-1" inputName="selector${a.tipoArchivoId}" asp-page="/FileViewer" asp-route-id="${a.id}" target="_blank" sourceLength="${(a.archivo || []).length}"><i class="bi bi-search"></i></a>
+                            <input type="file" id="selector${a.tipoArchivoId}" b64="${b64}" sourceName="${a.nombre}.${a.extension}" sourceLength="${(b64||"").length}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                            <a class='btn btn-sm btn-primary ${editDisabled} mb-1' onclick='onEditDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-pencil-fill'></i></a>
                             <a class="btn btn-sm btn-primary disableable mb-1" inputName="selector${a.tipoArchivoId}" onclick="onDeleteClick(this);" sourceId="selector${a.tipoArchivoId}" sourceLength="${(a.archivo || []).length}"><i class="bi bi-x-lg"></i></a>
                         </div>
                     </div>
@@ -469,10 +456,10 @@ function initEmpleadoDialog(action, row) {
         i++;
     });
 
-    initializeDisableableButtons();
+    initializeDisableableButtons(action == VER);
 }
 //Función para habilitar/deshabilitar los botones de visualización en base a si existe contenido o no para visualizar.
-function initializeDisableableButtons() {
+function initializeDisableableButtons(isConsulta = false) {
     //Botones de acción de editar y eliminar
     let buttons = document.getElementsByClassName("disableable");
 
@@ -484,7 +471,7 @@ function initializeDisableableButtons() {
             let input = document.getElementById(inputName);
             let sourceLength = (input.getAttribute("b64")||"").length;
             let hasFile = sourceLength >= 1;
-            if (hasFile) {
+            if (hasFile && !isConsulta) {
                 button.classList.remove("disabled");
             }
             else {
@@ -691,6 +678,9 @@ function onGuardarClick() {
     let jefeField = document.getElementById("selEmpleadoJefeId");
     let fechaIngresoField = document.getElementById("inpEmpleadoFechaIngreso");
     let emailField = document.getElementById("inpEmpleadoEmail");
+    let curpField = document.getElementById("inpEmpleadoCURP");
+    let rfcField = document.getElementById("inpEmpleadoRFC");
+    let nssField = document.getElementById("inpEmpleadoNSS");
     let nombreContacto1Field = document.getElementById("inpEmpleadoNombreContacto1");
     let telefonoContacto1Field = document.getElementById("inpEmpleadoTelefonoContacto1");
     let nombreContacto2Field = document.getElementById("inpEmpleadoNombreContacto2");
@@ -727,6 +717,9 @@ function onGuardarClick() {
         jefeId: jefeField.value == 0 ? null : parseInt(jefeField.value),
         fechaIngreso: fechaIngresoField.value,
         email: emailField.value.trim(),
+        curp: curpField.value.trim(),
+        rfc: rfcField.value.trim(),
+        nss: nssField.value.trim(),
         nombreContacto1: nombreContacto1Field.value.trim(),
         telefonoContacto1: telefonoContacto1Field.value.trim(),
         nombreContacto2: nombreContacto2Field.value.trim(),
@@ -745,8 +738,8 @@ function onGuardarClick() {
                         summary += `<li>${error}</li>`;
                     });
                     summaryContainer.innerHTML += `<ul>${summary}</ul>`;
-                    showError(dlgTitle.innerHTML, resp.mensaje);
                 }
+                showError(dlgTitle.innerHTML, resp.mensaje);
                 return;
             }
 

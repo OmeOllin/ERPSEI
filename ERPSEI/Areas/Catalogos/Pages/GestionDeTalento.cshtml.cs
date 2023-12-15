@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
+using NuGet.Packaging.Signing;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Net.Mime;
@@ -118,6 +119,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Phone(ErrorMessage = "PhoneFormat")]
 			[StringLength(10, ErrorMessage = "FieldLength", MinimumLength = 10)]
 			[DataType(DataType.PhoneNumber)]
+			[RegularExpression(RegularExpressions.Numeric, ErrorMessage = "Numeric")]
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "PhoneNumberField")]
 			public string Telefono { get; set; } = string.Empty;
@@ -127,6 +129,27 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "CorreoEmpresarialField")]
 			public string Email { get; set; } = string.Empty;
+
+			[DataType(DataType.Text)]
+			[StringLength(18, ErrorMessage = "FieldLength", MinimumLength = 18)]
+			[RegularExpression(RegularExpressions.AlphanumNoSpaceNoUnderscore, ErrorMessage = "AlphanumNoSpaceNoUnderscore")]
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "CURPField")]
+			public string CURP { get; set; } = string.Empty;
+
+			[DataType(DataType.Text)]
+			[StringLength(13, ErrorMessage = "FieldLength", MinimumLength = 13)]
+			[RegularExpression(RegularExpressions.AlphanumNoSpaceNoUnderscore, ErrorMessage = "AlphanumNoSpaceNoUnderscore")]
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "RFCField")]
+			public string RFC { get; set; } = string.Empty;
+
+			[DataType(DataType.Text)]
+			[StringLength(11, ErrorMessage = "FieldLength", MinimumLength = 9)]
+			[RegularExpression(RegularExpressions.NumericNoRestriction, ErrorMessage = "Numeric")]
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "NSSField")]
+			public string NSS { get; set; } = string.Empty;
 
 			[Display(Name = "GeneroField")]
 			public int? GeneroId { get; set; }
@@ -160,6 +183,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Phone(ErrorMessage = "PhoneFormat")]
 			[StringLength(10, ErrorMessage = "FieldLength", MinimumLength = 10)]
 			[DataType(DataType.PhoneNumber)]
+			[RegularExpression(RegularExpressions.Numeric, ErrorMessage = "Numeric")]
 			[Display(Name = "PhoneNumberField")]
 			public string? TelefonoContacto1 { get; set; } = string.Empty;
 
@@ -172,14 +196,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Phone(ErrorMessage = "PhoneFormat")]
 			[StringLength(10, ErrorMessage = "FieldLength", MinimumLength = 10)]
 			[DataType(DataType.PhoneNumber)]
+			[RegularExpression(RegularExpressions.Numeric, ErrorMessage = "Numeric")]
 			[Display(Name = "PhoneNumberField")]
 			public string? TelefonoContacto2 { get; set; } = string.Empty;
-
-			public string? CURP { get; set; } = string.Empty;
-
-			public string? RFC { get; set; } = string.Empty;
-
-			public string? NSS { get; set; } = string.Empty;
 
 			public ArchivoModel?[] Archivos { get; set; } = Array.Empty<ArchivoModel>();
 		}
@@ -467,7 +486,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		
 		public async Task<JsonResult> OnPostSaveEmpleado()
 		{
-
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadoSavedUnsuccessfully"]);
 
 			//Se remueve el campo Plantilla para que no sea validado ya que no pertenece a este proceso.
@@ -480,10 +498,18 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			}
 			try
 			{
-				await createEmployee(InputEmpleado);
+				//Valida que no exista un empleado registrado con los mismos datos. En caso de haber, se deja el mensaje en resp.Mensajes para ser mostrado al usuario.
+				resp.Mensaje = await validarSiExisteEmpleado(InputEmpleado, false);
 
-				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["EmpleadoSavedSuccessfully"];
+				//Si la longitud del mensaje de respuesta es menor o igual a cero, se considera que no hubo errores anteriores.
+				if ((resp.Mensaje ?? "").Length <= 0)
+				{
+					//Procede a crear o actualizar el empleado.
+					await createOrUpdateEmployee(InputEmpleado);
+
+					resp.TieneError = false;
+					resp.Mensaje = _strLocalizer["EmpleadoSavedSuccessfully"];
+				}
 			}
 			catch (Exception ex)
 			{
@@ -492,18 +518,55 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resp);
 		}
-		private async Task createEmployee(EmpleadoModel e)
+		private async Task<string> validarSiExisteEmpleado(EmpleadoModel emp, bool curpAsKey)
 		{
-			await _db.Database.BeginTransactionAsync();
+			List<Empleado> coincidences = new List<Empleado>();
+			List<Empleado> emps = await _empleadoManager.GetAllAsync();
+
+			if (curpAsKey)
+			{
+				//Excluyo al empleado con el CURP actual.
+				emps = emps.Where(e => e.CURP != emp.CURP).ToList();
+			}
+			else
+			{
+				//Excluyo al empleado con el Id actual.
+				emps = emps.Where(e => e.Id != emp.Id).ToList();
+			}
+
+			//Valido que no exista empleado que tenga los mismos datos.
+			coincidences = emps.Where(e => e.NombreCompleto == $"{emp.Nombre} {emp.ApellidoPaterno} {emp.ApellidoMaterno}").ToList();
+			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el nombre de {emp.Nombre} {emp.ApellidoPaterno} {emp.ApellidoMaterno}. Por favor verifique la información"; }
+
+			coincidences = emps.Where(e => e.Email == emp.Email).ToList();
+			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el correo {emp.Email}. Por favor verifique la información"; }
+
+			coincidences = emps.Where(e => e.CURP == emp.CURP).ToList();
+			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el CURP {emp.CURP}. Por favor verifique la información"; }
+
+			coincidences = emps.Where(e => e.RFC == emp.RFC).ToList();
+			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el RFC {emp.RFC}. Por favor verifique la información"; }
+
+			coincidences = emps.Where(e => e.NSS == emp.NSS).ToList();
+			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el NSS {emp.NSS}. Por favor verifique la información"; }
+
+			return string.Empty;
+		}
+		private async Task createOrUpdateEmployee(EmpleadoModel e)
+		{
 			try
 			{
+				await _db.Database.BeginTransactionAsync();
+
 				int idEmpleado = 0;
+
 				//Se busca empleado por id
 				Empleado? empleado = await _empleadoManager.GetByIdAsync(e.Id);
-				//Si no se encontró empleado por id, se busca el empleado por su CURP.
+				//Si no se encontró empleado por id, se busca el empleado por su CURP. 
 				if (empleado == null) { empleado = await _empleadoManager.GetByCURPAsync(e.CURP ?? string.Empty); }
-				//Si no se encontró empleado, crea uno nuevo. De lo contrario, obtiene su Id.
-				if (empleado == null) { empleado = new Empleado(); } else { idEmpleado = empleado.Id; }
+
+				//Si se encontró empleado, obtiene su Id del registro existente. De lo contrario, se crea uno nuevo.
+				if (empleado != null) { idEmpleado = empleado.Id; } else { empleado = new Empleado(); }
 
 				//Llena los datos del empleado.
 				empleado.ApellidoMaterno = e.ApellidoMaterno;
@@ -590,7 +653,15 @@ namespace ERPSEI.Areas.Catalogos.Pages
 								//Omite el procesamiento del row de encabezado
 								if(result.Tables[0].Rows.IndexOf(row) == 0) { continue; }
 
-								await CreateEmployeeFromExcelRow(row);
+								string vmsg = await CreateEmployeeFromExcelRow(row);
+
+								//Si la longitud del mensaje de respuesta es mayor o igual a uno, se considera que hubo errores.
+								if ((vmsg ?? "").Length >= 1)
+								{
+									resp.TieneError = true;
+									resp.Mensaje = vmsg;
+									break;
+								}
 							}
 						}
 					}
@@ -606,8 +677,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resp);
 		}
-		private async Task CreateEmployeeFromExcelRow(DataRow row)
+		private async Task<string> CreateEmployeeFromExcelRow(DataRow row)
 		{
+			string validationMsg = string.Empty;
 			Genero? genero = await _generoManager.GetByNameAsync(row[5].ToString() ?? string.Empty);
 			EstadoCivil? estadoCivil = await _estadoCivilManager.GetByNameAsync(row[6].ToString() ?? string.Empty);
 			Puesto? puesto = await _puestoManager.GetByNameAsync(row[8].ToString() ?? string.Empty);
@@ -656,7 +728,17 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			e.Archivos = archivos.ToArray();
 
-			await createEmployee(e);
+			//Valida que no exista un empleado registrado con los mismos datos. En caso de haber, se deja el mensaje en resp.Mensajes para ser mostrado al usuario.
+			validationMsg = await validarSiExisteEmpleado(e, true);
+
+			//Si la longitud del mensaje de respuesta es menor o igual a cero, se considera que no hubo errores anteriores.
+			if ((validationMsg ?? "").Length <= 0)
+			{
+				//Procede a crear o actualizar el empleado.
+				await createOrUpdateEmployee(e);
+			}
+
+			return validationMsg ?? "";
 		}
 	}
 }

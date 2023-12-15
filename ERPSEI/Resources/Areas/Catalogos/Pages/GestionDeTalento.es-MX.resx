@@ -193,7 +193,7 @@
     <value>Dirección</value>
   </data>
   <data name="DocumentSuggestion" xml:space="preserve">
-    <value>Tenga en cuenta que los archivos no deben tener más de 1 MB y solo se aceptan archivos en formatos .pdf, .jpg, .jpeg y .png.</value>
+    <value>Tenga en cuenta que los archivos no deben tener más de 5 MB y solo se aceptan archivos en formatos .pdf, .jpg, .jpeg y .png. Para reducir el tamaño de los archivos mencionados, visite la siguiente liga: </value>
   </data>
   <data name="EditButtonTitle" xml:space="preserve">
     <value>Editar</value>
@@ -276,6 +276,9 @@
   <data name="NSS" xml:space="preserve">
     <value>NSS</value>
   </data>
+  <data name="NSSPlaceholder" xml:space="preserve">
+    <value>NSS</value>
+  </data>
   <data name="OficinaPlaceholder" xml:space="preserve">
     <value>Oficina</value>
   </data>
@@ -292,6 +295,9 @@
     <value>Puesto</value>
   </data>
   <data name="RFC" xml:space="preserve">
+    <value>RFC</value>
+  </data>
+  <data name="RFCPlaceholder" xml:space="preserve">
     <value>RFC</value>
   </data>
   <data name="SaveButtonTitle" xml:space="preserve">

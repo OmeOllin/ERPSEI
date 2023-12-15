@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AlphanumNoSpaceNoUnderscore" xml:space="preserve">
+    <value>El campo {0} solo permite letras y números.</value>
+  </data>
   <data name="AlphanumSpace" xml:space="preserve">
     <value>El campo {0} solo permite letras, números, guión bajo y espacios.</value>
   </data>
@@ -177,6 +180,9 @@
   <data name="FirstNameField" xml:space="preserve">
     <value>Primer nombre</value>
   </data>
+  <data name="FullNameField" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
   <data name="GeneroField" xml:space="preserve">
     <value>Género</value>
   </data>
@@ -194,6 +200,12 @@
   </data>
   <data name="NewPasswordField" xml:space="preserve">
     <value>Nueva contraseña</value>
+  </data>
+  <data name="NSSField" xml:space="preserve">
+    <value>NSS</value>
+  </data>
+  <data name="Numeric" xml:space="preserve">
+    <value>El campo {0} solo permite números.</value>
   </data>
   <data name="OficinaField" xml:space="preserve">
     <value>Oficina</value>
@@ -224,6 +236,9 @@
   </data>
   <data name="Required" xml:space="preserve">
     <value>El campo {0} es requerido</value>
+  </data>
+  <data name="RFCField" xml:space="preserve">
+    <value>RFC</value>
   </data>
   <data name="SecondNameField" xml:space="preserve">
     <value>Segundo nombre</value>
