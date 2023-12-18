@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
-using NuGet.Packaging.Signing;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Net.Mime;
@@ -279,6 +278,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			foreach (Empleado e in empleados)
 			{
+				Empleado? jefe = e.JefeId != null ? _empleadoManager.GetByIdAsync((int)e.JefeId).Result : null;
 				List<string> jsonContactosEmergencia;
 				List<string> jsonArchivos;
 				string ProfilePictureSrc = string.Empty;
@@ -289,7 +289,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				nombreOficina = e.Oficina != null ? e.Oficina.Nombre : "";
 				nombreGenero = e.Genero != null ? e.Genero.Nombre : "";
 				nombreEstadoCivil = e.EstadoCivil != null ? e.EstadoCivil.Nombre : "";
-				nombreJefe = e.Jefe != null ? e.Jefe.NombreCompleto : "";
+				nombreJefe = jefe != null ? jefe.NombreCompleto : "";
 
 				jsonContactosEmergencia = getListJsonContactosEmergencia(e.ContactosEmergencia);
 

@@ -44,14 +44,9 @@ namespace ERPSEI.Data
 			modelBuilder.Entity<Empleado>().HasOne(e => e.Oficina).WithMany(o => o.Empleados).OnDelete(DeleteBehavior.NoAction);
 			modelBuilder.Entity<Empleado>().HasMany(e => e.ContactosEmergencia).WithOne(ce => ce.Empleado).OnDelete(DeleteBehavior.NoAction);
 			modelBuilder.Entity<Empleado>().HasMany(e => e.ArchivosEmpleado).WithOne(ae => ae.Empleado).OnDelete(DeleteBehavior.NoAction);
-			modelBuilder.Entity<Empleado>().HasOne(e => e.Jefe).WithMany(j => j.Empleados).OnDelete(DeleteBehavior.NoAction);
-			modelBuilder.Entity<Empleado>().HasOne(e => e.User).WithOne(u => u.Empleado).OnDelete(DeleteBehavior.NoAction);
+			//modelBuilder.Entity<Empleado>().HasOne(e => e.Jefe).WithMany(j => j.Empleados).OnDelete(DeleteBehavior.NoAction);
 
 
-			modelBuilder.Entity<TipoArchivo>()
-				.HasMany(ta => ta.ArchivosEmpleado)
-				.WithOne(ae => ae.TipoArchivo)
-				.OnDelete(DeleteBehavior.NoAction);
 			modelBuilder.Entity<TipoArchivo>()
 				.HasData(
 					new TipoArchivo((int)FileTypes.ImagenPerfil, "Imagen de perfil"),
@@ -67,14 +62,12 @@ namespace ERPSEI.Data
 					new TipoArchivo((int)FileTypes.Otro, "Otro")
 				);
 
-			modelBuilder.Entity<EstadoCivil>().HasMany(ec => ec.Empleados).WithOne(e => e.EstadoCivil).OnDelete(DeleteBehavior.NoAction);
 			modelBuilder.Entity<EstadoCivil>()
 				.HasData(
 					new EstadoCivil() { Id = 1, Nombre = "Soltero" },
 					new EstadoCivil() { Id = 2, Nombre = "Casado" }
 				);
 
-			modelBuilder.Entity<Genero>().HasMany(g => g.Empleados).WithOne(e => e.Genero).OnDelete(DeleteBehavior.NoAction);
 			modelBuilder.Entity<Genero>()
 				.HasData(
 					new Genero() { Id = 1, Nombre = "Masculino" },
@@ -112,7 +105,6 @@ namespace ERPSEI.Data
 				i++;
 			}
 			modelBuilder.Entity<Puesto>().HasData(dataPuestos);
-			modelBuilder.Entity<Puesto>().HasMany(p => p.Empleados).WithOne(e => e.Puesto).OnDelete(DeleteBehavior.NoAction);
 
 			List<KeyValuePair<string, List<string>>> areas = new List<KeyValuePair<string, List<string>>>()
 			{
@@ -149,12 +141,9 @@ namespace ERPSEI.Data
 				j++;
 			}
 			modelBuilder.Entity<Area>().HasData(dataAreas);
-			modelBuilder.Entity<Area>().HasMany(a => a.Empleados).WithOne(e => e.Area).OnDelete(DeleteBehavior.NoAction);
 			modelBuilder.Entity<Area>().HasMany(a => a.Subareas).WithOne(sa => sa.Area).OnDelete(DeleteBehavior.NoAction);
 
 			modelBuilder.Entity<Subarea>().HasData(dataSubareas.ToArray());
-			modelBuilder.Entity<Subarea>().HasMany(sa => sa.Empleados).WithOne(e => e.Subarea).OnDelete(DeleteBehavior.NoAction);
-			modelBuilder.Entity<Subarea>().HasOne(sa => sa.Area).WithMany(a => a.Subareas).OnDelete(DeleteBehavior.NoAction);
 
 			List<string> oficinas = new List<string>()
 			{
@@ -184,7 +173,6 @@ namespace ERPSEI.Data
 				l++;
             }
 			modelBuilder.Entity<Oficina>().HasData(dataOficinas);
-			modelBuilder.Entity<Oficina>().HasMany(o => o.Empleados).WithOne(e => e.Oficina).OnDelete(DeleteBehavior.NoAction);
 		}
 
     }

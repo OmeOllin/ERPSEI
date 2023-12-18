@@ -63,10 +63,6 @@ namespace ERPSEI.Data.Entities.Empleados
 
         //Referencia a esta misma tabla para el jefe del empleado
 		public int? JefeId { get; set; }
-		public Empleado? Jefe { get; set; }
-
-        //Referencia a esta misma tabla para empleados de un jefe
-		public ICollection<Empleado>? Empleados { get; }
 
 	}
 }

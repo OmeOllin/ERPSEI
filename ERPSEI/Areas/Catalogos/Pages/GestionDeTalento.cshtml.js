@@ -43,13 +43,61 @@ function responseHandler(res) {
 }
 //Función para dar formato al detalle de empleado
 function detailFormatter(index, row) {
-    var html = []
-    $.each(row, function (key, value) {
-        if (key != "state" && key != "empleados") {
-            html.push('<p><b>' + key + ':</b> ' + value + '</p>')
+    /*var html = []*/
+    let src = "";
+    for (var i = 0; i < row.archivos.length; i++) {
+        if (row.archivos[i].tipoArchivoId == 1) {
+            //Si el tipo de archivo es la foto de perfil, se establece en el contenedor directamente.
+            if ((row.archivos[i].imgSrc || "").length <= 0) { row.archivos[i].imgSrc = "/img/default_profile_pic.png"; }
+            src = row.archivos[i].imgSrc;
+            break;
         }
-    });
-    return html.join('')
+    }
+
+    let genderClass = "bi-gender-female";
+    if (row.genero == "Masculino") { genderClass = "bi-gender-male"; }
+
+    let h = `<div class="container alert alert-primary">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-2">
+						<div>
+							<img class="profile-pic-min m-3" src="${src}" />
+						</div>
+					</div>
+                    <div class="col-sm-12 col-md-12 col-lg-10">
+					    <div class="row">
+						    <div class="col-12">
+							    <i class="bi bi-person-fill"></i> <span><b>Nombre: </b>${row.nombreCompleto}</span>
+						    </div>
+						    <div class="col-12">
+							    <i class="bi bi-gear-fill"></i> <span><b>Fecha Ingreso: </b>${row.fechaIngreso}</span>
+						    </div>
+                            <div class="col-12">
+							    <i class="bi bi-cake2-fill"></i> <span><b>Fecha Nacimiento: </b>${row.fechaNacimiento}</span>
+						    </div>
+						    <div class="col-12">
+							    <i class="bi bi-telephone-fill"> </i><span><b>Teléfono: </b>${row.telefono}</span>
+						    </div>
+						    <div class="col-12">
+							    <i class="bi ${genderClass}"></i> <span><b>G&eacute;nero: </b>${row.genero}</span>
+						    </div>
+						    <div class="col-12">
+							    <i class="bi bi-yin-yang"></i> <span><b>Estado Civ&iacute;l: </b>${row.estadoCivil}</span>
+						    </div>
+						    <div class="col-12">
+							    <i class="bi bi-house-door-fill"> </i><span><b>Direcci&oacute;n: </b>${row.direccion}</span>
+						    </div>
+					    </div>
+				    </div>
+                </div>
+            </div>`;
+    //$.each(row, function (key, value) {
+    //    if (key != "state" && key != "empleados") {
+    //        html.push('<p><b>' + key + ':</b> ' + value + '</p>')
+    //    }
+    //});
+    //return html.join('')
+    return h;
 }
 //Función para dar formato a los iconos de operación de los registros
 function operateFormatter(value, row, index) {

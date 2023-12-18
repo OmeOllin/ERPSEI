@@ -90,10 +90,14 @@ namespace ERPSEI.Data.Managers
 				.Include(e => e.Subarea)
 				.Include(e => e.Genero)
 				.Include(e => e.EstadoCivil)
-				.Include(e => e.Jefe)
 				.Include(e => e.ContactosEmergencia)
 				.Include(e => e.ArchivosEmpleado)
 				.ToListAsync();
+		}
+
+		public async Task<List<Empleado>> GetEmpleadosByJefeIdAsync(int jefeId)
+		{
+			return await db.Empleados.Where(e => e.JefeId == jefeId).ToListAsync();
 		}
 
 		public async Task<Empleado?> GetByIdAsync(int id)

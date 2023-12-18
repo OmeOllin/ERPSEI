@@ -51,12 +51,15 @@ namespace ERPSEI.Areas.ERP.Pages
 
         private Task<string> CreateNode(Empleado emp, ref List<Empleado> empleadosRef, int levelOffset)
         {
-            string nombreArea = emp.Area != null ? emp.Area.Nombre : "";
+            Empleado? jefe = emp.JefeId != null ? _empleadoManager.GetByIdAsync((int)emp.JefeId).Result : null;
+            ICollection<Empleado> empleados = _empleadoManager.GetEmpleadosByJefeIdAsync(emp.Id).Result;
+
+			string nombreArea = emp.Area != null ? emp.Area.Nombre : "";
             string nombreSubarea = emp.Subarea != null ? emp.Subarea.Nombre : "";
             string nombrePuesto = emp.Puesto != null ? emp.Puesto.Nombre : "";
             string nombreOficina = emp.Oficina != null ? emp.Oficina.Nombre : "";
-            string nombreJefe = emp.Jefe != null ? emp.Jefe.NombreCompleto : "";
-            List<string> jsonChildren = new List<string>();
+            string nombreJefe = jefe != null ? jefe.NombreCompleto : "";
+			List<string> jsonChildren = new List<string>();
             string nombre = string.Empty;
             string firstApellido = string.Empty;
             ArchivoEmpleado? profilePicFile = null;
@@ -64,7 +67,7 @@ namespace ERPSEI.Areas.ERP.Pages
 
             //Crea los nodos hijos del empleado.
             bool loff = true;
-            foreach (Empleado c in emp.Empleados ?? new List<Empleado>()) { 
+            foreach (Empleado c in empleados ?? new List<Empleado>()) { 
                 jsonChildren.Add(CreateNode(c, ref empleadosRef, loff ? 2 : 0).Result);
                 loff = !loff;
             }
