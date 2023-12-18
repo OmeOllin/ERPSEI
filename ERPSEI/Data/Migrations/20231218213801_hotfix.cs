@@ -186,11 +186,6 @@ namespace ERPSEI.Data.Migrations
                         principalTable: "Areas",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Empleados_Empleados_JefeId",
-                        column: x => x.JefeId,
-                        principalTable: "Empleados",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_Empleados_EstadosCiviles_EstadoCivilId",
                         column: x => x.EstadoCivilId,
                         principalTable: "EstadosCiviles",
@@ -363,7 +358,6 @@ namespace ERPSEI.Data.Migrations
                     { 3, "CURP" },
                     { 4, "CLABE" },
                     { 5, "Comprobante de domicilio" },
-                    { 6, "Contactos de emergencia" },
                     { 7, "CSF" },
                     { 8, "INE" },
                     { 9, "RFC" },
@@ -424,11 +418,6 @@ namespace ERPSEI.Data.Migrations
                 name: "IX_Empleados_GeneroId",
                 table: "Empleados",
                 column: "GeneroId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Empleados_JefeId",
-                table: "Empleados",
-                column: "JefeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Empleados_OficinaId",

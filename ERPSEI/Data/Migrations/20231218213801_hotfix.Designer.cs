@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERPSEI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231204212028_hotfix")]
+    [Migration("20231218213801_hotfix")]
     partial class hotfix
     {
         /// <inheritdoc />
@@ -338,8 +338,6 @@ namespace ERPSEI.Data.Migrations
                     b.HasIndex("EstadoCivilId");
 
                     b.HasIndex("GeneroId");
-
-                    b.HasIndex("JefeId");
 
                     b.HasIndex("OficinaId");
 
@@ -738,11 +736,6 @@ namespace ERPSEI.Data.Migrations
                         },
                         new
                         {
-                            Id = 6,
-                            Description = "Contactos de emergencia"
-                        },
-                        new
-                        {
                             Id = 7,
                             Description = "CSF"
                         },
@@ -964,11 +957,6 @@ namespace ERPSEI.Data.Migrations
                         .HasForeignKey("GeneroId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("ERPSEI.Data.Entities.Empleados.Empleado", "Jefe")
-                        .WithMany("Empleados")
-                        .HasForeignKey("JefeId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("ERPSEI.Data.Entities.Empleados.Oficina", "Oficina")
                         .WithMany("Empleados")
                         .HasForeignKey("OficinaId")
@@ -989,8 +977,6 @@ namespace ERPSEI.Data.Migrations
                     b.Navigation("EstadoCivil");
 
                     b.Navigation("Genero");
-
-                    b.Navigation("Jefe");
 
                     b.Navigation("Oficina");
 
@@ -1072,8 +1058,6 @@ namespace ERPSEI.Data.Migrations
                     b.Navigation("ArchivosEmpleado");
 
                     b.Navigation("ContactosEmergencia");
-
-                    b.Navigation("Empleados");
 
                     b.Navigation("User");
                 });

@@ -336,8 +336,6 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasIndex("GeneroId");
 
-                    b.HasIndex("JefeId");
-
                     b.HasIndex("OficinaId");
 
                     b.HasIndex("PuestoId");
@@ -735,11 +733,6 @@ namespace ERPSEI.Data.Migrations
                         },
                         new
                         {
-                            Id = 6,
-                            Description = "Contactos de emergencia"
-                        },
-                        new
-                        {
                             Id = 7,
                             Description = "CSF"
                         },
@@ -961,11 +954,6 @@ namespace ERPSEI.Data.Migrations
                         .HasForeignKey("GeneroId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("ERPSEI.Data.Entities.Empleados.Empleado", "Jefe")
-                        .WithMany("Empleados")
-                        .HasForeignKey("JefeId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("ERPSEI.Data.Entities.Empleados.Oficina", "Oficina")
                         .WithMany("Empleados")
                         .HasForeignKey("OficinaId")
@@ -986,8 +974,6 @@ namespace ERPSEI.Data.Migrations
                     b.Navigation("EstadoCivil");
 
                     b.Navigation("Genero");
-
-                    b.Navigation("Jefe");
 
                     b.Navigation("Oficina");
 
@@ -1069,8 +1055,6 @@ namespace ERPSEI.Data.Migrations
                     b.Navigation("ArchivosEmpleado");
 
                     b.Navigation("ContactosEmergencia");
-
-                    b.Navigation("Empleados");
 
                     b.Navigation("User");
                 });
