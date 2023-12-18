@@ -7,7 +7,6 @@
         CURP,
         CLABE,
         ComprobanteDomicilio,
-        ContactosEmergencia,
         CSF,
         INE,
         RFC,

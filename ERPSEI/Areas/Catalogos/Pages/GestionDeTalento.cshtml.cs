@@ -535,19 +535,19 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			}
 
 			//Valido que no exista empleado que tenga los mismos datos.
-			coincidences = emps.Where(e => e.NombreCompleto == $"{emp.Nombre} {emp.ApellidoPaterno} {emp.ApellidoMaterno}").ToList();
+			coincidences = emps.Where(e => (e.NombreCompleto ?? "").Length >= 1 && e.NombreCompleto == $"{emp.Nombre} {emp.ApellidoPaterno} {emp.ApellidoMaterno}").ToList();
 			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el nombre de {emp.Nombre} {emp.ApellidoPaterno} {emp.ApellidoMaterno}. Por favor verifique la información"; }
 
-			coincidences = emps.Where(e => e.Email == emp.Email).ToList();
+			coincidences = emps.Where(e => (e.Email ?? "").Length >= 1 && e.Email == emp.Email).ToList();
 			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el correo {emp.Email}. Por favor verifique la información"; }
 
-			coincidences = emps.Where(e => e.CURP == emp.CURP).ToList();
+			coincidences = emps.Where(e => (e.CURP ?? "").Length >= 1 && e.CURP == emp.CURP).ToList();
 			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el CURP {emp.CURP}. Por favor verifique la información"; }
 
-			coincidences = emps.Where(e => e.RFC == emp.RFC).ToList();
+			coincidences = emps.Where(e => (e.RFC ?? "").Length >= 1 && e.RFC == emp.RFC).ToList();
 			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el RFC {emp.RFC}. Por favor verifique la información"; }
 
-			coincidences = emps.Where(e => e.NSS == emp.NSS).ToList();
+			coincidences = emps.Where(e => (e.NSS ?? "").Length >= 1 && e.NSS == emp.NSS).ToList();
 			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el NSS {emp.NSS}. Por favor verifique la información"; }
 
 			return string.Empty;
@@ -641,17 +641,18 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadosImportadosUnsuccessfully"]);
 			try
 			{
-				if (Request.Form.Files.Count >= 1) 
-				{ 					
+				if (Request.Form.Files.Count >= 1)
+				{
 					//Se procesa el archivo excel.
-					using(Stream s = Request.Form.Files[0].OpenReadStream())
+					using (Stream s = Request.Form.Files[0].OpenReadStream())
 					{
-						using(var reader = ExcelReaderFactory.CreateReader(s)) 
+						using (var reader = ExcelReaderFactory.CreateReader(s))
 						{
 							DataSet result = reader.AsDataSet(new ExcelDataSetConfiguration() { FilterSheet = (tableReader, sheetIndex) => sheetIndex == 0 });
-							foreach (DataRow row in result.Tables[0].Rows) {
+							foreach (DataRow row in result.Tables[0].Rows)
+							{
 								//Omite el procesamiento del row de encabezado
-								if(result.Tables[0].Rows.IndexOf(row) == 0) { continue; }
+								if (result.Tables[0].Rows.IndexOf(row) == 0) { continue; }
 
 								string vmsg = await CreateEmployeeFromExcelRow(row);
 
@@ -662,13 +663,20 @@ namespace ERPSEI.Areas.Catalogos.Pages
 									resp.Mensaje = vmsg;
 									break;
 								}
+								else
+								{
+									resp.TieneError = false;
+									resp.Mensaje = _strLocalizer["EmpleadosImportadosSuccessfully"];
+								}
 							}
 						}
 					}
 				}
 
-				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["EmpleadosImportadosSuccessfully"];
+				if (!resp.TieneError)
+				{
+					
+				}
 			}
 			catch (Exception ex)
 			{

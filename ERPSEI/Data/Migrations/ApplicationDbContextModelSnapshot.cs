@@ -733,32 +733,32 @@ namespace ERPSEI.Data.Migrations
                         },
                         new
                         {
-                            Id = 7,
+                            Id = 6,
                             Description = "CSF"
                         },
                         new
                         {
-                            Id = 8,
+                            Id = 7,
                             Description = "INE"
                         },
                         new
                         {
-                            Id = 9,
+                            Id = 8,
                             Description = "RFC"
                         },
                         new
                         {
-                            Id = 10,
+                            Id = 9,
                             Description = "Comprobante de estudios"
                         },
                         new
                         {
-                            Id = 11,
+                            Id = 10,
                             Description = "NSS"
                         },
                         new
                         {
-                            Id = 12,
+                            Id = 11,
                             Description = "Otro"
                         });
                 });

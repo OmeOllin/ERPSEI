@@ -358,12 +358,12 @@ namespace ERPSEI.Data.Migrations
                     { 3, "CURP" },
                     { 4, "CLABE" },
                     { 5, "Comprobante de domicilio" },
-                    { 7, "CSF" },
-                    { 8, "INE" },
-                    { 9, "RFC" },
-                    { 10, "Comprobante de estudios" },
-                    { 11, "NSS" },
-                    { 12, "Otro" }
+                    { 6, "CSF" },
+                    { 7, "INE" },
+                    { 8, "RFC" },
+                    { 9, "Comprobante de estudios" },
+                    { 10, "NSS" },
+                    { 11, "Otro" }
                 });
 
             migrationBuilder.InsertData(
