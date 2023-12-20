@@ -31,7 +31,7 @@
 				    <div class="row">
 						<div class="col-sm-12 col-md-6 col-lg-6">
 							<div class="form-floating mb-3">
-								<select id="selFiltroArea" asp-for="InputFiltro.AreaId" class="form-select" placeholder="@Localizer["AreaPlaceholder"]">
+								<select id="selFiltroArea" asp-for="InputFiltro.AreaId" onchange="onAreaChanged();" class="form-select" placeholder="@Localizer["AreaPlaceholder"]">
 									<option value="0">Seleccione...</option>
 									@{
 										foreach (Area area in areas)
@@ -50,7 +50,7 @@
 									@{
 										foreach (Subarea subarea in subareas)
 										{
-											<option value='@subarea.Id'>@subarea.Nombre</option>
+											<option areaid='@subarea.AreaId' value='@subarea.Id'>@subarea.Nombre</option>
 										}
 									}
 								</select>
@@ -88,5 +88,7 @@
     <script src="~/../Areas/ERP/Pages/Organigrama.cshtml.js"></script>
 	<script type="text/javascript">
 		var msgSinResultados = '@Localizer["MsgSinResultados"]';
+		var msgAreaIdRequerida = '@Localizer["MsgAreaIdRequerida"]';
+		var msgSubareaIdRequerida = '@Localizer["MsgSubareaIdRequerida"]';
 	</script>
 }

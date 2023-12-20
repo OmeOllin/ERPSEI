@@ -1,4 +1,4 @@
-﻿var ocs = [];
+﻿var oc = null;
 const postOptions = { headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() } }
 
 function onCargarOrganigrama() {
@@ -12,8 +12,15 @@ function onCargarOrganigrama() {
         SubareaId: selSubarea.value == 0 ? null : parseInt(selSubarea.value),
     };
 
+    let errors = validarParametros(oParams)||"";
+
+    if (errors.length >= 1) {
+        showError(btnOrganigrama.innerHTML, errors);
+        return;
+    }
+
     divCharts.innerHTML = "";
-    ocs = [];
+    oc = null;
     doAjax(
         "/ERP/Organigrama/FiltrarEmpleados",
         oParams,
@@ -31,8 +38,7 @@ function onCargarOrganigrama() {
             }
 
             divCharts.innerHTML += `<div id="chart${resp.datos[0].id}" class="col-12 orgchart"></div>`;
-            ocs.push(
-                $(`#chart${resp.datos[0].id}`).orgchart({
+            oc = $(`#chart${resp.datos[0].id}`).orgchart({
                     'data': resp.datos[0],
                     'nodeContent': 'title',
                     'pan': true,
@@ -47,62 +53,78 @@ function onCargarOrganigrama() {
                         let divOficina = data.oficina.length >= 1 ? `<div><i class="bi bi-building-fill"></i> ${data.oficina}</div>` : ``;
                         data.profilePic = data.profilePic || "/img/default_profile_pic.png";
                         $node.find('.content').append(`
-                                                        <div class="second-menu">
-                                                            <img class="avatar" src="${data.profilePic}">
-                                                            ${divEmail}
-                                                            ${divTelefono}
-                                                            ${divOficina}
-                                                        </div>
-                                                      `);
+                                                            <div class="second-menu">
+                                                                <img class="avatar" src="${data.profilePic}">
+                                                                ${divEmail}
+                                                                ${divTelefono}
+                                                                ${divOficina}
+                                                            </div>
+                                                          `);
                     }
-                })
-            );
-            //resp.datos.forEach(function (e) {
-            //    divCharts.innerHTML += `<div id="chart${e.id}" class="col-12 orgchart"></div>`;
-
-            //    ocs.push($(`#chart${e.id}`).orgchart({
-            //        'data': e,
-            //        'nodeContent': 'title',
-            //        'pan': true,
-            //        'zoom': true
-            //    }));
-
-
-            //});
-
-            //var nodeTemplate = function (data) {
-            //    return `
-            //            <div class="title">${data.name} <img class="avatar" src="/img/default_profile_pic.png" crossorigin="anonymous" /></div>
-            //            <div class="content"><b>${data.title}</b></div>
-            //          `;
-            //};
-
-            ocs.forEach(function (oc) {
-                oc.$chartContainer.on('touchmove', function (event) {
-                    event.preventDefault();
                 });
 
-                var $container = oc.$chartContainer;
-                var $chart = oc.$chart;
 
-                if ($container.width() < $chart.outerWidth(true)) {
-                    var scale = $container.width() / $chart.outerWidth(true);
-                    var x = ($container.width() - $chart.outerWidth(true)) / 2 * (1 / scale);
-                    var y = ($container.height() - $chart.outerHeight(true)) / 2 * (1 + scale);
-                    oc.setChartScale($chart, scale);
-                    var val = $chart.css('transform');
-                    $chart.css('transform', val + ' translate(' + x + 'px,' + y + 'px)');
-                }
-                else {
-                    oc.$chart.css('transform', 'none');
-                }
+            
+            oc.$chartContainer.on('touchmove', function (event) {
+                event.preventDefault();
             });
+
+            var $container = oc.$chartContainer;
+            var $chart = oc.$chart;
+
+            //Si el ancho del chart es mayor al ancho del contenedor, entonces escala el diagrama para mostrarlo completo.
+            if ($container.width() < $chart.outerWidth(true)) {
+                var scale = $container.width() / $chart.outerWidth(true);
+                var x = ($container.width() - $chart.outerWidth(true)) / 2 * (1 / scale);
+                var y = ($container.height() - $chart.outerHeight(true)) / 2 * (1 + scale);
+                oc.setChartScale($chart, scale);
+                var val = $chart.css('transform');
+                $chart.css('transform', val + ' translate(' + x + 'px,' + y + 'px)');
+            }
+            else {
+                oc.$chart.css('transform', 'none');
+            }
 
         }, function (error) {
             showError("Error", error);
         },
         postOptions
     );
+}
+function validarParametros(oParams) {
+    //Si no se seleccionó ningún área, marca el error.
+    if (oParams.AreaId == null) { return msgAreaIdRequerida; }
+
+    //Obtiene las opciones que correspondan al área seleccionada.
+    subareaOptions = document.querySelectorAll(`#selFiltroSubarea option[areaid='${oParams.AreaId}']`);
+
+    return "";
+}
+
+function onAreaChanged() {
+    let areaField = document.getElementById("selFiltroArea");
+    let subareaField = document.getElementById("selFiltroSubarea");
+
+    //Establece la selección por default.
+    subareaField.value = 0;
+
+    //Oculta todas las opciones, excepto la opción "Seleccione..."
+    let subareaOptions = document.querySelectorAll(`#selFiltroSubarea option`);
+    subareaOptions.forEach(function (o) { if (o.value >= 1) { o.style.display = 'none'; } });
+
+    //Deshabilita el campo de selección
+    subareaField.setAttribute('disabled', true);
+
+    //Muestra solo las opciones que correspondan al área seleccionada.
+    subareaOptions = document.querySelectorAll(`#selFiltroSubarea option[areaid='${areaField.value}']`);
+    //Si hay subareas...
+    if (subareaOptions.length >= 1) {
+        //Muestra las subareas
+        subareaOptions.forEach(function (o) { o.style.display = 'block'; });
+
+        //Habilita el campo de selección
+        subareaField.removeAttribute('disabled');
+    }
 }
 
 $(document).on("click", ".node", function (e) {
@@ -117,12 +139,8 @@ $(document).on("click", function (e) {
 $(window).resize(function () {
     var width = $(window).width();
     if (width > 1200) {
-        ocs.forEach(function (oc) {
-            oc.init({ 'verticalLevel': undefined });
-        });
+        if(oc != null) oc.init({ 'verticalLevel': undefined });
     } else {
-        ocs.forEach(function (oc) {
-            oc.init({ 'verticalLevel': 2 });
-        });
+        if (oc != null) oc.init({ 'verticalLevel': 2 });
     }
 });

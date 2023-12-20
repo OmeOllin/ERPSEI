@@ -123,8 +123,14 @@
   <data name="FilterTitle" xml:space="preserve">
     <value>Filtros</value>
   </data>
+  <data name="MsgAreaIdRequerida" xml:space="preserve">
+    <value>No se seleccionó ningún área, por favor verifique.</value>
+  </data>
   <data name="MsgSinResultados" xml:space="preserve">
     <value>No se encontraron resultados...</value>
+  </data>
+  <data name="MsgSubareaIdRequerida" xml:space="preserve">
+    <value>No se seleccionó ninguna subarea, por favor verifique.</value>
   </data>
   <data name="SeeButton" xml:space="preserve">
     <value>Ver</value>
