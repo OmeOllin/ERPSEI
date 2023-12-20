@@ -17,9 +17,11 @@ namespace ERPSEI.Data.Managers
 
         public Task<List<Empleado>> GetAllAsync();
 
-        public Task<List<Empleado>> GetEmpleadosByJefeIdAsync(int jefeId);
+        public Task<Empleado?> GetEmpleadoOrganigramaAsync(int id);
 
-		public Task<Empleado?> GetByIdAsync(int id);
+		public Task<List<Empleado>> GetEmpleadosOrganigramaAsync(int? jefeId, int? areaId, int? subareaId);
+
+        public Task<Empleado?> GetByIdAsync(int id);
 
         public Task<Empleado?> GetByCURPAsync(string curp);
 

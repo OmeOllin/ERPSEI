@@ -18,19 +18,18 @@ function onCargarOrganigrama() {
         "/ERP/Organigrama/FiltrarEmpleados",
         oParams,
         function (resp) {
-            let windowSize = $(window).width();
-            let vLevel = undefined;
-            if (windowSize > 1200) {
-                vLevel = undefined;
-            } else {
-                vLevel = 2;
-            }
             if (resp.tieneError) {
                 showError(btnOrganigrama.innerHTML, resp.mensaje);
                 return;
             }
 
             if (typeof resp.datos == "string" && resp.datos.length >= 1) { resp.datos = JSON.parse(resp.datos); }
+
+            if (resp.datos.length <= 0) {
+                showAlert(btnOrganigrama.innerHTML, msgSinResultados);
+                return;
+            }
+
             divCharts.innerHTML += `<div id="chart${resp.datos[0].id}" class="col-12 orgchart"></div>`;
             ocs.push(
                 $(`#chart${resp.datos[0].id}`).orgchart({
@@ -38,7 +37,6 @@ function onCargarOrganigrama() {
                     'nodeContent': 'title',
                     'pan': true,
                     'zoom': true,
-                    'verticalLevel': vLevel,
                     'createNode': function ($node, data) {
                         let formattedPhone = data.telefono;
                         if (data.telefono.length >= 10) {
@@ -83,6 +81,21 @@ function onCargarOrganigrama() {
                 oc.$chartContainer.on('touchmove', function (event) {
                     event.preventDefault();
                 });
+
+                var $container = oc.$chartContainer;
+                var $chart = oc.$chart;
+
+                if ($container.width() < $chart.outerWidth(true)) {
+                    var scale = $container.width() / $chart.outerWidth(true);
+                    var x = ($container.width() - $chart.outerWidth(true)) / 2 * (1 / scale);
+                    var y = ($container.height() - $chart.outerHeight(true)) / 2 * (1 + scale);
+                    oc.setChartScale($chart, scale);
+                    var val = $chart.css('transform');
+                    $chart.css('transform', val + ' translate(' + x + 'px,' + y + 'px)');
+                }
+                else {
+                    oc.$chart.css('transform', 'none');
+                }
             });
 
         }, function (error) {

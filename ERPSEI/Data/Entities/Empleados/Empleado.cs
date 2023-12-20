@@ -64,5 +64,9 @@ namespace ERPSEI.Data.Entities.Empleados
         //Referencia a esta misma tabla para el jefe del empleado
 		public int? JefeId { get; set; }
 
+        //Empleados de los que el empleado es jefe
+        [NotMapped]
+        public List<Empleado>? Empleados { get; set; }
+
 	}
 }

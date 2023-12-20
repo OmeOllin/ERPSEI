@@ -44,7 +44,6 @@ namespace ERPSEI.Data
 			modelBuilder.Entity<Empleado>().HasOne(e => e.Oficina).WithMany(o => o.Empleados).OnDelete(DeleteBehavior.NoAction);
 			modelBuilder.Entity<Empleado>().HasMany(e => e.ContactosEmergencia).WithOne(ce => ce.Empleado).OnDelete(DeleteBehavior.NoAction);
 			modelBuilder.Entity<Empleado>().HasMany(e => e.ArchivosEmpleado).WithOne(ae => ae.Empleado).OnDelete(DeleteBehavior.NoAction);
-			//modelBuilder.Entity<Empleado>().HasOne(e => e.Jefe).WithMany(j => j.Empleados).OnDelete(DeleteBehavior.NoAction);
 
 
 			modelBuilder.Entity<TipoArchivo>()

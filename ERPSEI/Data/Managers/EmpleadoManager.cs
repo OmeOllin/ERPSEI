@@ -95,9 +95,30 @@ namespace ERPSEI.Data.Managers
 				.ToListAsync();
 		}
 
-		public async Task<List<Empleado>> GetEmpleadosByJefeIdAsync(int jefeId)
+		public async Task<Empleado?> GetEmpleadoOrganigramaAsync(int id)
 		{
-			return await db.Empleados.Where(e => e.JefeId == jefeId).ToListAsync();
+			return await db.Empleados
+				.Where(e => e.Id == id)
+				.Include(e => e.Oficina)
+				.Include(e => e.Puesto)
+				.Include(e => e.Area)
+				.Include(e => e.Subarea)
+				.Include(e => e.ArchivosEmpleado.Where(a => a.TipoArchivoId == (int)FileTypes.ImagenPerfil))
+				.FirstOrDefaultAsync();
+		}
+
+		public async Task<List<Empleado>> GetEmpleadosOrganigramaAsync(int? jefeId, int? areaId, int? subareaId)
+		{
+			return await db.Empleados
+				.Where(e => jefeId.HasValue ? e.JefeId == jefeId : true)
+				.Where(e => areaId.HasValue ? e.AreaId == areaId : true)
+				.Where(e => subareaId.HasValue ? e.SubareaId == subareaId : true)
+				.Include(e => e.Oficina)
+				.Include(e => e.Puesto)
+				.Include(e => e.Area)
+				.Include(e => e.Subarea)
+				.Include(e => e.ArchivosEmpleado.Where(a => a.TipoArchivoId == (int)FileTypes.ImagenPerfil))
+				.ToListAsync();
 		}
 
 		public async Task<Empleado?> GetByIdAsync(int id)

@@ -123,6 +123,9 @@
   <data name="FilterTitle" xml:space="preserve">
     <value>Filters</value>
   </data>
+  <data name="MsgSinResultados" xml:space="preserve">
+    <value>No results found...</value>
+  </data>
   <data name="SeeButton" xml:space="preserve">
     <value>See</value>
   </data>
