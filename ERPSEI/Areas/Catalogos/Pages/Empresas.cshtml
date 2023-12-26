@@ -1,0 +1,352 @@
+﻿@page "{handler?}"
+@using ERPSEI.Data.Managers;
+@using Microsoft.AspNetCore.Localization;
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using ERPSEI.Areas.Catalogos.Pages;
+@using ERPSEI.Data.Entities.Empresas;
+@using ERPSEI.Data.Entities.Empleados;
+@model EmpresasModel
+@inject IViewLocalizer Localizer;
+@{
+	ViewData["Title"] = Localizer["Title"];
+
+	// Retrieves the requested culture
+	IRequestCultureFeature? rqf = Request.HttpContext.Features.Get<IRequestCultureFeature>();
+
+	// Culture contains the information of the requested culture
+	System.Globalization.CultureInfo? culture = rqf != null ? rqf.RequestCulture.Culture : new System.Globalization.CultureInfo("es-MX");
+
+	string cultureName = culture.Name;
+}
+<h3 class="title mb-3">@ViewData["Title"]</h3>
+
+<!-- --------------------------- -->
+<!-- Sección de filtros -------- -->
+<div class="accordion shadow mb-5" id="accordionFiltros">
+	<div class="accordion-item">
+		<h2 class="accordion-header" id="headingOne">
+			<button class="accordion-button p-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+				<h6>@Localizer["FilterTitle"]</h6>
+			</button>
+		</h2>
+		<div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionFiltros">
+			<div class="accordion-body">
+				<form id="filtros" method="post">
+					<div class="row">
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<input id="inpFiltroOrigen" type="text" asp-for="InputFiltro.Origen" class="form-control" placeholder="@Localizer["OrigenPlaceholder"]" />
+								<label for="inpFiltroOrigen" asp-for="InputFiltro.Origen" class="form-label"></label>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<input id="inpFiltroNivel" type="text" asp-for="InputFiltro.Nivel" class="form-control" placeholder="@Localizer["NivelPlaceholder"]" />
+								<label for="inpFiltroNivel" asp-for="InputFiltro.Nivel" class="form-label"></label>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<input id="inpFiltroAdministrador" type="text" asp-for="InputFiltro.Administrador" class="form-control" placeholder="@Localizer["AdministradorPlaceholder"]" />
+								<label for="inpFiltroAdministrador" asp-for="InputFiltro.Administrador" class="form-label"></label>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<input id="inpFiltroAccionista" type="text" asp-for="InputFiltro.Accionista" class="form-control" placeholder="@Localizer["AccionistaPlaceholder"]" />
+								<label for="inpFiltroAccionista" asp-for="InputFiltro.Accionista" class="form-label"></label>
+							</div>
+						</div>
+					</div>
+				</form>
+				<div class="row text-end">
+					<div class="col-12">
+						<button id="btnBuscar" class="btn btn-primary" onclick="onBuscarClick();">
+							<i class="bi bi-search"></i> @Localizer["SearchButton"]
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- --------------------------- -->
+<!-- --------------------------- -->
+
+<!-- --------------------------- -->
+<!-- Sección tabla de resultados -->
+<div id="toolbar" class="col-xl-12">
+	<button id="btnAgregar" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dlgEmpresa" onclick="onAgregarClick();">
+		<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
+	</button>
+	<button id="remove" class="btn btn-danger" disabled>
+		<i class="bi bi-trash"></i> <span class="d-none d-sm-inline">@Localizer["DeleteButton"]</span>
+	</button>
+</div>
+<table id="table" class="table-sm"
+		data-unique-id="id"
+		data-toolbar="#toolbar"
+		data-search="true"
+		data-show-toggle="true"
+		data-show-fullscreen="true"
+		data-show-columns="true"
+		data-show-columns-toggle-all="true"
+		data-detail-view="true"
+		data-show-export="true"
+		data-click-to-select="true"
+		data-detail-formatter="detailFormatter"
+		data-minimum-count-columns="2"
+		data-show-pagination-switch="true"
+		data-pagination="true"
+		data-id-field="id"
+		data-page-list="[10, 25, 50, 100, all]"
+		data-show-footer="false"
+		data-side-pagination="client"
+		data-response-handler="responseHandler"
+		data-buttons-class="primary"
+		data-buttons="additionalButtons">
+	<thead>
+		<tr align="center" valign="middle" class="bg-primary bg-opacity-10">
+		</tr>
+	</thead>
+</table>
+<!-- --------------------------- -->
+<!-- --------------------------- -->
+
+<!-- --------------------------- -->
+<!-- Sección Nuevo/Editar/Ver Registro --- -->
+<div id="dlgEmpresa" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-xl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 id="dlgEmpresaTitle" class="modal-title"></h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body align-items-center">
+				<form id="theForm" method="post">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-3 col-lg-2">
+								<div class="form-floating mb-3">
+									<input id="inpEmpresaId" asp-for="InputEmpresa.Id" type="text" class="form-control" />
+									<label for="inpEmpresaId" asp-for="InputEmpresa.Id" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.Id" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<h5>@Localizer["EmpresaPrimerSeccionTitle"]</h5>
+						<hr />
+						<div id="saveValidationSummary" class="text-danger mb-3" role="alert"></div>
+						<div class="row">
+							<div class="col-sm-12 col-md-6 col-lg-4">
+								<div class="form-floating mb-3">
+									<input id="inpEmpresaNombre" asp-for="InputEmpresa.RazonSocial" type="text" class="form-control formInput" placeholder="@Localizer["RazonSocialPlaceholder"]" />
+									<label for="inpEmpresaNombre" asp-for="InputEmpresa.RazonSocial" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.RazonSocial" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-6 col-lg-4">
+								<div class="form-floating mb-3">
+									<input id="inpEmpresaTelefono" asp-for="InputEmpresa.Origen" type="text" class="form-control formInput" placeholder="@Localizer["OrigenPlaceholder"]" />
+									<label for="inpEmpresaTelefono" asp-for="InputEmpresa.Origen" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.Origen" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-6 col-lg-4">
+								<div class="form-floating mb-3">
+									<input id="inpEmpresaTelefono" asp-for="InputEmpresa.Nivel" type="text" class="form-control formInput" placeholder="@Localizer["NivelPlaceholder"]" />
+									<label for="inpEmpresaTelefono" asp-for="InputEmpresa.Nivel" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.Nivel" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-6 col-lg-4">
+								<div class="form-floating mb-3">
+									<input id="inpEmpresaAdministrador" type="text" asp-for="InputEmpresa.Administrador" class="form-control" placeholder="@Localizer["AdministradorPlaceholder"]" />
+									<label for="inpEmpresaAdministrador" asp-for="InputEmpresa.Administrador" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.Administrador" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-6 col-lg-4">
+								<div class="form-floating mb-3">
+									<input id="inpEmpresaAccionista" type="text" asp-for="InputEmpresa.Accionista" class="form-control" placeholder="@Localizer["AccionistaPlaceholder"]" />
+									<label for="inpEmpresaAccionista" asp-for="InputEmpresa.Accionista" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.Accionista" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-6 col-lg-4">
+								<div class="form-floating mb-3">
+									<input id="inpEmpresaRFC" asp-for="InputEmpresa.Telefono" type="text" class="form-control formInput" placeholder="@Localizer["PhonePlaceholder"]" />
+									<label for="inpEmpresaRFC" asp-for="InputEmpresa.Telefono" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.Telefono" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<textarea id="txtEmpresaDireccion" maxlength="135" asp-for="InputEmpresa.DomicilioFiscal" class="form-control dynamic-height formInput" placeholder="@Localizer["DireccionPlaceholder"]"></textarea>
+									<label for="txtEmpresaDireccion" asp-for="InputEmpresa.DomicilioFiscal" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.DomicilioFiscal" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<h5>@Localizer["EmpresaSegundaSeccionTitle"]</h5>
+						<hr />
+						<div class="row">
+							<div class="col-sm-12 col-md-12 col-lg-6">
+								<div class="form-floating mb-3">
+									<input id="inpEmpresaEmail" asp-for="InputEmpresa.CorreoGeneral" type="text" class="form-control formInput" placeholder="@Localizer["CorreoGeneralPlaceholder"]" />
+									<label for="inpEmpresaEmail" asp-for="InputEmpresa.CorreoGeneral" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.CorreoGeneral" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-12 col-lg-6">
+								<div class="form-floating mb-3">
+									<input id="inpEmpresaEmail" asp-for="InputEmpresa.CorreoBancos" type="text" class="form-control formInput" placeholder="@Localizer["CorreoBancosPlaceholder"]" />
+								<label for="inpEmpresaEmail" asp-for="InputEmpresa.CorreoBancos" class="form-label"></label>
+								<span asp-validation-for="InputEmpresa.CorreoBancos" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-12 col-lg-6">
+								<div class="form-floating mb-3">
+									<input id="inpEmpresaEmail" asp-for="InputEmpresa.CorreoFiscal" type="text" class="form-control formInput" placeholder="@Localizer["CorreoFiscalPlaceholder"]" />
+								<label for="inpEmpresaEmail" asp-for="InputEmpresa.CorreoFiscal" class="form-label"></label>
+								<span asp-validation-for="InputEmpresa.CorreoFiscal" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-12 col-lg-6">
+								<div class="form-floating mb-3">
+									<input id="inpEmpresaRFC" asp-for="InputEmpresa.RFC" type="text" class="form-control formInput" placeholder="@Localizer["RFCPlaceholder"]" />
+									<label for="inpEmpresaRFC" asp-for="InputEmpresa.RFC" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.RFC" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<h5>@Localizer["EmpresaTercerSeccionTitle"]</h5>
+						<hr />
+						<div class="alert alert-primary d-flex align-items-center mb-3" role="alert">
+							<i class="bi bi-info-circle-fill me-2" style="font-size: x-large"></i>
+							<div>
+								@Localizer["DocumentSuggestion"] <a target="_blank" href="https://compressjpeg.com/es/">https://compressjpeg.com/es/</a>
+							</div>
+						</div>
+						<div id="bodyArchivos" class="row"></div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer" style="display: inline !important;">
+				<div class="container row">
+					<div class="col-5">
+						<button id="dlgEmpresaBtnDesactivar" type="button" class="btn btn-danger formButton" data-bs-dismiss="modal">
+							<i class="bi bi-ban"></i> @Localizer["DeactivateButton"]
+						</button>
+					</div>
+					<div class="col-7 text-end">
+						<button id="dlgEmpresaBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarClick();" data-bs-dismiss="modal">
+							<i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
+						</button>
+						<button id="dlgEmpresaBtnGuardar" type="button" class="btn btn-primary formButton" onclick="onGuardarClick();">
+							<i class="bi bi-floppy"></i> @Localizer["SaveButtonTitle"]
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- --------------------------- -->
+<!-- --------------------------- -->
+
+<!-- --------------------------- -->
+<!-- Sección Importar Excel ---- -->
+<div id="dlgImportarExcel" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 id="dlgExcelTitle" class="modal-title">@Localizer["ImportExcelDialogTitle"]</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body align-items-center">
+				<div class="alert d-flex align-items-center" role="alert">
+					<i class="bi bi-1-circle-fill me-2" style="font-size: x-large"></i>
+					<div>@Localizer["ImportExcelSuggestionA"]</div>
+				</div>
+                <div class="container">
+                    <div class="row">
+						<div class="col-12 text-center mb-3">
+							<a id="dlgExcelBtnPlantilla" href="@Url.Page("Empresas", "DownloadPlantilla")" class="btn btn-primary">
+								<i class="bi bi-file-earmark-ruled"></i> @Localizer["PlantillaButtonTitle"]
+							</a>
+						</div>
+                    </div>
+                </div>
+				<div class="alert d-flex align-items-center" role="alert">
+					<i class="bi bi-2-circle-fill me-2" style="font-size: x-large"></i>
+                    <div>@Localizer["ImportExcelSuggestionB"]</div>
+				</div>
+				<div class="container">
+					<div class="row">
+						<div class="col-12">
+							<form id="importForm" method="post">
+								<input asp-for="InputImportar.Plantilla" id="excelFile" onchange="onExcelSelectorChanged(this);" class="form-control" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+								<span asp-validation-for="InputImportar.Plantilla" class="text-danger"></span>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button id="dlgExcelBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarImportarClick();" data-bs-dismiss="modal">
+					<i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
+				</button>
+				<button id="dlgExcelBtnImportar" type="button" class="btn btn-primary" onclick="onImportarClick();">
+					<i class="bi bi-upload"></i> @Localizer["ImportButtonText"]
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- --------------------------- -->
+<!-- --------------------------- -->
+
+@section Scripts {
+	<link rel="stylesheet" href="~/lib/bootstrap-table/bootstrap-table.min.css">
+
+	<script src="~/lib/bootstrap-table/extensions/export/tableExport.min.js"></script>
+
+	<script src="~/lib/bootstrap-table/bootstrap-table.min.js"></script>
+	<script src="~/lib/bootstrap-table/locale/bootstrap-table-es-MX.min.js"></script>
+	<script src="~/lib/bootstrap-table/locale/bootstrap-table-en-US.min.js"></script>
+	<script src="~/lib/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
+
+	<link rel="stylesheet" href="~/css/Empresas.css" />
+	<script src="~/../Areas/Catalogos/Pages/Empresas.cshtml.js"></script>
+
+	<script type="text/javascript">
+		var cultureName = "@cultureName";
+		var btnImportarText = '@Localizer["ImportButtonText"]';
+		var btnImportarTitle = '@Localizer["ImportButtonTitle"]';
+		var btnVerTitle = '@Localizer["SeeButtonTitle"]';
+		var btnEditarTitle = '@Localizer["EditButtonTitle"]';
+		var dlgEditarTitle = '@Localizer["EditDialogTitle"]';
+		var dlgVerTitle = '@Localizer["SeeDialogTitle"]';
+		var dlgNuevoTitle = '@Localizer["NewDialogTitle"]';
+		var dlgDeleteTitle = '@Localizer["DeleteEmpresaDialogTitle"]';
+		var dlgDeleteQuestion = '@Localizer["DeleteEmpresaDialogQuestion"]';
+		var colNombreHeader = '@Localizer["ColNameHeader"]';
+		var colOrigenHeader = '@Localizer["ColOrigenHeader"]';
+		var colNivelHeader = '@Localizer["ColNivelHeader"]';
+		var colAdministradorHeader = '@Localizer["ColAdministradorHeader"]';
+		var colTelefonoHeader = '@Localizer["ColTelefonoHeader"]';
+		var colCorreoHeader = '@Localizer["ColCorreoHeader"]';
+		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
+		var arrTiposDocumentos = {
+			"1": '@Localizer["CSF"]',
+			"2": '@Localizer["INE"]',
+			"3": '@Localizer["RFC"]',
+			"4": '@Localizer["Otros"]'
+		};
+		var invalidFormatTitle = '@Localizer["InvalidFormatTitle"]';
+		var invalidFormatMsg = '@Localizer["InvalidFormatMsg"]';
+	</script>
+
+	<partial name="_ValidationScriptsPartial" />
+}

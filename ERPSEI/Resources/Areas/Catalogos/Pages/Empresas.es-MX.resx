@@ -117,163 +117,151 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AccionistaField" xml:space="preserve">
-    <value>Shareholder</value>
+  <data name="AccionistaPlaceholder" xml:space="preserve">
+    <value>Accionista</value>
   </data>
-  <data name="AdministradorField" xml:space="preserve">
-    <value>Administrator</value>
+  <data name="AddButton" xml:space="preserve">
+    <value>Agregar</value>
   </data>
-  <data name="AlphanumNoSpaceNoUnderscore" xml:space="preserve">
-    <value>The {0} field must have only letters and numbers.</value>
+  <data name="AdministradorPlaceholder" xml:space="preserve">
+    <value>Administrador</value>
   </data>
-  <data name="AlphanumSpace" xml:space="preserve">
-    <value>The {0} field only allows letters, numbers, underscores, and spaces.</value>
+  <data name="CancelButtonTitle" xml:space="preserve">
+    <value>Cancelar</value>
   </data>
-  <data name="AreaField" xml:space="preserve">
-    <value>Area</value>
+  <data name="ColActionsHeader" xml:space="preserve">
+    <value>Acciones</value>
   </data>
-  <data name="ConfirmNewPasswordField" xml:space="preserve">
-    <value>Confirm new password</value>
+  <data name="ColAdministradorHeader" xml:space="preserve">
+    <value>Administrador</value>
   </data>
-  <data name="ConfirmPasswordField" xml:space="preserve">
-    <value>Confirm password</value>
+  <data name="ColCorreoHeader" xml:space="preserve">
+    <value>Correo</value>
   </data>
-  <data name="CorreoBancosField" xml:space="preserve">
-    <value>Banks email</value>
+  <data name="ColNameHeader" xml:space="preserve">
+    <value>Nombre</value>
   </data>
-  <data name="CorreoEmpresarialField" xml:space="preserve">
-    <value>Business email</value>
+  <data name="ColNivelHeader" xml:space="preserve">
+    <value>Nivel</value>
   </data>
-  <data name="CorreoFiscalField" xml:space="preserve">
-    <value>Fiscal email</value>
+  <data name="ColOrigenHeader" xml:space="preserve">
+    <value>Origen</value>
   </data>
-  <data name="CorreoGeneralField" xml:space="preserve">
-    <value>General email</value>
+  <data name="ColTelefonoHeader" xml:space="preserve">
+    <value>Teléfono</value>
   </data>
-  <data name="CURPField" xml:space="preserve">
-    <value>CURP</value>
+  <data name="CorreoBancosPlaceholder" xml:space="preserve">
+    <value>Correo Bancos</value>
   </data>
-  <data name="DireccionField" xml:space="preserve">
-    <value>Address</value>
+  <data name="CorreoFiscalPlaceholder" xml:space="preserve">
+    <value>Correo Fiscal</value>
   </data>
-  <data name="DomicilioFiscalField" xml:space="preserve">
-    <value>Fiscal residence</value>
+  <data name="CorreoGeneralPlaceholder" xml:space="preserve">
+    <value>Correo General</value>
   </data>
-  <data name="EmailField" xml:space="preserve">
-    <value>Email</value>
+  <data name="CSF" xml:space="preserve">
+    <value>CSF</value>
   </data>
-  <data name="EmailFormat" xml:space="preserve">
-    <value>The {0} field is not a valid email address.</value>
+  <data name="DeactivateButton" xml:space="preserve">
+    <value>Dar de baja</value>
   </data>
-  <data name="EstadoCivilField" xml:space="preserve">
-    <value>Marital status</value>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Eliminar</value>
   </data>
-  <data name="FathersLastNameField" xml:space="preserve">
-    <value>Father's last name</value>
+  <data name="DeleteEmpresaDialogQuestion" xml:space="preserve">
+    <value>¿Está seguro que desea eliminar los registros seleccionados?</value>
   </data>
-  <data name="FechaIngresoField" xml:space="preserve">
-    <value>Admission date</value>
+  <data name="DeleteEmpresaDialogTitle" xml:space="preserve">
+    <value>Eliminar empresa</value>
   </data>
-  <data name="FechaIngresoFinField" xml:space="preserve">
-    <value>Admission date (End)</value>
+  <data name="DireccionPlaceholder" xml:space="preserve">
+    <value>Domicilio Fiscal</value>
   </data>
-  <data name="FechaIngresoInicioField" xml:space="preserve">
-    <value>Admission date (Start)</value>
+  <data name="DocumentSuggestion" xml:space="preserve">
+    <value>Tenga en cuenta que los archivos no deben tener más de 5 MB y solo se aceptan archivos en formatos .pdf, .jpg, .jpeg y .png. Para reducir el tamaño de los archivos mencionados, visite la siguiente liga: </value>
   </data>
-  <data name="FechaNacimientoField" xml:space="preserve">
-    <value>Birth date</value>
+  <data name="EditButtonTitle" xml:space="preserve">
+    <value>Editar</value>
   </data>
-  <data name="FechaNacimientoFinField" xml:space="preserve">
-    <value>Birth date (End)</value>
+  <data name="EditDialogTitle" xml:space="preserve">
+    <value>Editar Registro</value>
   </data>
-  <data name="FechaNacimientoInicioField" xml:space="preserve">
-    <value>Birth date (Start)</value>
+  <data name="EditLink" xml:space="preserve">
+    <value>Editar</value>
   </data>
-  <data name="FieldLength" xml:space="preserve">
-    <value>The field {0} must have at least {2} and a maximum of {1} characters.</value>
+  <data name="EmailPlaceholder" xml:space="preserve">
+    <value>Correo Empresarial</value>
   </data>
-  <data name="FieldsComparison" xml:space="preserve">
-    <value>Field {1} and field {0} do not match.</value>
+  <data name="EmpresaPrimerSeccionTitle" xml:space="preserve">
+    <value>Información Empresarial</value>
   </data>
-  <data name="FirstNameField" xml:space="preserve">
-    <value>First name</value>
+  <data name="EmpresaSegundaSeccionTitle" xml:space="preserve">
+    <value>Información Adicional</value>
   </data>
-  <data name="FullNameField" xml:space="preserve">
-    <value>Name</value>
+  <data name="EmpresaTercerSeccionTitle" xml:space="preserve">
+    <value>Documentos</value>
   </data>
-  <data name="GeneroField" xml:space="preserve">
-    <value>Gender</value>
+  <data name="FilterTitle" xml:space="preserve">
+    <value>Filtros de búsqueda</value>
   </data>
-  <data name="JefeField" xml:space="preserve">
-    <value>Boss</value>
+  <data name="ImportButtonText" xml:space="preserve">
+    <value>Importar</value>
   </data>
-  <data name="MothersLastNameField" xml:space="preserve">
-    <value>Mother's last name</value>
+  <data name="ImportButtonTitle" xml:space="preserve">
+    <value>Importar desde un archivo excel</value>
   </data>
-  <data name="NameField" xml:space="preserve">
-    <value>Name(s)</value>
+  <data name="ImportExcelDialogTitle" xml:space="preserve">
+    <value>Importar empresas</value>
   </data>
-  <data name="NewEmailField" xml:space="preserve">
-    <value>Nuevo correo electrónico</value>
+  <data name="ImportExcelSuggestionA" xml:space="preserve">
+    <value>Descargue la plantilla y rellénela con su información para cargar datos correctamente.</value>
   </data>
-  <data name="NewPasswordField" xml:space="preserve">
-    <value>New password</value>
+  <data name="ImportExcelSuggestionB" xml:space="preserve">
+    <value>Seleccione el archivo que rellenó con su información e importe los datos.</value>
   </data>
-  <data name="NivelField" xml:space="preserve">
-    <value>Level</value>
+  <data name="InvalidFormatMsg" xml:space="preserve">
+    <value>El formato del archivo debe ser .xlsx, por favor elija otro archivo. Puede descargar la plantilla proporcionada para cargar su información.</value>
   </data>
-  <data name="NSSField" xml:space="preserve">
-    <value>NSS</value>
+  <data name="InvalidFormatTitle" xml:space="preserve">
+    <value>Formato de archivo inválido</value>
   </data>
-  <data name="Numeric" xml:space="preserve">
-    <value>The {0} field must have only numbers.</value>
+  <data name="NewDialogTitle" xml:space="preserve">
+    <value>Nuevo Registro</value>
   </data>
-  <data name="OficinaField" xml:space="preserve">
-    <value>Office</value>
+  <data name="NivelPlaceholder" xml:space="preserve">
+    <value>Nivel</value>
   </data>
-  <data name="OldPasswordField" xml:space="preserve">
-    <value>Old password</value>
+  <data name="OrigenPlaceholder" xml:space="preserve">
+    <value>Origen</value>
   </data>
-  <data name="OrigenField" xml:space="preserve">
-    <value>Origin</value>
+  <data name="PlantillaButtonTitle" xml:space="preserve">
+    <value>Descargar plantilla</value>
   </data>
-  <data name="PasswordField" xml:space="preserve">
-    <value>Password</value>
+  <data name="RazonSocialPlaceholder" xml:space="preserve">
+    <value>Razón Social</value>
   </data>
-  <data name="PersonName" xml:space="preserve">
-    <value>The {0} field must have only letters. Whitespaces are allowed. The first letter must be capitalized and there must be at least two letters.</value>
-  </data>
-  <data name="PhoneFormat" xml:space="preserve">
-    <value>The {0} field is not a valid phone number.</value>
-  </data>
-  <data name="PhoneNumberField" xml:space="preserve">
-    <value>Phone</value>
-  </data>
-  <data name="PreferredNameField" xml:space="preserve">
-    <value>Preferred name</value>
-  </data>
-  <data name="PuestoField" xml:space="preserve">
-    <value>Position</value>
-  </data>
-  <data name="RazonSocialField" xml:space="preserve">
-    <value>Business name</value>
-  </data>
-  <data name="RememberField" xml:space="preserve">
-    <value>Remember me?</value>
-  </data>
-  <data name="Required" xml:space="preserve">
-    <value>The {0} field is required.</value>
-  </data>
-  <data name="RFCField" xml:space="preserve">
+  <data name="RFC" xml:space="preserve">
     <value>RFC</value>
   </data>
-  <data name="SecondNameField" xml:space="preserve">
-    <value>Second name</value>
+  <data name="RFCPlaceholder" xml:space="preserve">
+    <value>RFC</value>
   </data>
-  <data name="SubareaField" xml:space="preserve">
-    <value>Subarea</value>
+  <data name="SaveButtonTitle" xml:space="preserve">
+    <value>Guardar</value>
   </data>
-  <data name="UserNameField" xml:space="preserve">
-    <value>Username</value>
+  <data name="SearchButton" xml:space="preserve">
+    <value>Buscar</value>
+  </data>
+  <data name="SeeButtonTitle" xml:space="preserve">
+    <value>Ver</value>
+  </data>
+  <data name="SeeDialogTitle" xml:space="preserve">
+    <value>Ver Registro</value>
+  </data>
+  <data name="TelefonoPlaceholder" xml:space="preserve">
+    <value>Teléfono</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Gestión de empresas</value>
   </data>
 </root>

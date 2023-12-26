@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AccionistaField" xml:space="preserve">
+    <value>Accionista</value>
+  </data>
+  <data name="AdministradorField" xml:space="preserve">
+    <value>Administrador</value>
+  </data>
   <data name="AlphanumNoSpaceNoUnderscore" xml:space="preserve">
     <value>El campo {0} solo permite letras y números.</value>
   </data>
@@ -132,14 +138,26 @@
   <data name="ConfirmPasswordField" xml:space="preserve">
     <value>Confirmar contraseña</value>
   </data>
+  <data name="CorreoBancosField" xml:space="preserve">
+    <value>Correo bancos</value>
+  </data>
   <data name="CorreoEmpresarialField" xml:space="preserve">
     <value>Correo Empresarial</value>
+  </data>
+  <data name="CorreoFiscalField" xml:space="preserve">
+    <value>Correo fiscal</value>
+  </data>
+  <data name="CorreoGeneralField" xml:space="preserve">
+    <value>Correo general</value>
   </data>
   <data name="CURPField" xml:space="preserve">
     <value>CURP</value>
   </data>
   <data name="DireccionField" xml:space="preserve">
     <value>Dirección</value>
+  </data>
+  <data name="DomicilioFiscalField" xml:space="preserve">
+    <value>Domicilio fiscal</value>
   </data>
   <data name="EmailField" xml:space="preserve">
     <value>Correo electrónico</value>
@@ -201,6 +219,9 @@
   <data name="NewPasswordField" xml:space="preserve">
     <value>Nueva contraseña</value>
   </data>
+  <data name="NivelField" xml:space="preserve">
+    <value>Nivel</value>
+  </data>
   <data name="NSSField" xml:space="preserve">
     <value>NSS</value>
   </data>
@@ -212,6 +233,9 @@
   </data>
   <data name="OldPasswordField" xml:space="preserve">
     <value>Contraseña anterior</value>
+  </data>
+  <data name="OrigenField" xml:space="preserve">
+    <value>Origen</value>
   </data>
   <data name="PasswordField" xml:space="preserve">
     <value>Contraseña</value>
@@ -230,6 +254,9 @@
   </data>
   <data name="PuestoField" xml:space="preserve">
     <value>Puesto</value>
+  </data>
+  <data name="RazonSocialField" xml:space="preserve">
+    <value>Razón social</value>
   </data>
   <data name="RememberField" xml:space="preserve">
     <value>¿Recordarme?</value>

@@ -2,6 +2,7 @@
 using ERPSEI.Data.Entities;
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Managers;
+using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Email;
 using ERPSEI.Resources;
 using Microsoft.AspNetCore.Identity;
@@ -34,7 +35,10 @@ namespace ERPSEI
             _builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
             _builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            _builder.Services.AddScoped<IArchivoEmpleadoManager, ArchivoEmpleadoManager>();
+			_builder.Services.AddScoped<IArchivoEmpresaManager, ArchivoEmpresaManager>();
+			_builder.Services.AddScoped<IEmpresaManager, EmpresaManager>();
+
+			_builder.Services.AddScoped<IArchivoEmpleadoManager, ArchivoEmpleadoManager>();
 			_builder.Services.AddScoped<IContactoEmergenciaManager, ContactoEmergenciaManager>();
 
 			_builder.Services.AddScoped<IEmpleadoManager, EmpleadoManager>();
