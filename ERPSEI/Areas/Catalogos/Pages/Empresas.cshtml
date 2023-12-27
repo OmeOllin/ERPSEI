@@ -137,7 +137,7 @@
 						<h5>@Localizer["EmpresaPrimerSeccionTitle"]</h5>
 						<hr />
 						<div id="saveValidationSummary" class="text-danger mb-3" role="alert"></div>
-						<div class="row">
+						<div class="row mb-5">
 							<div class="col-sm-12 col-md-6 col-lg-4">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaNombre" asp-for="InputEmpresa.RazonSocial" type="text" class="form-control formInput" placeholder="@Localizer["RazonSocialPlaceholder"]" />
@@ -187,10 +187,13 @@
 									<span asp-validation-for="InputEmpresa.DomicilioFiscal" class="text-danger"></span>
 								</div>
 							</div>
-						</div>
-						<h5>@Localizer["EmpresaSegundaSeccionTitle"]</h5>
-						<hr />
-						<div class="row">
+							<div class="col-sm-12 col-md-12 col-lg-6">
+								<div class="form-floating mb-3">
+									<input id="inpEmpresaRFC" asp-for="InputEmpresa.RFC" type="text" class="form-control formInput" placeholder="@Localizer["RFCPlaceholder"]" />
+									<label for="inpEmpresaRFC" asp-for="InputEmpresa.RFC" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.RFC" class="text-danger"></span>
+								</div>
+							</div>
 							<div class="col-sm-12 col-md-12 col-lg-6">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaEmail" asp-for="InputEmpresa.CorreoGeneral" type="text" class="form-control formInput" placeholder="@Localizer["CorreoGeneralPlaceholder"]" />
@@ -201,25 +204,28 @@
 							<div class="col-sm-12 col-md-12 col-lg-6">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaEmail" asp-for="InputEmpresa.CorreoBancos" type="text" class="form-control formInput" placeholder="@Localizer["CorreoBancosPlaceholder"]" />
-								<label for="inpEmpresaEmail" asp-for="InputEmpresa.CorreoBancos" class="form-label"></label>
-								<span asp-validation-for="InputEmpresa.CorreoBancos" class="text-danger"></span>
+									<label for="inpEmpresaEmail" asp-for="InputEmpresa.CorreoBancos" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.CorreoBancos" class="text-danger"></span>
 								</div>
 							</div>
 							<div class="col-sm-12 col-md-12 col-lg-6">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaEmail" asp-for="InputEmpresa.CorreoFiscal" type="text" class="form-control formInput" placeholder="@Localizer["CorreoFiscalPlaceholder"]" />
-								<label for="inpEmpresaEmail" asp-for="InputEmpresa.CorreoFiscal" class="form-label"></label>
-								<span asp-validation-for="InputEmpresa.CorreoFiscal" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-sm-12 col-md-12 col-lg-6">
-								<div class="form-floating mb-3">
-									<input id="inpEmpresaRFC" asp-for="InputEmpresa.RFC" type="text" class="form-control formInput" placeholder="@Localizer["RFCPlaceholder"]" />
-									<label for="inpEmpresaRFC" asp-for="InputEmpresa.RFC" class="form-label"></label>
-									<span asp-validation-for="InputEmpresa.RFC" class="text-danger"></span>
+									<label for="inpEmpresaEmail" asp-for="InputEmpresa.CorreoFiscal" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.CorreoFiscal" class="text-danger"></span>
 								</div>
 							</div>
 						</div>
+						<div class="row">
+							<div class="col-6"><h5>@Localizer["EmpresaSegundaSeccionTitle"]</h5></div>
+							<div class="col-6 text-end">
+								<button id="dlgEmpresaBtnAgregarBanco" type="button" class="btn btn-primary formButton" onclick="onAgregarBancoClick();">
+									<i class="bi bi-plus-lg"></i> @Localizer["AgregarBancoButtonText"]
+								</button>
+							</div>
+						</div>
+						<hr />
+						<div id="bodyBancos" class="row mb-5"></div>
 						<h5>@Localizer["EmpresaTercerSeccionTitle"]</h5>
 						<hr />
 						<div class="alert alert-primary d-flex align-items-center mb-3" role="alert">
@@ -335,9 +341,20 @@
 		var colOrigenHeader = '@Localizer["ColOrigenHeader"]';
 		var colNivelHeader = '@Localizer["ColNivelHeader"]';
 		var colAdministradorHeader = '@Localizer["ColAdministradorHeader"]';
+		var colAccionistaHeader = '@Localizer["ColAccionistaHeader"]';
 		var colTelefonoHeader = '@Localizer["ColTelefonoHeader"]';
 		var colCorreoHeader = '@Localizer["ColCorreoHeader"]';
 		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
+		var dlgMaxBancosAllowedMessage = '@Localizer["MaxBancosAllowed"]';
+		var maxFileSizeTitle = '@Localizer["MaxFileSizeTitle"]';
+		var maxFileSizeMessage = '@Localizer["MaxFileSizeMessage"]';
+		var fileFormatTitle = '@Localizer["FileFormatTitle"]';
+		var fileFormatMessage = '@Localizer["FileFormatMessage"]';
+		var nuevoRegistro = '@Localizer["Nuevo"]';
+		var emptySelectItemText = '@Localizer["Seleccione"]';
+		var empresaBancoTitle = '@Localizer["EmpresaBancoTitle"]';
+		var titularPlaceholder = '@Localizer["TitularPlaceholder"]';
+		var responsablePlaceholder = '@Localizer["ResponsablePlaceholder"]';
 		var arrTiposDocumentos = {
 			"1": '@Localizer["CSF"]',
 			"2": '@Localizer["INE"]',

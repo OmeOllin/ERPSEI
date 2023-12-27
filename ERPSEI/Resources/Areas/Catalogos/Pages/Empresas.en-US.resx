@@ -126,8 +126,14 @@
   <data name="AdministradorPlaceholder" xml:space="preserve">
     <value>Administrator</value>
   </data>
+  <data name="AgregarBancoButtonText" xml:space="preserve">
+    <value>Add Bank</value>
+  </data>
   <data name="CancelButtonTitle" xml:space="preserve">
     <value>Cancel</value>
+  </data>
+  <data name="ColAccionistaHeader" xml:space="preserve">
+    <value>Shareholder</value>
   </data>
   <data name="ColActionsHeader" xml:space="preserve">
     <value>Actions</value>
@@ -192,14 +198,23 @@
   <data name="EmailPlaceholder" xml:space="preserve">
     <value>Business Email</value>
   </data>
+  <data name="EmpresaBancoTitle" xml:space="preserve">
+    <value>Bank</value>
+  </data>
   <data name="EmpresaPrimerSeccionTitle" xml:space="preserve">
     <value>Business Information</value>
   </data>
   <data name="EmpresaSegundaSeccionTitle" xml:space="preserve">
-    <value>Additional Information</value>
+    <value>Bank Information</value>
   </data>
   <data name="EmpresaTercerSeccionTitle" xml:space="preserve">
     <value>Documents</value>
+  </data>
+  <data name="FileFormatMessage" xml:space="preserve">
+    <value>The file format must be .pdf, .jpg, .jpeg o .png. Please choose another file.</value>
+  </data>
+  <data name="FileFormatTitle" xml:space="preserve">
+    <value>Invalid file format</value>
   </data>
   <data name="FilterTitle" xml:space="preserve">
     <value>Search filters</value>
@@ -225,11 +240,23 @@
   <data name="InvalidFormatTitle" xml:space="preserve">
     <value>Invalid file format</value>
   </data>
+  <data name="MaxBancosAllowed" xml:space="preserve">
+    <value>It is not possible to add more banks.</value>
+  </data>
+  <data name="MaxFileSizeMessage" xml:space="preserve">
+    <value>The selected file exceeds the maximum allowed file size. Please choose another file with size no larger than</value>
+  </data>
+  <data name="MaxFileSizeTitle" xml:space="preserve">
+    <value>Invalid file size</value>
+  </data>
   <data name="NewDialogTitle" xml:space="preserve">
     <value>New record</value>
   </data>
   <data name="NivelPlaceholder" xml:space="preserve">
     <value>Level</value>
+  </data>
+  <data name="Nuevo" xml:space="preserve">
+    <value>New</value>
   </data>
   <data name="OrigenPlaceholder" xml:space="preserve">
     <value>Origin</value>
@@ -239,6 +266,9 @@
   </data>
   <data name="RazonSocialPlaceholder" xml:space="preserve">
     <value>Business Name</value>
+  </data>
+  <data name="ResponsablePlaceholder" xml:space="preserve">
+    <value>Account manager</value>
   </data>
   <data name="RFC" xml:space="preserve">
     <value>RFC</value>
@@ -258,6 +288,9 @@
   <data name="SeeDialogTitle" xml:space="preserve">
     <value>See record</value>
   </data>
+  <data name="Seleccione" xml:space="preserve">
+    <value>Select...</value>
+  </data>
   <data name="SubareaPlaceholder" xml:space="preserve">
     <value>Subarea</value>
   </data>
@@ -266,5 +299,8 @@
   </data>
   <data name="Title" xml:space="preserve">
     <value>Companies manager</value>
+  </data>
+  <data name="TitularPlaceholder" xml:space="preserve">
+    <value>Account holder</value>
   </data>
 </root>

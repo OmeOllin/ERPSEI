@@ -129,10 +129,10 @@
   <data name="EmpresasDeletedUnsuccessfully" xml:space="preserve">
     <value>Error deleting records</value>
   </data>
-  <data name="EmpresasFiltrtadasSuccessfully" xml:space="preserve">
+  <data name="EmpresasFiltradasSuccessfully" xml:space="preserve">
     <value>Companies filtered successfully!</value>
   </data>
-  <data name="EmpresasFiltrtadasUnsuccessfully" xml:space="preserve">
+  <data name="EmpresasFiltradasUnsuccessfully" xml:space="preserve">
     <value>Error filtering companies</value>
   </data>
   <data name="EmpresasImportadasSuccessfully" xml:space="preserve">

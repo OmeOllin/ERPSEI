@@ -126,8 +126,14 @@
   <data name="AdministradorPlaceholder" xml:space="preserve">
     <value>Administrador</value>
   </data>
+  <data name="AgregarBancoButtonText" xml:space="preserve">
+    <value>Agregar Banco</value>
+  </data>
   <data name="CancelButtonTitle" xml:space="preserve">
     <value>Cancelar</value>
+  </data>
+  <data name="ColAccionistaHeader" xml:space="preserve">
+    <value>Accionista</value>
   </data>
   <data name="ColActionsHeader" xml:space="preserve">
     <value>Acciones</value>
@@ -192,14 +198,23 @@
   <data name="EmailPlaceholder" xml:space="preserve">
     <value>Correo Empresarial</value>
   </data>
+  <data name="EmpresaBancoTitle" xml:space="preserve">
+    <value>Banco</value>
+  </data>
   <data name="EmpresaPrimerSeccionTitle" xml:space="preserve">
     <value>Información Empresarial</value>
   </data>
   <data name="EmpresaSegundaSeccionTitle" xml:space="preserve">
-    <value>Información Adicional</value>
+    <value>Información Bancaria</value>
   </data>
   <data name="EmpresaTercerSeccionTitle" xml:space="preserve">
     <value>Documentos</value>
+  </data>
+  <data name="FileFormatMessage" xml:space="preserve">
+    <value>El formato del archivo debe ser .pdf, .jpg, .jpeg o .png. Por favor elija otro archivo.</value>
+  </data>
+  <data name="FileFormatTitle" xml:space="preserve">
+    <value>Formato de archivo inválido</value>
   </data>
   <data name="FilterTitle" xml:space="preserve">
     <value>Filtros de búsqueda</value>
@@ -225,11 +240,23 @@
   <data name="InvalidFormatTitle" xml:space="preserve">
     <value>Formato de archivo inválido</value>
   </data>
+  <data name="MaxBancosAllowed" xml:space="preserve">
+    <value>No es posible agregar más bancos.</value>
+  </data>
+  <data name="MaxFileSizeMessage" xml:space="preserve">
+    <value>El archivo seleccionado supera el máximo tamaño permitido de los archivos. Por favor elija otro archivo con tamaño no mayor a </value>
+  </data>
+  <data name="MaxFileSizeTitle" xml:space="preserve">
+    <value>Tamaño de archivo inválido</value>
+  </data>
   <data name="NewDialogTitle" xml:space="preserve">
     <value>Nuevo Registro</value>
   </data>
   <data name="NivelPlaceholder" xml:space="preserve">
     <value>Nivel</value>
+  </data>
+  <data name="Nuevo" xml:space="preserve">
+    <value>Nuevo</value>
   </data>
   <data name="OrigenPlaceholder" xml:space="preserve">
     <value>Origen</value>
@@ -239,6 +266,9 @@
   </data>
   <data name="RazonSocialPlaceholder" xml:space="preserve">
     <value>Razón Social</value>
+  </data>
+  <data name="ResponsablePlaceholder" xml:space="preserve">
+    <value>Responsable de la cuenta</value>
   </data>
   <data name="RFC" xml:space="preserve">
     <value>RFC</value>
@@ -258,10 +288,16 @@
   <data name="SeeDialogTitle" xml:space="preserve">
     <value>Ver Registro</value>
   </data>
+  <data name="Seleccione" xml:space="preserve">
+    <value>Seleccione...</value>
+  </data>
   <data name="TelefonoPlaceholder" xml:space="preserve">
     <value>Teléfono</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Gestión de empresas</value>
+  </data>
+  <data name="TitularPlaceholder" xml:space="preserve">
+    <value>Titular de la cuenta</value>
   </data>
 </root>

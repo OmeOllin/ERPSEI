@@ -4,8 +4,9 @@ var selections = [];
 const NUEVO = 0;
 const EDITAR = 1;
 const VER = 2;
-//5mb = (5 * 1024) * 1024;
-var maxFileSizeInBytes = 5242880;
+const maxFileSizeInBytes = 5242880; //5mb = (5 * 1024) * 1024
+const oneMegabyteSizeInBytes = 1048576; // 1mb = (1 * 1024) * 1024
+const maxBanks = 5; // Máximo 5 registros de bancos.
 const postOptions = { headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() } }
 
 //Función para inicializar el módulo.
@@ -43,51 +44,9 @@ function responseHandler(res) {
 }
 //Función para dar formato al detalle de empresa
 function detailFormatter(index, row) {
-    let src = "";
-    for (var i = 0; i < row.archivos.length; i++) {
-        if (row.archivos[i].tipoArchivoId == 1) {
-            //Si el tipo de archivo es la foto de perfil, se establece en el contenedor directamente.
-            if ((row.archivos[i].imgSrc || "").length <= 0) { row.archivos[i].imgSrc = "/img/default_profile_pic.png"; }
-            src = row.archivos[i].imgSrc;
-            break;
-        }
-    }
-
-    let genderClass = "bi-gender-female";
-    if (row.genero == "Masculino") { genderClass = "bi-gender-male"; }
-
     let h = `<div class="container alert alert-primary">
                 <div class="row">
-                    <div class="col-sm-12 col-md-12 col-lg-2">
-						<div>
-							<img class="profile-pic-min m-3" src="${src}" />
-						</div>
-					</div>
-                    <div class="col-sm-12 col-md-12 col-lg-10">
-					    <div class="row">
-						    <div class="col-12">
-							    <i class="bi bi-person-fill"></i> <span><b>Nombre: </b>${row.nombreCompleto}</span>
-						    </div>
-						    <div class="col-12">
-							    <i class="bi bi-gear-fill"></i> <span><b>Fecha Ingreso: </b>${row.fechaIngreso}</span>
-						    </div>
-                            <div class="col-12">
-							    <i class="bi bi-cake2-fill"></i> <span><b>Fecha Nacimiento: </b>${row.fechaNacimiento}</span>
-						    </div>
-						    <div class="col-12">
-							    <i class="bi bi-telephone-fill"> </i><span><b>Teléfono: </b>${row.telefono}</span>
-						    </div>
-						    <div class="col-12">
-							    <i class="bi ${genderClass}"></i> <span><b>G&eacute;nero: </b>${row.genero}</span>
-						    </div>
-						    <div class="col-12">
-							    <i class="bi bi-yin-yang"></i> <span><b>Estado Civ&iacute;l: </b>${row.estadoCivil}</span>
-						    </div>
-						    <div class="col-12">
-							    <i class="bi bi-house-door-fill"> </i><span><b>Direcci&oacute;n: </b>${row.direccion}</span>
-						    </div>
-					    </div>
-				    </div>
+                    
                 </div>
             </div>`;
     return h;
@@ -116,11 +75,11 @@ window.operateEvents = {
 function additionalButtons() {
     return {
         btnImport: {
-            text: 'Importar',
+            text: btnImportarText,
             icon: 'bi-upload',
             event: function () { },
             attributes: {
-                "title": 'Importar datos desde un archivo excel',
+                "title": btnImportarTitle,
                 "data-bs-toggle": "modal",
                 "data-bs-target": "#dlgImportarExcel"
             }
@@ -130,7 +89,7 @@ function additionalButtons() {
 //Función para agregar empresas
 function onAgregarClick() {
     let oEmpresaNueva = {
-        id: "Nuevo",
+        id: nuevoRegistro,
         rfc: "",
         archivos: []
     };
@@ -171,7 +130,7 @@ function initTable() {
             },
             {
                 title: colNombreHeader,
-                field: "nombreCompleto",
+                field: "razonSocial",
                 align: "center",
                 valign: "middle",
                 sortable: true
@@ -198,15 +157,8 @@ function initTable() {
                 sortable: true
             },
             {
-                title: colTelefonoHeader,
-                field: "telefono",
-                align: "center",
-                valign: "middle",
-                sortable: true
-            },
-            {
-                title: colCorreoHeader,
-                field: "email",
+                title: colAccionistaHeader,
+                field: "accionista",
                 align: "center",
                 valign: "middle",
                 sortable: true
@@ -273,24 +225,16 @@ function initTable() {
 //Función para filtrar los datos de la tabla.
 function onBuscarClick() {
     let btnBuscar = document.getElementById("btnBuscar");
-    let inpFechaIngresoIni = document.getElementById("inpFiltroFechaIngresoInicio");
-    let inpFechaIngresoFin = document.getElementById("inpFiltroFechaIngresoFin");
-    let inpFechaNacimientoIni = document.getElementById("inpFiltroFechaNacimientoInicio");
-    let inpFechaNacimientoFin = document.getElementById("inpFiltroFechaNacimientoFin");
-    let selPuesto = document.getElementById("selFiltroPuesto");
-    let selArea = document.getElementById("selFiltroArea");
-    let selSubarea = document.getElementById("selFiltroSubarea");
-    let selOficina = document.getElementById("selFiltroOficina");
+    let inpOrigen = document.getElementById("inpFiltroOrigen");
+    let inpNivel = document.getElementById("inpFiltroNivel");
+    let inpAdministrador = document.getElementById("inpFiltroAdministrador");
+    let inpAccionista = document.getElementById("inpFiltroAccionista");
 
     let oParams = {
-        FechaIngresoInicio: inpFechaIngresoIni.value,
-        FechaIngresoFin: inpFechaIngresoFin.value,
-        FechaNacimientoInicio: inpFechaNacimientoIni.value,
-        FechaNacimientoFin: inpFechaNacimientoFin.value,
-        PuestoId: selPuesto.value == 0 ? null : parseInt(selPuesto.value),
-        AreaId: selArea.value == 0 ? null : parseInt(selArea.value),
-        SubareaId: selSubarea.value == 0 ? null : parseInt(selSubarea.value),
-        OficinaId: selOficina.value == 0 ? null : parseInt(selOficina.value)
+        origen: inpOrigen.value,
+        nivel: inpNivel.value,
+        administrador: inpAdministrador.value,
+        accionista: inpAccionista.value
     };
 
     //Resetea el valor de los filtros.
@@ -371,44 +315,35 @@ function initEmpresaDialog(action, row) {
         let srcElements = (a.imgSrc || "").split(",");
         let b64 = srcElements.length >= 1 ? srcElements[1]||"" : "";
 
-        if (a.tipoArchivoId == 1) {
-            //Si el tipo de archivo es la foto de perfil, se establece en el contenedor directamente.
-            if ((a.imgSrc||"").length <= 0) { a.imgSrc = "/img/default_profile_pic.png"; }
-            picField.setAttribute('src', a.imgSrc);
-            picSelector.setAttribute('sourceLength', a.imgSrc.length);
-            picSelector.setAttribute('sourceName', `${a.nombre}.${a.extension}`);
-            picSelector.setAttribute('b64', b64);
+        let containerClass = "document-container-empty";
+        let iconClass = "opacity-25";
+        let nameClass = "opacity-25";
+        let nameHTML = `<div class="overflowed-text">${emptySelectItemText}</div>`;
+        let editDisabled = action == VER ? "disabled" : "";
+
+        if (b64.length >= 1) {
+            //Si trae base64, agrega un archivo al DOM con la información.
+            containerClass = "document-container-filled";
+            iconClass = "document-icon-filled";
+            nameClass = "document-name-filled";
+            nameHTML = `<div class="overflowed-text">${a.nombre}</div>.<div>${a.extension}</div>`;
         }
-        else {
-            let containerClass = "document-container-empty";
-            let iconClass = "opacity-25";
-            let nameClass = "opacity-25";
-            let nameHTML = `<div class="overflowed-text">Seleccione...</div>`;
-            let editDisabled = action == VER ? "disabled" : "";
 
-            if (b64.length >= 1) {
-                //Si trae base64, agrega un archivo al DOM con la información.
-                containerClass = "document-container-filled";
-                iconClass = "document-icon-filled";
-                nameClass = "document-name-filled";
-                nameHTML = `<div class="overflowed-text">${a.nombre}</div>.<div>${a.extension}</div>`;
-            }
-
-            $("#bodyArchivos").append(
-                `<div class="col-12 col-xl-6">
-                    <div><b>${arrTiposDocumentos[a.tipoArchivoId]}</b></div>
-                    <div id="container${a.tipoArchivoId}" class="alert mb-2 mt-2 ${containerClass} row me-0">
-                        <div id="fileIcon${a.tipoArchivoId}" class="align-self-center col-1 ${iconClass}"><i class='bi bi-file-image' style='font-size:25px'></i></div>
-                        <div id="fileName${a.tipoArchivoId}" class="align-self-center col-10 ${nameClass} p-2" style="display:flex; color:dimgray">${nameHTML}</div>
-                        <div class="align-self-center col-1">
-                            <input type="file" id="selector${a.tipoArchivoId}" b64="${b64}" sourceName="${a.nombre}.${a.extension}" sourceLength="${(b64||"").length}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-                            <a class='btn btn-sm btn-primary ${editDisabled} mb-1' onclick='onEditDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-pencil-fill'></i></a>
-                            <a class="btn btn-sm btn-primary disableable mb-1" inputName="selector${a.tipoArchivoId}" onclick="onDeleteClick(this);" sourceId="selector${a.tipoArchivoId}" sourceLength="${(a.archivo || []).length}"><i class="bi bi-x-lg"></i></a>
-                        </div>
+        $("#bodyArchivos").append(
+            `<div class="col-12 col-xl-6">
+                <div><b>${arrTiposDocumentos[a.tipoArchivoId]}</b></div>
+                <div id="container${a.tipoArchivoId}" class="alert mb-2 mt-2 ${containerClass} row me-0">
+                    <div id="fileIcon${a.tipoArchivoId}" class="align-self-center col-1 ${iconClass}"><i class='bi bi-file-image' style='font-size:25px'></i></div>
+                    <div id="fileName${a.tipoArchivoId}" class="align-self-center col-10 ${nameClass} p-2" style="display:flex; color:dimgray">${nameHTML}</div>
+                    <div class="align-self-center col-1">
+                        <input type="file" id="selector${a.tipoArchivoId}" b64="${b64}" sourceName="${a.nombre}.${a.extension}" sourceLength="${(b64||"").length}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                        <a class='btn btn-sm btn-primary ${editDisabled} mb-1' onclick='onEditDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-pencil-fill'></i></a>
+                        <a class="btn btn-sm btn-primary disableable mb-1" inputName="selector${a.tipoArchivoId}" onclick="onDeleteClick(this);" sourceId="selector${a.tipoArchivoId}" sourceLength="${(a.archivo || []).length}"><i class="bi bi-x-lg"></i></a>
                     </div>
-                </div>`
-            );
-        }
+                </div>
+            </div>`
+        );
+
         i++;
     });
 
@@ -465,10 +400,43 @@ function onDeleteClick(button) {
 
         fileName.classList.remove("document-name-filled");
         fileName.classList.add("opacity-25");
-        fileName.innerHTML = `<div class="overflowed-text">Seleccione...</div>`;
+        fileName.innerHTML = `<div class="overflowed-text">${emptySelectItemText}</div>`;
     }
 
     initializeDisableableButtons();
+}
+//Función para capturar el clic en el botón agregar banco, que añade un item de banco para capturar datos.
+function onAgregarBancoClick() {
+    let btnAgregarBanco = document.getElementById("dlgEmpresaBtnAgregarBanco");
+    let currentRows = document.querySelectorAll(".rowBancos").length;
+
+    if (currentRows >= maxBanks) {
+        showAlert(btnAgregarBanco.innerHTML, dlgMaxBancosAllowedMessage);
+        return;
+    }
+
+    currentRows += 1;
+    
+    let bodyBancos = document.getElementById("bodyBancos");
+    bodyBancos.innerHTML += `<div class="col-sm-12 col-md-12 col-lg-6 rowBancos">
+								<div class="row">
+									<h6 class="col-12"><i>${empresaBancoTitle} ${currentRows}</i></h6>
+									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+										<div class="form-floating mb-3">
+											<input id="inpEmpresaBancoTitular${currentRows}" type="text" class="form-control formInput" placeholder="${titularPlaceholder}" />
+											<label for="inpEmpresaBancoTitular${currentRows}" class="form-label">${titularPlaceholder}</label>
+											<span class="text-danger"></span>
+										</div>
+									</div>
+									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+										<div class="form-floating mb-3">
+											<input id="inpEmpresaBancoResponsable${currentRows}" type="text" class="form-control formInput" placeholder="${responsablePlaceholder}" />
+											<label for="inpEmpresaBancoResponsable${currentRows}" class="form-label">${responsablePlaceholder}</label>
+											<span class="text-danger"></span>
+										</div>
+									</div>
+								</div>
+							</div>`;
 }
 
 //Función para mostrar cualquiera de los documentos seleccionados.
@@ -476,10 +444,7 @@ function onDocumentSelectorChanged(input) {
     if (input.files && (input.files.length || 0) >= 1) {
         if (input.files[0].size >= maxFileSizeInBytes) {
             input.value = null;
-            showAlert(
-                "Tama&ntilde;o de archivo inv&aacute;lido",
-                `El tama&ntilde;o del archivo no debe superar ${maxFileSizeInBytes / 1000000}Mb. Por favor elija otro archivo.`
-            );
+            showAlert(maxFileSizeTitle, `${maxFileSizeMessage} ${maxFileSizeInBytes / oneMegabyteSizeInBytes}Mb`);
             return;
         }
         let docType = input.files[0].type;
@@ -526,10 +491,7 @@ function onDocumentSelectorChanged(input) {
         }
         else {
             input.value = null;
-            showAlert(
-                "Formato de archivo inv&aacute;lido",
-                `El formato del archivo debe ser .pdf, .jpg, .jpeg o .png. Por favor elija otro archivo.`
-            );
+            showAlert(fileFormatTitle, fileFormatMessage);
 
             return;
         }
@@ -577,7 +539,7 @@ function onGuardarClick() {
     });
 
     let oParams = {
-        id: idField.value == "Nuevo" ? 0 : idField.value,
+        id: idField.value == nuevoRegistro ? 0 : idField.value,
         rfc: rfcField.value.trim(),
         archivos: files
     };
