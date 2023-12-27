@@ -16,10 +16,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\js\MessageDialog.js" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="ExcelDataReader" Version="3.6.0" />
     <PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.0" />
@@ -37,11 +33,6 @@
   <ItemGroup>
     <Folder Include="wwwroot\img\" />
     <Folder Include="wwwroot\templates\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\js\MessageDialog.js" />
-    <None Include="wwwroot\js\Loading.js" />
   </ItemGroup>
 
   <ItemGroup>
