@@ -72,6 +72,28 @@ namespace ERPSEI.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Empresas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    RazonSocial = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Origen = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Nivel = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RFC = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DomicilioFiscal = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Administrador = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Accionista = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CorreoGeneral = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CorreoBancos = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CorreoFiscal = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Telefono = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Empresas", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "EstadosCiviles",
                 columns: table => new
                 {
@@ -133,6 +155,19 @@ namespace ERPSEI.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TipoArchivoEmpresa",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TipoArchivoEmpresa", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Subareas",
                 columns: table => new
                 {
@@ -147,6 +182,32 @@ namespace ERPSEI.Data.Migrations
                         name: "FK_Subareas_Areas_AreaId",
                         column: x => x.AreaId,
                         principalTable: "Areas",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ArchivosEmpresa",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Extension = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Archivo = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    TipoArchivoId = table.Column<int>(type: "int", nullable: true),
+                    EmpresaId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArchivosEmpresa", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ArchivosEmpresa_Empresas_EmpresaId",
+                        column: x => x.EmpresaId,
+                        principalTable: "Empresas",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ArchivosEmpresa_TipoArchivoEmpresa_TipoArchivoId",
+                        column: x => x.TipoArchivoId,
+                        principalTable: "TipoArchivoEmpresa",
                         principalColumn: "Id");
                 });
 
@@ -367,6 +428,15 @@ namespace ERPSEI.Data.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "TipoArchivoEmpresa",
+                columns: new[] { "Id", "Description" },
+                values: new object[,]
+                {
+                    { 2, "CSF" },
+                    { 3, "RFC" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Subareas",
                 columns: new[] { "Id", "AreaId", "Nombre" },
                 values: new object[,]
@@ -397,6 +467,16 @@ namespace ERPSEI.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_ArchivosEmpleado_TipoArchivoId",
                 table: "ArchivosEmpleado",
+                column: "TipoArchivoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArchivosEmpresa_EmpresaId",
+                table: "ArchivosEmpresa",
+                column: "EmpresaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArchivosEmpresa_TipoArchivoId",
+                table: "ArchivosEmpresa",
                 column: "TipoArchivoId");
 
             migrationBuilder.CreateIndex(
@@ -458,10 +538,19 @@ namespace ERPSEI.Data.Migrations
                 name: "ArchivosEmpleado");
 
             migrationBuilder.DropTable(
+                name: "ArchivosEmpresa");
+
+            migrationBuilder.DropTable(
                 name: "ContactosEmergencia");
 
             migrationBuilder.DropTable(
                 name: "TipoArchivo");
+
+            migrationBuilder.DropTable(
+                name: "Empresas");
+
+            migrationBuilder.DropTable(
+                name: "TipoArchivoEmpresa");
 
             migrationBuilder.DropTable(
                 name: "Empleados");

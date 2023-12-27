@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERPSEI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231218220955_hotfix")]
+    [Migration("20231227205633_hotfix")]
     partial class hotfix
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace ERPSEI.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.13")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -766,6 +766,121 @@ namespace ERPSEI.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.ArchivoEmpresa", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<byte[]>("Archivo")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int?>("EmpresaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Extension")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TipoArchivoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmpresaId");
+
+                    b.HasIndex("TipoArchivoId");
+
+                    b.ToTable("ArchivosEmpresa");
+                });
+
+            modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.Empresa", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Accionista")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Administrador")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CorreoBancos")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CorreoFiscal")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CorreoGeneral")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DomicilioFiscal")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nivel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Origen")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RFC")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RazonSocial")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Empresas");
+                });
+
+            modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.TipoArchivoEmpresa", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TipoArchivoEmpresa");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 2,
+                            Description = "CSF"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "RFC"
+                        });
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -995,6 +1110,23 @@ namespace ERPSEI.Data.Migrations
                     b.Navigation("Area");
                 });
 
+            modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.ArchivoEmpresa", b =>
+                {
+                    b.HasOne("ERPSEI.Data.Entities.Empresas.Empresa", "Empresa")
+                        .WithMany("ArchivosEmpresa")
+                        .HasForeignKey("EmpresaId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ERPSEI.Data.Entities.Empresas.TipoArchivoEmpresa", "TipoArchivo")
+                        .WithMany("ArchivosEmpresa")
+                        .HasForeignKey("TipoArchivoId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Empresa");
+
+                    b.Navigation("TipoArchivo");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1090,6 +1222,16 @@ namespace ERPSEI.Data.Migrations
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.TipoArchivo", b =>
                 {
                     b.Navigation("ArchivosEmpleado");
+                });
+
+            modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.Empresa", b =>
+                {
+                    b.Navigation("ArchivosEmpresa");
+                });
+
+            modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.TipoArchivoEmpresa", b =>
+                {
+                    b.Navigation("ArchivosEmpresa");
                 });
 #pragma warning restore 612, 618
         }
