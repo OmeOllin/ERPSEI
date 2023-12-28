@@ -12,6 +12,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Net.Mime;
 
+//TODO: Optimizar la obtención de talentos para que solo traiga los datos que se mostrarán en pantalla. El resto de datos traerlos hasta que se consulte o edite el registro.
+//TODO: Corregir los strings en duro y obtenerlos de los recursos para que sean localizables.
+//TODO: Verificar si es posible modificar el proceso de guardado de los archivos de empleados, para que se guarden solo los que establezca el usuario, en vez de guardar todos por default.
 namespace ERPSEI.Areas.Catalogos.Pages
 {
 	public class GestionDeTalentoModel : PageModel
