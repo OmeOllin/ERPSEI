@@ -165,6 +165,9 @@
   <data name="ColNameHeader" xml:space="preserve">
     <value>Nombre</value>
   </data>
+  <data name="ColOficinaHeader" xml:space="preserve">
+    <value>Oficina</value>
+  </data>
   <data name="ColPuestoHeader" xml:space="preserve">
     <value>Puesto</value>
   </data>
@@ -196,10 +199,10 @@
     <value>Eliminar</value>
   </data>
   <data name="DeleteEmpleadoDialogQuestion" xml:space="preserve">
-    <value>¿Está seguro que desea eliminar los registros seleccionados?</value>
+    <value>¿Está seguro que desea dar de baja los registros seleccionados?</value>
   </data>
   <data name="DeleteEmpleadoDialogTitle" xml:space="preserve">
-    <value>Eliminar empleado</value>
+    <value>Dar de baja empleado</value>
   </data>
   <data name="DireccionPlaceholder" xml:space="preserve">
     <value>Dirección</value>

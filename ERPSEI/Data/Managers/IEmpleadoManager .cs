@@ -11,17 +11,30 @@ namespace ERPSEI.Data.Managers
 
         public Task DeleteAsync(Empleado contacto);
 
-        public Task DeleteByIdAsync(int contactoId);
+		public Task DisableByIdAsync(int id);
+
+		public Task DeleteByIdAsync(int contactoId);
 
         public Task DeleteMultipleByIdAsync(string[] ids);
 
-        public Task<List<Empleado>> GetAllAsync();
+        public Task<List<Empleado>> GetAllAsync(
+			DateTime? fechaIngresoInicio = null,
+			DateTime? fechaIngresoFin = null,
+			DateTime? fechaNacimientoInicio = null,
+			DateTime? fechaNacimientoFin = null,
+			int? puestoId = null,
+			int? areaId = null,
+			int? subareaId = null,
+			int? oficinaId = null
+		);
 
         public Task<Empleado?> GetEmpleadoOrganigramaAsync(int id);
 
 		public Task<List<Empleado>> GetEmpleadosOrganigramaAsync(int? jefeId, int? areaId, int? subareaId);
 
-        public Task<Empleado?> GetByIdAsync(int id);
+		public Task<Empleado?> GetByIdWithAdicionalesAsync(int id);
+
+		public Task<Empleado?> GetByIdAsync(int id);
 
         public Task<Empleado?> GetByCURPAsync(string curp);
 

@@ -153,7 +153,7 @@
 		<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
 	</button>
 	<button id="remove" class="btn btn-danger" disabled>
-		<i class="bi bi-trash"></i> <span class="d-none d-sm-inline">@Localizer["DeleteButton"]</span>
+		<i class="bi bi-ban"></i> <span class="d-none d-sm-inline">@Localizer["DeactivateButton"]</span>
 	</button>
 </div>
 <table id="table" class="table-sm"
@@ -483,7 +483,7 @@
 			<div class="modal-footer" style="display: inline !important;">
 				<div class="container row">
 					<div class="col-5">
-						<button id="dlgEmpleadoBtnDesactivar" type="button" class="btn btn-danger formButton" data-bs-dismiss="modal">
+						<button id="dlgEmpleadoBtnDesactivar" type="button" class="btn btn-danger formButton" onclick="onDeleteEmpleadoClick();" data-bs-dismiss="modal">
 							<i class="bi bi-ban"></i> @Localizer["DeactivateButton"]
 						</button>
 					</div>
@@ -590,6 +590,7 @@
 		var colGeneroHeader = '@Localizer["ColGeneroHeader"]';
 		var colEstadoCivilHeader = '@Localizer["ColEstadoCivilHeader"]';
 		var colDireccionHeader = '@Localizer["ColDireccionHeader"]';
+		var colOficinaHeader = '@Localizer["ColOficinaHeader"]';
 		var emptySelectItemText = '@Localizer["EmptySelectItemText"]';
 		var nuevoRegistro = '@Localizer["NuevoRegistro"]';
 		var arrTiposDocumentos = {

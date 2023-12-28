@@ -33,6 +33,7 @@ namespace ERPSEI.Data.Entities.Empleados
 
         public string NSS { get; set; } = string.Empty;
 
+        public int Deshabilitado { get; set; } = 0;
 
         
         //Relaciones de la entidad

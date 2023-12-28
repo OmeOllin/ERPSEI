@@ -12,9 +12,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Net.Mime;
 
-//TODO: Optimizar la obtención de talentos para que solo traiga los datos que se mostrarán en pantalla. El resto de datos traerlos hasta que se consulte o edite el registro.
-//TODO: Verificar si es posible modificar el proceso de guardado de los archivos de empleados, para que se guarden solo los que establezca el usuario, en vez de guardar todos por default.
-//TODO: Agregar funcionalidad de "Dar de baja" empleados y cambiar el botón de "Eliminar" en la tabla de resultados por un botón que sea "Dar de baja" solamente.
 namespace ERPSEI.Areas.Catalogos.Pages
 {
 	public class GestionDeTalentoModel : PageModel
@@ -254,6 +251,34 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			InputImportar = new ImportarModel();
 		}
 
+
+		private async Task<string> GetDatosAdicionalesEmpleado(int idEmpleado)
+		{
+			string jsonResponse;
+			string nombreJefe;
+			Empleado? e = await _empleadoManager.GetByIdWithAdicionalesAsync(idEmpleado);
+
+			if (e == null) { throw new Exception($"No se encontró información del empleado id {idEmpleado}"); }
+
+			Empleado? jefe = e.JefeId != null ? _empleadoManager.GetByIdAsync((int)e.JefeId).Result : null;
+			List<string> jsonArchivos;
+			List<string> jsonContactosEmergencia;
+
+			nombreJefe = jefe != null ? jefe.NombreCompleto : "";
+
+			jsonContactosEmergencia = getListJsonContactosEmergencia(e.ContactosEmergencia);
+
+			jsonArchivos = getListJsonArchivos(e.ArchivosEmpleado);
+
+			jsonResponse = $"{{" +
+								$"\"jefeId\": {e.JefeId ?? 0}, " +
+								$"\"jefe\": \"{nombreJefe}\", " +
+								$"\"contactosEmergencia\": [{string.Join(",", jsonContactosEmergencia)}], " +
+								$"\"archivos\": [{string.Join(",", jsonArchivos)}] " +
+							$"}}";
+
+			return jsonResponse;
+		}
 		private async Task<string> GetTalentList(FiltroModel? filtro = null)
 		{
 			string nombreArea;
@@ -262,41 +287,36 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			string nombreOficina;
 			string nombreGenero;
 			string nombreEstadoCivil;
-			string nombreJefe;
 			string jsonResponse;
 			List<string> jsonEmpleados = new List<string>();
-			List<Empleado> empleados = await _empleadoManager.GetAllAsync();
+			List<Empleado> empleados;
 
-			if(filtro != null)
+			if (filtro != null)
 			{
-				if(filtro.FechaIngresoInicio != null) { empleados = empleados.Where(e => e.FechaIngreso >= filtro.FechaIngresoInicio).ToList(); }
-				if (filtro.FechaIngresoFin != null) { empleados = empleados.Where(e => e.FechaIngreso <= filtro.FechaIngresoFin).ToList(); }
-				if (filtro.FechaNacimientoInicio != null) { empleados = empleados.Where(e => e.FechaNacimiento >= filtro.FechaNacimientoInicio).ToList(); }
-				if (filtro.FechaNacimientoFin != null) { empleados = empleados.Where(e => e.FechaNacimiento <= filtro.FechaNacimientoFin).ToList(); }
-				if (filtro.PuestoId != null) { empleados = empleados.Where(e => e.PuestoId == filtro.PuestoId).ToList(); }
-				if (filtro.AreaId != null) { empleados = empleados.Where(e => e.AreaId == filtro.AreaId).ToList(); }
-				if (filtro.SubareaId != null) { empleados = empleados.Where(e => e.SubareaId == filtro.SubareaId).ToList(); }
-				if (filtro.OficinaId != null) { empleados = empleados.Where(e => e.OficinaId == filtro.OficinaId).ToList(); }
+				empleados = await _empleadoManager.GetAllAsync(
+					filtro.FechaIngresoInicio, 
+					filtro.FechaIngresoFin, 
+					filtro.FechaNacimientoInicio, 
+					filtro.FechaNacimientoFin,
+					filtro.PuestoId,
+					filtro.AreaId,
+					filtro.SubareaId,
+					filtro.OficinaId
+				);
+			}
+			else
+			{
+				empleados = await _empleadoManager.GetAllAsync();
 			}
 
 			foreach (Empleado e in empleados)
 			{
-				Empleado? jefe = e.JefeId != null ? _empleadoManager.GetByIdAsync((int)e.JefeId).Result : null;
-				List<string> jsonContactosEmergencia;
-				List<string> jsonArchivos;
-				string ProfilePictureSrc = string.Empty;
-
 				nombreArea = e.Area != null ? e.Area.Nombre : "";
 				nombreSubarea = e.Subarea != null ? e.Subarea.Nombre : "";
 				nombrePuesto = e.Puesto != null ? e.Puesto.Nombre : "";
 				nombreOficina = e.Oficina != null ? e.Oficina.Nombre : "";
 				nombreGenero = e.Genero != null ? e.Genero.Nombre : "";
 				nombreEstadoCivil = e.EstadoCivil != null ? e.EstadoCivil.Nombre : "";
-				nombreJefe = jefe != null ? jefe.NombreCompleto : "";
-
-				jsonContactosEmergencia = getListJsonContactosEmergencia(e.ContactosEmergencia);
-
-				jsonArchivos = getListJsonArchivos(e.ArchivosEmpleado);
 
 				jsonEmpleados.Add(
 					"{" +
@@ -326,12 +346,12 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						$"\"estadoCivilId\": {e.EstadoCivilId ?? 0}, " +
 						$"\"estadoCivil\": \"{nombreEstadoCivil}\", " +
 						$"\"jefeId\": {e.JefeId ?? 0}, " +
-						$"\"jefe\": \"{nombreJefe}\", " +
+						$"\"jefe\": \"\", " +
 						$"\"curp\": \"{e.CURP}\", " +
 						$"\"rfc\": \"{e.RFC}\", " +
 						$"\"nss\": \"{e.NSS}\", " +
-						$"\"contactosEmergencia\": [{string.Join(",", jsonContactosEmergencia)}], " +
-						$"\"archivos\": [{string.Join(",", jsonArchivos)}] " +
+						$"\"contactosEmergencia\": [], " +
+						$"\"archivos\": [] " +
 					"}"
 				);
 			}
@@ -441,6 +461,22 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			return File("/templates/PlantillaEmpleados.xlsx", MediaTypeNames.Application.Octet, "PlantillaEmpleados.xlsx");
 		}
 
+		public async Task<JsonResult> OnPostDatosAdicionalesEmpleado(int idEmpleado)
+		{
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadoConsultadoUnsuccessfully"]);
+			try
+			{
+				resp.Datos = await GetDatosAdicionalesEmpleado(idEmpleado);
+				resp.TieneError = false;
+				resp.Mensaje = _strLocalizer["EmpleadoConsultadoSuccessfully"];
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+			}
+
+			return new JsonResult(resp);
+		}
 		public async Task<JsonResult> OnPostFiltrarEmpleados()
 		{
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadosFiltradosUnsuccessfully"]);
@@ -458,23 +494,21 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			return new JsonResult(resp);
 		}
 		
-		public async Task<JsonResult> OnPostDeleteEmpleados(string[] ids)
+		public async Task<JsonResult> OnPostDisableEmpleados(string[] ids)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadosDeletedUnsuccessfully"]);
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadosDisabledUnsuccessfully"]);
 			await _db.Database.BeginTransactionAsync();
 			try
 			{
                 foreach (string id in ids)
                 {
 					int intId = Convert.ToInt32(id);
-					//Elimina dependencias y posteriormente el empleado.
-					await _contactoEmergenciaManager.DeleteByEmpleadoIdAsync(intId);
-					await _archivoEmpleadoManager.DeleteByEmpleadoIdAsync(intId);
-					await _empleadoManager.DeleteByIdAsync(intId);
+					//Deshabilita el empleado y por ende, el usuario relacionado.
+					await _empleadoManager.DisableByIdAsync(intId);
                 }
 
 				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["EmpleadosDeletedSuccessfully"];
+				resp.Mensaje = _strLocalizer["EmpleadosDisabledSuccessfully"];
 
 				await _db.Database.CommitTransactionAsync();
 			}

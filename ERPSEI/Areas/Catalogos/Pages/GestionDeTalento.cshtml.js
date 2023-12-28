@@ -1,6 +1,8 @@
 ﻿var table;
 var buttonRemove;
 var selections = [];
+var dlgEmpleadoModal = null;
+
 const NUEVO = 0;
 const EDITAR = 1;
 const VER = 2;
@@ -12,6 +14,7 @@ const postOptions = { headers: { "RequestVerificationToken": $('input[name="__Re
 document.addEventListener("DOMContentLoaded", function (event) {
     table = $("#table");
     buttonRemove = $("#remove");
+    dlgEmpleadoModal = new bootstrap.Modal(document.getElementById('dlgEmpleado'), null);
 
     initTable();
 
@@ -41,63 +44,33 @@ function responseHandler(res) {
 }
 //Función para dar formato al detalle de empleado
 function detailFormatter(index, row) {
-    /*var html = []*/
-    let src = "";
-    for (var i = 0; i < row.archivos.length; i++) {
-        if (row.archivos[i].tipoArchivoId == 1) {
-            //Si el tipo de archivo es la foto de perfil, se establece en el contenedor directamente.
-            if ((row.archivos[i].imgSrc || "").length <= 0) { row.archivos[i].imgSrc = "/img/default_profile_pic.png"; }
-            src = row.archivos[i].imgSrc;
-            break;
-        }
-    }
-
-    let genderClass = "bi-gender-female";
-    if (row.genero == "Masculino") { genderClass = "bi-gender-male"; }
-
-    let h = `<div class="container alert alert-primary">
+    return `<div class="container-fluid alert alert-primary mb-0">
                 <div class="row">
-                    <div class="col-sm-12 col-md-12 col-lg-2">
-						<div>
-							<img class="profile-pic-min m-3" src="${src}" />
-						</div>
+                    <div class="col-sm-12 col-md-6 col-lg-3 mb-2">
+						<i class="bi bi-cake2-fill"></i> <span><b>${colFechaNacimientoHeader}: </b>${row.fechaNacimiento}</span>
 					</div>
-                    <div class="col-sm-12 col-md-12 col-lg-10">
-					    <div class="row">
-						    <div class="col-12">
-							    <i class="bi bi-person-fill"></i> <span><b>${colNombreHeader}: </b>${row.nombreCompleto}</span>
-						    </div>
-						    <div class="col-12">
-							    <i class="bi bi-gear-fill"></i> <span><b>${colFechaIngresoHeader}: </b>${row.fechaIngreso}</span>
-						    </div>
-                            <div class="col-12">
-							    <i class="bi bi-cake2-fill"></i> <span><b>${colFechaNacimientoHeader}: </b>${row.fechaNacimiento}</span>
-						    </div>
-						    <div class="col-12">
-							    <i class="bi bi-telephone-fill"> </i><span><b>${colTelefonoHeader}: </b>${row.telefono}</span>
-						    </div>
-						    <div class="col-12">
-							    <i class="bi ${genderClass}"></i> <span><b>${colGeneroHeader}: </b>${row.genero}</span>
-						    </div>
-						    <div class="col-12">
-							    <i class="bi bi-yin-yang"></i> <span><b>${colEstadoCivilHeader}: </b>${row.estadoCivil}</span>
-						    </div>
-						    <div class="col-12">
-							    <i class="bi bi-house-door-fill"> </i><span><b>${colDireccionHeader}: </b>${row.direccion}</span>
-						    </div>
-					    </div>
-				    </div>
+					<div class="col-sm-12 col-md-6 col-lg-3 mb-2">
+						<i class="bi bi-telephone-fill"> </i><span><b>${colTelefonoHeader}: </b>${row.telefono}</span>
+					</div>
+					<div class="col-sm-12 col-md-6 col-lg-3 mb-2">
+						<i class="bi bi-building-fill"></i> <span><b>${colOficinaHeader}: </b>${row.oficina}</span>
+					</div>
+					<div class="col-sm-12 col-md-6 col-lg-3 mb-2">
+						<i class="bi bi-yin-yang"></i> <span><b>${colEstadoCivilHeader}: </b>${row.estadoCivil}</span>
+					</div>
+					<div class="col-12 mb-2">
+						<i class="bi bi-house-door-fill"> </i><span><b>${colDireccionHeader}: </b>${row.direccion}</span>
+					</div>
                 </div>
             </div>`;
-    return h;
 }
 //Función para dar formato a los iconos de operación de los registros
 function operateFormatter(value, row, index) {
     return [
-        '<a class="see btn" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgEmpleado" title="' + btnVerTitle + '">',
+        '<a class="see btn" href="javascript:void(0)" title="' + btnVerTitle + '">',
             '<i class="bi bi-search"></i>',
         '</a>  ',
-        '<a class="edit btn" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgEmpleado" title="' + btnEditarTitle + '">',
+        '<a class="edit btn" href="javascript:void(0)" title="' + btnEditarTitle + '">',
             '<i class="bi bi-pencil-fill"></i>',
         '</a>'
     ].join('')
@@ -258,37 +231,46 @@ function initTable() {
     table.on('all.bs.table', function (e, name, args) {
         console.log(name, args)
     })
-    buttonRemove.click(function () {
-        askConfirmation(dlgDeleteTitle, dlgDeleteQuestion, function () {
-            let oParams = { ids: selections };
+    buttonRemove.click(function () { onDeleteEmpleadoClick(selections); });
+}
+//Función para capturar el click de los botones para dar de baja empleados. Ejecuta una llamada ajax para dar de baja empleados.
+function onDeleteEmpleadoClick(ids = null) {
+    askConfirmation(dlgDeleteTitle, dlgDeleteQuestion, function () {
+        let oParams = {};
 
-            doAjax(
-                "/Catalogos/GestionDeTalento/DeleteEmpleados",
-                oParams,
-                function (resp) {
-                    if (resp.tieneError) {
-                        showError(dlgDeleteTitle, resp.mensaje);
-                        return;
-                    }
+        if (ids != null) { oParams.ids = ids; }
+        else { oParams.ids = [document.getElementById("inpEmpleadoId").value]; }
 
-                    table.bootstrapTable('remove', {
-                        field: 'id',
-                        values: selections
-                    })
-                    selections = [];
+        doAjax(
+            "/Catalogos/GestionDeTalento/DisableEmpleados",
+            oParams,
+            function (resp) {
+                if (resp.tieneError) {
+                    showError(dlgDeleteTitle, resp.mensaje);
+                    return;
+                }
+
+                table.bootstrapTable('remove', {
+                    field: 'id',
+                    values: oParams.ids
+                });
+
+                if (ids != null) {
+                    ids = [];
+                    selections = null;
                     buttonRemove.prop('disabled', true);
+                }
 
-                    onBuscarClick();
+                onBuscarClick();
 
-                    showSuccess(dlgDeleteTitle, resp.mensaje);
-                }, function (error) {
-                    showError(dlgDeleteTitle, error);
-                },
-                postOptions
-            );
+                showSuccess(dlgDeleteTitle, resp.mensaje);
+            }, function (error) {
+                showError(dlgDeleteTitle, error);
+            },
+            postOptions
+        );
 
-        });
-    })
+    });
 }
 ////////////////////////////////
 
@@ -352,8 +334,6 @@ function onBuscarClick() {
 //Función para inicializar el cuadro de diálogo
 function initEmpleadoDialog(action, row) {
     let idField = document.getElementById("inpEmpleadoId");
-    let picField = document.getElementById("profilePicContainer");
-    let picSelector = document.getElementById("profilePicSelector");
     let primerNombreField = document.getElementById("inpEmpleadoPrimerNombre");
     let nombrePreferidoField = document.getElementById("inpEmpleadoNombrePreferido");
     let apellidoPaternoField = document.getElementById("inpEmpleadoApellidoPaterno");
@@ -373,10 +353,6 @@ function initEmpleadoDialog(action, row) {
     let curpField = document.getElementById("inpEmpleadoCURP");
     let rfcField = document.getElementById("inpEmpleadoRFC");
     let nssField = document.getElementById("inpEmpleadoNSS");
-    let nombreContacto1Field = document.getElementById("inpEmpleadoNombreContacto1");
-    let telefonoContacto1Field = document.getElementById("inpEmpleadoTelefonoContacto1");
-    let nombreContacto2Field = document.getElementById("inpEmpleadoNombreContacto2");
-    let telefonoContacto2Field = document.getElementById("inpEmpleadoTelefonoContacto2");
 
     let btnDesactivar = document.getElementById("dlgEmpleadoBtnDesactivar");
     let dlgTitle = document.getElementById("dlgEmpleadoTitle");
@@ -430,6 +406,60 @@ function initEmpleadoDialog(action, row) {
     rfcField.value = row.rfc;
     nssField.value = row.nss;
 
+    if (action == NUEVO || (row.hasDatosAdicionales||false)) {
+        establecerDatosAdicionales(row, action);
+        initializeDisableableButtons(false);
+        dlgEmpleadoModal.toggle();
+        return;
+    }
+
+    doAjax(
+        "/Catalogos/GestionDeTalento/DatosAdicionalesEmpleado",
+        {idEmpleado: row.id},
+        function (resp) {
+            if (resp.tieneError) {
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    let summary = ``;
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                }
+                showError(btnBuscar.innerHTML, resp.mensaje);
+                return;
+            }
+
+            //Se establece el row con los datos adicionales.
+            if (typeof resp.datos == "string" && resp.datos.length >= 1) { resp.datos = JSON.parse(resp.datos); };
+            row.jefeId = resp.datos.jefeId || 0;
+            row.jefe = resp.datos.jefe || "";
+            row.contactosEmergencia = resp.datos.contactosEmergencia || [];
+            row.archivos = resp.datos.archivos || [];
+            row.hasDatosAdicionales = true;
+
+            //Actualiza el row para no tener que volver a obtener los datos la próxima vez.
+            table.bootstrapTable('updateByUniqueId', { id: row.id, row: row });
+
+            establecerDatosAdicionales(row, action);
+            initializeDisableableButtons(action == VER);
+            dlgEmpleadoModal.toggle();
+
+        }, function (error) {
+            showError("Error", error);
+        },
+        postOptions
+    );
+}
+//Función para establecer los datos adicionales del empleado
+function establecerDatosAdicionales(row, action) {
+    let picField = document.getElementById("profilePicContainer");
+    let picSelector = document.getElementById("profilePicSelector");
+    let nombreContacto1Field = document.getElementById("inpEmpleadoNombreContacto1");
+    let telefonoContacto1Field = document.getElementById("inpEmpleadoTelefonoContacto1");
+    let nombreContacto2Field = document.getElementById("inpEmpleadoNombreContacto2");
+    let telefonoContacto2Field = document.getElementById("inpEmpleadoTelefonoContacto2");
+
+    //Se establecen los contactos de emergencia
     row.contactosEmergencia = row.contactosEmergencia || [];
     nombreContacto1Field.value = "";
     telefonoContacto1Field.value = "";
@@ -444,16 +474,17 @@ function initEmpleadoDialog(action, row) {
         telefonoContacto2Field.value = row.contactosEmergencia[1].telefono || "";
     }
 
+    //Se establecen los archivos.
     $("#bodyArchivos").html("");
     row.archivos = row.archivos || [];
     let i = 1;
     row.archivos.forEach(function (a) {
         let srcElements = (a.imgSrc || "").split(",");
-        let b64 = srcElements.length >= 1 ? srcElements[1]||"" : "";
+        let b64 = srcElements.length >= 1 ? srcElements[1] || "" : "";
 
         if (a.tipoArchivoId == 1) {
             //Si el tipo de archivo es la foto de perfil, se establece en el contenedor directamente.
-            if ((a.imgSrc||"").length <= 0) { a.imgSrc = "/img/default_profile_pic.png"; }
+            if ((a.imgSrc || "").length <= 0) { a.imgSrc = "/img/default_profile_pic.png"; }
             picField.setAttribute('src', a.imgSrc);
             picSelector.setAttribute('sourceLength', a.imgSrc.length);
             picSelector.setAttribute('sourceName', `${a.nombre}.${a.extension}`);
@@ -476,23 +507,21 @@ function initEmpleadoDialog(action, row) {
 
             $("#bodyArchivos").append(
                 `<div class="col-12 col-xl-6">
-                    <div><b>${arrTiposDocumentos[a.tipoArchivoId]}</b></div>
-                    <div id="container${a.tipoArchivoId}" class="alert mb-2 mt-2 ${containerClass} row me-0">
-                        <div id="fileIcon${a.tipoArchivoId}" class="align-self-center col-1 ${iconClass}"><i class='bi bi-file-image' style='font-size:25px'></i></div>
-                        <div id="fileName${a.tipoArchivoId}" class="align-self-center col-10 ${nameClass} p-2" style="display:flex; color:dimgray">${nameHTML}</div>
-                        <div class="align-self-center col-1">
-                            <input type="file" id="selector${a.tipoArchivoId}" b64="${b64}" sourceName="${a.nombre}.${a.extension}" sourceLength="${(b64||"").length}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-                            <a class='btn btn-sm btn-primary ${editDisabled} mb-1' onclick='onEditDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-pencil-fill'></i></a>
-                            <a class="btn btn-sm btn-primary disableable mb-1" inputName="selector${a.tipoArchivoId}" onclick="onDeleteClick(this);" sourceId="selector${a.tipoArchivoId}" sourceLength="${(a.archivo || []).length}"><i class="bi bi-x-lg"></i></a>
-                        </div>
-                    </div>
-                </div>`
+                            <div><b>${arrTiposDocumentos[a.tipoArchivoId]}</b></div>
+                            <div id="container${a.tipoArchivoId}" class="alert mb-2 mt-2 ${containerClass} row me-0">
+                                <div id="fileIcon${a.tipoArchivoId}" class="align-self-center col-1 ${iconClass}"><i class='bi bi-file-image' style='font-size:25px'></i></div>
+                                <div id="fileName${a.tipoArchivoId}" class="align-self-center col-10 ${nameClass} p-2" style="display:flex; color:dimgray">${nameHTML}</div>
+                                <div class="align-self-center col-1">
+                                    <input type="file" id="selector${a.tipoArchivoId}" b64="${b64}" sourceName="${a.nombre}.${a.extension}" sourceLength="${(b64 || "").length}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                                    <a class='btn btn-sm btn-primary ${editDisabled} mb-1' onclick='onEditDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-pencil-fill'></i></a>
+                                    <a class="btn btn-sm btn-primary disableable mb-1" inputName="selector${a.tipoArchivoId}" onclick="onDeleteClick(this);" sourceId="selector${a.tipoArchivoId}" sourceLength="${(a.archivo || []).length}"><i class="bi bi-x-lg"></i></a>
+                                </div>
+                            </div>
+                        </div>`
             );
         }
         i++;
     });
-
-    initializeDisableableButtons(action == VER);
 }
 //Función para habilitar/deshabilitar los botones de visualización en base a si existe contenido o no para visualizar.
 function initializeDisableableButtons(isConsulta = false) {
