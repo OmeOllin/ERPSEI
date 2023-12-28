@@ -90,7 +90,7 @@
 							</div>
 							<div class="col-sm-6 col-md-6 col-lg-3">
 								<div class="form-floating mb-3">
-									<select id="selFiltroArea" asp-for="InputFiltro.AreaId" class="form-select" placeholder="@Localizer["AreaPlaceholder"]">
+									<select id="selFiltroArea" asp-for="InputFiltro.AreaId" onchange="onAreaChanged(this);" class="form-select" placeholder="@Localizer["AreaPlaceholder"]">
 										<option value="0">Seleccione...</option>
 										@{
 											foreach (Area area in areas)
@@ -109,7 +109,7 @@
 										@{
 											foreach (Subarea subarea in subareas)
 											{
-												<option value='@subarea.Id'>@subarea.Nombre</option>
+												<option areaid='@subarea.AreaId' value='@subarea.Id'>@subarea.Nombre</option>
 											}
 										}
 									</select>
@@ -333,7 +333,7 @@
 							</div>
 							<div class="col-sm-6 col-md-6 col-lg-3">
 								<div class="form-floating mb-3">
-									<select id="selEmpleadoAreaId" asp-for="InputEmpleado.AreaId" class="form-select formSelect" placeholder="@Localizer["AreaPlaceholder"]">
+									<select id="selEmpleadoAreaId" asp-for="InputEmpleado.AreaId" onchange="onAreaChanged(this);" class="form-select formSelect" placeholder="@Localizer["AreaPlaceholder"]">
 										@{
 											foreach (Area area in areas)
 											{
@@ -352,7 +352,7 @@
 										@{
 											foreach (Subarea subarea in subareas)
 											{
-												<option value='@subarea.Id'>@subarea.Nombre</option>
+												<option areaid='@subarea.AreaId' value='@subarea.Id'>@subarea.Nombre</option>
 											}
 										}
 									</select>

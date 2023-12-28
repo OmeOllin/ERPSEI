@@ -276,6 +276,50 @@ function onDeleteEmpleadoClick(ids = null) {
 
 //Funcionalidad Filtrar
 
+//Función para capturar el cambio de área. Muestra solo las subareas que corresponden al área seleccionada.
+function onAreaChanged(areaField) {
+    let id = areaField.getAttribute('id');
+    let strSubareaField = "";
+    let subareaField = null;
+
+    if (id == "selFiltroArea") {
+        strSubareaField = "selFiltroSubarea";
+    }
+    else {
+        strSubareaField = "selEmpleadoSubareaId";
+    }
+
+    subareaField = document.getElementById(strSubareaField);
+
+    //Establece la selección por default.
+    subareaField.value = 0;
+
+    //Oculta todas las opciones, excepto la opción "Seleccione..."
+    let subareaOptions = document.querySelectorAll(`#${strSubareaField} option`);
+    subareaOptions.forEach(function (o) { if (o.value >= 1) { o.style.display = 'none'; } });
+
+    //Deshabilita el campo de selección
+    subareaField.setAttribute('disabled', true);
+
+    //Muestra solo las opciones que correspondan al área seleccionada.
+    subareaOptions = document.querySelectorAll(`#${strSubareaField} option[areaid='${areaField.value}']`);
+    //Si hay subareas...
+    if (subareaOptions.length >= 1) {
+        //Muestra las subareas
+        subareaOptions.forEach(function (o) { o.style.display = 'block'; });
+
+        //Habilita el campo de selección
+        subareaField.removeAttribute('disabled');
+    }
+    else {
+        //Habilita el campo de selección solo para el filtro y solo cuando no se tenga seleccionada ningún área.
+        if (id == "selFiltroArea" && areaField.value == "0") {
+            subareaField.removeAttribute('disabled');
+            subareaOptions = document.querySelectorAll(`#${strSubareaField} option`);
+            subareaOptions.forEach(function (o) { if (o.value >= 1) { o.style.display = 'block'; } });
+        }
+    }
+}
 //Función para filtrar los datos de la tabla.
 function onBuscarClick() {
     let btnBuscar = document.getElementById("btnBuscar");
@@ -374,7 +418,8 @@ function initEmpleadoDialog(action, row) {
 
             document.querySelectorAll(".formButton").forEach(function (btn) { btn.classList.remove("disabled"); });
             document.querySelectorAll(".formInput, .formSelect").forEach(function (e) { e.removeAttribute("disabled"); });
-            
+
+            if (action == NUEVO) { subareaField.setAttribute("disabled", true); }
 
             break;
         default:
@@ -397,6 +442,7 @@ function initEmpleadoDialog(action, row) {
     direccionField.value = row.direccion;
     puestoField.value = row.puestoId;
     areaField.value = row.areaId;
+    if (action == EDITAR) { onAreaChanged(areaField); }
     subareaField.value = row.subareaId;
     oficinaField.value = row.oficinaId;
     jefeField.value = row.jefeId;
