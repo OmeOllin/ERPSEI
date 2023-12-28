@@ -147,8 +147,20 @@
   <data name="ColCorreoHeader" xml:space="preserve">
     <value>Email</value>
   </data>
+  <data name="ColDireccionHeader" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="ColEstadoCivilHeader" xml:space="preserve">
+    <value>Marital Status</value>
+  </data>
   <data name="ColFechaIngresoHeader" xml:space="preserve">
     <value>Admission Date</value>
+  </data>
+  <data name="ColFechaNacimientoHeader" xml:space="preserve">
+    <value>Birth date</value>
+  </data>
+  <data name="ColGeneroHeader" xml:space="preserve">
+    <value>Gender</value>
   </data>
   <data name="ColNameHeader" xml:space="preserve">
     <value>Name</value>
@@ -219,6 +231,9 @@
   <data name="EmpleadoTercerSeccionTitle" xml:space="preserve">
     <value>Documents</value>
   </data>
+  <data name="EmptySelectItemText" xml:space="preserve">
+    <value>Select...</value>
+  </data>
   <data name="EstadoCivilPlaceholder" xml:space="preserve">
     <value>Marital status</value>
   </data>
@@ -227,6 +242,12 @@
   </data>
   <data name="FechaNacimientoPlaceholder" xml:space="preserve">
     <value>Birth date</value>
+  </data>
+  <data name="FileFormatMessage" xml:space="preserve">
+    <value>The file format must be .pdf, .jpg, .jpeg o .png. Please choose another file.</value>
+  </data>
+  <data name="FileFormatTitle" xml:space="preserve">
+    <value>Invalid file format</value>
   </data>
   <data name="FilterTitle" xml:space="preserve">
     <value>Search filters</value>
@@ -264,6 +285,12 @@
   <data name="JefePlaceholder" xml:space="preserve">
     <value>Boss</value>
   </data>
+  <data name="MaxFileSizeMessage" xml:space="preserve">
+    <value>The selected file exceeds the maximum allowed file size. Please choose another file with size no larger than</value>
+  </data>
+  <data name="MaxFileSizeTitle" xml:space="preserve">
+    <value>Invalid file size</value>
+  </data>
   <data name="NewDialogTitle" xml:space="preserve">
     <value>New record</value>
   </data>
@@ -278,6 +305,9 @@
   </data>
   <data name="NSSPlaceholder" xml:space="preserve">
     <value>NSS</value>
+  </data>
+  <data name="NuevoRegistro" xml:space="preserve">
+    <value>New</value>
   </data>
   <data name="OficinaPlaceholder" xml:space="preserve">
     <value>Office</value>

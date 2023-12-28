@@ -147,8 +147,20 @@
   <data name="ColCorreoHeader" xml:space="preserve">
     <value>Correo</value>
   </data>
+  <data name="ColDireccionHeader" xml:space="preserve">
+    <value>Dirección</value>
+  </data>
+  <data name="ColEstadoCivilHeader" xml:space="preserve">
+    <value>Estado Civil</value>
+  </data>
   <data name="ColFechaIngresoHeader" xml:space="preserve">
     <value>Fecha Ingreso</value>
+  </data>
+  <data name="ColFechaNacimientoHeader" xml:space="preserve">
+    <value>Fecha de Nacimiento</value>
+  </data>
+  <data name="ColGeneroHeader" xml:space="preserve">
+    <value>Género</value>
   </data>
   <data name="ColNameHeader" xml:space="preserve">
     <value>Nombre</value>
@@ -219,6 +231,9 @@
   <data name="EmpleadoTercerSeccionTitle" xml:space="preserve">
     <value>Documentos</value>
   </data>
+  <data name="EmptySelectItemText" xml:space="preserve">
+    <value>Seleccione...</value>
+  </data>
   <data name="EstadoCivilPlaceholder" xml:space="preserve">
     <value>Estado Civil</value>
   </data>
@@ -227,6 +242,12 @@
   </data>
   <data name="FechaNacimientoPlaceholder" xml:space="preserve">
     <value>Fecha de nacimiento</value>
+  </data>
+  <data name="FileFormatMessage" xml:space="preserve">
+    <value>El formato del archivo debe ser .pdf, .jpg, .jpeg o .png. Por favor elija otro archivo.</value>
+  </data>
+  <data name="FileFormatTitle" xml:space="preserve">
+    <value>Formato de archivo inválido</value>
   </data>
   <data name="FilterTitle" xml:space="preserve">
     <value>Filtros de búsqueda</value>
@@ -264,6 +285,12 @@
   <data name="JefePlaceholder" xml:space="preserve">
     <value>Jefe</value>
   </data>
+  <data name="MaxFileSizeMessage" xml:space="preserve">
+    <value>El archivo seleccionado supera el máximo tamaño permitido de los archivos. Por favor elija otro archivo con tamaño no mayor a </value>
+  </data>
+  <data name="MaxFileSizeTitle" xml:space="preserve">
+    <value>Tamaño de archivo inválido</value>
+  </data>
   <data name="NewDialogTitle" xml:space="preserve">
     <value>Nuevo Registro</value>
   </data>
@@ -278,6 +305,9 @@
   </data>
   <data name="NSSPlaceholder" xml:space="preserve">
     <value>NSS</value>
+  </data>
+  <data name="NuevoRegistro" xml:space="preserve">
+    <value>Nuevo</value>
   </data>
   <data name="OficinaPlaceholder" xml:space="preserve">
     <value>Oficina</value>

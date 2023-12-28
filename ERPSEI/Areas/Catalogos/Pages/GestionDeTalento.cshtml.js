@@ -4,8 +4,8 @@ var selections = [];
 const NUEVO = 0;
 const EDITAR = 1;
 const VER = 2;
-//5mb = (5 * 1024) * 1024;
-var maxFileSizeInBytes = 5242880;
+const maxFileSizeInBytes = 5242880; //5mb = (5 * 1024) * 1024;
+const oneMegabyteSizeInBytes = 1048576; // 1mb = (1 * 1024) * 1024
 const postOptions = { headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() } }
 
 //Función para inicializar el módulo.
@@ -37,8 +37,6 @@ function responseHandler(res) {
         row.state = $.inArray(row.id, selections) !== -1
     });
 
-
-
     return res
 }
 //Función para dar formato al detalle de empleado
@@ -67,36 +65,30 @@ function detailFormatter(index, row) {
                     <div class="col-sm-12 col-md-12 col-lg-10">
 					    <div class="row">
 						    <div class="col-12">
-							    <i class="bi bi-person-fill"></i> <span><b>Nombre: </b>${row.nombreCompleto}</span>
+							    <i class="bi bi-person-fill"></i> <span><b>${colNombreHeader}: </b>${row.nombreCompleto}</span>
 						    </div>
 						    <div class="col-12">
-							    <i class="bi bi-gear-fill"></i> <span><b>Fecha Ingreso: </b>${row.fechaIngreso}</span>
+							    <i class="bi bi-gear-fill"></i> <span><b>${colFechaIngresoHeader}: </b>${row.fechaIngreso}</span>
 						    </div>
                             <div class="col-12">
-							    <i class="bi bi-cake2-fill"></i> <span><b>Fecha Nacimiento: </b>${row.fechaNacimiento}</span>
+							    <i class="bi bi-cake2-fill"></i> <span><b>${colFechaNacimientoHeader}: </b>${row.fechaNacimiento}</span>
 						    </div>
 						    <div class="col-12">
-							    <i class="bi bi-telephone-fill"> </i><span><b>Teléfono: </b>${row.telefono}</span>
+							    <i class="bi bi-telephone-fill"> </i><span><b>${colTelefonoHeader}: </b>${row.telefono}</span>
 						    </div>
 						    <div class="col-12">
-							    <i class="bi ${genderClass}"></i> <span><b>G&eacute;nero: </b>${row.genero}</span>
+							    <i class="bi ${genderClass}"></i> <span><b>${colGeneroHeader}: </b>${row.genero}</span>
 						    </div>
 						    <div class="col-12">
-							    <i class="bi bi-yin-yang"></i> <span><b>Estado Civ&iacute;l: </b>${row.estadoCivil}</span>
+							    <i class="bi bi-yin-yang"></i> <span><b>${colEstadoCivilHeader}: </b>${row.estadoCivil}</span>
 						    </div>
 						    <div class="col-12">
-							    <i class="bi bi-house-door-fill"> </i><span><b>Direcci&oacute;n: </b>${row.direccion}</span>
+							    <i class="bi bi-house-door-fill"> </i><span><b>${colDireccionHeader}: </b>${row.direccion}</span>
 						    </div>
 					    </div>
 				    </div>
                 </div>
             </div>`;
-    //$.each(row, function (key, value) {
-    //    if (key != "state" && key != "empleados") {
-    //        html.push('<p><b>' + key + ':</b> ' + value + '</p>')
-    //    }
-    //});
-    //return html.join('')
     return h;
 }
 //Función para dar formato a los iconos de operación de los registros
@@ -117,21 +109,17 @@ window.operateEvents = {
     },
     'click .edit': function (e, value, row, index) {
         initEmpleadoDialog(EDITAR, row);
-        //table.bootstrapTable('remove', {
-        //    field: 'id',
-        //    values: [row.id]
-        //})
     }
 }
 //Función para añadir botones a la cinta de botones de la tabla
 function additionalButtons() {
     return {
         btnImport: {
-            text: 'Importar',
+            text: btnImportarText,
             icon: 'bi-upload',
             event: function () { },
             attributes: {
-                "title": 'Importar datos desde un archivo excel',
+                "title": btnImportarTitle,
                 "data-bs-toggle": "modal",
                 "data-bs-target": "#dlgImportarExcel"
             }
@@ -141,7 +129,7 @@ function additionalButtons() {
 //Función para agregar empleados
 function onAgregarClick() {
     let oEmpleadoNuevo = {
-        id: "Nuevo",
+        id: nuevoRegistro,
         nombre: "",
         nombrePreferido: "",
         segundoNombre: "",
@@ -475,7 +463,7 @@ function initEmpleadoDialog(action, row) {
             let containerClass = "document-container-empty";
             let iconClass = "opacity-25";
             let nameClass = "opacity-25";
-            let nameHTML = `<div class="overflowed-text">Seleccione...</div>`;
+            let nameHTML = `<div class="overflowed-text">${emptySelectItemText}</div>`;
             let editDisabled = action == VER ? "disabled" : "";
 
             if (b64.length >= 1) {
@@ -557,7 +545,7 @@ function onDeleteClick(button) {
 
         fileName.classList.remove("document-name-filled");
         fileName.classList.add("opacity-25");
-        fileName.innerHTML = `<div class="overflowed-text">Seleccione...</div>`;
+        fileName.innerHTML = `<div class="overflowed-text">${emptySelectItemText}</div>`;
     }
 
     initializeDisableableButtons();
@@ -567,10 +555,7 @@ function onProfilePicSelectorChanged(input) {
     if (input.files && (input.files.length || 0) >= 1) {
         if (input.files[0].size >= maxFileSizeInBytes) {
             input.value = null;
-            showAlert(
-                "Tama&ntilde;o de archivo inv&aacute;lido",
-                `El tama&ntilde;o del archivo no debe superar ${maxFileSizeInBytes / 1000000}Mb. Por favor elija otro archivo.`
-            );
+            showAlert(maxFileSizeTitle, `${maxFileSizeMessage} ${maxFileSizeInBytes / oneMegabyteSizeInBytes}Mb`);
             return;
         }
         let imgType = input.files[0].type;
@@ -593,10 +578,7 @@ function onProfilePicSelectorChanged(input) {
             reader.readAsArrayBuffer(input.files[0]);
         }
         else {
-            showAlert(
-                "Formato de archivo inv&aacute;lido",
-                `El formato del archivo no es permitido. Por favor elija archivos en formato png, jpg o jpeg.`
-            );
+            showAlert(fileFormatTitle, fileFormatMessage);
         }
     }
 }
@@ -605,10 +587,7 @@ function onDocumentSelectorChanged(input) {
     if (input.files && (input.files.length || 0) >= 1) {
         if (input.files[0].size >= maxFileSizeInBytes) {
             input.value = null;
-            showAlert(
-                "Tama&ntilde;o de archivo inv&aacute;lido",
-                `El tama&ntilde;o del archivo no debe superar ${maxFileSizeInBytes / 1000000}Mb. Por favor elija otro archivo.`
-            );
+            showAlert(maxFileSizeTitle, `${maxFileSizeMessage} ${maxFileSizeInBytes / oneMegabyteSizeInBytes}Mb`);
             return;
         }
         let docType = input.files[0].type;
@@ -657,31 +636,10 @@ function onDocumentSelectorChanged(input) {
         }
         else {
             input.value = null;
-            showAlert(
-                "Formato de archivo inv&aacute;lido",
-                `El formato del archivo debe ser .pdf, .jpg, .jpeg o .png. Por favor elija otro archivo.`
-            );
+            showAlert(fileFormatTitle, fileFormatMessage);
 
             return;
         }
-
-        //if (isImg) {
-        //    let src = window.URL.createObjectURL(input.files[0]);
-        //    container.innerHTML = `<img id="${showerName}" src="${src}" style="max-height: 200px;" />`;
-        //}
-        //else if (isPDF) {
-        //    showLoading();
-        //    container.innerHTML = `<canvas id="${showerName}" class="canvaspdf"></canvas>`;
-        //    await loadPDFFromFileAsync(input.files[0], showerName);
-        //    hideLoading();
-        //}
-        //else {
-        //    input.value = null;
-        //    showAlert(
-        //        "Formato de archivo inv&aacute;lido",
-        //        `El formato del archivo debe ser .pdf, .jpg, .jpeg o .png. Por favor elija otro archivo.`
-        //    );
-        //}
     }
 }
 //Función para el cierre del cuadro de diálogo
@@ -748,7 +706,7 @@ function onGuardarClick() {
     });
 
     let oParams = {
-        id: idField.value == "Nuevo" ? 0 : idField.value,
+        id: idField.value == nuevoRegistro ? 0 : idField.value,
         nombre: primerNombreField.value.trim(),
         nombrePreferido: nombrePreferidoField.value.trim(),
         apellidoPaterno: apellidoPaternoField.value.trim(),
