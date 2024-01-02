@@ -110,10 +110,19 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					}
 					else
 					{
-						await _subareaManager.CreateAsync(new Subarea() { Nombre = Input.Nombre, AreaId = Input.IdArea });
+						//Se busca si ya existe una subarea con el mismo nombre.
+						subarea = await _subareaManager.GetByNameAsync(Input.Nombre);
+						if (subarea != null)
+						{
+							resp.Mensaje = _strLocalizer["ErrorSubareaExistente"];
+						}
+						else
+						{
+							await _subareaManager.CreateAsync(new Subarea() { Nombre = Input.Nombre, AreaId = Input.IdArea });
 
-						resp.TieneError = false;
-						resp.Mensaje = _strLocalizer["SubareaSavedSuccessfully"];
+							resp.TieneError = false;
+							resp.Mensaje = _strLocalizer["SubareaSavedSuccessfully"];
+						}
 					}
 				}
 			}

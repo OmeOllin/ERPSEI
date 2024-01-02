@@ -129,4 +129,7 @@
   <data name="AreasDeletedUnsuccessfully" xml:space="preserve">
     <value>Error al eliminar los registros</value>
   </data>
+  <data name="ErrorAreaExistente" xml:space="preserve">
+    <value>Ya existe un área registrada con el mismo nombre. Por favor, use otro nombre para la nueva área.</value>
+  </data>
 </root>

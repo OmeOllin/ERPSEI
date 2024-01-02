@@ -78,10 +78,12 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				}
 				else
 				{
+					//Busca el área por Id
 					Area? area = await _areaManager.GetByIdAsync(Input.Id);
 
 					if (area != null)
 					{
+						//El área ya existe, por lo que solo se actualiza.
 						area.Nombre = Input.Nombre;
 						await _areaManager.UpdateAsync(area);
 
@@ -90,10 +92,18 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					}
 					else
 					{
-						await _areaManager.CreateAsync(new Area() { Nombre = Input.Nombre });
+						//Se busca si ya existe un área con el mismo nombre.
+						area = await _areaManager.GetByNameAsync(Input.Nombre);
+						if (area != null) {
+							resp.Mensaje = _strLocalizer["ErrorAreaExistente"];
+						}
+						else
+						{
+							await _areaManager.CreateAsync(new Area() { Nombre = Input.Nombre });
 
-						resp.TieneError = false;
-						resp.Mensaje = _strLocalizer["AreaSavedSuccessfully"];
+							resp.TieneError = false;
+							resp.Mensaje = _strLocalizer["AreaSavedSuccessfully"];
+						}
 					}
 				}
 			}

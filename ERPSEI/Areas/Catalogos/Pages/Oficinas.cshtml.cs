@@ -91,10 +91,19 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					}
 					else
 					{
-						await _oficinaManager.CreateAsync(new Oficina() { Nombre = Input.Nombre });
+						//Se busca si ya existe una oficina con el mismo nombre.
+						oficina = await _oficinaManager.GetByNameAsync(Input.Nombre);
+						if (oficina != null)
+						{
+							resp.Mensaje = _strLocalizer["ErrorOficinaExistente"];
+						}
+						else
+						{
+							await _oficinaManager.CreateAsync(new Oficina() { Nombre = Input.Nombre });
 
-						resp.TieneError = false;
-						resp.Mensaje = _strLocalizer["OfficeSavedSuccessfully"];
+							resp.TieneError = false;
+							resp.Mensaje = _strLocalizer["OfficeSavedSuccessfully"];
+						}
 					}
 				}
 			}

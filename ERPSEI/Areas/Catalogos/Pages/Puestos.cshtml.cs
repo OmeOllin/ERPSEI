@@ -87,10 +87,19 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					}
 					else
 					{
-						await _puestoManager.CreateAsync(new Puesto() { Nombre = Input.Nombre });
+						//Se busca si ya existe un puesto con el mismo nombre.
+						puesto = await _puestoManager.GetByNameAsync(Input.Nombre);
+						if (puesto != null)
+						{
+							resp.Mensaje = _strLocalizer["ErrorPuestoExistente"];
+						}
+						else
+						{
+							await _puestoManager.CreateAsync(new Puesto() { Nombre = Input.Nombre });
 
-						resp.TieneError = false;
-						resp.Mensaje = _strLocalizer["PositionSavedSuccessfully"];
+							resp.TieneError = false;
+							resp.Mensaje = _strLocalizer["PositionSavedSuccessfully"];
+						}
 					}
 				}
 			}
