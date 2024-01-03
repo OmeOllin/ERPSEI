@@ -117,11 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="EmailBodyFP" xml:space="preserve">
+    <value>You have recieved an invitation to ERPSEI system, please confirm your account by</value>
+  </data>
+  <data name="EmailBodySP" xml:space="preserve">
+    <value>clicking here</value>
+  </data>
+  <data name="EmailSubject" xml:space="preserve">
+    <value>Welcome to ERPSEI! Please confirm your email</value>
+  </data>
   <data name="EmpleadoConsultadoSuccessfully" xml:space="preserve">
     <value>Employee consulted successfully!</value>
   </data>
   <data name="EmpleadoConsultadoUnsuccessfully" xml:space="preserve">
     <value>Error consulting employee</value>
+  </data>
+  <data name="EmpleadoInvitadoSuccessfully" xml:space="preserve">
+    <value>Invitation was sent succesfully</value>
+  </data>
+  <data name="EmpleadoInvitadoUnsuccessfully" xml:space="preserve">
+    <value>Error sending invitation</value>
   </data>
   <data name="EmpleadoSavedSuccessfully" xml:space="preserve">
     <value>Employee saved successfully!</value>

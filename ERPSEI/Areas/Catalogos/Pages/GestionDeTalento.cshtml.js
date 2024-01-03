@@ -66,14 +66,26 @@ function detailFormatter(index, row) {
 }
 //Función para dar formato a los iconos de operación de los registros
 function operateFormatter(value, row, index) {
-    return [
-        '<a class="see btn" href="javascript:void(0)" title="' + btnVerTitle + '">',
-            '<i class="bi bi-search"></i>',
-        '</a>  ',
-        '<a class="edit btn" href="javascript:void(0)" title="' + btnEditarTitle + '">',
-            '<i class="bi bi-pencil-fill"></i>',
-        '</a>'
-    ].join('')
+    let icons = [];
+
+    //Icono Ver
+    icons.push(`<li><a class="dropdown-item see" href="#" title="${btnVerTitle}"><i class="bi bi-search"></i> ${btnVerTitle}</a></li>`);
+    //Icono Editar
+    icons.push(`<li><a class="dropdown-item edit" href="#" title="${btnEditarTitle}"><i class="bi bi-pencil-fill"></i> ${btnEditarTitle}</a></li>`);
+
+    if ((row.usuarioId || "").length <= 0 || parseInt(row.usuario.emailConfirmed||"0") <= 0) {
+        //Icono Invitar
+        icons.push(`<li><a class="dropdown-item invite" href="#" title="${btnInvitarTitle}"><i class="bi bi-person-fill-add"></i> ${btnInvitarTitle}</a></li>`);
+    }
+
+    return `<div class="dropdown">
+              <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical success"></i>
+              </button>
+              <ul class="dropdown-menu">${icons.join("")}</ul>
+            </div>`;
+
+    return icons.join('')
 }
 //Eventos de los iconos de operación
 window.operateEvents = {
@@ -82,7 +94,37 @@ window.operateEvents = {
     },
     'click .edit': function (e, value, row, index) {
         initEmpleadoDialog(EDITAR, row);
+    },
+    'click .invite': function (e, value, row, index) {
+        invitarEmpleado(row.id);
     }
+}
+//Función para invitar a los empleados al sistema mediante un correo electrónico.
+function invitarEmpleado(rowId) {
+    let oParams = {id: rowId};
+
+    doAjax(
+        "/Catalogos/GestionDeTalento/InvitarEmpleado",
+        oParams,
+        function (resp) {
+            if (resp.tieneError) {
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    let summary = ``;
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                }
+                showError(btnInvitarTitle, resp.mensaje);
+                return;
+            }
+
+            showSuccess(btnInvitarTitle, resp.mensaje);
+        }, function (error) {
+            showError("Error", error);
+        },
+        postOptions
+    );
 }
 //Función para añadir botones a la cinta de botones de la tabla
 function additionalButtons() {

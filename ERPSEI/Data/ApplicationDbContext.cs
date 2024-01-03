@@ -43,7 +43,7 @@ namespace ERPSEI.Data
 			buildEmpleados(modelBuilder);
 
 			//Usuarios
-			buildUsuarios(modelBuilder);
+			//buildUsuarios(modelBuilder);
 		}
 
 		private void buildEmpresas(ModelBuilder b) 
@@ -63,7 +63,7 @@ namespace ERPSEI.Data
 		{
 			b.Entity<ArchivoEmpleado>().HasOne(ae => ae.TipoArchivo).WithMany(ta => ta.ArchivosEmpleado).OnDelete(DeleteBehavior.NoAction);
 
-			b.Entity<Empleado>().HasOne(e => e.User).WithOne(u => u.Empleado).OnDelete(DeleteBehavior.NoAction);
+			//b.Entity<Empleado>().HasOne(e => e.User).WithOne(u => u.Empleado).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Empleado>().HasOne(e => e.EstadoCivil).WithMany(ec => ec.Empleados).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Empleado>().HasOne(e => e.Genero).WithMany(g => g.Empleados).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Empleado>().HasOne(e => e.Puesto).WithMany(p => p.Empleados).OnDelete(DeleteBehavior.NoAction);
@@ -204,7 +204,7 @@ namespace ERPSEI.Data
 
 		private void buildUsuarios(ModelBuilder b)
 		{
-			b.Entity<AppUser>().HasOne(u => u.Empleado).WithOne(e => e.User).OnDelete(DeleteBehavior.NoAction);
+			//b.Entity<AppUser>().HasOne(u => u.Empleado).WithOne(e => e.User).OnDelete(DeleteBehavior.NoAction);
 		}
 
 	}

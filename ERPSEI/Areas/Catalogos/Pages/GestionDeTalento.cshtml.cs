@@ -1,21 +1,30 @@
 using ERPSEI.Data;
+using ERPSEI.Data.Entities;
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Managers;
+using ERPSEI.Email;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
 using ExcelDataReader;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Net.Mime;
+using System.Text;
+using System.Text.Encodings.Web;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
 	public class GestionDeTalentoModel : PageModel
 	{
+		private readonly IUserStore<AppUser> _userStore;
+		private readonly IUserEmailStore<AppUser> _emailStore;
+		private readonly AppUserManager _userManager;
 		private readonly IEmpleadoManager _empleadoManager;
 		private readonly IRWCatalogoManager<Area> _areaManager;
 		private readonly IRWCatalogoManager<Subarea> _subareaManager;
@@ -29,6 +38,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		private readonly IStringLocalizer<GestionDeTalentoModel> _strLocalizer;
 		private readonly ILogger<GestionDeTalentoModel> _logger;
 		private readonly ApplicationDbContext _db;
+
+		private readonly IEmailSender _emailSender;
 
 		[BindProperty]
 		public FiltroModel InputFiltro { get; set; }
@@ -219,6 +230,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 
 		public GestionDeTalentoModel(
+			IUserStore<AppUser> store,
+			AppUserManager userManager,
 			IEmpleadoManager empleadoManager,
 			IRWCatalogoManager<Area> areaManager,
 			IRWCatalogoManager<Subarea> subareaManager,
@@ -230,9 +243,13 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			IArchivoEmpleadoManager archivoEmpleadoManager,
 			IStringLocalizer<GestionDeTalentoModel> stringLocalizer,
 			ILogger<GestionDeTalentoModel> logger,
-			ApplicationDbContext db
+			ApplicationDbContext db,
+			IEmailSender emailSender
 		)
 		{
+			_userStore = store;
+			_userManager = userManager;
+			_emailStore = GetEmailStore();
 			_empleadoManager = empleadoManager;
 			_areaManager = areaManager;
 			_subareaManager = subareaManager;
@@ -245,10 +262,20 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			_strLocalizer = stringLocalizer;
 			_logger = logger;
 			_db = db;
+			_emailSender = emailSender;
 
 			InputFiltro = new FiltroModel();
 			InputEmpleado = new EmpleadoModel();
 			InputImportar = new ImportarModel();
+		}
+
+		private IUserEmailStore<AppUser> GetEmailStore()
+		{
+			if (!_userManager.SupportsUserEmail)
+			{
+				throw new NotSupportedException("La UI default requiere almacenar un usuario con correo electrónico.");
+			}
+			return (IUserEmailStore<AppUser>)_userStore;
 		}
 
 
@@ -350,6 +377,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						$"\"curp\": \"{e.CURP}\", " +
 						$"\"rfc\": \"{e.RFC}\", " +
 						$"\"nss\": \"{e.NSS}\", " +
+						$"\"usuarioId\": \"{e.UserId}\", " +
 						$"\"contactosEmergencia\": [], " +
 						$"\"archivos\": [] " +
 					"}"
@@ -784,6 +812,85 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			}
 
 			return validationMsg ?? "";
+		}
+
+		private AppUser CreateUser()
+		{
+			try
+			{
+				return Activator.CreateInstance<AppUser>();
+			}
+			catch
+			{
+				throw new InvalidOperationException($"No se puede crear una instancia de '{nameof(AppUser)}'. " +
+					$"Asegurese que '{nameof(AppUser)}' no es una clase abstracta y tiene un constructor sin parámetros, o alternativamente " +
+					$"sobrecargue la página de registro en /Areas/Identity/Pages/Account/Register.cshtml");
+			}
+		}
+		public async Task<IActionResult> OnPostInvitarEmpleado(int id)
+		{
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadoInvitadoUnsuccessfully"]);
+			try
+			{
+				//Se busca al empleado por Id
+				Empleado? emp = await _empleadoManager.GetByIdAsync(id);
+				if (emp != null)
+				{
+					AppUser? user;
+
+					if ((emp.UserId??"").Length <= 0)
+					{
+						//Si el empleado NO tiene usuario, entonces procede a crearlo.
+						user = CreateUser();
+						user.Email = emp.Email;
+						user.EmpleadoId = emp.Id;
+						user.NormalizedEmail = emp.Email.ToUpper();
+						user.NormalizedUserName = emp.Email.ToUpper();
+						user.PasswordResetNeeded = true;
+						user.PhoneNumber = emp.Telefono;
+						user.UserName = emp.Email;
+
+						await _userStore.SetUserNameAsync(user, emp.Email, CancellationToken.None);
+						await _emailStore.SetEmailAsync(user, emp.Email, CancellationToken.None);
+						await _userManager.CreateAsync(user);
+					}
+					else
+					{
+						//De lo contrario, obtiene al usuario por Id
+						user = await _userManager.FindByIdAsync(emp.UserId??"");
+					}
+
+					if(user != null)
+					{
+						//Envía una invitación al empleado mediante correo electrónico.
+						string userCode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+						userCode = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(userCode));
+
+						//El usuario tendrá que confirmar su correo para poder iniciar sesión.
+						string userURL = Url.Page(
+							"/Account/ConfirmEmail",
+							pageHandler: null,
+							values: new { area = "Identity", userId = emp.UserId, code = userCode },
+							protocol: Request.Scheme)??string.Empty;
+
+						await _emailSender.SendEmailAsync(
+							emp.Email,
+							_strLocalizer["EmailSubject"],
+							$"{_strLocalizer["EmailBodyFP"]} <a href='{HtmlEncoder.Default.Encode(userURL)}'>{_strLocalizer["EmailBodySP"]}</a>."
+						);
+
+						resp.TieneError = false;
+						resp.Mensaje = _strLocalizer["EmpleadoInvitadoSuccessfully"];
+					}
+
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+			}
+
+			return new JsonResult(resp);
 		}
 	}
 }

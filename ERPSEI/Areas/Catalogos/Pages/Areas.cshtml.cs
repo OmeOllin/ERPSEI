@@ -39,7 +39,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			Input = new InputModel();
 			_areaManager = areaManager;
 			_strLocalizer = stringLocalizer;
-			logger = _logger;
+			_logger = logger;
 		}
 
 		public JsonResult OnGetAreasList()

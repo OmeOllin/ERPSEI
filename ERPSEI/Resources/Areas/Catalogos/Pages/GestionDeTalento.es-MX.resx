@@ -285,6 +285,9 @@
   <data name="InvalidFormatTitle" xml:space="preserve">
     <value>Formato de archivo inválido</value>
   </data>
+  <data name="InviteButtonTitle" xml:space="preserve">
+    <value>Enviar invitación</value>
+  </data>
   <data name="JefePlaceholder" xml:space="preserve">
     <value>Jefe</value>
   </data>

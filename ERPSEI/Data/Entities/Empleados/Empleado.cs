@@ -55,8 +55,7 @@ namespace ERPSEI.Data.Entities.Empleados
         public int? EstadoCivilId {  get; set; }
 		public EstadoCivil? EstadoCivil { get; set; }
 
-		public int? UserId { get; set; }
-		public AppUser? User { get; set; }
+        public string? UserId { get; set; } = string.Empty;
 
 		public ICollection<ContactoEmergencia>? ContactosEmergencia { get; }
 
