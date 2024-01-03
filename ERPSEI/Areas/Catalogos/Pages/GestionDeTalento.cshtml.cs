@@ -6,6 +6,7 @@ using ERPSEI.Email;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
 using ExcelDataReader;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -20,6 +21,7 @@ using System.Text.Encodings.Web;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
+	[Authorize]
 	public class GestionDeTalentoModel : PageModel
 	{
 		private readonly IUserStore<AppUser> _userStore;

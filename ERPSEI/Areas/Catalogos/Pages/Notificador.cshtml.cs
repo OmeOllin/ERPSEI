@@ -1,10 +1,12 @@
 using ERPSEI.Data.Managers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-    public class NotificadorModel : PageModel
+	[Authorize]
+	public class NotificadorModel : PageModel
     {
         private readonly IEmpleadoManager _empleadoManager;
         private readonly IStringLocalizer<NotificadorModel> _strLocalizer;

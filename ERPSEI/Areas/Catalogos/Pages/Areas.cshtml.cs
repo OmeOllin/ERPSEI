@@ -2,6 +2,7 @@ using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Managers;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
@@ -9,7 +10,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-    public class AreasModel : PageModel
+	[Authorize]
+	public class AreasModel : PageModel
     {
 		private readonly IRWCatalogoManager<Area> _areaManager;
 		private readonly IStringLocalizer<AreasModel> _strLocalizer;

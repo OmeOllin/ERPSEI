@@ -6,6 +6,7 @@ using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
 using ExcelDataReader;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
@@ -16,6 +17,7 @@ using System.Net.Mime;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
+	[Authorize]
 	public class EmpresasModel : PageModel
 	{
 		private readonly IEmpresaManager _empresaManager;
