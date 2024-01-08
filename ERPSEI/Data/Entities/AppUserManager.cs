@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using System.Text;
 
 namespace ERPSEI.Data.Entities
 {
@@ -27,5 +28,49 @@ namespace ERPSEI.Data.Entities
         {
         }
 
-    }
+		//Genera un password aleatorio del tamaño definidio (opcional)
+		public string GenerateRandomPassword(int size = 6)
+		{
+			if(size <= 0) { size = 6; }
+
+			size -= 4;
+
+			int half = size / 2;
+
+			StringBuilder builder = new StringBuilder();
+			builder.Append(RandomString(half, true));
+			builder.Append(RandomNumber(1000, 9999));
+			builder.Append(RandomString(half, false));
+			return builder.ToString();
+		}
+
+        private string RandomNumber(int min, int max)
+        {
+			// Generate a random number
+			Random random = new Random();
+
+			// Any random integer
+			int num = random.Next(min, max);
+
+            return num.ToString();
+		}
+
+		//Genera un string aleatorio con el tamaño y el case dados.
+		//Si el segundo parámetro es verdadero, el string resultante será lowercase.
+		public string RandomString(int size, bool lowerCase)
+		{
+			StringBuilder builder = new StringBuilder();
+			Random random = new Random();
+			char ch;
+			for (int i = 0; i < size; i++)
+			{
+				ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * random.NextDouble() + 65)));
+				builder.Append(ch);
+			}
+			if (lowerCase)
+				return builder.ToString().ToLower();
+			return builder.ToString();
+		}
+
+	}
 }

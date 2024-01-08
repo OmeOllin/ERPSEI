@@ -838,7 +838,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				Empleado? emp = await _empleadoManager.GetByIdAsync(id);
 				if (emp != null)
 				{
-					AppUser? user;
+					string password = _userManager.GenerateRandomPassword(10);
+					AppUser ? user;
 
 					if ((emp.UserId??"").Length <= 0)
 					{
@@ -852,14 +853,27 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						user.PhoneNumber = emp.Telefono;
 						user.UserName = emp.Email;
 
+						//Crea el usuario.
 						await _userStore.SetUserNameAsync(user, emp.Email, CancellationToken.None);
 						await _emailStore.SetEmailAsync(user, emp.Email, CancellationToken.None);
-						await _userManager.CreateAsync(user);
+						await _userManager.CreateAsync(user, password);
+
+						//Asigna el usuario al empleado.
+						emp.UserId = user.Id;
+						await _empleadoManager.UpdateAsync(emp);
 					}
 					else
 					{
+
 						//De lo contrario, obtiene al usuario por Id
 						user = await _userManager.FindByIdAsync(emp.UserId??"");
+
+						if (user != null)
+						{
+							//Cambia el password del usuario.
+							await _userManager.RemovePasswordAsync(user);
+							await _userManager.AddPasswordAsync(user, password);
+						}
 					}
 
 					if(user != null)
@@ -872,13 +886,24 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						string userURL = Url.Page(
 							"/Account/ConfirmEmail",
 							pageHandler: null,
-							values: new { area = "Identity", userId = emp.UserId, code = userCode },
+							values: new { area = "Identity", userId = user.Id, code = userCode },
 							protocol: Request.Scheme)??string.Empty;
 
 						await _emailSender.SendEmailAsync(
 							emp.Email,
 							_strLocalizer["EmailSubject"],
-							$"{_strLocalizer["EmailBodyFP"]} <a href='{HtmlEncoder.Default.Encode(userURL)}'>{_strLocalizer["EmailBodySP"]}</a>."
+							$"{_strLocalizer["EmailBodyFP"]} <a href='{HtmlEncoder.Default.Encode(userURL)}'>{_strLocalizer["EmailBodySP"]}</a>. " +
+							$"<br />" +
+							$"<br />" +
+							$"{_strLocalizer["EmailBodyTP"]}" +
+							$"<br />" +
+							$"<br />" +
+							$"User: {emp.Email}" +
+							$"<br />" +
+							$"Password: {password}" +
+							$"<br />" +
+							$"<br />" +
+							$"{_strLocalizer["EmailBodyFOP"]}"
 						);
 
 						resp.TieneError = false;

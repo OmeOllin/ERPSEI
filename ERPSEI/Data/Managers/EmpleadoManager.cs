@@ -51,29 +51,19 @@ namespace ERPSEI.Data.Managers
 		{
 			Empleado? empleado = await GetByIdAsync(id);
 			AppUser? appUser = db.Users.Where(u => u.EmpleadoId == id).FirstOrDefault();
-			await db.Database.BeginTransactionAsync();
-			try
-			{
-				if (empleado != null)
-				{
-					//Deshabilita el empleado
-					empleado.Deshabilitado = 1;
-					if (appUser != null)
-					{
-						appUser.IsBanned = true;
-						db.Update(appUser);
-					}
 
-					db.Update(empleado);
-					await db.SaveChangesAsync();
+			if (empleado != null)
+			{
+				//Deshabilita el empleado
+				empleado.Deshabilitado = 1;
+				if (appUser != null)
+				{
+					appUser.IsBanned = true;
+					db.Update(appUser);
 				}
 
-				await db.Database.CommitTransactionAsync();
-			}
-			catch (Exception)
-			{
-				await db.Database.RollbackTransactionAsync();
-				throw;
+				db.Update(empleado);
+				await db.SaveChangesAsync();
 			}
 		}
 

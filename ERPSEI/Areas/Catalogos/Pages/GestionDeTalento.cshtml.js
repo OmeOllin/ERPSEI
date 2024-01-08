@@ -73,7 +73,7 @@ function operateFormatter(value, row, index) {
     //Icono Editar
     icons.push(`<li><a class="dropdown-item edit" href="#" title="${btnEditarTitle}"><i class="bi bi-pencil-fill"></i> ${btnEditarTitle}</a></li>`);
 
-    if ((row.usuarioId || "").length <= 0 || parseInt(row.usuario.emailConfirmed||"0") <= 0) {
+    if ((row.usuarioId || "").length <= 0 || parseInt((row.usuario ||{}).emailConfirmed||"0") <= 0) {
         //Icono Invitar
         icons.push(`<li><a class="dropdown-item invite" href="#" title="${btnInvitarTitle}"><i class="bi bi-person-fill-add"></i> ${btnInvitarTitle}</a></li>`);
     }

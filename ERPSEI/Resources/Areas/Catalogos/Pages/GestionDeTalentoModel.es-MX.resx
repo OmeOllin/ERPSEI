@@ -117,11 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="EmailBodyFOP" xml:space="preserve">
+    <value>Considere que la primera vez que inicie sesión, por seguridad deberá cambiar la contraseña proporcionada por el sistema.</value>
+  </data>
   <data name="EmailBodyFP" xml:space="preserve">
     <value>Usted ha recibido una invitación al sistema ERPSEI, por favor confirme su cuenta dando</value>
   </data>
   <data name="EmailBodySP" xml:space="preserve">
     <value>clic aquí</value>
+  </data>
+  <data name="EmailBodyTP" xml:space="preserve">
+    <value>Para iniciar sesión, use la siguiente información:</value>
   </data>
   <data name="EmailSubject" xml:space="preserve">
     <value>¡Bienvenido a ERPSEI! Por favor confirme su correo</value>
