@@ -120,6 +120,9 @@
   <data name="AreaPlaceholder" xml:space="preserve">
     <value>Area</value>
   </data>
+  <data name="ExportButton" xml:space="preserve">
+    <value>Export</value>
+  </data>
   <data name="FilterTitle" xml:space="preserve">
     <value>Filters</value>
   </data>
@@ -131,6 +134,12 @@
   </data>
   <data name="MsgSubareaIdRequerida" xml:space="preserve">
     <value>No subarea was selected, please verify.</value>
+  </data>
+  <data name="OrgchartInstruction" xml:space="preserve">
+    <value>Select an area to start</value>
+  </data>
+  <data name="OrgchartSuggestion" xml:space="preserve">
+    <value>The graph can be zoomed or dragged to improve visualization. You can also click on any node to view the employee details.</value>
   </data>
   <data name="SeeButton" xml:space="preserve">
     <value>See</value>

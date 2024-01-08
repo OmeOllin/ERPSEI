@@ -18,7 +18,7 @@
 
 <!-- --------------------------- -->
 <!-- Sección de filtros -------- -->
-<div class="accordion shadow mb-5" id="accordionFiltros">
+<div class="accordion shadow mb-4" id="accordionFiltros">
 	<div class="accordion-item">
 		<h2 class="accordion-header" id="headingOne">
 			<button class="accordion-button p-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -60,9 +60,12 @@
 					</div>
 					<div class="row text-end">
 						<div class="col-12">
-                            <button id="btnOrganigrama" type="button" class="btn btn-primary" onclick="onCargarOrganigrama();">
+							<button id="btnOrganigrama" type="button" class="btn btn-primary" onclick="onCargarOrganigrama();">
                                 <i class="bi bi-search"></i> @Localizer["SeeButton"]
                             </button>
+							<button id="btnExportar" type="button" class="btn btn-primary disabled" onclick="onExportarOrganigrama();">
+								<i class="bi bi-upload"></i> @Localizer["ExportButton"]
+							</button>
                         </div>
 			        </div>
 				</form>
@@ -75,7 +78,22 @@
 
 <!-- --------------------------- -->
 <!-- Sección de organigramas -------- -->
-<div id="divCharts" class="row"></div>
+<div class="alert alert-primary d-flex align-items-center mb-2" role="alert">
+    <i class="bi bi-info-circle-fill me-2" style="font-size: x-large"></i>
+    <div>
+        @Localizer["OrgchartSuggestion"]
+    </div>
+</div>
+<div id="divCharts" class="row">
+	<div class="col-12 opacity-25" style="height:150px;">
+		<div>
+			<img class="indeximage" src="@this.HttpContext.Request.Scheme://@this.HttpContext.Request.Host/img/empty_orgchart.jpg" />
+			<div class="col-12 h2">
+				<span>@Localizer["OrgchartInstruction"]</span>
+			</div>
+		</div>
+	</div>
+</div>
 <!-- --------------------------- -->
 <!-- --------------------------- -->
 
@@ -83,6 +101,7 @@
 {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/orgchart/3.8.0/css/jquery.orgchart.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/orgchart/3.8.0/js/jquery.orgchart.min.js"></script>
+	<script src="~/js/html2canvas.js"></script>
 
     <link rel="stylesheet" href="~/css/Organigrama.css" />
     <script src="~/../Areas/ERP/Pages/Organigrama.cshtml.js"></script>
@@ -90,5 +109,8 @@
 		var msgSinResultados = '@Localizer["MsgSinResultados"]';
 		var msgAreaIdRequerida = '@Localizer["MsgAreaIdRequerida"]';
 		var msgSubareaIdRequerida = '@Localizer["MsgSubareaIdRequerida"]';
+		var orgchartInstruction = '@Localizer["OrgchartInstruction"]';
+		var orgchartSuggestion = '@Localizer["OrgchartSuggestion"]';
+		var emptyOrgchartURL = '@this.HttpContext.Request.Scheme://@this.HttpContext.Request.Host/img/empty_orgchart.jpg'
 	</script>
 }

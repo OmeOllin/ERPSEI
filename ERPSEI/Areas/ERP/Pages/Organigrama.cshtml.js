@@ -6,6 +6,7 @@ function onCargarOrganigrama() {
     let selArea = document.getElementById("selFiltroArea");
     let selSubarea = document.getElementById("selFiltroSubarea");
     let divCharts = document.getElementById("divCharts");
+    let btnExportar = document.getElementById("btnExportar");
 
     let oParams = {
         AreaId: selArea.value == 0 ? null : parseInt(selArea.value),
@@ -19,8 +20,16 @@ function onCargarOrganigrama() {
         return;
     }
 
-    divCharts.innerHTML = "";
+    divCharts.innerHTML = `<div class="col-12 opacity-25" style="height:150px;">
+		                        <div>
+			                        <img class="indeximage" src="${emptyOrgchartURL}" />
+			                        <div class="col-12 h2">
+				                        <span>${orgchartInstruction}</span>
+			                        </div>
+		                        </div>
+	                        </div>`;
     oc = null;
+    btnExportar.classList.add("disabled");
     doAjax(
         "/ERP/Organigrama/FiltrarEmpleados",
         oParams,
@@ -37,33 +46,36 @@ function onCargarOrganigrama() {
                 return;
             }
 
-            divCharts.innerHTML += `<div id="chart${resp.datos[0].id}" class="col-12 orgchart"></div>`;
+            divCharts.innerHTML = `<div id="chart${resp.datos[0].id}" class="col-12 orgchart"></div>`;
             oc = $(`#chart${resp.datos[0].id}`).orgchart({
-                    'data': resp.datos[0],
-                    'nodeContent': 'title',
-                    'pan': true,
-                    'zoom': true,
-                    'createNode': function ($node, data) {
-                        let formattedPhone = data.telefono;
-                        if (data.telefono.length >= 10) {
-                            formattedPhone = `${data.telefono.slice(0, 2)} ${data.telefono.slice(2, 6)} ${data.telefono.slice(6, 10)}`;
-                        }
-                        let divEmail = data.email.length >= 1 ? `<div><i class="bi bi-envelope-at-fill"></i> ${data.email}</div>` : ``;
-                        let divTelefono = data.telefono.length >= 1 ? `<div><i class="bi bi-telephone-fill"></i> ${formattedPhone}</div>` : ``;
-                        let divOficina = data.oficina.length >= 1 ? `<div><i class="bi bi-building-fill"></i> ${data.oficina}</div>` : ``;
-                        data.profilePic = data.profilePic || "/img/default_profile_pic.png";
-                        $node.find('.content').append(`
-                                                            <div class="second-menu">
-                                                                <img class="avatar" src="${data.profilePic}">
-                                                                ${divEmail}
-                                                                ${divTelefono}
-                                                                ${divOficina}
-                                                            </div>
-                                                          `);
+                'data': resp.datos[0],
+                'nodeContent': 'title',
+                'pan': true,
+                'zoom': true,
+                'createNode': function ($node, data) {
+                    let formattedPhone = data.telefono;
+                    if (data.telefono.length >= 10) {
+                        formattedPhone = `${data.telefono.slice(0, 2)} ${data.telefono.slice(2, 6)} ${data.telefono.slice(6, 10)}`;
                     }
-                });
+                    let divNombre = data.nombreCompleto.length >= 1 ? `<div><i class="bi bi-person-fill"></i> <b>${data.nombreCompleto}</b></div>` : ``;
+                    let divEmail = data.email.length >= 1 ? `<div><i class="bi bi-envelope-at-fill"></i> ${data.email}</div>` : ``;
+                    let divTelefono = data.telefono.length >= 1 ? `<div><i class="bi bi-telephone-fill"></i> ${formattedPhone}</div>` : ``;
+                    let divOficina = data.oficina.length >= 1 ? `<div><i class="bi bi-building-fill"></i> ${data.oficina}</div>` : ``;
+                    data.profilePic = data.profilePic || "/img/default_profile_pic.png";
+                    $node.find('.content').append(`
+                                                        <div class="second-menu">
+                                                            <img class="avatar" src="${data.profilePic}">
+                                                            ${divNombre}
+                                                            <hr />
+                                                            ${divEmail}
+                                                            ${divTelefono}
+                                                            ${divOficina}
+                                                        </div>
+                                                        `);
+                }
+            });
 
-
+            btnExportar.classList.remove("disabled");
             
             oc.$chartContainer.on('touchmove', function (event) {
                 event.preventDefault();
@@ -93,12 +105,18 @@ function onCargarOrganigrama() {
 }
 function validarParametros(oParams) {
     //Si no se seleccionó ningún área, marca el error.
-    if (oParams.AreaId == null) { return msgAreaIdRequerida; }
+    //if (oParams.AreaId == null) { return msgAreaIdRequerida; }
 
     //Obtiene las opciones que correspondan al área seleccionada.
     subareaOptions = document.querySelectorAll(`#selFiltroSubarea option[areaid='${oParams.AreaId}']`);
 
     return "";
+}
+
+function onExportarOrganigrama() {
+    if (oc === null) { return; }
+
+    oc.export("orgchart", "png");
 }
 
 function onAreaChanged() {

@@ -1,6 +1,7 @@
 ﻿#divCharts {
     text-align: center;
     min-height: 480px;
+    border: 2px dashed lightgray;
 }
 .orgchart {
     background: #fff;
@@ -36,7 +37,8 @@
     box-shadow: 0 0 10px 1px #999;
     background-color: #e7f1ff;
     z-index: 1;
-    width: 200px;
+    min-width: 200px;
+    width: auto;
     font-size: 13px;
     padding:10px;
 }
@@ -45,4 +47,9 @@
     border-radius: 300px;
     margin: 5px;
     height: 100px;
+}
+
+.indeximage {
+    max-width: 600px;
+    width: 100%;
 }

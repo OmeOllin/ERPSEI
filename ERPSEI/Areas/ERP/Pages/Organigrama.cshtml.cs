@@ -11,7 +11,15 @@ namespace ERPSEI.Areas.ERP.Pages
 	public class OrganigramaModel : PageModel
     {
 		//Crea un elemento Empleado con el nombre de la corporación, que será el jefe en común.
-		private Empleado organizacion = new Empleado() { Id = 0, Nombre = "SEI", ApellidoPaterno = "Consulting", Puesto = new Puesto() { Nombre = "Organización" } };
+		private Empleado organizacion = new Empleado() { 
+            Id = 0, 
+            Nombre = "SEI", 
+            ApellidoPaterno = "Consulting", 
+            ApellidoMaterno = "Group", 
+            NombreCompleto = "SEI Consulting Group", 
+            Puesto = new Puesto() { 
+                Nombre = "Organización" 
+            } };
 
 		private readonly IEmpleadoManager _empleadoManager;
         private readonly IStringLocalizer<OrganigramaModel> _strLocalizer;
@@ -104,7 +112,8 @@ namespace ERPSEI.Areas.ERP.Pages
 						$"\"name\": \"{ nombre + ' ' + emp.ApellidoPaterno}\", " +
                         $"\"title\": \"{nombrePuesto}\", " +
                         $"\"children\": [{string.Join(",", jsonChildren)}], " +
-                        $"\"fechaIngresoJS\": \"{emp.FechaIngreso:yyyy-MM-dd}\", " +
+						$"\"nombreCompleto\": \"{emp.NombreCompleto}\", " +
+						$"\"fechaIngresoJS\": \"{emp.FechaIngreso:yyyy-MM-dd}\", " +
                         $"\"fechaNacimientoJS\": \"{emp.FechaNacimiento:yyyy-MM-dd}\", " +
                         $"\"telefono\": \"{emp.Telefono}\", " +
                         $"\"email\": \"{emp.Email}\", " +

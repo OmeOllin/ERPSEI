@@ -120,6 +120,9 @@
   <data name="AreaPlaceholder" xml:space="preserve">
     <value>Área</value>
   </data>
+  <data name="ExportButton" xml:space="preserve">
+    <value>Exportar</value>
+  </data>
   <data name="FilterTitle" xml:space="preserve">
     <value>Filtros</value>
   </data>
@@ -131,6 +134,12 @@
   </data>
   <data name="MsgSubareaIdRequerida" xml:space="preserve">
     <value>No se seleccionó ninguna subarea, por favor verifique.</value>
+  </data>
+  <data name="OrgchartInstruction" xml:space="preserve">
+    <value>Para iniciar, seleccione un área</value>
+  </data>
+  <data name="OrgchartSuggestion" xml:space="preserve">
+    <value>Se puede hacer zoom o se puede arrastrar el gráfico para mejorar la visualización. También puede dar clic en algún nodo para ver los detalles del empleado.</value>
   </data>
   <data name="SeeButton" xml:space="preserve">
     <value>Ver</value>
