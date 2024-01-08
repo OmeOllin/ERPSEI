@@ -3,12 +3,14 @@ const postOptions = { headers: { "RequestVerificationToken": $('input[name="__Re
 
 function onCargarOrganigrama() {
     let btnOrganigrama = document.getElementById("btnOrganigrama");
+    let selPuesto = document.getElementById("selFiltroPuesto");
     let selArea = document.getElementById("selFiltroArea");
     let selSubarea = document.getElementById("selFiltroSubarea");
     let divCharts = document.getElementById("divCharts");
     let btnExportar = document.getElementById("btnExportar");
 
     let oParams = {
+        PuestoId: selPuesto.value == 0 ? null : parseInt(selPuesto.value),
         AreaId: selArea.value == 0 ? null : parseInt(selArea.value),
         SubareaId: selSubarea.value == 0 ? null : parseInt(selSubarea.value),
     };

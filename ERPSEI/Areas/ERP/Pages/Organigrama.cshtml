@@ -6,12 +6,14 @@
 @using ERPSEI.Data.Entities.Empleados;
 @model OrganigramaModel
 @inject IViewLocalizer Localizer;
+@inject IRWCatalogoManager<Puesto> PuestosManager;
 @inject IRWCatalogoManager<Area> AreasManager;
 @inject IRWCatalogoManager<Subarea> SubareasManager;
 @{
-    ViewData["Title"] = Localizer["Title"];
+	ViewData["Title"] = Localizer["Title"];
 
-    List<Area> areas = await AreasManager.GetAllAsync();
+	List<Puesto> puestos = await PuestosManager.GetAllAsync();
+	List<Area> areas = await AreasManager.GetAllAsync();
     List<Subarea> subareas = await SubareasManager.GetAllAsync();
 }
 <h3 class="title mb-3">@ViewData["Title"]</h3>
@@ -29,7 +31,7 @@
 			<div class="accordion-body">
 				<form id="filtros" method="post">
 				    <div class="row">
-						<div class="col-sm-12 col-md-6 col-lg-6">
+						<div class="col-sm-12 col-md-4 col-lg-4">
 							<div class="form-floating mb-3">
 								<select id="selFiltroArea" asp-for="InputFiltro.AreaId" onchange="onAreaChanged();" class="form-select" placeholder="@Localizer["AreaPlaceholder"]">
 									<option value="0">Seleccione...</option>
@@ -43,7 +45,7 @@
 								<label for="selFiltroArea" asp-for="InputFiltro.AreaId" class="form-label"></label>
 							</div>
 						</div>
-						<div class="col-sm-12 col-md-6 col-lg-6">
+						<div class="col-sm-12 col-md-4 col-lg-4">
 							<div class="form-floating mb-3">
 								<select id="selFiltroSubarea" InputFiltro.SubareaId" class="form-select" placeholder="@Localizer["SubareaPlaceholder"]">
 									<option value="0">Seleccione...</option>
@@ -55,6 +57,20 @@
 									}
 								</select>
 								<label for="selFiltroSubarea" asp-for="InputFiltro.SubareaId" class="form-label"></label>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-4 col-lg-4">
+							<div class="form-floating mb-3">
+								<select id="selFiltroPuesto" asp-for="InputFiltro.PuestoId" class="form-select" placeholder="@Localizer["PuestoPlaceholder"]">
+									<option value="0">Seleccione...</option>
+									@{
+										foreach (Puesto puesto in puestos)
+										{
+											<option value='@puesto.Id'>@puesto.Nombre</option>
+										}
+									}
+								</select>
+								<label for="selFiltroPuesto" asp-for="InputFiltro.PuestoId" class="form-label"></label>
 							</div>
 						</div>
 					</div>

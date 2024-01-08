@@ -30,6 +30,9 @@ namespace ERPSEI.Areas.ERP.Pages
 
         public class FiltroModel
         {
+            [Display(Name = "PuestoField")]
+            public int? PuestoId { get; set; }
+
             [Display(Name = "AreaField")]
             public int? AreaId { get; set; }
 
@@ -138,13 +141,26 @@ namespace ERPSEI.Areas.ERP.Pages
                     //Si la lista de ayuda contiene a la organización, entonces la obtiene de la lista. De lo contrario, establece al jefe como la organización.
                     if (empOrg.Contains(organizacion)) { Jefe = empOrg[empOrg.IndexOf(organizacion)]; } else { Jefe = organizacion; }
 				}
+				else if (Jefe != null && empOrg.Contains(Jefe))
+				{
+					//Si la lista de ayuda contiene al jefe, entonces lo obtiene de la lista.
+					Jefe = empOrg[empOrg.IndexOf(Jefe)];
+				}
 
                 if(Jefe != null) {
-					//Si la lista de ayuda contiene a la organización, entonces la obtiene de la lista.
-					if (empOrg.Contains(Jefe)) { Jefe = empOrg[empOrg.IndexOf(Jefe)]; }
-
-					//Se añade el empleado como hijo del empleado jefe.
-					if (Jefe.Empleados == null) { Jefe.Empleados = new List<Empleado>() { empleado }; } else { Jefe.Empleados.Add(empleado); }
+                    //Si en la lista ya se encuentra la organización, se busca al jefe en los empleados de la organización.
+					if (empOrg.Contains(organizacion))
+                    {
+                        //Si el jefe ya se encuentra listado en los hijos de la organización, entonces lo retoma.
+                        List<Empleado> empleadosOrganizacion = empOrg[empOrg.IndexOf(organizacion)].Empleados ?? new List<Empleado>();
+					    //Se añade el empleado como hijo del empleado jefe.
+                        if (!empleadosOrganizacion.Contains(empleado)) { if (Jefe.Empleados == null) { Jefe.Empleados = new List<Empleado>() { empleado }; } else { Jefe.Empleados.Add(empleado); } }
+					}
+                    else
+                    {
+					    //Se añade el empleado como hijo del empleado jefe.
+					    if (Jefe.Empleados == null) { Jefe.Empleados = new List<Empleado>() { empleado }; } else { Jefe.Empleados.Add(empleado); }
+                    }
 
                     //Si la lista de ayuda ya contiene al Jefe, entonces lo establece en la lista. De lo contrario lo agrega a la lista.
                     if (empOrg.Contains(Jefe)) { empOrg[empOrg.IndexOf(Jefe)] = Jefe; } else { empOrg.Add(Jefe); }
@@ -192,11 +208,12 @@ namespace ERPSEI.Areas.ERP.Pages
         private async Task<string> getTalentList(FiltroModel? filtro = null)
         {
 			List<string> jsonEmpleados = new List<string>();
+            int? puestoId = filtro != null ? filtro.PuestoId : 0;
 			int? areaId = filtro != null ? filtro.AreaId : 0;
 			int? subareaId = filtro != null ? filtro.SubareaId : 0;
 
 			//Lista de empleados principal
-			List<Empleado> empleados = await _empleadoManager.GetEmpleadosOrganigramaAsync(null, areaId, subareaId);
+			List<Empleado> empleados = await _empleadoManager.GetEmpleadosOrganigramaAsync(null, puestoId, areaId, subareaId);
 
             //Si la lista de empleados no tuvo resultados, devuelve un arreglo vacío
             if(empleados == null || empleados.Count == 0) { return "[]"; }

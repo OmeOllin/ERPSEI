@@ -147,11 +147,12 @@ namespace ERPSEI.Data.Managers
 				.FirstOrDefaultAsync();
 		}
 
-		public async Task<List<Empleado>> GetEmpleadosOrganigramaAsync(int? jefeId, int? areaId, int? subareaId)
+		public async Task<List<Empleado>> GetEmpleadosOrganigramaAsync(int? jefeId, int? puestoId, int? areaId, int? subareaId)
 		{
 			return await db.Empleados
 				.Where(e => e.Deshabilitado == 0)
 				.Where(e => jefeId.HasValue ? e.JefeId == jefeId : true)
+				.Where(e => puestoId.HasValue ? e.PuestoId == puestoId : true)
 				.Where(e => areaId.HasValue ? e.AreaId == areaId : true)
 				.Where(e => subareaId.HasValue ? e.SubareaId == subareaId : true)
 				.Include(e => e.Oficina)

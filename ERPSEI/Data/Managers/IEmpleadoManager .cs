@@ -30,7 +30,7 @@ namespace ERPSEI.Data.Managers
 
         public Task<Empleado?> GetEmpleadoOrganigramaAsync(int id);
 
-		public Task<List<Empleado>> GetEmpleadosOrganigramaAsync(int? jefeId, int? areaId, int? subareaId);
+		public Task<List<Empleado>> GetEmpleadosOrganigramaAsync(int? jefeId, int? puestoId, int? areaId, int? subareaId);
 
 		public Task<Empleado?> GetByIdWithAdicionalesAsync(int id);
 
