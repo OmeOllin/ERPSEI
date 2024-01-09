@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
 {
@@ -120,6 +122,20 @@ namespace ERPSEI.Areas.Identity.Pages.Account
                 {
                     _logger.LogWarning("Cuenta de usuario bloqueada.");
                     return RedirectToPage("./Lockout");
+                }
+                else if (user.PasswordResetNeeded)
+                {
+                    _logger.LogWarning("Se requiere reset de password");
+
+					var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+					code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+					var callbackUrl = Url.Page(
+						"/Account/ResetPassword",
+						pageHandler: null,
+						values: new { area = "Identity", code },
+						protocol: Request.Scheme);
+
+					return RedirectToPage($"./ResetPassword", new { code = code });
                 }
                 else
                 {
