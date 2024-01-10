@@ -10,15 +10,15 @@ using ERPSEI.Resources;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 
 namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 {
     public class IndexModel : PageModel
     {
+        private readonly IContactoEmergenciaManager _contactoEmergenciaManager;
+        private readonly IEmpleadoManager _empleadoManager;
         private readonly AppUserManager _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IArchivoEmpleadoManager _userFileManager;
@@ -26,12 +26,16 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
         private readonly ApplicationDbContext _db;
 
         public IndexModel(
+            IContactoEmergenciaManager contactoEmergenciaManager,
+            IEmpleadoManager empleadoManager,
             AppUserManager userManager,
             SignInManager<AppUser> signInManager,
             IArchivoEmpleadoManager userFileManager,
             IStringLocalizer<IndexModel> localizer,
             ApplicationDbContext db)
         {
+            _contactoEmergenciaManager = contactoEmergenciaManager;
+            _empleadoManager = empleadoManager;
             _userManager = userManager;
             _signInManager = signInManager;
             _userFileManager = userFileManager;
@@ -56,6 +60,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 
         public class FileFromGet
         {
+            public string Name { get; set; }
             public string FileId { get; set; }
             public string Src { get; set; }
             public int TypeId { get; set; }
@@ -77,8 +82,9 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 
             [StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
             [RegularExpression(RegularExpressions.PersonName, ErrorMessage = "PersonName")]
-            [Display(Name = "SecondNameField")]
-            public string SecondName {  get; set; }
+            [DataType(DataType.Text)]
+            [Display(Name = "PreferredNameField")]
+            public string NombrePreferido { get; set; } = string.Empty;
 
             [Required(ErrorMessage = "Required")]
             [StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
@@ -92,18 +98,92 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             [Display(Name = "MothersLastNameField")]
             public string MothersLastName { get; set; }
 
+            [DataType(DataType.DateTime)]
+            [Required(ErrorMessage = "Required")]
+            [Display(Name = "FechaNacimientoField")]
+            public DateTime FechaNacimiento { get; set; }
+
             [Phone(ErrorMessage = "PhoneFormat")]
             [DataType(DataType.PhoneNumber)]
             [Display(Name = "PhoneNumberField")]
             public string PhoneNumber { get; set; }
+
+            [Required(ErrorMessage = "Required")]
+            [DataType(DataType.MultilineText)]
+            [Display(Name = "DireccionField")]
+            public string Direccion { get; set; } = string.Empty;
+
+            [DataType(DataType.Text)]
+            [StringLength(18, ErrorMessage = "FieldLength", MinimumLength = 18)]
+            [RegularExpression(RegularExpressions.AlphanumNoSpaceNoUnderscore, ErrorMessage = "AlphanumNoSpaceNoUnderscore")]
+            [Required(ErrorMessage = "Required")]
+            [Display(Name = "CURPField")]
+            public string CURP { get; set; } = string.Empty;
+
+            [DataType(DataType.Text)]
+            [StringLength(13, ErrorMessage = "FieldLength", MinimumLength = 13)]
+            [RegularExpression(RegularExpressions.AlphanumNoSpaceNoUnderscore, ErrorMessage = "AlphanumNoSpaceNoUnderscore")]
+            [Required(ErrorMessage = "Required")]
+            [Display(Name = "RFCField")]
+            public string RFC { get; set; } = string.Empty;
+
+            [DataType(DataType.Text)]
+            [StringLength(11, ErrorMessage = "FieldLength", MinimumLength = 9)]
+            [RegularExpression(RegularExpressions.NumericNoRestriction, ErrorMessage = "Numeric")]
+            [Required(ErrorMessage = "Required")]
+            [Display(Name = "NSSField")]
+            public string NSS { get; set; } = string.Empty;
+
+            [Display(Name = "GeneroField")]
+            public int? GeneroId { get; set; }
+
+            [Display(Name = "EstadoCivilField")]
+            public int? EstadoCivilId { get; set; }
+
+            [DataType(DataType.Text)]
+            [StringLength(60, ErrorMessage = "FieldLength", MinimumLength = 2)]
+            [RegularExpression(RegularExpressions.PersonName, ErrorMessage = "PersonName")]
+            [Display(Name = "NameField")]
+            public string NombreContacto1 { get; set; } = string.Empty;
+
+            [Phone(ErrorMessage = "PhoneFormat")]
+            [StringLength(10, ErrorMessage = "FieldLength", MinimumLength = 10)]
+            [DataType(DataType.PhoneNumber)]
+            [RegularExpression(RegularExpressions.Numeric, ErrorMessage = "Numeric")]
+            [Display(Name = "PhoneNumberField")]
+            public string TelefonoContacto1 { get; set; } = string.Empty;
+
+            [DataType(DataType.Text)]
+            [StringLength(60, ErrorMessage = "FieldLength", MinimumLength = 2)]
+            [RegularExpression(RegularExpressions.PersonName, ErrorMessage = "PersonName")]
+            [Display(Name = "NameField")]
+            public string NombreContacto2 { get; set; } = string.Empty;
+
+            [Phone(ErrorMessage = "PhoneFormat")]
+            [StringLength(10, ErrorMessage = "FieldLength", MinimumLength = 10)]
+            [DataType(DataType.PhoneNumber)]
+            [RegularExpression(RegularExpressions.Numeric, ErrorMessage = "Numeric")]
+            [Display(Name = "PhoneNumberField")]
+            public string TelefonoContacto2 { get; set; } = string.Empty;
         }
 
 
+        private void LoadUserContacts(List<ContactoEmergencia> userContacts)
+        {
+            if(userContacts != null && userContacts.Count >= 1)
+            {
+                Input.NombreContacto1 = userContacts[0].Nombre;
+                Input.TelefonoContacto1 = userContacts[0].Telefono;
+            }
 
+            if (userContacts != null && userContacts.Count >= 2)
+            {
+                Input.NombreContacto2 = userContacts[1].Nombre;
+                Input.TelefonoContacto2 = userContacts[1].Telefono;
+            }
+        }
 
-        private async Task LoadUserFilesAsync(int empleadoId) {
-            //Carga y recorre los archivos del usuario.
-            List<ArchivoEmpleado> userFiles = await _userFileManager.GetFilesByEmpleadoIdAsync(empleadoId);
+        private void LoadUserFiles(List<ArchivoEmpleado> userFiles) {
             //Ordena los archivos del usuario por tipo de archivo de manera ascendente
             userFiles = (from userFile in userFiles
                          orderby userFile.TipoArchivoId ascending
@@ -123,7 +203,9 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                 //Si el usuario ya tiene archivos, se llena el arreglo de datos a partir de ellos.
                 foreach (ArchivoEmpleado file in userFiles)
                 {
-                    FileFromGet fg = new FileFromGet() { FileId = file.Id, TypeId = file.TipoArchivoId ?? 0, Src = "" };
+                    if(file.TipoArchivoId == (int)FileTypes.ImagenPerfil) { continue; }  
+
+                    FileFromGet fg = new FileFromGet() { FileId = file.Id, TypeId = file.TipoArchivoId ?? 0, Src = "", Name = $"{file.Nombre}.{file.Extension}" };
                     //Si el archivo tiene contenido
                     if (file.Archivo != null && file.Archivo.Length >= 1)
                     {
@@ -151,26 +233,47 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            ICollection<ContactoEmergencia> contactos = new List<ContactoEmergencia>();
+            List<ArchivoEmpleado> archivos = new List<ArchivoEmpleado>();
 
-            Input.Username = userName;
-            Input.FirstName = user.Empleado.Nombre;
-            Input.FathersLastName = user.Empleado.ApellidoPaterno;
-            Input.MothersLastName = user.Empleado.ApellidoMaterno;
+			Input.Username = userName;
+
+            user.Empleado = await _empleadoManager.GetByIdAsync(user.EmpleadoId??0);
+            if(user.Empleado != null)
+            {
+                Input.FirstName = user.Empleado.Nombre;
+                Input.NombrePreferido = user.Empleado.NombrePreferido;
+                Input.FathersLastName = user.Empleado.ApellidoPaterno;
+                Input.MothersLastName = user.Empleado.ApellidoMaterno;
+                Input.FechaNacimiento = user.Empleado.FechaNacimiento;
+                Input.GeneroId = user.Empleado.GeneroId;
+                Input.EstadoCivilId = user.Empleado.EstadoCivilId;
+                Input.Direccion = user.Empleado.Direccion;
+                Input.CURP = user.Empleado.CURP;
+                Input.RFC = user.Empleado.RFC;
+                Input.NSS = user.Empleado.NSS;
+
+                contactos = await _contactoEmergenciaManager.GetContactosByEmpleadoIdAsync(user.EmpleadoId ?? 0);
+                LoadUserContacts(contactos.ToList());
+
+                archivos = await _userFileManager.GetFilesByEmpleadoIdAsync(user.EmpleadoId ?? 0);
+                ArchivoEmpleado imagenPerfil = archivos.Where(a => a.TipoArchivoId == (int)FileTypes.ImagenPerfil).FirstOrDefault();
+
+				//Si el usuario tiene imagen de perfil
+				if (imagenPerfil != null && imagenPerfil.Archivo.Length >= 1)
+				{
+					//Se usa para mostrarla
+					ProfilePictureSrc = $"data:image/png;base64,{Convert.ToBase64String(imagenPerfil.Archivo)}";
+				}
+				else
+				{
+					//De lo contrario, se usa la imagen default.
+					ProfilePictureSrc = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/img/default_profile_pic.png";
+				}
+			}
             Input.PhoneNumber = phoneNumber;
 
-            //Si el usuario tiene imagen de perfil
-            //if (user.Empleado.ProfilePicture != null && user.Empleado.ProfilePicture.Length >= 1)
-            //{
-            //    //Se usa para mostrarla
-            //    ProfilePictureSrc = $"data:image/png;base64,{Convert.ToBase64String(user.Empleado.ProfilePicture)}";
-            //}
-            //else
-            //{
-            //    //De lo contrario, se usa la imagen default.
-            //    ProfilePictureSrc = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/img/default_profile_pic.png";
-            //}
-
-            await LoadUserFilesAsync(user.EmpleadoId ?? 0);
+            LoadUserFiles(archivos);
         }
 
         public async Task<IActionResult> OnGetAsync()

@@ -267,9 +267,6 @@
   <data name="RFCField" xml:space="preserve">
     <value>RFC</value>
   </data>
-  <data name="SecondNameField" xml:space="preserve">
-    <value>Second name</value>
-  </data>
   <data name="SubareaField" xml:space="preserve">
     <value>Subarea</value>
   </data>

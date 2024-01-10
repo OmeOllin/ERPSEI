@@ -142,13 +142,25 @@
     <value>Deactivate profile</value>
   </data>
   <data name="DocumentSuggestion" xml:space="preserve">
-    <value>Please note that files should not be larger than 1mb and only files in .pdf, .jpg, .jpeg and .png formats are accepted.</value>
+    <value>Please note that files should not be larger than 5mb and only files in .pdf, .jpg, .jpeg and .png formats are accepted.</value>
   </data>
   <data name="EditLink" xml:space="preserve">
     <value>Edit</value>
   </data>
+  <data name="EmpleadoContactoTitle" xml:space="preserve">
+    <value>Emergency Contact</value>
+  </data>
+  <data name="EmptySelectItemText" xml:space="preserve">
+    <value>Select...</value>
+  </data>
   <data name="FathersLastNamePlaceholder" xml:space="preserve">
     <value>Father's last name</value>
+  </data>
+  <data name="FileFormatMessage" xml:space="preserve">
+    <value>The file format must be .pdf, .jpg, .jpeg o .png. Please choose another file.</value>
+  </data>
+  <data name="FileFormatTitle" xml:space="preserve">
+    <value>Invalid file format</value>
   </data>
   <data name="FirstNamePlaceholder" xml:space="preserve">
     <value>First name</value>
@@ -159,6 +171,12 @@
   <data name="INE" xml:space="preserve">
     <value>Personal identification</value>
   </data>
+  <data name="MaxFileSizeMessage" xml:space="preserve">
+    <value>The selected file exceeds the maximum allowed file size. Please choose another file with size no larger than</value>
+  </data>
+  <data name="MaxFileSizeTitle" xml:space="preserve">
+    <value>Invalid file size</value>
+  </data>
   <data name="MothersLastNamePlaceholder" xml:space="preserve">
     <value>Mother's last name</value>
   </data>
@@ -167,6 +185,9 @@
   </data>
   <data name="PhonePlaceholder" xml:space="preserve">
     <value>Please insert your phone number</value>
+  </data>
+  <data name="PreferredNamePlaceholder" xml:space="preserve">
+    <value>Preferred name</value>
   </data>
   <data name="ProfilePicSuggestion" xml:space="preserve">
     <value>Consider uploading a professional profile photo so other people can recognize you.</value>
@@ -177,14 +198,11 @@
   <data name="SaveButton" xml:space="preserve">
     <value>Save</value>
   </data>
-  <data name="SecondNamePlaceholder" xml:space="preserve">
-    <value>Second name</value>
-  </data>
   <data name="SecondSectionTitle" xml:space="preserve">
     <value>Additional information</value>
   </data>
   <data name="Title" xml:space="preserve">
-    <value>Profile</value>
+    <value>Manage profile</value>
   </data>
   <data name="Title1" xml:space="preserve">
     <value>Personal Data</value>

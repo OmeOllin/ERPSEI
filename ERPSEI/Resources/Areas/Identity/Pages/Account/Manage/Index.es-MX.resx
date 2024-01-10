@@ -142,22 +142,40 @@
     <value>Desactivar perfil</value>
   </data>
   <data name="DocumentSuggestion" xml:space="preserve">
-    <value>Tenga en cuenta que los archivos no deben tener más de 1 MB y solo se aceptan archivos en formatos .pdf, .jpg, .jpeg y .png.</value>
+    <value>Tenga en cuenta que los archivos no deben tener más de 5 MB y solo se aceptan archivos en formatos .pdf, .jpg, .jpeg y .png.</value>
   </data>
   <data name="EditLink" xml:space="preserve">
     <value>Editar</value>
   </data>
+  <data name="EmpleadoContactoTitle" xml:space="preserve">
+    <value>Contacto de Emergencia</value>
+  </data>
+  <data name="EmptySelectItemText" xml:space="preserve">
+    <value>Seleccione...</value>
+  </data>
   <data name="FathersLastNamePlaceholder" xml:space="preserve">
     <value>Primer apellido</value>
   </data>
+  <data name="FileFormatMessage" xml:space="preserve">
+    <value>El formato del archivo debe ser .pdf, .jpg, .jpeg o .png. Por favor elija otro archivo.</value>
+  </data>
+  <data name="FileFormatTitle" xml:space="preserve">
+    <value>Formato de archivo inválido</value>
+  </data>
   <data name="FirstNamePlaceholder" xml:space="preserve">
-    <value>Primer nombre</value>
+    <value>Nombre(s)</value>
   </data>
   <data name="FirstSectionTitle" xml:space="preserve">
     <value>Información principal</value>
   </data>
   <data name="INE" xml:space="preserve">
     <value>INE</value>
+  </data>
+  <data name="MaxFileSizeMessage" xml:space="preserve">
+    <value>El archivo seleccionado supera el máximo tamaño permitido de los archivos. Por favor elija otro archivo con tamaño no mayor a </value>
+  </data>
+  <data name="MaxFileSizeTitle" xml:space="preserve">
+    <value>Tamaño de archivo inválido</value>
   </data>
   <data name="MothersLastNamePlaceholder" xml:space="preserve">
     <value>Segundo apellido</value>
@@ -168,6 +186,9 @@
   <data name="PhonePlaceholder" xml:space="preserve">
     <value>Por favor introduzca su número de teléfono</value>
   </data>
+  <data name="PreferredNamePlaceholder" xml:space="preserve">
+    <value>Nombre preferido</value>
+  </data>
   <data name="ProfilePicSuggestion" xml:space="preserve">
     <value>Considere subir una foto de perfil profesional para que el resto de las personas puedan reconocerle.</value>
   </data>
@@ -177,14 +198,11 @@
   <data name="SaveButton" xml:space="preserve">
     <value>Guardar</value>
   </data>
-  <data name="SecondNamePlaceholder" xml:space="preserve">
-    <value>Segundo nombre</value>
-  </data>
   <data name="SecondSectionTitle" xml:space="preserve">
     <value>Información adicional</value>
   </data>
   <data name="Title" xml:space="preserve">
-    <value>Perfil</value>
+    <value>Administrar perfil</value>
   </data>
   <data name="Title1" xml:space="preserve">
     <value>Información Personal</value>
