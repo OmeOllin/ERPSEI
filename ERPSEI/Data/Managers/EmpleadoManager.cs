@@ -149,18 +149,33 @@ namespace ERPSEI.Data.Managers
 
 		public async Task<List<Empleado>> GetEmpleadosOrganigramaAsync(int? jefeId, int? puestoId, int? areaId, int? subareaId)
 		{
-			return await db.Empleados
-				.Where(e => e.Deshabilitado == 0)
-				.Where(e => jefeId.HasValue ? e.JefeId == jefeId : true)
-				.Where(e => puestoId.HasValue ? e.PuestoId == puestoId : true)
-				.Where(e => areaId.HasValue ? e.AreaId == areaId : true)
-				.Where(e => subareaId.HasValue ? e.SubareaId == subareaId : true)
-				.Include(e => e.Oficina)
-				.Include(e => e.Puesto)
-				.Include(e => e.Area)
-				.Include(e => e.Subarea)
-				.Include(e => e.ArchivosEmpleado.Where(a => a.TipoArchivoId == (int)FileTypes.ImagenPerfil))
-				.ToListAsync();
+			if (jefeId.HasValue)
+			{
+                return await db.Empleados
+                .Where(e => e.Deshabilitado == 0)
+                .Where(e => jefeId.HasValue ? e.JefeId == jefeId : true)
+                .Include(e => e.Oficina)
+                .Include(e => e.Puesto)
+                .Include(e => e.Area)
+                .Include(e => e.Subarea)
+                .Include(e => e.ArchivosEmpleado.Where(a => a.TipoArchivoId == (int)FileTypes.ImagenPerfil))
+                .ToListAsync();
+            }
+			else
+			{
+                return await db.Empleados
+                .Where(e => e.Deshabilitado == 0)
+                .Where(e => puestoId.HasValue ? e.PuestoId == puestoId : true)
+                .Where(e => areaId.HasValue ? e.AreaId == areaId : true)
+                .Where(e => subareaId.HasValue ? e.SubareaId == subareaId : true)
+                .Include(e => e.Oficina)
+                .Include(e => e.Puesto)
+                .Include(e => e.Area)
+                .Include(e => e.Subarea)
+                .Include(e => e.ArchivosEmpleado.Where(a => a.TipoArchivoId == (int)FileTypes.ImagenPerfil))
+                .ToListAsync();
+            }
+			
 		}
 
 		public async Task<Empleado?> GetByIdWithAdicionalesAsync(int id)

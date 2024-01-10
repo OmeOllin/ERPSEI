@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 
 namespace ERPSEI.Areas.ERP.Pages
 {
@@ -227,8 +228,25 @@ namespace ERPSEI.Areas.ERP.Pages
 			int? areaId = filtro != null ? filtro.AreaId : 0;
 			int? subareaId = filtro != null ? filtro.SubareaId : 0;
 
-			//Lista de empleados principal
-			List<Empleado> empleados = await _empleadoManager.GetEmpleadosOrganigramaAsync(null, puestoId, areaId, subareaId);
+            List<Empleado> empleados = await _empleadoManager.GetEmpleadosOrganigramaAsync(null, puestoId, areaId, subareaId);
+
+            //NOTA PERSONAL:
+            //No me gusta esta solución, pero Carlos Silveti quiere que todas las personas que estén bajo su cargo, aparezcan aquí aunque no pertenezcan a su área.
+            int administracionId = 1;
+            int directorId = 7;
+            if (areaId == administracionId)
+            {
+                //Si el área es administración, se busca al Director de administración.
+                Empleado? director = empleados.Where(e => e.PuestoId == directorId).FirstOrDefault();
+                if (director != null) {
+                    //Si hay director de administración, obtiene los hijos
+                    List<Empleado> hijosDirector = await _empleadoManager.GetEmpleadosOrganigramaAsync(director.Id, 0, 0, 0);
+                    foreach (Empleado empleado in hijosDirector)
+                    {
+                        if (!empleados.Contains(empleado)) { empleados.Add(empleado); }
+                    }
+                }
+            }
 
             //Si la lista de empleados no tuvo resultados, devuelve un arreglo vacío
             if(empleados == null || empleados.Count == 0) { return "[]"; }
