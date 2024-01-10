@@ -64,14 +64,29 @@ namespace ERPSEI.Areas.ERP.Pages
             string nombrePuesto = emp.Puesto != null ? emp.Puesto.Nombre : "";
             string nombreOficina = emp.Oficina != null ? emp.Oficina.Nombre : "";
             string nombre = string.Empty;
+            string title = String.Empty;
             ArchivoEmpleado? profilePicFile = null;
             string profilePic = string.Empty;
             List<string> jsonChildren = new List<string>();
+
+            if (nombrePuesto == "Director" || nombrePuesto == "Gerente")
+            {
+                title = $"{nombrePuesto} {nombreArea}";
+            }
+            else
+            {
+                title = nombrePuesto;
+            }
 
             if (emp.NombrePreferido != null && emp.NombrePreferido.Length >= 1)
             {
                 //Si el usuario tiene nombre preferido, lo usa para mostrar.
                 nombre = emp.NombrePreferido;
+            }
+            else if (emp.Nombre == "Vacante")
+            {
+                nombre = emp.Nombre;
+                emp.ApellidoPaterno = String.Empty;
             }
             else
             {
@@ -113,7 +128,7 @@ namespace ERPSEI.Areas.ERP.Pages
             return "{" +
                         $"\"id\": {emp.Id}, " +
 						$"\"name\": \"{ nombre + ' ' + emp.ApellidoPaterno}\", " +
-                        $"\"title\": \"{nombrePuesto}\", " +
+                        $"\"title\": \"{title}\", " +
                         $"\"children\": [{string.Join(",", jsonChildren)}], " +
 						$"\"nombreCompleto\": \"{emp.NombreCompleto}\", " +
 						$"\"fechaIngresoJS\": \"{emp.FechaIngreso:yyyy-MM-dd}\", " +
