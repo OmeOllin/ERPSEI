@@ -118,7 +118,22 @@ function validarParametros(oParams) {
 function onExportarOrganigrama() {
     if (oc === null) { return; }
 
-    oc.export("orgchart", "png");
+    let selAreaVal = parseInt(document.getElementById("selFiltroArea").value||"0");
+    let selSubareaVal = parseInt(document.getElementById("selFiltroSubarea").value||"0");
+
+    let area = document.querySelector(`#selFiltroArea option[value='${selAreaVal}']`).text;
+    let subarea = document.querySelector(`#selFiltroSubarea option[value='${selSubareaVal}']`).text;
+
+    //Por default, el nombre del archivo exportado.
+    let exportName = "Orgchart";
+
+    //Si hay área seleccionada, se usa para el nombre del archivo exportado.
+    if (selAreaVal >= 1) { exportName = area; }
+
+    //Si también hay seleccionada una subarea, añade la descripción al nombre del archivo exportado;
+    if (selSubareaVal >= 1) { exportName += ` ${subarea}`; }
+
+    oc.export(exportName, "png");
 }
 
 function onAreaChanged() {
