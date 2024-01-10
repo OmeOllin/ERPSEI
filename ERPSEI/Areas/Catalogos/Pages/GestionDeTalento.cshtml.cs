@@ -602,19 +602,19 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			}
 
 			//Valido que no exista empleado que tenga los mismos datos.
-			coincidences = emps.Where(e => (e.NombreCompleto ?? "").Length >= 1 && e.NombreCompleto == $"{emp.Nombre} {emp.ApellidoPaterno} {emp.ApellidoMaterno}").ToList();
+			coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.NombreCompleto ?? "").Length >= 1 && e.NombreCompleto == $"{emp.Nombre} {emp.ApellidoPaterno} {emp.ApellidoMaterno}").ToList();
 			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el nombre de {emp.Nombre} {emp.ApellidoPaterno} {emp.ApellidoMaterno}. Por favor verifique la información"; }
 
-			coincidences = emps.Where(e => (e.Email ?? "").Length >= 1 && e.Email == emp.Email).ToList();
+			coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.Email ?? "").Length >= 1 && e.Email == emp.Email).ToList();
 			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el correo {emp.Email}. Por favor verifique la información"; }
 
-			coincidences = emps.Where(e => (e.CURP ?? "").Length >= 1 && e.CURP == emp.CURP).ToList();
+			coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.CURP ?? "").Length >= 1 && e.CURP == emp.CURP).ToList();
 			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el CURP {emp.CURP}. Por favor verifique la información"; }
 
-			coincidences = emps.Where(e => (e.RFC ?? "").Length >= 1 && e.RFC == emp.RFC).ToList();
+			coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.RFC ?? "").Length >= 1 && e.RFC == emp.RFC).ToList();
 			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el RFC {emp.RFC}. Por favor verifique la información"; }
 
-			coincidences = emps.Where(e => (e.NSS ?? "").Length >= 1 && e.NSS == emp.NSS).ToList();
+			coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.NSS ?? "").Length >= 1 && e.NSS == emp.NSS).ToList();
 			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el NSS {emp.NSS}. Por favor verifique la información"; }
 
 			return string.Empty;
