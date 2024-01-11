@@ -118,7 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LogoutButton" xml:space="preserve">
-    <value>Clic aquí para cerrar sesión</value>
+    <value>Cerrar Sesión</value>
+  </data>
+  <data name="LogoutInstructionA" xml:space="preserve">
+    <value>¿Está seguro que desea cerrar la sesión?</value>
+  </data>
+  <data name="LogoutInstructionB" xml:space="preserve">
+    <value>Confirme para salir</value>
   </data>
   <data name="LogoutMessage" xml:space="preserve">
     <value>Ha cerrado sesión exitosamente en la aplicación</value>
