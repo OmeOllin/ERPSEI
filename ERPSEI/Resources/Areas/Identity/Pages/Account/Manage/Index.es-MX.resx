@@ -120,6 +120,18 @@
   <data name="ActaNacimiento" xml:space="preserve">
     <value>Acta de nacimiento</value>
   </data>
+  <data name="BtnDescargarTitle" xml:space="preserve">
+    <value>Descargar</value>
+  </data>
+  <data name="BtnEditarTitle" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="BtnEliminarTitle" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="BtnVerTitle" xml:space="preserve">
+    <value>Ver</value>
+  </data>
   <data name="CLABE" xml:space="preserve">
     <value>CLABE</value>
   </data>

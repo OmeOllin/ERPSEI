@@ -576,6 +576,7 @@ function establecerDatosAdicionales(row, action) {
             picField.setAttribute('src', a.imgSrc);
             picSelector.setAttribute('sourceLength', a.fileSize);
             picSelector.setAttribute('sourceName', `${a.nombre}.${a.extension}`);
+            picSelector.setAttribute('sourceId', a.id);
             picSelector.setAttribute('b64', b64);
         }
         else {
@@ -584,6 +585,7 @@ function establecerDatosAdicionales(row, action) {
             let nameClass = "opacity-25";
             let nameHTML = `<div class="overflowed-text">${emptySelectItemText}</div>`;
             let editDisabled = action == VER ? "disabled" : "";
+            let itemVerHTML = "";
 
             if (parseInt(a.fileSize) >= 1) {
                 //Si el tamaño del archivo es mayor o igual a 1 byte, agrega un archivo al DOM con la información.
@@ -591,6 +593,7 @@ function establecerDatosAdicionales(row, action) {
                 iconClass = "document-icon-filled";
                 nameClass = "document-name-filled";
                 nameHTML = `<div class="overflowed-text">${a.nombre}</div>.<div>${a.extension}</div>`;
+                itemVerHTML = `<li><a class='dropdown-item' onclick='onVerDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-search'></i> ${btnVerTitle}</a></li>`;
             }
 
             $("#bodyArchivos").append(
@@ -600,9 +603,17 @@ function establecerDatosAdicionales(row, action) {
                         <div id="fileIcon${a.tipoArchivoId}" class="align-self-center col-1 ${iconClass}"><i class='bi bi-file-image' style='font-size:25px'></i></div>
                         <div id="fileName${a.tipoArchivoId}" class="align-self-center col-10 ${nameClass} p-2" style="display:flex; color:dimgray">${nameHTML}</div>
                         <div class="align-self-center col-1">
-                            <input type="file" id="selector${a.tipoArchivoId}" sourceName="${a.nombre}.${a.extension}" sourceLength="${a.fileSize}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-                            <a class='btn btn-sm btn-primary ${editDisabled} mb-1' onclick='onEditDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-pencil-fill'></i></a>
-                            <a class="btn btn-sm btn-primary disableable mb-1" inputName="selector${a.tipoArchivoId}" onclick="onDeleteClick(this);" sourceId="selector${a.tipoArchivoId}" sourceLength="${a.fileSize}"><i class="bi bi-x-lg"></i></a>
+                            <input type="file" id="selector${a.tipoArchivoId}" sourceId="${a.id}" sourceName="${a.nombre}.${a.extension}" sourceLength="${a.fileSize}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                            <div class="dropdown">
+                                <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical success"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    ${itemVerHTML}
+                                    <li><a class='dropdown-item ${editDisabled}' onclick='onEditDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-pencil-fill'></i> ${btnEditarTitle}</a></li>
+                                    <li><a class="dropdown-item disableable" inputName="selector${a.tipoArchivoId}" onclick="onDeleteClick(this);" sourceId="selector${a.tipoArchivoId}" sourceLength="${a.fileSize}"><i class="bi bi-x-lg"></i> ${btnEliminarTitle}</a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>`
@@ -622,7 +633,8 @@ function initializeDisableableButtons(isConsulta = false) {
             let button = buttons[i];
             let inputName = button.getAttribute("inputName");
             let input = document.getElementById(inputName);
-            let sourceLength = (input.getAttribute("b64")||"").length;
+            let sourceLength = (input.getAttribute("b64") || "").length;
+            if (sourceLength <= 0) { sourceLength = parseInt(input.getAttribute("sourceLength") || "0"); }
             let hasFile = sourceLength >= 1;
             if (hasFile && !isConsulta) {
                 button.classList.remove("disabled");
@@ -632,6 +644,14 @@ function initializeDisableableButtons(isConsulta = false) {
             }
         }
     }
+}
+//Función para capturar el clic en el botón de ver, que dispara la visualización del archivo.
+function onVerDocumentClick(button) {
+    let inputName = button.getAttribute("inputName");
+    let input = document.getElementById(inputName);
+    let oParams = {id: input.getAttribute("sourceId")}
+
+    window.open(`/FileViewer?id=${oParams.id}`, "_blank");
 }
 //Función para capturar el clic en el botón de edición, que dispara la apertura del selector de archivo.
 function onEditDocumentClick(button) {
@@ -651,7 +671,7 @@ function onDeleteClick(button) {
         let fileIcon = document.getElementById(fileIconName);
         let fileName = document.getElementById(fileNameName);
 
-        fileInput.files = null;
+        fileInput.value = null;
         fileInput.setAttribute("b64", "");
 
         container.classList.remove("document-container-filled");

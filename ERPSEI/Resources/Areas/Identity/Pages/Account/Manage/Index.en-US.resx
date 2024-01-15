@@ -120,6 +120,18 @@
   <data name="ActaNacimiento" xml:space="preserve">
     <value>Birth certificate</value>
   </data>
+  <data name="BtnDescargarTitle" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="BtnEditarTitle" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="BtnEliminarTitle" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="BtnVerTitle" xml:space="preserve">
+    <value>See</value>
+  </data>
   <data name="CLABE" xml:space="preserve">
     <value>Standardized bank key</value>
   </data>

@@ -231,8 +231,19 @@
                             <input type="hidden" name="FilesFromGet[@fd.FileId].TypeId" value="@fd.TypeId" />
                             <input type="hidden" name="FilesFromGet[@fd.FileId].FileSize" value="@fd.FileSize" />
                             <input name="FilesFromGet[@fd.FileId].File" type="file" id="selector{@fd.TypeId}" sourceName="@fd.FileId" sourceLength="@fd.FileSize" tipoArchivoId="@fd.TypeId" containerName="container{@fd.TypeId}" fileIconName="fileIcon{@fd.TypeId}" fileNameName="fileName{@fd.TypeId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-                            <a class='btn btn-sm btn-primary mb-1' onclick='onEditDocumentClick(this);' inputName="selector{@fd.TypeId}"><i class='bi bi-pencil-fill'></i></a>
-                            <a class="btn btn-sm btn-primary disableable mb-1" inputName="selector{@fd.TypeId}" onclick="onDeleteClick(this);" sourceId="selector{@fd.TypeId}" sourceLength="@fd.FileSize"><i class="bi bi-x-lg"></i></a>
+                            <div class="dropdown">
+                                <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical success"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    @if(fd.FileSize >= 1)
+                                    {
+                                        <li><a class='dropdown-item disableable' asp-page="/FileViewer" asp-route-id="@fd.FileId" target="_blank" inputName="selector{@fd.TypeId}"><i class='bi bi-search'></i> @Localizer["BtnVerTitle"]</a></li>
+                                    }
+                                    <li><a class='dropdown-item' onclick='onEditDocumentClick(this);' inputName="selector{@fd.TypeId}"><i class='bi bi-pencil-fill'></i> @Localizer["BtnEditarTitle"]</a></li>
+                                    <li><a class="dropdown-item disableable" inputName="selector{@fd.TypeId}" onclick="onDeleteClick(this);" sourceId="selector{@fd.TypeId}" sourceLength="@fd.FileSize"><i class="bi bi-x-lg"></i> @Localizer["BtnEliminarTitle"]</a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -246,54 +257,6 @@
             @Localizer["SaveButton"]
         </button>
     </div>
-    @* <table class="table table-bordered" align="center" style="width:auto;">
-        <thead>
-            <tr align="center">
-                <th scope="col"></th>
-                <th scope="col">Nombre documento</th>
-                <th scope="col">Documento</th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            @{
-                foreach (IndexModel.FileFromGet fd in Model.FilesFromGet)
-                {
-                    //Obtiene el nombre del tipo.
-                    string? enumName = System.Enum.GetName(typeof(FileTypes),fd.TypeId) ?? "";
-                    string containerId = Guid.NewGuid().ToString();
-                    string selectorId = Guid.NewGuid().ToString();
-
-                    <tr valign="middle" align="center">
-                        <th scope="row">@fd.TypeId</th>
-                        <td><b>@Localizer[@enumName]</b></td>
-                        <td>
-                            <div id="@containerId" class="document-container">
-                                @Html.Raw(fd.Src)
-                            </div>
-                        </td>
-                        <td align="left">
-                            <div style="width:auto;">
-                                <input type="hidden" name="FilesFromGet.Index" value="@fd.FileId" />
-                                <input type="hidden" name="FilesFromGet[@fd.FileId].FileId" value="@fd.FileId" />
-                                <input type="hidden" name="FilesFromGet[@fd.FileId].TypeId" value="@fd.TypeId" />
-                                <input name="FilesFromGet[@fd.FileId].File" type="file" id="@selectorId" containerName="@containerId" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-                                <a class="btn mb-1" onclick="onEditDocumentClick(this);" inputName="@selectorId">
-                                    <i class="bi bi-pencil-fill"></i>
-                                </a>
-                                <a class="btn disableable mb-1" asp-page="/FileViewer" asp-route-id="@fd.FileId" target="_blank" sourceLength="@fd.Src.Length">
-                                    <i class="bi bi-search"></i>
-                                </a>
-                                <a class="btn disableable mb-1" onclick="onDeleteClick(this);" sourceId="@selectorId" sourceLength="@fd.Src.Length">
-                                    <i class="bi bi-x-lg"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table> *@
 </form>
 
 @section Scripts {

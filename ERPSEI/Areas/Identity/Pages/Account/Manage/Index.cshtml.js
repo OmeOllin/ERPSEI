@@ -107,7 +107,8 @@ function initializeDisableableButtons() {
             let button = buttons[i];
             let inputName = button.getAttribute("inputName");
             let input = document.getElementById(inputName);
-            let sourceLength = parseInt(input.getAttribute("sourceLength") || "0");
+            let sourceLength = (input.getAttribute("b64") || "").length;
+            if (sourceLength <= 0) { sourceLength = parseInt(input.getAttribute("sourceLength") || "0"); }
             let hasFile = sourceLength >= 1;
             if (hasFile) {
                 button.classList.remove("disabled");
@@ -135,8 +136,8 @@ function onDeleteClick(button) {
         let fileName = document.getElementById(fileNameName);
         let fileSizeInput = document.querySelector(`input[name='FilesFromGet[${sourceName}].FileSize']`);
 
-        fileInput.files = null;
-        fileInput.setAttribute("sourceLength", "");
+        fileInput.value = null;
+        fileInput.setAttribute("b64", "");
         fileSizeInput.setAttribute("value", 0);
 
         container.classList.remove("document-container-filled");
