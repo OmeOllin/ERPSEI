@@ -290,14 +290,24 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			if (e == null) { throw new Exception($"No se encontró información del empleado id {idEmpleado}"); }
 
 			Empleado? jefe = e.JefeId != null ? _empleadoManager.GetByIdAsync((int)e.JefeId).Result : null;
-			List<string> jsonArchivos;
+			List<SemiArchivoEmpleado> archivos = await _archivoEmpleadoManager.GetFilesByEmpleadoIdAsync(idEmpleado);
+            foreach (SemiArchivoEmpleado a in archivos)
+            {
+				if(a.TipoArchivoId == (int)FileTypes.ImagenPerfil)
+				{
+					ArchivoEmpleado? ae = _archivoEmpleadoManager.GetFileById(a.Id);
+					if (ae != null) { a.Archivo = ae.Archivo; }
+					break;   
+				}
+            }
+            List<string> jsonArchivos;
 			List<string> jsonContactosEmergencia;
 
 			nombreJefe = jefe != null ? jefe.NombreCompleto : "";
 
 			jsonContactosEmergencia = getListJsonContactosEmergencia(e.ContactosEmergencia);
 
-			jsonArchivos = getListJsonArchivos(e.ArchivosEmpleado);
+			jsonArchivos = getListJsonArchivos(archivos);
 
 			jsonResponse = $"{{" +
 								$"\"jefeId\": {e.JefeId ?? 0}, " +
@@ -359,7 +369,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						$"\"fechaIngresoJS\": \"{e.FechaIngreso:yyyy-MM-dd}\", " +
 						$"\"fechaNacimiento\": \"{e.FechaNacimiento:dd/MM/yyyy}\", " +
 						$"\"fechaNacimientoJS\": \"{e.FechaNacimiento:yyyy-MM-dd}\", " +
-						$"\"direccion\": \"{e.Direccion}\", " +
+						$"\"direccion\": \"{e.Direccion.Trim()}\", " +
 						$"\"telefono\": \"{e.Telefono}\", " +
 						$"\"email\": \"{e.Email}\", " +
 						$"\"generoId\": {e.GeneroId ?? 0}, " +
@@ -405,23 +415,23 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			}
 			return jsonContactosEmergencia;
 		}
-		private List<string> getListJsonArchivos(ICollection<ArchivoEmpleado>? archivos)
+		private List<string> getListJsonArchivos(ICollection<SemiArchivoEmpleado>? archivos)
 		{
 			List<string> jsonArchivos = new List<string>();
 			if (archivos != null)
 			{
 				//Si el usuario ya tiene archivos, se llena el arreglo de datos a partir de ellos.					
-				List<ArchivoEmpleado> userFiles = (from userFile in archivos
+				List<SemiArchivoEmpleado> userFiles = (from userFile in archivos
 												   orderby userFile.TipoArchivoId ascending
 												   select userFile).ToList();
 
-				foreach (ArchivoEmpleado a in userFiles)
+				foreach (SemiArchivoEmpleado a in userFiles)
 				{
 					string htmlContainer = string.Empty;
 					string imgSrc = string.Empty;
 					string id = Guid.NewGuid().ToString();
 					//Si el archivo tiene contenido
-					if (a.Archivo != null && a.Archivo.Length >= 1)
+					if (a.FileSize >= 1)
 					{
 						//Asigna la información del archivo al arreglo de datos.
 						string b64 = Convert.ToBase64String(a.Archivo);
@@ -451,11 +461,12 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					jsonArchivos.Add(
 						"{" +
 							$"\"id\": \"{a.Id}\"," +
-							$"\"nombre\": \"{a.Nombre}\"," +
+                            $"\"nombre\": \"{a.Nombre}\"," +
 							$"\"tipoArchivoId\": {a.TipoArchivoId}," +
 							$"\"extension\": \"{a.Extension}\"," +
 							$"\"imgSrc\": \"{imgSrc}\"," +
-							$"\"htmlContainer\": \"{htmlContainer}\"" +
+							$"\"htmlContainer\": \"{htmlContainer}\"," +
+                            $"\"fileSize\": \"{a.FileSize}\"" +
 						"}"
 					);
 				}
@@ -477,8 +488,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 							$"\"tipoArchivoId\": {(int)i}," +
 							$"\"extension\": \"\"," +
 							$"\"imgSrc\": \"{imgSrc}\"," +
-							$"\"htmlContainer\": \"{htmlContainer}\"" +
-						"}"
+							$"\"htmlContainer\": \"{htmlContainer}\"," +
+                            $"\"fileSize\": \"0\"" +
+                        "}"
 					);
 				}
 			}

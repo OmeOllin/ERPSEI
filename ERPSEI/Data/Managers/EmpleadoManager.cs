@@ -184,7 +184,6 @@ namespace ERPSEI.Data.Managers
 				.Where(e => e.Deshabilitado == 0)
 				.Where(e => e.Id == id)
 				.Include(e => e.ContactosEmergencia)
-				.Include(e => e.ArchivosEmpleado)
 				.FirstOrDefaultAsync();
 		}
 

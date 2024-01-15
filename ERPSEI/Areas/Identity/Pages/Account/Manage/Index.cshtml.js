@@ -97,7 +97,7 @@ function onDocumentSelectorChanged(input) {
 }
 
 //Función para habilitar/deshabilitar los botones de visualización en base a si existe contenido o no para visualizar.
-function initializeDisableableButtons(isConsulta = false) {
+function initializeDisableableButtons() {
     //Botones de acción de editar y eliminar
     let buttons = document.getElementsByClassName("disableable");
 
@@ -107,9 +107,9 @@ function initializeDisableableButtons(isConsulta = false) {
             let button = buttons[i];
             let inputName = button.getAttribute("inputName");
             let input = document.getElementById(inputName);
-            let sourceLength = (input.getAttribute("b64") || "").length;
+            let sourceLength = parseInt(input.getAttribute("sourceLength") || "0");
             let hasFile = sourceLength >= 1;
-            if (hasFile && !isConsulta) {
+            if (hasFile) {
                 button.classList.remove("disabled");
             }
             else {
@@ -128,12 +128,16 @@ function onDeleteClick(button) {
         let containerName = fileInput.getAttribute("containerName") || "";
         let fileIconName = fileInput.getAttribute("fileIconName");
         let fileNameName = fileInput.getAttribute("fileNameName");
+        let sourceName = fileInput.getAttribute("sourceName");
+
         let container = document.getElementById(containerName);
         let fileIcon = document.getElementById(fileIconName);
         let fileName = document.getElementById(fileNameName);
+        let fileSizeInput = document.querySelector(`input[name='FilesFromGet[${sourceName}].FileSize']`);
 
         fileInput.files = null;
-        fileInput.setAttribute("b64", "");
+        fileInput.setAttribute("sourceLength", "");
+        fileSizeInput.setAttribute("value", 0);
 
         container.classList.remove("document-container-filled");
         container.classList.add("document-container-empty");

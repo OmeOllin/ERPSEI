@@ -203,9 +203,6 @@
         @{
             foreach (IndexModel.FileFromGet fd in Model.FilesFromGet)
             {
-                string[] srcElements = fd.Src.Split(',', StringSplitOptions.RemoveEmptyEntries);
-                string b64 = srcElements.Length >= 2 ? srcElements[1] : "";
-                if (b64.Length >= 1) { b64 = b64.Substring(0, b64.Length - 30); }
                 string? enumName = System.Enum.GetName(typeof(FileTypes), fd.TypeId) ?? "";
                 string containerId = Guid.NewGuid().ToString();
                 string selectorId = Guid.NewGuid().ToString();
@@ -215,26 +212,27 @@
                 string nameClass = "opacity-25";
                 string fileName = Localizer["EmptySelectItemText"].Value;
 
-                if (b64.Length >= 1) {
-                    //Si trae base64, agrega un archivo al DOM con la información.
+                if (fd.FileSize >= 1) {
+                    //Si el tamaño del archvio es mayor o igual a 1 byte, agrega un archivo al DOM con la información.
                     containerClass = "document-container-filled";
                     iconClass = "document-icon-filled";
                     nameClass = "document-name-filled";
-                    fileName = fd.Name;
+                    fileName = $"<div class='overflowed-text'>{fd.Name}</div>.<div>{fd.Extension}</div>";
                 }
 
                 <div class="col-12 col-xl-6">
                     <div><b>@Localizer[enumName]</b></div>
                     <div id="container{@fd.TypeId}" class="alert mb-2 mt-2 @containerClass row me-0">
                         <div id="fileIcon{@fd.TypeId}" class="align-self-center col-1 @iconClass"><i class='bi bi-file-image' style='font-size:25px'></i></div>
-                        <div id="fileName{@fd.TypeId}" class="align-self-center col-10 @nameClass p-2" style="display:flex; color:dimgray"><div class='overflowed-text'>@fileName</div></div>
+                        <div id="fileName{@fd.TypeId}" class="align-self-center col-10 @nameClass p-2" style="display:flex; color:dimgray">@Html.Raw(fileName)</div>
                         <div class="align-self-center col-1">
                             <input type="hidden" name="FilesFromGet.Index" value="@fd.FileId" />
                             <input type="hidden" name="FilesFromGet[@fd.FileId].FileId" value="@fd.FileId" />
                             <input type="hidden" name="FilesFromGet[@fd.FileId].TypeId" value="@fd.TypeId" />
-                            <input name="FilesFromGet[@fd.FileId].File" type="file" id="selector{@fd.TypeId}" b64="@b64" sourceName="@fd.FileId" sourceLength="@b64.Length" tipoArchivoId="@fd.TypeId" containerName="container{@fd.TypeId}" fileIconName="fileIcon{@fd.TypeId}" fileNameName="fileName{@fd.TypeId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                            <input type="hidden" name="FilesFromGet[@fd.FileId].FileSize" value="@fd.FileSize" />
+                            <input name="FilesFromGet[@fd.FileId].File" type="file" id="selector{@fd.TypeId}" sourceName="@fd.FileId" sourceLength="@fd.FileSize" tipoArchivoId="@fd.TypeId" containerName="container{@fd.TypeId}" fileIconName="fileIcon{@fd.TypeId}" fileNameName="fileName{@fd.TypeId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
                             <a class='btn btn-sm btn-primary mb-1' onclick='onEditDocumentClick(this);' inputName="selector{@fd.TypeId}"><i class='bi bi-pencil-fill'></i></a>
-                            <a class="btn btn-sm btn-primary disableable mb-1" inputName="selector{@fd.TypeId}" onclick="onDeleteClick(this);" sourceId="selector{@fd.TypeId}" sourceLength="@b64.Length"><i class="bi bi-x-lg"></i></a>
+                            <a class="btn btn-sm btn-primary disableable mb-1" inputName="selector{@fd.TypeId}" onclick="onDeleteClick(this);" sourceId="selector{@fd.TypeId}" sourceLength="@fd.FileSize"><i class="bi bi-x-lg"></i></a>
                         </div>
                     </div>
                 </div>

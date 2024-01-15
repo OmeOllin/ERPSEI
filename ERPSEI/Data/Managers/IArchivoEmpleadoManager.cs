@@ -15,7 +15,7 @@ namespace ERPSEI.Data.Managers
 
 		public Task DeleteByEmpleadoIdAsync(int empleadoId);
 
-		public Task<List<ArchivoEmpleado>> GetFilesByEmpleadoIdAsync(int empleadoId);
+		public Task<List<SemiArchivoEmpleado>> GetFilesByEmpleadoIdAsync(int empleadoId);
 
         ArchivoEmpleado? GetFileById(string id);
     }

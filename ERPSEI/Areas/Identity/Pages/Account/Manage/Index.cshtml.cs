@@ -10,6 +10,7 @@ using ERPSEI.Resources;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.CodeAnalysis.Emit;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
 
@@ -24,6 +25,9 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
         private readonly IArchivoEmpleadoManager _userFileManager;
         private readonly IStringLocalizer<IndexModel> _localizer;
         private readonly ApplicationDbContext _db;
+
+        private readonly long maxFileSizeInBytes = 5242880; //5mb = (5 * 1024) * 1024;
+        private readonly long oneMegabyteSizeInBytes = 1048576; // 1mb = (1 * 1024) * 1024
 
         public IndexModel(
             IContactoEmergenciaManager contactoEmergenciaManager,
@@ -55,15 +59,17 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
         public List<FileFromGet> FilesFromGet { get; set; }
 
 
-
+        public string ProfilePictureId { get; set; }
         public string ProfilePictureSrc { get; set; }
 
         public class FileFromGet
         {
             public string Name { get; set; }
+            public string Extension { get; set; }
             public string FileId { get; set; }
             public string Src { get; set; }
             public int TypeId { get; set; }
+            public long FileSize { get; set; }
             public IFormFile File { get; set; }
         }
 
@@ -104,7 +110,9 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             public DateTime FechaNacimiento { get; set; }
 
             [Phone(ErrorMessage = "PhoneFormat")]
+            [StringLength(10, ErrorMessage = "FieldLength", MinimumLength = 10)]
             [DataType(DataType.PhoneNumber)]
+            [RegularExpression(RegularExpressions.Numeric, ErrorMessage = "Numeric")]
             [Display(Name = "PhoneNumberField")]
             public string PhoneNumber { get; set; }
 
@@ -183,7 +191,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             }
         }
 
-        private void LoadUserFiles(List<ArchivoEmpleado> userFiles) {
+        private void LoadUserFiles(List<SemiArchivoEmpleado> userFiles) {
             //Ordena los archivos del usuario por tipo de archivo de manera ascendente
             userFiles = (from userFile in userFiles
                          orderby userFile.TipoArchivoId ascending
@@ -201,28 +209,11 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             else
             {
                 //Si el usuario ya tiene archivos, se llena el arreglo de datos a partir de ellos.
-                foreach (ArchivoEmpleado file in userFiles)
+                foreach (SemiArchivoEmpleado file in userFiles)
                 {
                     if(file.TipoArchivoId == (int)FileTypes.ImagenPerfil) { continue; }  
 
-                    FileFromGet fg = new FileFromGet() { FileId = file.Id, TypeId = file.TipoArchivoId ?? 0, Src = "", Name = $"{file.Nombre}.{file.Extension}" };
-                    //Si el archivo tiene contenido
-                    if (file.Archivo != null && file.Archivo.Length >= 1)
-                    {
-                        //Asigna la información del archivo al arreglo de datos.
-                        string b64 = Convert.ToBase64String(file.Archivo);
-                        string imgSrc = $"data:image/png;base64,{b64}";
-                        string id = Guid.NewGuid().ToString();
-
-                        if (file.Extension == "pdf")
-                        {
-                            fg.Src = $"<canvas id = '{id}' b64 = '{b64}' class = 'canvaspdf'></canvas>";
-                        }
-                        else
-                        {
-                            fg.Src = $"<img id = '{id}' src = '{imgSrc}' style='min-height: 200px;'/>";
-                        }
-                    }
+                    FileFromGet fg = new FileFromGet() { FileId = file.Id, TypeId = file.TipoArchivoId ?? 0, Src = "", Name = file.Nombre, Extension = file.Extension, FileSize = file.FileSize };
 
                     FilesFromGet.Add(fg);
                 }
@@ -234,7 +225,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             ICollection<ContactoEmergencia> contactos = new List<ContactoEmergencia>();
-            List<ArchivoEmpleado> archivos = new List<ArchivoEmpleado>();
+            List<SemiArchivoEmpleado> archivos = new List<SemiArchivoEmpleado>();
 
 			Input.Username = userName;
 
@@ -257,18 +248,30 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                 LoadUserContacts(contactos.ToList());
 
                 archivos = await _userFileManager.GetFilesByEmpleadoIdAsync(user.EmpleadoId ?? 0);
-                ArchivoEmpleado imagenPerfil = archivos.Where(a => a.TipoArchivoId == (int)FileTypes.ImagenPerfil).FirstOrDefault();
+                foreach (SemiArchivoEmpleado a in archivos)
+                {
+                    if (a.TipoArchivoId == (int)FileTypes.ImagenPerfil)
+                    {
+                        ArchivoEmpleado ae = _userFileManager.GetFileById(a.Id);
+                        if (ae != null) { a.Archivo = ae.Archivo; }
+                        break;
+                    }
+                }
+                SemiArchivoEmpleado imagenPerfil = archivos.Where(a => a.TipoArchivoId == (int)FileTypes.ImagenPerfil).FirstOrDefault();
 
 				//Si el usuario tiene imagen de perfil
-				if (imagenPerfil != null && imagenPerfil.Archivo.Length >= 1)
+				if (imagenPerfil != null && imagenPerfil.FileSize >= 1)
 				{
 					//Se usa para mostrarla
 					ProfilePictureSrc = $"data:image/png;base64,{Convert.ToBase64String(imagenPerfil.Archivo)}";
+                    //Se guarda referencia del id del archivo
+                    ProfilePictureId = imagenPerfil.Id;
 				}
 				else
 				{
 					//De lo contrario, se usa la imagen default.
 					ProfilePictureSrc = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/img/default_profile_pic.png";
+                    ProfilePictureId = string.Empty;
 				}
 			}
             Input.PhoneNumber = phoneNumber;
@@ -294,7 +297,8 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
         public async Task<IActionResult> OnPostAsync()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
+            Empleado emp = await _empleadoManager.GetByIdAsync(user.EmpleadoId??0);
+            if (user == null || emp == null)
             {
                 return NotFound($"{_localizer["UserLoadFails"]} '{_userManager.GetUserId(User)}'.");
             }
@@ -305,43 +309,70 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
+            //Actualiza información principal del empleado.
+            emp.Nombre = Input.FirstName;
+            emp.NombrePreferido = Input.NombrePreferido ?? "";
+            emp.ApellidoPaterno = Input.FathersLastName;
+            emp.ApellidoMaterno = Input.MothersLastName;
+            emp.FechaNacimiento = Input.FechaNacimiento;
+            emp.Telefono = Input.PhoneNumber ?? "";
+            emp.GeneroId = Input.GeneroId;
+            emp.EstadoCivilId = Input.EstadoCivilId;
+            emp.Direccion = Input.Direccion.Trim();
+            emp.CURP = Input.CURP;
+            emp.RFC = Input.RFC;
+            emp.NSS = Input.NSS;
+
             //Actualiza información principal del usuario.
-            user.Empleado.Nombre = Input.FirstName;
-            user.Empleado.ApellidoPaterno = Input.FathersLastName;
-            user.Empleado.ApellidoMaterno = Input.MothersLastName;
             user.PhoneNumber = Input.PhoneNumber ?? "";
 
             //Inicia una transacción.
             await _db.Database.BeginTransactionAsync();
             try
             {
-
                 //Si el usuario estableció una imagen de perfil
                 if (Input.ProfilePicture != null && Input.ProfilePicture.Length >= 1)
                 {
-                    await saveUploadedFile(user, Input.ProfilePicture, FileTypes.ImagenPerfil);
+                    //Si el usuario subió un archivo, borra el existente y sube el nuevo.
+                    if (ProfilePictureId != null && ProfilePictureId.Length >= 1) { await _userFileManager.DeleteByIdAsync(ProfilePictureId); }
+                    await saveUploadedFile(user, Input.ProfilePicture, (int)FileTypes.ImagenPerfil);
                 }
 
-                int fileType = 1;
+                int fileType = 2;
                 foreach (FileFromGet file in FilesFromGet)
                 {
                     if (file == null) { continue; }
 
-                    if (file.File != null && file.File.Length >= 0) 
+                    if (file.File != null && file.File.Length >= 1) 
                     {
                         //Si el usuario subió un archivo, borra el existente y sube el nuevo.
                         await _userFileManager.DeleteByIdAsync(file.FileId);
-                        await saveUploadedFile(user, file.File, (FileTypes)fileType); 
+                        await saveUploadedFile(user, file.File, fileType); 
                     }
-                    else if(file.FileId.Length <= 0)
+                    else if(file.FileSize <= 0)
                     {
                         //Si el usuario no subió archivo pero quitó el que estaba asignado, entonces borra el existente y sube uno vacío.
                         await _userFileManager.DeleteByIdAsync(file.FileId);
-                        await saveEmptyFile(user.EmpleadoId ?? 0, (FileTypes)fileType);
+                        await saveEmptyFile(user.EmpleadoId ?? 0, fileType);
                     }
 
                     fileType++;
                 }
+
+                //Elimina los contactos del empleado.
+                await _contactoEmergenciaManager.DeleteByEmpleadoIdAsync(emp.Id);
+
+                //Crea dos nuevos contactos para el empleado.
+                await _contactoEmergenciaManager.CreateAsync(
+                    new ContactoEmergencia() { Nombre = Input.NombreContacto1 ?? string.Empty, Telefono = Input.TelefonoContacto1 ?? string.Empty, EmpleadoId = emp.Id }
+                );
+                await _contactoEmergenciaManager.CreateAsync(
+                    new ContactoEmergencia() { Nombre = Input.NombreContacto2 ?? string.Empty, Telefono = Input.TelefonoContacto2 ?? string.Empty, EmpleadoId = emp.Id }
+                );
+
+                //Se actualiza el empleado.
+                await _empleadoManager.UpdateAsync(emp);
+
 
                 //Se actualiza el usuario.
                 var setResult = await _userManager.UpdateAsync(user);
@@ -366,17 +397,17 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             return RedirectToPage();
         }
 
-        private async Task saveEmptyFile(int empleadoId, FileTypes type)
+        private async Task saveEmptyFile(int empleadoId, int typeId)
         {
             //Se guarda el archivo vacío
             await _userFileManager.CreateAsync(new ArchivoEmpleado()
             {
-                TipoArchivoId = (int)type,
+                TipoArchivoId = typeId,
                 EmpleadoId = empleadoId
 			});
         }
 
-        private async Task saveUploadedFile(AppUser user, IFormFile file, FileTypes type)
+        private async Task saveUploadedFile(AppUser user, IFormFile file, int typeId)
         {
             string fileName = Path.GetFileNameWithoutExtension(file.FileName);
             string fileExtension = Path.GetExtension(file.FileName).Substring(1);
@@ -384,38 +415,30 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             using (var memoryStream = new MemoryStream())
             {
                 await file.CopyToAsync(memoryStream);
-                int maxSizeInBytes = 1000000;
-                //Verifica que el tamaño máximo no exceda el megabyte
-                if (memoryStream.Length < maxSizeInBytes)
+                //Verifica que el tamaño del archivo no exceda el tamaño máximo.
+                if (memoryStream.Length < maxFileSizeInBytes)
                 {
-                    if (type == FileTypes.ImagenPerfil)
+                    //Se guarda el arreglo de bytes del archivo
+                    await _userFileManager.CreateAsync(new ArchivoEmpleado()
                     {
-                        //Se guarda el arreglo de bytes de la imagen.
-                        //user.Empleado.ProfilePicture = memoryStream.ToArray();
-                    }
-                    else
-                    {
-                        //Se guarda el arreglo de bytes del archivo
-                        await _userFileManager.CreateAsync(new ArchivoEmpleado()
-                        {
-                            Nombre = fileName,
-                            Extension = fileExtension,
-                            Archivo = memoryStream.ToArray(),
-                            TipoArchivoId = (int)type,
-                            EmpleadoId = user.EmpleadoId ?? 0
-                        });
-                    }
+                        Nombre = fileName,
+                        Extension = fileExtension,
+                        Archivo = memoryStream.ToArray(),
+                        TipoArchivoId = typeId,
+                        EmpleadoId = user.EmpleadoId ?? 0
+                    });
+                    
                 }
                 else
                 {
                     //Se notifica error del tamaño máximo de archivo.
-                    if (type == FileTypes.ImagenPerfil)
+                    if (typeId == (int)FileTypes.ImagenPerfil)
                     {
-                        StatusMessage = $"{_localizer["ProfilePictureTooLarge"]} {maxSizeInBytes / 1000000} Mb";
+                        StatusMessage = $"{_localizer["ProfilePictureTooLarge"]} {maxFileSizeInBytes / oneMegabyteSizeInBytes} Mb";
                     }
                     else
                     {
-                        StatusMessage = $"{_localizer["FileTooLarge"]} {maxSizeInBytes / 1000000} Mb";
+                        StatusMessage = $"{_localizer["FileTooLarge"]} {maxFileSizeInBytes / oneMegabyteSizeInBytes} Mb";
                     }
                 }
             }

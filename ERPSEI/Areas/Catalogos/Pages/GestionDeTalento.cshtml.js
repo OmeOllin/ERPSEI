@@ -567,14 +567,14 @@ function establecerDatosAdicionales(row, action) {
     row.archivos = row.archivos || [];
     let i = 1;
     row.archivos.forEach(function (a) {
-        let srcElements = (a.imgSrc || "").split(",");
-        let b64 = srcElements.length >= 1 ? srcElements[1] || "" : "";
 
         if (a.tipoArchivoId == 1) {
+            let srcElements = (a.imgSrc || "").split(",");
+            let b64 = srcElements.length >= 1 ? srcElements[1] || "" : "";
             //Si el tipo de archivo es la foto de perfil, se establece en el contenedor directamente.
-            if ((a.imgSrc || "").length <= 0) { a.imgSrc = "/img/default_profile_pic.png"; }
+            if (a.fileSize <= 0) { a.imgSrc = "/img/default_profile_pic.png"; }
             picField.setAttribute('src', a.imgSrc);
-            picSelector.setAttribute('sourceLength', a.imgSrc.length);
+            picSelector.setAttribute('sourceLength', a.fileSize);
             picSelector.setAttribute('sourceName', `${a.nombre}.${a.extension}`);
             picSelector.setAttribute('b64', b64);
         }
@@ -585,8 +585,8 @@ function establecerDatosAdicionales(row, action) {
             let nameHTML = `<div class="overflowed-text">${emptySelectItemText}</div>`;
             let editDisabled = action == VER ? "disabled" : "";
 
-            if (b64.length >= 1) {
-                //Si trae base64, agrega un archivo al DOM con la información.
+            if (parseInt(a.fileSize) >= 1) {
+                //Si el tamaño del archivo es mayor o igual a 1 byte, agrega un archivo al DOM con la información.
                 containerClass = "document-container-filled";
                 iconClass = "document-icon-filled";
                 nameClass = "document-name-filled";
@@ -600,9 +600,9 @@ function establecerDatosAdicionales(row, action) {
                         <div id="fileIcon${a.tipoArchivoId}" class="align-self-center col-1 ${iconClass}"><i class='bi bi-file-image' style='font-size:25px'></i></div>
                         <div id="fileName${a.tipoArchivoId}" class="align-self-center col-10 ${nameClass} p-2" style="display:flex; color:dimgray">${nameHTML}</div>
                         <div class="align-self-center col-1">
-                            <input type="file" id="selector${a.tipoArchivoId}" b64="${b64}" sourceName="${a.nombre}.${a.extension}" sourceLength="${(b64 || "").length}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                            <input type="file" id="selector${a.tipoArchivoId}" sourceName="${a.nombre}.${a.extension}" sourceLength="${a.fileSize}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
                             <a class='btn btn-sm btn-primary ${editDisabled} mb-1' onclick='onEditDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-pencil-fill'></i></a>
-                            <a class="btn btn-sm btn-primary disableable mb-1" inputName="selector${a.tipoArchivoId}" onclick="onDeleteClick(this);" sourceId="selector${a.tipoArchivoId}" sourceLength="${(a.archivo || []).length}"><i class="bi bi-x-lg"></i></a>
+                            <a class="btn btn-sm btn-primary disableable mb-1" inputName="selector${a.tipoArchivoId}" onclick="onDeleteClick(this);" sourceId="selector${a.tipoArchivoId}" sourceLength="${a.fileSize}"><i class="bi bi-x-lg"></i></a>
                         </div>
                     </div>
                 </div>`
