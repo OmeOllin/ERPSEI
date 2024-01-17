@@ -6,8 +6,10 @@ using ERPSEI.Data.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
@@ -18,15 +20,18 @@ namespace ERPSEI.Areas.Identity.Pages.Account
         private readonly AppUserManager _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly IStringLocalizer<LoginModel> _localizer;
 
         public LoginModel(
             AppUserManager userManager, 
             SignInManager<AppUser> signInManager, 
-            ILogger<LoginModel> logger)
+            ILogger<LoginModel> logger,
+            IStringLocalizer<LoginModel> localizer)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _localizer = localizer;
         }
 
         /// <summary>
@@ -97,7 +102,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account
 
             returnUrl ??= Url.Content("~/");
 
-            if (_signInManager.IsSignedIn(User)) { return this.LocalRedirect("~/Identity/Account/Logout"); }
+            if (_signInManager.IsSignedIn(User)) { return LocalRedirect("~/Identity/Account/Logout"); }
 
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
@@ -120,37 +125,46 @@ namespace ERPSEI.Areas.Identity.Pages.Account
                 AppUser user = await _userManager.FindByEmailAsync(_userManager.NormalizeEmail(Input.Email));
                 if (user == null)
                 {
-                    ModelState.AddModelError(string.Empty, "Error de inicio de sesión. Usuario o contraseña incorrectos.");
+                    ModelState.AddModelError(string.Empty, _localizer["LoginError"]);
                     return Page();
                 }
                 else if (user.IsBanned)
                 {
-                    _logger.LogWarning("Cuenta de usuario bloqueada.");
+                    //Si el usuario está baneado, restringe acceso.
+                    _logger.LogWarning(_localizer["AccountBanned"]);
                     return RedirectToPage("./Lockout");
                 }
                 else if (user.PasswordResetNeeded)
                 {
-                    _logger.LogWarning("Se requiere reset de password");
+                    //Si el usuario requiere resetear su password, redirige a pantalla de reset de password.
+                    _logger.LogWarning(_localizer["ResetPasswordRequired"]);
 
 					var code = await _userManager.GeneratePasswordResetTokenAsync(user);
 					code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-					var callbackUrl = Url.Page(
-						"/Account/ResetPassword",
-						pageHandler: null,
-						values: new { area = "Identity", code },
-						protocol: Request.Scheme);
-
 					return RedirectToPage($"./ResetPassword", new { code = code });
+                }
+                else if (user.EmpleadoId.HasValue && !user.IsPreregisterAuthorized)
+                {
+                    //Si el usuario ya cuenta con registro de empleado pero el preregistro no ha sido autorizado, entonces redirige a pantalla de espera de autorización.
+                    _logger.LogWarning(_localizer["PendingUserAuthorization"]);
+                    return RedirectToPage("./PendingUserAuthorization");
                 }
                 else
                 {
-                    // This doesn't count login failures towards account lockout
-                    // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+                    //De lo contrario se le permite el intento de iniciar sesión.
                     var result = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                     if (result.Succeeded)
                     {
-                        _logger.LogInformation("El usuario inició sesión.");
-                        return LocalRedirect("/");
+						if (!await _userManager.IsInRoleAsync(user, ServicesConfiguration.Master) && !user.EmpleadoId.HasValue)
+						{
+							//Si el usuario no está en el rol de Master y además no tiene empleado vinculado, entonces redirige a pantalla de preregistro.
+							_logger.LogWarning(_localizer["PreregisterRequired"]);
+							return RedirectToPage("./Manage/Index");
+						}
+                        else
+                        {
+                            return LocalRedirect("/");
+                        }
                     }
                     if (result.RequiresTwoFactor)
                     {
@@ -158,18 +172,18 @@ namespace ERPSEI.Areas.Identity.Pages.Account
                     }
                     if (result.IsLockedOut)
                     {
-                        _logger.LogWarning("Cuenta de usuario bloqueada.");
+                        _logger.LogWarning(_localizer["AccountBanned"]);
                         return RedirectToPage("./Lockout");
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "Error de inicio de sesión. Usuario o contraseña incorrectos.");
+                        ModelState.AddModelError(string.Empty, _localizer["LoginError"]);
                         return Page();
                     }
                 }
             }
 
-            // If we got this far, something failed, redisplay form
+            //Si el código llegó hasta este punto, algo salió mal. Vuelve a mostrar la pantalla de inicio de sesión.
             return Page();
         }
     }

@@ -11,8 +11,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-	[Authorize]
-	public class OficinasModel : PageModel
+    [Authorize(Roles = $"{ServicesConfiguration.Master}, {ServicesConfiguration.Administrador}")]
+    public class OficinasModel : PageModel
     {
 		private readonly IRWCatalogoManager<Oficina> _oficinaManager;
 		private readonly IStringLocalizer<OficinasModel> _strLocalizer;

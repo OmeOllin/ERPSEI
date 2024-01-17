@@ -21,8 +21,8 @@ using System.Text.Encodings.Web;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-	[Authorize]
-	public class GestionDeTalentoModel : PageModel
+    [Authorize(Roles = $"{ServicesConfiguration.Master}, {ServicesConfiguration.Administrador}")]
+    public class GestionDeTalentoModel : PageModel
 	{
 		private readonly IUserStore<AppUser> _userStore;
 		private readonly IUserEmailStore<AppUser> _emailStore;
@@ -862,17 +862,24 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						user.NormalizedEmail = emp.Email.ToUpper();
 						user.NormalizedUserName = emp.Email.ToUpper();
 						user.PasswordResetNeeded = true;
+						user.IsPreregisterAuthorized = true;
 						user.PhoneNumber = emp.Telefono;
 						user.UserName = emp.Email;
 
 						//Crea el usuario.
 						await _userStore.SetUserNameAsync(user, emp.Email, CancellationToken.None);
 						await _emailStore.SetEmailAsync(user, emp.Email, CancellationToken.None);
-						await _userManager.CreateAsync(user, password);
+						var result = await _userManager.CreateAsync(user, password);
 
-						//Asigna el usuario al empleado.
-						emp.UserId = user.Id;
-						await _empleadoManager.UpdateAsync(emp);
+						if (result.Succeeded)
+						{
+							//Se asigna rol de usuario
+							await _userManager.AddToRoleAsync(user, ServicesConfiguration.Usuario);
+
+							//Asigna el usuario al empleado.
+							emp.UserId = user.Id;
+							await _empleadoManager.UpdateAsync(emp);
+						}
 					}
 					else
 					{

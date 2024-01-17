@@ -117,13 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Message" xml:space="preserve">
-    <value>The page you’re looking for doesn’t exist.</value>
+  <data name="AccountBanned" xml:space="preserve">
+    <value>User account blocked.</value>
   </data>
-  <data name="Oops" xml:space="preserve">
-    <value>Oops!</value>
+  <data name="LoginError" xml:space="preserve">
+    <value>Login error. Incorrect username or password.</value>
   </data>
-  <data name="PageNotFound" xml:space="preserve">
-    <value>Page not found</value>
+  <data name="PendingAuthorization" xml:space="preserve">
+    <value>User account pending authorization.</value>
+  </data>
+  <data name="PreregisterRequired" xml:space="preserve">
+    <value>User account must create pre-registration.</value>
+  </data>
+  <data name="ResetPasswordRequired" xml:space="preserve">
+    <value>Password reset required</value>
   </data>
 </root>

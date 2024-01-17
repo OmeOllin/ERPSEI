@@ -5,8 +5,8 @@ using Microsoft.Extensions.Localization;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-	[Authorize]
-	public class NotificadorModel : PageModel
+    [Authorize(Roles = $"{ServicesConfiguration.Master}, {ServicesConfiguration.Administrador}")]
+    public class NotificadorModel : PageModel
     {
         private readonly IEmpleadoManager _empleadoManager;
         private readonly IStringLocalizer<NotificadorModel> _strLocalizer;

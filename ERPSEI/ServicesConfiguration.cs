@@ -10,11 +10,26 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
 using System.Reflection;
+using System.Reflection.Metadata;
 
 namespace ERPSEI
 {
     public static class ServicesConfiguration
     {
+        public const string Master = "Master";
+        public const string Administrador = "Administrador";
+        public const string Usuario = "Usuario";
+        public const string Candidato = "Candidato";
+
+        public static string MasterPassword { get; set; } = string.Empty;
+        public static AppUser MasterUser {  get; } = new AppUser() { 
+            Email = "master@soportecliente.com.mx",
+            UserName = "master@soportecliente.com.mx",
+            EmailConfirmed = true,
+            IsPreregisterAuthorized = true,
+            PasswordResetNeeded = false,
+        };
+
         public static void ConfigureEmail(WebApplicationBuilder _builder)
         {
             //Obtiene la configuración del enviador de correos.

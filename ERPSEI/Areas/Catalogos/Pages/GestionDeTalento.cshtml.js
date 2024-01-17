@@ -179,8 +179,8 @@ function onAgregarClick() {
             tipoArchivoId: a,
             extension: "",
             imgSrc: "",
-            htmlContainer: ""
-
+            htmlContainer: "",
+            fileSize: 0
         });
     }
 
@@ -572,7 +572,7 @@ function establecerDatosAdicionales(row, action) {
             let srcElements = (a.imgSrc || "").split(",");
             let b64 = srcElements.length >= 1 ? srcElements[1] || "" : "";
             //Si el tipo de archivo es la foto de perfil, se establece en el contenedor directamente.
-            if (a.fileSize <= 0) { a.imgSrc = "/img/default_profile_pic.png"; }
+            if ((a.fileSize||0) <= 0) { a.imgSrc = "/img/default_profile_pic.png"; }
             picField.setAttribute('src', a.imgSrc);
             picSelector.setAttribute('sourceLength', a.fileSize);
             picSelector.setAttribute('sourceName', `${a.nombre}.${a.extension}`);

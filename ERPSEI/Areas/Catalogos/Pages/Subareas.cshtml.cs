@@ -10,7 +10,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-	[Authorize]
+	[Authorize(Roles = $"{ServicesConfiguration.Master}, {ServicesConfiguration.Administrador}")]
 	public class SubareasModel : PageModel
     {
 		private readonly IRWCatalogoManager<Subarea> _subareaManager;

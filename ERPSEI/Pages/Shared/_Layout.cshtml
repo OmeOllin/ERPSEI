@@ -34,45 +34,56 @@
                             <li class="nav-item">
                                 <a class="nav-link @_LayoutPages.AvisoPrivacidadNavClass(ViewContext)" asp-area="" asp-page="/Privacy">@Localizer["PrivacyMenu"]</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link @_LayoutPages.OrganigramaNavClass(ViewContext)" asp-area="ERP" asp-page="/Organigrama">@Localizer["OrganizationChartMenu"]</a>
+                            </li>
                         }
                         else
                         {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle @_LayoutPages.CatalogosNavClass(ViewContext)" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    @Localizer["CatalogsMenu"]
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item @_LayoutPages.GestionDeTalentoNavClass(ViewContext)" asp-area="Catalogos" asp-page="/GestionDeTalento">@Localizer["PersonalCatalogMenu"]</a>
-                                    <a class="dropdown-item @_LayoutPages.CatalogoPuestosNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Puestos">@Localizer["PositionsCatalogMenu"]</a>
-                                    <a class="dropdown-item @_LayoutPages.CatalogoAreasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Areas">@Localizer["AreasCatalogMenu"]</a>
-                                    <a class="dropdown-item @_LayoutPages.CatalogoSubareasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Subareas">@Localizer["SubareasCatalogMenu"]</a>
-                                    <a class="dropdown-item @_LayoutPages.CatalogoOficinasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Oficinas">@Localizer["OfficesCatalogMenu"]</a>
-                                </div>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <!--Los submenues deben llevar el atributo data-bs-auto-close="outside" para que el menú padre permanezca abierto al dar clic-->
-                                <a class="nav-link dropdown-toggle @_LayoutPages.ERPNavClass(ViewContext)" href="#" id="navbarDropdownMenuLinkERP" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-                                    @Localizer["ERPMenu"]
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkERP">
-                                    <div class="dropend">
-                                        <a class="dropdown-item nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">@Localizer["HumanResourcesMenu"]</a>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" asp-area="ERP" asp-page="/Organigrama">@Localizer["OrganizationChartMenu"]</a>
-                                            <a class="dropdown-item" asp-area="" asp-page="/Building">@Localizer["VacationMenu"]</a>
-                                            <a class="dropdown-item" asp-area="" asp-page="/Building">@Localizer["DisabilitiesMenu"]</a>
-                                            <a class="dropdown-item" asp-area="" asp-page="/Building">@Localizer["PermissionsMenu"]</a>
-                                        </div>
+                            @if (User.IsInRole(ServicesConfiguration.Master) || User.IsInRole(ServicesConfiguration.Administrador))
+                            {
+                                //Si el usuario es Master o Admin, entonces muestra la sección de los catálogos
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle @_LayoutPages.CatalogosNavClass(ViewContext)" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        @Localizer["CatalogsMenu"]
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                        <a class="dropdown-item @_LayoutPages.GestionDeTalentoNavClass(ViewContext)" asp-area="Catalogos" asp-page="/GestionDeTalento">@Localizer["PersonalCatalogMenu"]</a>
+                                        <a class="dropdown-item @_LayoutPages.CatalogoPuestosNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Puestos">@Localizer["PositionsCatalogMenu"]</a>
+                                        <a class="dropdown-item @_LayoutPages.CatalogoAreasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Areas">@Localizer["AreasCatalogMenu"]</a>
+                                        <a class="dropdown-item @_LayoutPages.CatalogoSubareasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Subareas">@Localizer["SubareasCatalogMenu"]</a>
+                                        <a class="dropdown-item @_LayoutPages.CatalogoOficinasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Oficinas">@Localizer["OfficesCatalogMenu"]</a>
                                     </div>
-                                    @* <div class="dropend">
-                                        <a class="dropdown-item dropdown-toggle text-dark" data-bs-toggle="dropdown" href="#">@Localizer["AccountingMenu"]</a>
-                                        <div class="dropdown-menu">
+                                </li>
+                            }
+                            if (!User.IsInRole(ServicesConfiguration.Candidato))
+                            {        
+                                //Si no es candidato, muestra el menú ERP
+                                <li class="nav-item dropdown">
+                                    <!--Los menues que tengan otro menú hijo deben llevar el atributo data-bs-auto-close="outside" para que el menú padre permanezca abierto al dar clic-->
+                                    <a class="nav-link dropdown-toggle @_LayoutPages.ERPNavClass(ViewContext)" href="#" id="navbarDropdownMenuLinkERP" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                                        @Localizer["ERPMenu"]
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkERP">
+                                        <div class="dropend">
+                                            <a class="dropdown-item nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">@Localizer["HumanResourcesMenu"]</a>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item @_LayoutPages.OrganigramaNavClass(ViewContext)" asp-area="ERP" asp-page="/Organigrama">@Localizer["OrganizationChartMenu"]</a>
+                                                <a class="dropdown-item @_LayoutPages.VacacionesNavClass(ViewContext)" asp-area="" asp-page="/Building">@Localizer["VacationMenu"]</a>
+                                                <a class="dropdown-item @_LayoutPages.IncapacidadesNavClass(ViewContext)" asp-area="" asp-page="/Building">@Localizer["DisabilitiesMenu"]</a>
+                                                <a class="dropdown-item @_LayoutPages.PermisosNavClass(ViewContext)" asp-area="" asp-page="/Building">@Localizer["PermissionsMenu"]</a>
+                                            </div>
+                                        </div>
+                                        @* <div class="dropend">
+                                            <a class="dropdown-item dropdown-toggle text-dark" data-bs-toggle="dropdown" href="#">@Localizer["AccountingMenu"]</a>
+                                            <div class="dropdown-menu">
                                             <a class="dropdown-item text-dark" asp-area="" asp-page="/Building">@Localizer["Item1"]</a>
                                             <a class="dropdown-item text-dark" asp-area="" asp-page="/Building">@Localizer["Item2"]</a>
-                                        </div>
-                                    </div> *@
-                                </div>
-                            </li>
+                                            </div>
+                                        </div> *@
+                                    </div>
+                                </li>
+                            }
                         }
                     </ul>
                     <partial name="_LoginPartial" />

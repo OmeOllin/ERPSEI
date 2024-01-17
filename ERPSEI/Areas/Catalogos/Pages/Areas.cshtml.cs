@@ -10,8 +10,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-	[Authorize]
-	public class AreasModel : PageModel
+    [Authorize(Roles = $"{ServicesConfiguration.Master}, {ServicesConfiguration.Administrador}")]
+    public class AreasModel : PageModel
     {
 		private readonly IRWCatalogoManager<Area> _areaManager;
 		private readonly IStringLocalizer<AreasModel> _strLocalizer;

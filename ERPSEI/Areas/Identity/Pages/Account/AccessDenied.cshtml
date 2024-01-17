@@ -1,13 +1,13 @@
 ﻿@page
 @using Microsoft.AspNetCore.Mvc.Localization
-@model ERPSEI.Pages._404Model
+@model ERPSEI.Areas.Identity.Pages.Account.AccessDeniedModel
 @inject IViewLocalizer Localizer;
 @{
 }
 <div class="d-flex align-items-center justify-content-center" style="height: 70vh;">
     <div class="text-center">
-        <img class="indeximage" src="@this.HttpContext.Request.Scheme://@this.HttpContext.Request.Host/img/404.jpg" />
-        <p class="fs-3">@Localizer["PageNotFound"]</p>
+        <img class="indeximage" src="@this.HttpContext.Request.Scheme://@this.HttpContext.Request.Host/img/403.jpg" />
+        <p class="fs-3">@Localizer["ForbiddenPage"]</p>
         <p class="lead">
             @Localizer["Message"]
         </p>

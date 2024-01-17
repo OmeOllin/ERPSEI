@@ -1,6 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-#nullable disable
+﻿#nullable disable
 
 using ERPSEI.Data;
 using ERPSEI.Data.Entities;
@@ -10,7 +8,6 @@ using ERPSEI.Resources;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.CodeAnalysis.Emit;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
 
@@ -202,7 +199,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                 foreach (FileTypes i in Enum.GetValues(typeof(FileTypes)))
                 {
                     //Omite el tipo imagen de perfil.
-                    if ((int)i == 0) { continue; }
+                    if ((int)i == (int)FileTypes.ImagenPerfil) { continue; }
                     FilesFromGet.Add(new FileFromGet() { FileId = new Guid().ToString(), TypeId = (int)i, Src = "" });
                 }
             }
@@ -222,6 +219,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 
         private async Task LoadAsync(AppUser user)
         {
+            SemiArchivoEmpleado imagenPerfil = null;
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             ICollection<ContactoEmergencia> contactos = new List<ContactoEmergencia>();
@@ -257,23 +255,24 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                         break;
                     }
                 }
-                SemiArchivoEmpleado imagenPerfil = archivos.Where(a => a.TipoArchivoId == (int)FileTypes.ImagenPerfil).FirstOrDefault();
-
-				//Si el usuario tiene imagen de perfil
-				if (imagenPerfil != null && imagenPerfil.FileSize >= 1)
-				{
-					//Se usa para mostrarla
-					ProfilePictureSrc = $"data:image/png;base64,{Convert.ToBase64String(imagenPerfil.Archivo)}";
-                    //Se guarda referencia del id del archivo
-                    ProfilePictureId = imagenPerfil.Id;
-				}
-				else
-				{
-					//De lo contrario, se usa la imagen default.
-					ProfilePictureSrc = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/img/default_profile_pic.png";
-                    ProfilePictureId = string.Empty;
-				}
+                imagenPerfil = archivos.Where(a => a.TipoArchivoId == (int)FileTypes.ImagenPerfil).FirstOrDefault();
 			}
+
+            //Si el usuario tiene imagen de perfil
+            if (imagenPerfil != null && imagenPerfil.FileSize >= 1)
+            {
+                //Se usa para mostrarla
+                ProfilePictureSrc = $"data:image/png;base64,{Convert.ToBase64String(imagenPerfil.Archivo)}";
+                //Se guarda referencia del id del archivo
+                ProfilePictureId = imagenPerfil.Id;
+            }
+            else
+            {
+                //De lo contrario, se usa la imagen default.
+                ProfilePictureSrc = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/img/default_profile_pic.png";
+                ProfilePictureId = string.Empty;
+            }
+
             Input.PhoneNumber = phoneNumber;
 
             LoadUserFiles(archivos);

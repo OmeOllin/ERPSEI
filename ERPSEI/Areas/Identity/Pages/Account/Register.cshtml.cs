@@ -120,6 +120,9 @@ namespace ERPSEI.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("El usuario creó una nueva cuenta con contraseña.");
 
+                    //Se agrega la cuenta de usuario como candidato.
+                    await _userManager.AddToRoleAsync(user, ServicesConfiguration.Candidato);
+
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
