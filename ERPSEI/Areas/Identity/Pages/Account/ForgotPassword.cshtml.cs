@@ -72,7 +72,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account
                     values: new { area = "Identity", code },
                     protocol: Request.Scheme);
 
-                await _emailSender.SendEmailAsync(
+                _emailSender.SendEmailAsync(
                     Input.Email,
                     _localizer["EmailSubject"],
                     $"{_localizer["EmailBodyFP"]} <a href='{callbackUrl}'>{_localizer["EmailBodySP"]}</a>.");

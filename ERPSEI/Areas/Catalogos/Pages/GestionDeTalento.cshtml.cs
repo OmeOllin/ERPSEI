@@ -908,7 +908,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 							values: new { area = "Identity", userId = user.Id, code = userCode },
 							protocol: Request.Scheme)??string.Empty;
 
-						await _emailSender.SendEmailAsync(
+						_emailSender.SendEmailAsync(
 							emp.Email,
 							_strLocalizer["EmailSubject"],
 							$"{_strLocalizer["EmailBodyFP"]} <a href='{HtmlEncoder.Default.Encode(userURL)}'>{_strLocalizer["EmailBodySP"]}</a>. " +

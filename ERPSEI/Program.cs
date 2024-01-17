@@ -31,6 +31,7 @@ using(IServiceScope scope = app.Services.CreateScope())
 
     //Se inicializa el usuario master
     AppUserManager userManager = scope.ServiceProvider.GetRequiredService<AppUserManager>();
+
     if (await userManager.FindByEmailAsync(ServicesConfiguration.MasterUser.Email ?? "") == null)
     {
         //Genera password para usuario master
@@ -43,9 +44,9 @@ using(IServiceScope scope = app.Services.CreateScope())
             //Asigna el rol de Master al usuario master.
             await userManager.AddToRoleAsync(ServicesConfiguration.MasterUser, ServicesConfiguration.Master);
 
-            //Env�a password por correo para notificarlo.
+            //Envía password por correo para notificarlo.
             IEmailSender emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
-            await emailSender.SendEmailAsync(ServicesConfiguration.MasterUser.Email ?? "", "Login Password", $"Use this password to login: {ServicesConfiguration.MasterPassword}");
+            emailSender.SendEmailAsync(ServicesConfiguration.MasterUser.Email ?? "", "Login Password", $"Use this password to login: {ServicesConfiguration.MasterPassword}");
         }
     }
 }

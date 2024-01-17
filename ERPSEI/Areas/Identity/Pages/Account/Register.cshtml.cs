@@ -132,7 +132,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, _localizer["EmailSubject"],
+                    _emailSender.SendEmailAsync(Input.Email, _localizer["EmailSubject"],
                         $"{_localizer["EmailBodyFP"]} <a href='{callbackUrl}'>{_localizer["EmailBodySP"]}</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
