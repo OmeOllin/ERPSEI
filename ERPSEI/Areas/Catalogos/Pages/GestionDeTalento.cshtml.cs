@@ -21,7 +21,7 @@ using System.Text.Encodings.Web;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-    [Authorize(Roles = $"{ServicesConfiguration.Master}, {ServicesConfiguration.Administrador}")]
+    [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
     public class GestionDeTalentoModel : PageModel
 	{
 		private readonly IUserStore<AppUser> _userStore;

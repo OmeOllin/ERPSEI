@@ -17,7 +17,7 @@ using System.Net.Mime;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-    [Authorize(Roles = $"{ServicesConfiguration.Master}, {ServicesConfiguration.Administrador}")]
+    [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
     public class EmpresasModel : PageModel
 	{
 		private readonly IEmpresaManager _empresaManager;

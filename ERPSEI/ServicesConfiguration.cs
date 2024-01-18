@@ -15,10 +15,10 @@ namespace ERPSEI
 {
     public static class ServicesConfiguration
     {
-        public const string Master = "Master";
-        public const string Administrador = "Administrador";
-        public const string Usuario = "Usuario";
-        public const string Candidato = "Candidato";
+        public const string RolMaster = "Master";
+        public const string RolAdministrador = "Administrador";
+        public const string RolUsuario = "Usuario";
+        public const string RolCandidato = "Candidato";
 
         public static string MasterPassword { get; set; } = string.Empty;
         public static AppUser MasterUser {  get; } = new AppUser() { 
@@ -48,6 +48,8 @@ namespace ERPSEI
             var connectionString = _builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             _builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
             _builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+            _builder.Services.AddScoped<RoleManager, RoleManager>();
 
 			_builder.Services.AddScoped<IArchivoEmpresaManager, ArchivoEmpresaManager>();
 			_builder.Services.AddScoped<IEmpresaManager, EmpresaManager>();

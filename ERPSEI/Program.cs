@@ -24,10 +24,10 @@ using(IServiceScope scope = app.Services.CreateScope())
 {
     //Se inicializan los roles
     RoleManager<IdentityRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    if (!await roleManager.RoleExistsAsync(ServicesConfiguration.Master)) { await roleManager.CreateAsync(new IdentityRole(ServicesConfiguration.Master)); }
-    if (!await roleManager.RoleExistsAsync(ServicesConfiguration.Administrador)) { await roleManager.CreateAsync(new IdentityRole(ServicesConfiguration.Administrador)); }
-    if (!await roleManager.RoleExistsAsync(ServicesConfiguration.Usuario)) { await roleManager.CreateAsync(new IdentityRole(ServicesConfiguration.Usuario)); }
-    if (!await roleManager.RoleExistsAsync(ServicesConfiguration.Candidato)) { await roleManager.CreateAsync(new IdentityRole(ServicesConfiguration.Candidato)); }
+    if (!await roleManager.RoleExistsAsync(ServicesConfiguration.RolMaster)) { await roleManager.CreateAsync(new IdentityRole(ServicesConfiguration.RolMaster)); }
+    if (!await roleManager.RoleExistsAsync(ServicesConfiguration.RolAdministrador)) { await roleManager.CreateAsync(new IdentityRole(ServicesConfiguration.RolAdministrador)); }
+    if (!await roleManager.RoleExistsAsync(ServicesConfiguration.RolUsuario)) { await roleManager.CreateAsync(new IdentityRole(ServicesConfiguration.RolUsuario)); }
+    if (!await roleManager.RoleExistsAsync(ServicesConfiguration.RolCandidato)) { await roleManager.CreateAsync(new IdentityRole(ServicesConfiguration.RolCandidato)); }
 
     //Se inicializa el usuario master
     AppUserManager userManager = scope.ServiceProvider.GetRequiredService<AppUserManager>();
@@ -42,7 +42,7 @@ using(IServiceScope scope = app.Services.CreateScope())
         if (result.Succeeded)
         {
             //Asigna el rol de Master al usuario master.
-            await userManager.AddToRoleAsync(ServicesConfiguration.MasterUser, ServicesConfiguration.Master);
+            await userManager.AddToRoleAsync(ServicesConfiguration.MasterUser, ServicesConfiguration.RolMaster);
 
             //Envía password por correo para notificarlo.
             IEmailSender emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();

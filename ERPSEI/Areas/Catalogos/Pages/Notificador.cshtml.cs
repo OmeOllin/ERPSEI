@@ -5,7 +5,7 @@ using Microsoft.Extensions.Localization;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-    [Authorize(Roles = $"{ServicesConfiguration.Master}, {ServicesConfiguration.Administrador}")]
+    [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
     public class NotificadorModel : PageModel
     {
         private readonly IEmpleadoManager _empleadoManager;

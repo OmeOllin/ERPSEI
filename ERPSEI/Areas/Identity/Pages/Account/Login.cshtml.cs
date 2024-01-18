@@ -155,7 +155,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account
                     var result = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                     if (result.Succeeded)
                     {
-						if (!await _userManager.IsInRoleAsync(user, ServicesConfiguration.Master) && !user.EmpleadoId.HasValue)
+						if (!await _userManager.IsInRoleAsync(user, ServicesConfiguration.RolMaster) && !user.EmpleadoId.HasValue)
 						{
 							//Si el usuario no está en el rol de Master y además no tiene empleado vinculado, entonces redirige a pantalla de preregistro.
 							_logger.LogWarning(_localizer["PreregisterRequired"]);
