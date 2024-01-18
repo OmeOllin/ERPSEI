@@ -165,6 +165,9 @@
   <data name="EmailFormat" xml:space="preserve">
     <value>El campo {0} no es una dirección de correo electrónico válida.</value>
   </data>
+  <data name="EmployeeNameField" xml:space="preserve">
+    <value>Nombre de empleado</value>
+  </data>
   <data name="EstadoCivilField" xml:space="preserve">
     <value>Estado Civil</value>
   </data>
@@ -267,8 +270,11 @@
   <data name="RFCField" xml:space="preserve">
     <value>RFC</value>
   </data>
+  <data name="RolField" xml:space="preserve">
+    <value>Rol</value>
+  </data>
   <data name="SubareaField" xml:space="preserve">
-    <value>Subarea</value>
+    <value>Subárea</value>
   </data>
   <data name="UserNameField" xml:space="preserve">
     <value>Nombre de usuario</value>

@@ -117,166 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AccionistaField" xml:space="preserve">
-    <value>Shareholder</value>
+  <data name="DeletedSuccessfully" xml:space="preserve">
+    <value>Records deleted succesfully!</value>
   </data>
-  <data name="AdministradorField" xml:space="preserve">
-    <value>Administrator</value>
+  <data name="DeletedUnsuccessfully" xml:space="preserve">
+    <value>Error deleting records</value>
   </data>
-  <data name="AlphanumNoSpaceNoUnderscore" xml:space="preserve">
-    <value>The {0} field must have only letters and numbers.</value>
+  <data name="EmptyEmployeeName" xml:space="preserve">
+    <value>No assigned employee</value>
   </data>
-  <data name="AlphanumSpace" xml:space="preserve">
-    <value>The {0} field only allows letters, numbers, underscores, and spaces.</value>
+  <data name="EmptyRoleName" xml:space="preserve">
+    <value>No assigned role</value>
   </data>
-  <data name="AreaField" xml:space="preserve">
-    <value>Area</value>
+  <data name="FiltroSuccessfully" xml:space="preserve">
+    <value>Users filtered successfully!</value>
   </data>
-  <data name="ConfirmNewPasswordField" xml:space="preserve">
-    <value>Confirm new password</value>
+  <data name="FiltroUnsuccessfully" xml:space="preserve">
+    <value>Error filtering users</value>
   </data>
-  <data name="ConfirmPasswordField" xml:space="preserve">
-    <value>Confirm password</value>
+  <data name="SavedSuccessfully" xml:space="preserve">
+    <value>User saved successfully!</value>
   </data>
-  <data name="CorreoBancosField" xml:space="preserve">
-    <value>Banks email</value>
-  </data>
-  <data name="CorreoEmpresarialField" xml:space="preserve">
-    <value>Business email</value>
-  </data>
-  <data name="CorreoFiscalField" xml:space="preserve">
-    <value>Fiscal email</value>
-  </data>
-  <data name="CorreoGeneralField" xml:space="preserve">
-    <value>General email</value>
-  </data>
-  <data name="CURPField" xml:space="preserve">
-    <value>CURP</value>
-  </data>
-  <data name="DireccionField" xml:space="preserve">
-    <value>Address</value>
-  </data>
-  <data name="DomicilioFiscalField" xml:space="preserve">
-    <value>Fiscal residence</value>
-  </data>
-  <data name="EmailField" xml:space="preserve">
-    <value>Email</value>
-  </data>
-  <data name="EmailFormat" xml:space="preserve">
-    <value>The {0} field is not a valid email address.</value>
-  </data>
-  <data name="EmployeeNameField" xml:space="preserve">
-    <value>Employee name</value>
-  </data>
-  <data name="EstadoCivilField" xml:space="preserve">
-    <value>Marital status</value>
-  </data>
-  <data name="FathersLastNameField" xml:space="preserve">
-    <value>Father's last name</value>
-  </data>
-  <data name="FechaIngresoField" xml:space="preserve">
-    <value>Admission date</value>
-  </data>
-  <data name="FechaIngresoFinField" xml:space="preserve">
-    <value>Admission date (End)</value>
-  </data>
-  <data name="FechaIngresoInicioField" xml:space="preserve">
-    <value>Admission date (Start)</value>
-  </data>
-  <data name="FechaNacimientoField" xml:space="preserve">
-    <value>Birth date</value>
-  </data>
-  <data name="FechaNacimientoFinField" xml:space="preserve">
-    <value>Birth date (End)</value>
-  </data>
-  <data name="FechaNacimientoInicioField" xml:space="preserve">
-    <value>Birth date (Start)</value>
-  </data>
-  <data name="FieldLength" xml:space="preserve">
-    <value>The field {0} must have at least {2} and a maximum of {1} characters.</value>
-  </data>
-  <data name="FieldsComparison" xml:space="preserve">
-    <value>Field {1} and field {0} do not match.</value>
-  </data>
-  <data name="FirstNameField" xml:space="preserve">
-    <value>First name</value>
-  </data>
-  <data name="FullNameField" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="GeneroField" xml:space="preserve">
-    <value>Gender</value>
-  </data>
-  <data name="JefeField" xml:space="preserve">
-    <value>Boss</value>
-  </data>
-  <data name="MothersLastNameField" xml:space="preserve">
-    <value>Mother's last name</value>
-  </data>
-  <data name="NameField" xml:space="preserve">
-    <value>Name(s)</value>
-  </data>
-  <data name="NewEmailField" xml:space="preserve">
-    <value>Nuevo correo electrónico</value>
-  </data>
-  <data name="NewPasswordField" xml:space="preserve">
-    <value>New password</value>
-  </data>
-  <data name="NivelField" xml:space="preserve">
-    <value>Level</value>
-  </data>
-  <data name="NSSField" xml:space="preserve">
-    <value>NSS</value>
-  </data>
-  <data name="Numeric" xml:space="preserve">
-    <value>The {0} field must have only numbers.</value>
-  </data>
-  <data name="OficinaField" xml:space="preserve">
-    <value>Office</value>
-  </data>
-  <data name="OldPasswordField" xml:space="preserve">
-    <value>Old password</value>
-  </data>
-  <data name="OrigenField" xml:space="preserve">
-    <value>Origin</value>
-  </data>
-  <data name="PasswordField" xml:space="preserve">
-    <value>Password</value>
-  </data>
-  <data name="PersonName" xml:space="preserve">
-    <value>The {0} field must have only letters. Whitespaces are allowed. The first letter must be capitalized and there must be at least two letters.</value>
-  </data>
-  <data name="PhoneFormat" xml:space="preserve">
-    <value>The {0} field is not a valid phone number.</value>
-  </data>
-  <data name="PhoneNumberField" xml:space="preserve">
-    <value>Phone</value>
-  </data>
-  <data name="PreferredNameField" xml:space="preserve">
-    <value>Preferred name</value>
-  </data>
-  <data name="PuestoField" xml:space="preserve">
-    <value>Position</value>
-  </data>
-  <data name="RazonSocialField" xml:space="preserve">
-    <value>Business name</value>
-  </data>
-  <data name="RememberField" xml:space="preserve">
-    <value>Remember me?</value>
-  </data>
-  <data name="Required" xml:space="preserve">
-    <value>The {0} field is required.</value>
-  </data>
-  <data name="RFCField" xml:space="preserve">
-    <value>RFC</value>
-  </data>
-  <data name="RolField" xml:space="preserve">
-    <value>Role</value>
-  </data>
-  <data name="SubareaField" xml:space="preserve">
-    <value>Subarea</value>
-  </data>
-  <data name="UserNameField" xml:space="preserve">
-    <value>Username</value>
+  <data name="SavedUnsuccessfully" xml:space="preserve">
+    <value>Error saving user</value>
   </data>
 </root>

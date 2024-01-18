@@ -874,7 +874,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						if (result.Succeeded)
 						{
 							//Se asigna rol de usuario
-							await _userManager.AddToRoleAsync(user, ServicesConfiguration.Usuario);
+							await _userManager.AddToRoleAsync(user, ServicesConfiguration.RolUsuario);
 
 							//Asigna el usuario al empleado.
 							emp.UserId = user.Id;

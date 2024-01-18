@@ -121,7 +121,7 @@
     <value>Accounting</value>
   </data>
   <data name="AreasCatalogMenu" xml:space="preserve">
-    <value>Areas catalog</value>
+    <value>Areas</value>
   </data>
   <data name="CatalogsMenu" xml:space="preserve">
     <value>Catalogs</value>
@@ -139,7 +139,7 @@
     <value>Human resources</value>
   </data>
   <data name="OfficesCatalogMenu" xml:space="preserve">
-    <value>Offices catalog</value>
+    <value>Offices</value>
   </data>
   <data name="OrganizationChartMenu" xml:space="preserve">
     <value>Organization chart</value>
@@ -151,7 +151,7 @@
     <value>Talent management</value>
   </data>
   <data name="PositionsCatalogMenu" xml:space="preserve">
-    <value>Positions catalog</value>
+    <value>Positions</value>
   </data>
   <data name="PrivacyMenu" xml:space="preserve">
     <value>Privacy</value>
@@ -160,7 +160,10 @@
     <value>Images by &lt;a href="https://www.freepik.com/author/stories"&gt;storyset&lt;/a&gt; on Freepik.com</value>
   </data>
   <data name="SubareasCatalogMenu" xml:space="preserve">
-    <value>Subareas catalog</value>
+    <value>Subareas</value>
+  </data>
+  <data name="UsersCatalogMenu" xml:space="preserve">
+    <value>Users</value>
   </data>
   <data name="VacationMenu" xml:space="preserve">
     <value>Vacation</value>

@@ -28,6 +28,7 @@
                     <ul class="navbar-nav flex-grow-1">
                         @if (!SignInManager.IsSignedIn(User))
                         {
+                            //Si el usuario no está logueado, muestra menú básico
                             <li class="nav-item">
                                 <a class="nav-link @_LayoutPages.InicioNavClass(ViewContext)" asp-area="" asp-page="/Index">@Localizer["HomeMenu"]</a>
                             </li>
@@ -49,6 +50,7 @@
                                     </a>
                                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                         <a class="dropdown-item @_LayoutPages.GestionDeTalentoNavClass(ViewContext)" asp-area="Catalogos" asp-page="/GestionDeTalento">@Localizer["PersonalCatalogMenu"]</a>
+                                        <a class="dropdown-item @_LayoutPages.CatalogoUsuariosNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Usuarios">@Localizer["UsersCatalogMenu"]</a>
                                         <a class="dropdown-item @_LayoutPages.CatalogoPuestosNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Puestos">@Localizer["PositionsCatalogMenu"]</a>
                                         <a class="dropdown-item @_LayoutPages.CatalogoAreasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Areas">@Localizer["AreasCatalogMenu"]</a>
                                         <a class="dropdown-item @_LayoutPages.CatalogoSubareasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Subareas">@Localizer["SubareasCatalogMenu"]</a>
@@ -56,9 +58,12 @@
                                     </div>
                                 </li>
                             }
-                            if (!User.IsInRole(ServicesConfiguration.RolCandidato))
+                            if (User.IsInRole(ServicesConfiguration.RolMaster) ||
+                                User.IsInRole(ServicesConfiguration.RolAdministrador) ||
+                                User.IsInRole(ServicesConfiguration.RolUsuario)
+                            )
                             {        
-                                //Si no es candidato, muestra el menú ERP
+                                //Si el usuario es Master, Administrador o Usuario, muestra el menú ERP
                                 <li class="nav-item dropdown">
                                     <!--Los menues que tengan otro menú hijo deben llevar el atributo data-bs-auto-close="outside" para que el menú padre permanezca abierto al dar clic-->
                                     <a class="nav-link dropdown-toggle @_LayoutPages.ERPNavClass(ViewContext)" href="#" id="navbarDropdownMenuLinkERP" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">

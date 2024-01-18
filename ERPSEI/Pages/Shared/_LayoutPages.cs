@@ -31,6 +31,9 @@ namespace ERPSEI.Pages.Shared
 		public static string CatalogoSubareas => "CatalogoSubareas";
 		public static string CatalogoSubareasNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoSubareas);
 
+		public static string CatalogoUsuarios => "CatalogoUsuarios";
+		public static string CatalogoUsuariosNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoUsuarios);
+
 
 		public static string ERP => "ERP";
         public static string ERPNavClass(ViewContext viewContext) => PageNavClass(viewContext, ERP);
