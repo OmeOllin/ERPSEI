@@ -114,7 +114,8 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             {
                 foreach (var error in changePasswordResult.Errors)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    string localizedError = _localizer[error.Code];
+                    ModelState.AddModelError(string.Empty, localizedError);
                 }
                 return Page();
             }

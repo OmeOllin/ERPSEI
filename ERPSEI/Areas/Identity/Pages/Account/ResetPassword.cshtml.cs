@@ -117,7 +117,8 @@ namespace ERPSEI.Areas.Identity.Pages.Account
 
             foreach (var error in result.Errors)
             {
-                ModelState.AddModelError(string.Empty, error.Description);
+                string localizedError = _localizer[error.Code];
+                ModelState.AddModelError(string.Empty, localizedError);
             }
             return Page();
         }
