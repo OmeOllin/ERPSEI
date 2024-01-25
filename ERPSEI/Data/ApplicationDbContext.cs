@@ -98,7 +98,8 @@ namespace ERPSEI.Data
 			b.Entity<Genero>()
 				.HasData(
 					new Genero() { Id = 1, Nombre = "Masculino" },
-					new Genero() { Id = 2, Nombre = "Femenino" }
+					new Genero() { Id = 2, Nombre = "Femenino" },
+					new Genero() { Id = 3, Nombre = "Otro" }
 				);
 
 			List<string> puestos = new List<string>()
