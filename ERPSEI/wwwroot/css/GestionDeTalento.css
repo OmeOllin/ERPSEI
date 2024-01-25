@@ -31,3 +31,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.required::before {
+    content: "* ";
+    color: red;
+}
