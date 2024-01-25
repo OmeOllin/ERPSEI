@@ -289,7 +289,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			if (e == null) { throw new Exception($"No se encontró información del empleado id {idEmpleado}"); }
 
-			Empleado? jefe = e.JefeId != null ? _empleadoManager.GetByIdAsync((int)e.JefeId).Result : null;
+			Empleado? jefe = e.JefeId != null ? await _empleadoManager.GetByIdAsync((int)e.JefeId) : null;
 			List<SemiArchivoEmpleado> archivos = await _archivoEmpleadoManager.GetFilesByEmpleadoIdAsync(idEmpleado);
             foreach (SemiArchivoEmpleado a in archivos)
             {
@@ -326,6 +326,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			string nombreOficina;
 			string nombreGenero;
 			string nombreEstadoCivil;
+			bool usuarioConfirmado = false;
 			string jsonResponse;
 			List<string> jsonEmpleados = new List<string>();
 			List<Empleado> empleados;
@@ -356,8 +357,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				nombreOficina = e.Oficina != null ? e.Oficina.Nombre : "";
 				nombreGenero = e.Genero != null ? e.Genero.Nombre : "";
 				nombreEstadoCivil = e.EstadoCivil != null ? e.EstadoCivil.Nombre : "";
+				AppUser? usuario = e.UserId != null && e.UserId.Length >= 1 ? await _userManager.FindByIdAsync(e.UserId) : null;
+				usuarioConfirmado = usuario != null && usuario.EmailConfirmed;
 
-				jsonEmpleados.Add(
+					jsonEmpleados.Add(
 					"{" +
 						$"\"id\": {e.Id}," +
 						$"\"nombre\": \"{e.Nombre}\", " +
@@ -390,6 +393,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						$"\"rfc\": \"{e.RFC}\", " +
 						$"\"nss\": \"{e.NSS}\", " +
 						$"\"usuarioId\": \"{e.UserId}\", " +
+						$"\"usuarioValido\": \"{(usuarioConfirmado ? "1" : "0")}\", " +
 						$"\"contactosEmergencia\": [], " +
 						$"\"archivos\": [] " +
 					"}"

@@ -67,13 +67,19 @@ function detailFormatter(index, row) {
 //Función para dar formato a los iconos de operación de los registros
 function operateFormatter(value, row, index) {
     let icons = [];
+    //¿El empleado tiene id de usuario?
+    let hasUserId = (row.usuarioId || "").length >= 1;
+    //El empleado si tiene usuario, pero ¿ese usuario es válido?
+    let hasUsuarioValido = parseInt((row.usuarioValido || "0")) >= 1;
+    //Si el empleado no tiene id de usuario o tiene un usuario inválido, entonces se habilita la opción invitar.
+    let canInvite = !hasUserId || !hasUsuarioValido;
 
     //Icono Ver
     icons.push(`<li><a class="dropdown-item see" href="#" title="${btnVerTitle}"><i class="bi bi-search"></i> ${btnVerTitle}</a></li>`);
     //Icono Editar
     icons.push(`<li><a class="dropdown-item edit" href="#" title="${btnEditarTitle}"><i class="bi bi-pencil-fill"></i> ${btnEditarTitle}</a></li>`);
 
-    if ((row.usuarioId || "").length <= 0 || parseInt((row.usuario ||{}).emailConfirmed||"0") <= 0) {
+    if (canInvite) {
         //Icono Invitar
         icons.push(`<li><a class="dropdown-item invite" href="#" title="${btnInvitarTitle}"><i class="bi bi-person-fill-add"></i> ${btnInvitarTitle}</a></li>`);
     }
