@@ -90,8 +90,6 @@ function operateFormatter(value, row, index) {
               </button>
               <ul class="dropdown-menu">${icons.join("")}</ul>
             </div>`;
-
-    return icons.join('')
 }
 //Eventos de los iconos de operación
 window.operateEvents = {
