@@ -74,6 +74,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Display(Name = "NivelField")]
 			public string Nivel { get; set; } = string.Empty;
 
+			[DataType(DataType.DateTime)]
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "FechaInicioOperacionField")]
+			public DateTime FechaInicioOperacion { get; set; }
+
 			[DataType(DataType.Text)]
 			[StringLength(13, ErrorMessage = "FieldLength", MinimumLength = 13)]
 			[RegularExpression(RegularExpressions.AlphanumNoSpaceNoUnderscore, ErrorMessage = "AlphanumNoSpaceNoUnderscore")]

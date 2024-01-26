@@ -140,22 +140,29 @@
 						<div class="row mb-5">
 							<div class="col-sm-12 col-md-6 col-lg-4">
 								<div class="form-floating mb-3">
-									<input id="inpEmpresaNombre" asp-for="InputEmpresa.RazonSocial" type="text" class="form-control formInput" placeholder="@Localizer["RazonSocialPlaceholder"]" />
-									<label for="inpEmpresaNombre" asp-for="InputEmpresa.RazonSocial" class="form-label"></label>
+									<input id="inpEmpresaRazonSocial" asp-for="InputEmpresa.RazonSocial" type="text" class="form-control formInput" placeholder="@Localizer["RazonSocialPlaceholder"]" />
+									<label for="inpEmpresaRazonSocial" asp-for="InputEmpresa.RazonSocial" class="form-label"></label>
 									<span asp-validation-for="InputEmpresa.RazonSocial" class="text-danger"></span>
 								</div>
 							</div>
 							<div class="col-sm-12 col-md-6 col-lg-4">
 								<div class="form-floating mb-3">
-									<input id="inpEmpresaTelefono" asp-for="InputEmpresa.Origen" type="text" class="form-control formInput" placeholder="@Localizer["OrigenPlaceholder"]" />
-									<label for="inpEmpresaTelefono" asp-for="InputEmpresa.Origen" class="form-label"></label>
+									<input id="inpEmpresaRFC" asp-for="InputEmpresa.RFC" type="text" class="form-control formInput" placeholder="@Localizer["RFCPlaceholder"]" />
+									<label for="inpEmpresaRFC" asp-for="InputEmpresa.RFC" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.RFC" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-6 col-lg-4">
+								<div class="form-floating mb-3">
+									<input id="inpEmpresaOrigen" asp-for="InputEmpresa.Origen" type="text" class="form-control formInput" placeholder="@Localizer["OrigenPlaceholder"]" />
+									<label for="inpEmpresaOrigen" asp-for="InputEmpresa.Origen" class="form-label"></label>
 									<span asp-validation-for="InputEmpresa.Origen" class="text-danger"></span>
 								</div>
 							</div>
 							<div class="col-sm-12 col-md-6 col-lg-4">
 								<div class="form-floating mb-3">
-									<input id="inpEmpresaTelefono" asp-for="InputEmpresa.Nivel" type="text" class="form-control formInput" placeholder="@Localizer["NivelPlaceholder"]" />
-									<label for="inpEmpresaTelefono" asp-for="InputEmpresa.Nivel" class="form-label"></label>
+									<input id="inpEmpresaNivel" asp-for="InputEmpresa.Nivel" type="text" class="form-control formInput" placeholder="@Localizer["NivelPlaceholder"]" />
+									<label for="inpEmpresaNivel" asp-for="InputEmpresa.Nivel" class="form-label"></label>
 									<span asp-validation-for="InputEmpresa.Nivel" class="text-danger"></span>
 								</div>
 							</div>
@@ -173,46 +180,48 @@
 									<span asp-validation-for="InputEmpresa.Accionista" class="text-danger"></span>
 								</div>
 							</div>
-							<div class="col-sm-12 col-md-6 col-lg-4">
-								<div class="form-floating mb-3">
-									<input id="inpEmpresaRFC" asp-for="InputEmpresa.Telefono" type="text" class="form-control formInput" placeholder="@Localizer["PhonePlaceholder"]" />
-									<label for="inpEmpresaRFC" asp-for="InputEmpresa.Telefono" class="form-label"></label>
-									<span asp-validation-for="InputEmpresa.Telefono" class="text-danger"></span>
-								</div>
-							</div>
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<textarea id="txtEmpresaDireccion" maxlength="135" asp-for="InputEmpresa.DomicilioFiscal" class="form-control dynamic-height formInput" placeholder="@Localizer["DireccionPlaceholder"]"></textarea>
-									<label for="txtEmpresaDireccion" asp-for="InputEmpresa.DomicilioFiscal" class="form-label"></label>
+									<textarea id="txtEmpresaDomicilioFiscal" maxlength="135" asp-for="InputEmpresa.DomicilioFiscal" class="form-control dynamic-height formInput" placeholder="@Localizer["DireccionPlaceholder"]"></textarea>
+									<label for="txtEmpresaDomicilioFiscal" asp-for="InputEmpresa.DomicilioFiscal" class="form-label"></label>
 									<span asp-validation-for="InputEmpresa.DomicilioFiscal" class="text-danger"></span>
 								</div>
 							</div>
-							<div class="col-sm-12 col-md-12 col-lg-6">
+							<div class="col-sm-12 col-md-6 col-lg-4">
 								<div class="form-floating mb-3">
-									<input id="inpEmpresaRFC" asp-for="InputEmpresa.RFC" type="text" class="form-control formInput" placeholder="@Localizer["RFCPlaceholder"]" />
-									<label for="inpEmpresaRFC" asp-for="InputEmpresa.RFC" class="form-label"></label>
-									<span asp-validation-for="InputEmpresa.RFC" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-sm-12 col-md-12 col-lg-6">
-								<div class="form-floating mb-3">
-									<input id="inpEmpresaEmail" asp-for="InputEmpresa.CorreoGeneral" type="text" class="form-control formInput" placeholder="@Localizer["CorreoGeneralPlaceholder"]" />
-									<label for="inpEmpresaEmail" asp-for="InputEmpresa.CorreoGeneral" class="form-label"></label>
+									<input id="inpEmpresaCorreoGeneral" asp-for="InputEmpresa.CorreoGeneral" type="text" class="form-control formInput" placeholder="@Localizer["CorreoGeneralPlaceholder"]" />
+									<label for="inpEmpresaCorreoGeneral" asp-for="InputEmpresa.CorreoGeneral" class="form-label"></label>
 									<span asp-validation-for="InputEmpresa.CorreoGeneral" class="text-danger"></span>
 								</div>
 							</div>
-							<div class="col-sm-12 col-md-12 col-lg-6">
+							<div class="col-sm-12 col-md-6 col-lg-4">
 								<div class="form-floating mb-3">
-									<input id="inpEmpresaEmail" asp-for="InputEmpresa.CorreoBancos" type="text" class="form-control formInput" placeholder="@Localizer["CorreoBancosPlaceholder"]" />
-									<label for="inpEmpresaEmail" asp-for="InputEmpresa.CorreoBancos" class="form-label"></label>
+									<input id="inpEmpresaCorreoBancos" asp-for="InputEmpresa.CorreoBancos" type="text" class="form-control formInput" placeholder="@Localizer["CorreoBancosPlaceholder"]" />
+									<label for="inpEmpresaCorreoBancos" asp-for="InputEmpresa.CorreoBancos" class="form-label"></label>
 									<span asp-validation-for="InputEmpresa.CorreoBancos" class="text-danger"></span>
 								</div>
 							</div>
-							<div class="col-sm-12 col-md-12 col-lg-6">
+							<div class="col-sm-12 col-md-6 col-lg-4">
 								<div class="form-floating mb-3">
-									<input id="inpEmpresaEmail" asp-for="InputEmpresa.CorreoFiscal" type="text" class="form-control formInput" placeholder="@Localizer["CorreoFiscalPlaceholder"]" />
-									<label for="inpEmpresaEmail" asp-for="InputEmpresa.CorreoFiscal" class="form-label"></label>
+									<input id="inpEmpresaCorreoFiscal" asp-for="InputEmpresa.CorreoFiscal" type="text" class="form-control formInput" placeholder="@Localizer["CorreoFiscalPlaceholder"]" />
+									<label for="inpEmpresaCorreoFiscal" asp-for="InputEmpresa.CorreoFiscal" class="form-label"></label>
 									<span asp-validation-for="InputEmpresa.CorreoFiscal" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-6 col-lg-4">
+								<div class="form-floating mb-3">
+									<input id="inpEmpresaTelefono" asp-for="InputEmpresa.Telefono" type="text" class="form-control formInput" placeholder="@Localizer["PhonePlaceholder"]" />
+									<label for="inpEmpresaTelefono" asp-for="InputEmpresa.Telefono" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.Telefono" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-6 col-lg-4">
+								<div class="form-floating mb-3">
+									<div class="form-floating mb-3">
+										<input id="inpEmpresaFechaInicioOperacion" type="date" asp-for="InputEmpresa.FechaInicioOperacion" class="form-control formInput" placeholder="@Localizer["FechaInicioOperacionPlaceholder"]" />
+										<label for="inpEmpresaFechaInicioOperacion" asp-for="InputEmpresa.FechaInicioOperacion" class="form-label required"></label>
+										<span asp-validation-for="InputEmpresa.FechaInicioOperacion" class="text-danger"></span>
+									</div>
 								</div>
 							</div>
 						</div>

@@ -183,6 +183,9 @@
   <data name="FechaIngresoInicioField" xml:space="preserve">
     <value>Admission date (Start)</value>
   </data>
+  <data name="FechaInicioOperacionField" xml:space="preserve">
+    <value>Operation start date</value>
+  </data>
   <data name="FechaNacimientoField" xml:space="preserve">
     <value>Birth date</value>
   </data>

@@ -1,6 +1,8 @@
 ﻿var table;
 var buttonRemove;
 var selections = [];
+var dlgEmpresaModal = null;
+
 const NUEVO = 0;
 const EDITAR = 1;
 const VER = 2;
@@ -13,6 +15,7 @@ const postOptions = { headers: { "RequestVerificationToken": $('input[name="__Re
 document.addEventListener("DOMContentLoaded", function (event) {
     table = $("#table");
     buttonRemove = $("#remove");
+    dlgEmpresaModal = new bootstrap.Modal(document.getElementById('dlgEmpresa'), null);
 
     initTable();
 
@@ -53,14 +56,19 @@ function detailFormatter(index, row) {
 }
 //Función para dar formato a los iconos de operación de los registros
 function operateFormatter(value, row, index) {
-    return [
-        '<a class="see btn" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgEmpresa" title="' + btnVerTitle + '">',
-            '<i class="bi bi-search"></i>',
-        '</a>  ',
-        '<a class="edit btn" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgEmpresa" title="' + btnEditarTitle + '">',
-            '<i class="bi bi-pencil-fill"></i>',
-        '</a>'
-    ].join('')
+    let icons = [];
+
+    //Icono Ver
+    icons.push(`<li><a class="dropdown-item see" href="#" title="${btnVerTitle}"><i class="bi bi-search"></i> ${btnVerTitle}</a></li>`);
+    //Icono Editar
+    icons.push(`<li><a class="dropdown-item edit" href="#" title="${btnEditarTitle}"><i class="bi bi-pencil-fill"></i> ${btnEditarTitle}</a></li>`);
+
+    return `<div class="dropdown">
+              <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical success"></i>
+              </button>
+              <ul class="dropdown-menu">${icons.join("")}</ul>
+            </div>`;
 }
 //Eventos de los iconos de operación
 window.operateEvents = {
@@ -90,7 +98,19 @@ function additionalButtons() {
 function onAgregarClick() {
     let oEmpresaNueva = {
         id: nuevoRegistro,
+        razonSocial: "",
         rfc: "",
+        origen: "",
+        nivel: "",
+        administrador: "",
+        accionista: "",
+        domicilioFiscal: "",
+        correoGeneral: "",
+        correoBancos: "",
+        correoFiscal: "",
+        telefono: "",
+        fechaInicioOperacion: null,
+        bancos: [],
         archivos: []
     };
 
@@ -272,7 +292,18 @@ function onBuscarClick() {
 //Función para inicializar el cuadro de diálogo
 function initEmpresaDialog(action, row) {
     let idField = document.getElementById("inpEmpresaId");
+    let razonSocialField = document.getElementById("inpEmpresaRazonSocial");
     let rfcField = document.getElementById("inpEmpresaRFC");
+    let origenField = document.getElementById("inpEmpresaOrigen");
+    let nivelField = document.getElementById("inpEmpresaNivel");
+    let administradorField = document.getElementById("inpEmpresaAdministrador");
+    let accionistaField = document.getElementById("inpEmpresaAccionista");
+    let domicilioFiscalField = document.getElementById("txtEmpresaDomicilioFiscal");
+    let correoGeneralField = document.getElementById("inpEmpresaCorreoGeneral");
+    let correoBancosField = document.getElementById("inpEmpresaCorreoBancos");
+    let correoFiscalField = document.getElementById("inpEmpresaCorreoFiscal");
+    let telefonoField = document.getElementById("inpEmpresaTelefono");
+    let fechaInicioOperacionField = document.getElementById("inpEmpresaFechaInicioOperacion");
 
     let btnDesactivar = document.getElementById("dlgEmpresaBtnDesactivar");
     let dlgTitle = document.getElementById("dlgEmpresaTitle");
@@ -306,7 +337,47 @@ function initEmpresaDialog(action, row) {
     }
 
     idField.value = row.id;
+    razonSocialField.value = row.razonSocial;
     rfcField.value = row.rfc;
+    origenField.value = row.origen;
+    nivelField.value = row.nivel;
+    administradorField.value = row.administrador;
+    accionistaField.value = row.accionista;
+    domicilioFiscalField.value = row.domicilioFiscal;
+    correoGeneralField.value = row.correoGeneral;
+    correoBancosField.value = row.correoBancos;
+    correoFiscalField.value = row.correoFiscal;
+    telefonoField.value = row.telefono;
+    fechaInicioOperacionField.value = row.fechaInicioOperacionJS;
+
+    $("#bodyBancos").html("");
+    row.bancos = row.bancos || [];
+    let j = 1;
+    row.bancos.forEach(function (b) {
+        $("#bodyBancos").append(
+            `<div class="col-sm-12 col-md-12 col-lg-6 rowBancos">
+				<div class="row">
+					<h6 class="col-12"><i>${empresaBancoTitle} ${j}</i></h6>
+					<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+						<div class="form-floating mb-3">
+							<input id="inpEmpresaBancoTitular${j}" type="text" class="form-control formInput" placeholder="${titularPlaceholder}" />
+							<label for="inpEmpresaBancoTitular${j}" class="form-label">${titularPlaceholder}</label>
+							<span class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+						<div class="form-floating mb-3">
+							<input id="inpEmpresaBancoResponsable${j}" type="text" class="form-control formInput" placeholder="${responsablePlaceholder}" />
+							<label for="inpEmpresaBancoResponsable${j}" class="form-label">${responsablePlaceholder}</label>
+							<span class="text-danger"></span>
+						</div>
+					</div>
+				</div>
+			</div>`
+        );
+
+        j++;
+    });
 
     $("#bodyArchivos").html("");
     row.archivos = row.archivos || [];
@@ -348,6 +419,7 @@ function initEmpresaDialog(action, row) {
     });
 
     initializeDisableableButtons(action == VER);
+    dlgEmpleadoModal.toggle();
 }
 //Función para habilitar/deshabilitar los botones de visualización en base a si existe contenido o no para visualizar.
 function initializeDisableableButtons(isConsulta = false) {

@@ -183,6 +183,9 @@
   <data name="FechaIngresoInicioField" xml:space="preserve">
     <value>Fecha ingreso (Inicio)</value>
   </data>
+  <data name="FechaInicioOperacionField" xml:space="preserve">
+    <value>Fecha de inicio de operación</value>
+  </data>
   <data name="FechaNacimientoField" xml:space="preserve">
     <value>Fecha Nacimiento</value>
   </data>

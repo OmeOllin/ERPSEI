@@ -210,6 +210,9 @@
   <data name="EmpresaTercerSeccionTitle" xml:space="preserve">
     <value>Documentos</value>
   </data>
+  <data name="FechaInicioOperacionPlaceholder" xml:space="preserve">
+    <value>Fecha de inicio de operación</value>
+  </data>
   <data name="FileFormatMessage" xml:space="preserve">
     <value>El formato del archivo debe ser .pdf, .jpg, .jpeg o .png. Por favor elija otro archivo.</value>
   </data>
