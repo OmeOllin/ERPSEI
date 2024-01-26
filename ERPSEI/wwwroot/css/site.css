@@ -40,33 +40,3 @@ select {
         overflow: visible;
     }
 }
-
-@media (min-width: 1201px) {
-    .dynamic-height {
-        height: 156px !important;
-    }
-}
-
-@media (max-width: 1200px) {
-    .dynamic-height {
-        height: 180px !important;
-    }
-}
-
-@media (max-width: 992px) {
-    .dynamic-height {
-        height: 120px !important;
-    }
-}
-
-@media (max-width: 768px) {
-    .dynamic-height {
-        height: 85px !important;
-    }
-}
-
-@media (max-width: 576px) {
-    .dynamic-height {
-        height: 105px !important;
-    }
-}
