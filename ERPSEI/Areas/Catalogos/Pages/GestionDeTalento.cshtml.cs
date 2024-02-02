@@ -617,23 +617,23 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				emps = emps.Where(e => e.Id != emp.Id).ToList();
 			}
 
-			//Valido que no exista empleado que tenga los mismos datos.
-			coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.NombreCompleto ?? "").Length >= 1 && e.NombreCompleto == $"{emp.Nombre} {emp.ApellidoPaterno} {emp.ApellidoMaterno}").ToList();
-			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el nombre de {emp.Nombre} {emp.ApellidoPaterno} {emp.ApellidoMaterno}. Por favor verifique la información"; }
+            //Valido que no exista empleado que tenga los mismos datos.
+            coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.NombreCompleto ?? "").Length >= 1 && e.NombreCompleto == $"{emp.Nombre} {emp.ApellidoPaterno} {emp.ApellidoMaterno}").ToList();
+            if (coincidences.Count() >= 1) { return $"{_strLocalizer["ErrorEmpleadoExistenteA"]} {_strLocalizer["Nombre"]} {emp.Nombre} {emp.ApellidoPaterno} {emp.ApellidoMaterno}. {_strLocalizer["ErrorEmpleadoExistenteB"]}."; }
 
-			coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.Email ?? "").Length >= 1 && e.Email == emp.Email).ToList();
-			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el correo {emp.Email}. Por favor verifique la información"; }
+            coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.Email ?? "").Length >= 1 && e.Email == emp.Email).ToList();
+            if (coincidences.Count() >= 1) { return $"{_strLocalizer["ErrorEmpleadoExistenteA"]} {_strLocalizer["Correo"]} {emp.Email}. {_strLocalizer["ErrorEmpleadoExistenteB"]}."; }
 
-			coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.CURP ?? "").Length >= 1 && e.CURP == emp.CURP).ToList();
-			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el CURP {emp.CURP}. Por favor verifique la información"; }
+            coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.CURP ?? "").Length >= 1 && e.CURP == emp.CURP).ToList();
+            if (coincidences.Count() >= 1) { return $"{_strLocalizer["ErrorEmpleadoExistenteA"]} {_strLocalizer["CURP"]} {emp.CURP}. {_strLocalizer["ErrorEmpleadoExistenteB"]}."; }
 
-			coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.RFC ?? "").Length >= 1 && e.RFC == emp.RFC).ToList();
-			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el RFC {emp.RFC}. Por favor verifique la información"; }
+            coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.RFC ?? "").Length >= 1 && e.RFC == emp.RFC).ToList();
+            if (coincidences.Count() >= 1) { return $"{_strLocalizer["ErrorEmpleadoExistenteA"]} {_strLocalizer["RFC"]} {emp.RFC}. {_strLocalizer["ErrorEmpleadoExistenteB"]}."; }
 
-			coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.NSS ?? "").Length >= 1 && e.NSS == emp.NSS).ToList();
-			if (coincidences.Count() >= 1) { return $"Ya existe un empleado registrado con el NSS {emp.NSS}. Por favor verifique la información"; }
+            coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.NSS ?? "").Length >= 1 && e.NSS == emp.NSS).ToList();
+            if (coincidences.Count() >= 1) { return $"{_strLocalizer["ErrorEmpleadoExistenteA"]} {_strLocalizer["NSS"]} {emp.NSS}. {_strLocalizer["ErrorEmpleadoExistenteB"]}."; }
 
-			return string.Empty;
+            return string.Empty;
 		}
 		private async Task createOrUpdateEmployee(EmpleadoModel e)
 		{

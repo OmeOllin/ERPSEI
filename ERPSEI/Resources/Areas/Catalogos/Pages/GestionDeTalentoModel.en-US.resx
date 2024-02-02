@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Correo" xml:space="preserve">
+    <value>email</value>
+  </data>
+  <data name="CURP" xml:space="preserve">
+    <value>CURP</value>
+  </data>
   <data name="EmailBodyFOP" xml:space="preserve">
     <value>Please note that the first time you log in, for security reasons you must change the password provided by the system.</value>
   </data>
@@ -173,5 +179,20 @@
   </data>
   <data name="EmpleadosImportadosUnsuccessfully" xml:space="preserve">
     <value>Error importing employees</value>
+  </data>
+  <data name="ErrorEmpleadoExistenteA" xml:space="preserve">
+    <value>There is already an employee registered with the</value>
+  </data>
+  <data name="ErrorEmpleadoExistenteB" xml:space="preserve">
+    <value>Please verify</value>
+  </data>
+  <data name="Nombre" xml:space="preserve">
+    <value>name</value>
+  </data>
+  <data name="NSS" xml:space="preserve">
+    <value>NSS</value>
+  </data>
+  <data name="RFC" xml:space="preserve">
+    <value>RFC</value>
   </data>
 </root>
