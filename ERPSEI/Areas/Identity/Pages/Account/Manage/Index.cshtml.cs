@@ -4,12 +4,16 @@ using ERPSEI.Data;
 using ERPSEI.Data.Entities;
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Managers;
+using ERPSEI.Email;
 using ERPSEI.Resources;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
+using static ERPSEI.Areas.Catalogos.Pages.GestionDeTalentoModel;
 
 namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 {
@@ -21,6 +25,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IArchivoEmpleadoManager _userFileManager;
         private readonly IStringLocalizer<IndexModel> _localizer;
+        private readonly IEmailSender _emailSender;
         private readonly ApplicationDbContext _db;
 
         private readonly long maxFileSizeInBytes = 5242880; //5mb = (5 * 1024) * 1024;
@@ -33,6 +38,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             SignInManager<AppUser> signInManager,
             IArchivoEmpleadoManager userFileManager,
             IStringLocalizer<IndexModel> localizer,
+            IEmailSender emailSender,
             ApplicationDbContext db)
         {
             _contactoEmergenciaManager = contactoEmergenciaManager;
@@ -41,6 +47,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             _signInManager = signInManager;
             _userFileManager = userFileManager;
             _localizer = localizer;
+            _emailSender = emailSender;
             _db = db;
         }
 
@@ -293,11 +300,48 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
+        private async Task<string> validarSiExisteEmpleado(Empleado emp, bool curpAsKey)
+        {
+            List<Empleado> coincidences = new List<Empleado>();
+            List<Empleado> emps = await _empleadoManager.GetAllAsync();
+
+            if (curpAsKey)
+            {
+                //Excluyo al empleado con el CURP actual.
+                emps = emps.Where(e => e.CURP != emp.CURP).ToList();
+            }
+            else
+            {
+                //Excluyo al empleado con el Id actual.
+                emps = emps.Where(e => e.Id != emp.Id).ToList();
+            }
+
+            //Valido que no exista empleado que tenga los mismos datos.
+            coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.NombreCompleto ?? "").Length >= 1 && e.NombreCompleto == $"{emp.Nombre} {emp.ApellidoPaterno} {emp.ApellidoMaterno}").ToList();
+            if (coincidences.Count() >= 1) { return $"{_localizer["ErrorEmpleadoExistenteA"]} {_localizer["Nombre"]} {emp.Nombre} {emp.ApellidoPaterno} {emp.ApellidoMaterno}. {_localizer["ErrorEmpleadoExistenteB"]}."; }
+
+            coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.Email ?? "").Length >= 1 && e.Email == emp.Email).ToList();
+            if (coincidences.Count() >= 1) { return $"{_localizer["ErrorEmpleadoExistenteA"]} {_localizer["Correo"]} {emp.Email}. {_localizer["ErrorEmpleadoExistenteB"]}."; }
+
+            coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.CURP ?? "").Length >= 1 && e.CURP == emp.CURP).ToList();
+            if (coincidences.Count() >= 1) { return $"{_localizer["ErrorEmpleadoExistenteA"]} {_localizer["CURP"]} {emp.CURP}. {_localizer["ErrorEmpleadoExistenteB"]}."; }
+
+            coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.RFC ?? "").Length >= 1 && e.RFC == emp.RFC).ToList();
+            if (coincidences.Count() >= 1) { return $"{_localizer["ErrorEmpleadoExistenteA"]} {_localizer["RFC"]} {emp.RFC}. {_localizer["ErrorEmpleadoExistenteB"]}."; }
+
+            coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.NSS ?? "").Length >= 1 && e.NSS == emp.NSS).ToList();
+            if (coincidences.Count() >= 1) { return $"{_localizer["ErrorEmpleadoExistenteA"]} {_localizer["NSS"]} {emp.NSS}. {_localizer["ErrorEmpleadoExistenteB"]}."; }
+
+            return string.Empty;
+        }
+
         public async Task<IActionResult> OnPostAsync()
         {
+            bool isNewEmployee = false;
+
             var user = await _userManager.GetUserAsync(User);
-            Empleado emp = await _empleadoManager.GetByIdAsync(user.EmpleadoId??0);
-            if (user == null || emp == null)
+
+            if (user == null)
             {
                 return NotFound($"{_localizer["UserLoadFails"]} '{_userManager.GetUserId(User)}'.");
             }
@@ -307,6 +351,11 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                 await LoadAsync(user);
                 return Page();
             }
+
+            Empleado emp = await _empleadoManager.GetByIdAsync(user.EmpleadoId??0);
+            isNewEmployee = emp == null;
+            //Se crea el usuario por primera vez
+            if (isNewEmployee) { emp = new Empleado(); }
 
             //Actualiza información principal del empleado.
             emp.Nombre = Input.FirstName;
@@ -325,10 +374,45 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             //Actualiza información principal del usuario.
             user.PhoneNumber = Input.PhoneNumber ?? "";
 
+            //Valida que no exista un empleado registrado con los mismos datos. En caso de haber, se deja el mensaje en resp.Mensajes para ser mostrado al usuario.
+            string msg = await validarSiExisteEmpleado(emp, false);
+
+            //Si la longitud del mensaje de respuesta es mayor o igual a uno, se considera que hubo errores.
+            if ((msg ?? "").Length >= 1)
+            {
+                StatusMessage = $"Error: {msg}";
+                return RedirectToPage();
+            }
+
             //Inicia una transacción.
             await _db.Database.BeginTransactionAsync();
             try
             {
+                if (isNewEmployee)
+                {
+                    //Se crea el empleado.
+                    user.EmpleadoId = await _empleadoManager.CreateAsync(emp);
+
+                    //Se envía correo para solicitar autorización del usuario.
+                    var userId = await _userManager.GetUserIdAsync(user);
+                    var code = await _userManager.GenerateUserTokenAsync(user, "ERPSEI", "UserAuth");
+                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    var callbackUrl = Url.Page(
+                        "/Account/AuthorizeUser",
+                        pageHandler: null,
+                        values: new { area = "Identity", userId = userId, code = code},
+                        protocol: Request.Scheme);
+
+                    //Se envía notificación al correo configurado para autorizar procesos de los candidatos
+                    _emailSender.SendEmailAsync(ServicesConfiguration.MasterUser.Email, 
+                        _localizer["EmailSubject"], $"{_localizer["EmailBodyFP"]} {user.Email}. {_localizer["EmailBodySP"]} <a href='{callbackUrl}'>{_localizer["EmailBodyTP"]}</a>.");
+                }
+                else
+                {
+                    //Se actualiza el empleado.
+                    await _empleadoManager.UpdateAsync(emp);
+                }
+
                 //Si el usuario estableció una imagen de perfil
                 if (Input.ProfilePicture != null && Input.ProfilePicture.Length >= 1)
                 {
@@ -359,19 +443,15 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                 }
 
                 //Elimina los contactos del empleado.
-                await _contactoEmergenciaManager.DeleteByEmpleadoIdAsync(emp.Id);
+                await _contactoEmergenciaManager.DeleteByEmpleadoIdAsync(user.EmpleadoId ?? 0);
 
                 //Crea dos nuevos contactos para el empleado.
                 await _contactoEmergenciaManager.CreateAsync(
-                    new ContactoEmergencia() { Nombre = Input.NombreContacto1 ?? string.Empty, Telefono = Input.TelefonoContacto1 ?? string.Empty, EmpleadoId = emp.Id }
+                    new ContactoEmergencia() { Nombre = Input.NombreContacto1 ?? string.Empty, Telefono = Input.TelefonoContacto1 ?? string.Empty, EmpleadoId = user.EmpleadoId ?? 0 }
                 );
                 await _contactoEmergenciaManager.CreateAsync(
-                    new ContactoEmergencia() { Nombre = Input.NombreContacto2 ?? string.Empty, Telefono = Input.TelefonoContacto2 ?? string.Empty, EmpleadoId = emp.Id }
+                    new ContactoEmergencia() { Nombre = Input.NombreContacto2 ?? string.Empty, Telefono = Input.TelefonoContacto2 ?? string.Empty, EmpleadoId = user.EmpleadoId ?? 0 }
                 );
-
-                //Se actualiza el empleado.
-                await _empleadoManager.UpdateAsync(emp);
-
 
                 //Se actualiza el usuario.
                 var setResult = await _userManager.UpdateAsync(user);
@@ -391,7 +471,6 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             {
                 //Revierte la transacción.
                 await _db.Database.RollbackTransactionAsync();
-                throw;
             }
             return RedirectToPage();
         }

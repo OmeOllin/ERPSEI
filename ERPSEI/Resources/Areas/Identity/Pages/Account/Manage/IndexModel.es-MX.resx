@@ -117,11 +117,32 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Correo" xml:space="preserve">
+    <value>correo</value>
+  </data>
+  <data name="CURP" xml:space="preserve">
+    <value>CURP</value>
+  </data>
+  <data name="ErrorEmpleadoExistenteA" xml:space="preserve">
+    <value>Ya existe un empleado registrado con el </value>
+  </data>
+  <data name="ErrorEmpleadoExistenteB" xml:space="preserve">
+    <value>Por favor verifique</value>
+  </data>
   <data name="FileTooLarge" xml:space="preserve">
     <value>Error al actualizar los datos. Uno de los archivos es demasiado grande. Deben tener un tamaño máximo de</value>
   </data>
+  <data name="Nombre" xml:space="preserve">
+    <value>nombre</value>
+  </data>
+  <data name="NSS" xml:space="preserve">
+    <value>NSS</value>
+  </data>
   <data name="ProfilePictureTooLarge" xml:space="preserve">
     <value>Error al actualizar los datos. La foto de perfil es demasiado grande. Debe tener un tamaño máximo de</value>
+  </data>
+  <data name="RFC" xml:space="preserve">
+    <value>RFC</value>
   </data>
   <data name="SaveUserFails" xml:space="preserve">
     <value>Error al intentar actualizar la información del perfil</value>

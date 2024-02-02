@@ -154,10 +154,19 @@
     <value>Deactivate profile</value>
   </data>
   <data name="DocumentSuggestion" xml:space="preserve">
-    <value>Please note that files should not be larger than 5mb and only files in .pdf, .jpg, .jpeg and .png formats are accepted.</value>
+    <value>Please note that files should not be larger than 5mb and only files in .pdf, .jpg, .jpeg and .png formats are accepted. To reduce size of mentioned files, visit:</value>
   </data>
   <data name="EditLink" xml:space="preserve">
     <value>Edit</value>
+  </data>
+  <data name="EmailBodyFP" xml:space="preserve">
+    <value>A new user with email</value>
+  </data>
+  <data name="EmailBodySP" xml:space="preserve">
+    <value>recently registered as a candidate. To authorize it, click on the following link:</value>
+  </data>
+  <data name="EmailBodyTP" xml:space="preserve">
+    <value>Authorize</value>
   </data>
   <data name="EmpleadoContactoTitle" xml:space="preserve">
     <value>Emergency Contact</value>
