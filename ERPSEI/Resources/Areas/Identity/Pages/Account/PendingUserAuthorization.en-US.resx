@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Message" xml:space="preserve">
-    <value>Your request is being processed. We are validating your information and is pending of authorization. You will be notified shortly to the email provided.</value>
+    <value>The authorization of your profile is in process. We are validating your information and is pending of authorization. You will be notified shortly to the email address you registered with.</value>
   </data>
   <data name="PendingAuthorization" xml:space="preserve">
     <value>Authorization pending</value>

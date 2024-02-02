@@ -143,12 +143,6 @@ namespace ERPSEI.Areas.Identity.Pages.Account
 					code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 					return RedirectToPage($"./ResetPassword", new { code = code });
                 }
-                else if (user.EmpleadoId.HasValue && !user.IsPreregisterAuthorized)
-                {
-                    //Si el usuario ya cuenta con registro de empleado pero el preregistro no ha sido autorizado, entonces redirige a pantalla de espera de autorización.
-                    _logger.LogWarning(_localizer["PendingUserAuthorization"]);
-                    return RedirectToPage("./PendingUserAuthorization");
-                }
                 else
                 {
                     //De lo contrario se le permite el intento de iniciar sesión.
@@ -161,6 +155,12 @@ namespace ERPSEI.Areas.Identity.Pages.Account
 							_logger.LogWarning(_localizer["PreregisterRequired"]);
 							return RedirectToPage("./Manage/Index");
 						}
+                        else if (user.EmpleadoId.HasValue && !user.IsPreregisterAuthorized)
+                        {
+                            //Si el usuario ya cuenta con registro de empleado pero el preregistro no ha sido autorizado, entonces redirige a pantalla de espera de autorización.
+                            _logger.LogWarning(_localizer["PendingUserAuthorization"]);
+                            return RedirectToPage("./PendingUserAuthorization");
+                        }
                         else
                         {
                             return LocalRedirect("/");

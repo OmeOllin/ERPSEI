@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Message" xml:space="preserve">
-    <value>Su solicitud está siendo procesada. Estamos validando su información y se encuentra pendiente de autorización. Se le notificará en breve al correo electrónico proporcionado.</value>
+    <value>La autorización de su perfil está en proceso. Estamos validando su información y se encuentra pendiente de autorización. Se le notificará en breve al correo electrónico con el que se registró.</value>
   </data>
   <data name="PendingAuthorization" xml:space="preserve">
     <value>Pendiente de autorización</value>
