@@ -16,7 +16,7 @@ namespace ERPSEI.Data.Managers
 
 		private async Task<int> getNextId()
 		{
-			List<Empleado> registros = await GetAllAsync();
+			List<Empleado> registros = await db.Empleados.ToListAsync();
 			Empleado? last = registros.OrderByDescending(r => r.Id).FirstOrDefault();
 			int lastId = last != null ? last.Id : 0;
 			lastId += 1;

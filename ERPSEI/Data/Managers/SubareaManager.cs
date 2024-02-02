@@ -14,7 +14,7 @@ namespace ERPSEI.Data.Managers
 
 		private async Task<int> getNextId()
 		{
-			List<Subarea> registros = await GetAllAsync();
+			List<Subarea> registros = await db.Subareas.ToListAsync();
 			Subarea? last = registros.OrderByDescending(r => r.Id).FirstOrDefault();
 			int lastId = last != null ? last.Id : 0;
 			lastId += 1;
