@@ -395,7 +395,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 
                     //Se envía correo para solicitar autorización del usuario.
                     var userId = await _userManager.GetUserIdAsync(user);
-                    var code = await _userManager.GenerateUserTokenAsync(user, "ERPSEI", "UserAuth");
+                    var code = await _userManager.GenerateUserTokenAsync(user, "UserAuthorization", "UserAuthorization");
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
                         "/Account/AuthorizeUser",

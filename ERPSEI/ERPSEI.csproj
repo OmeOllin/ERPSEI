@@ -52,6 +52,9 @@
     <EmbeddedResource Update="Resources\Areas\Identity\Pages\Account\AccessDenied.en-US.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Areas\Identity\Pages\Account\AuthorizeUser.en-US.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Areas\Identity\Pages\Account\PendingUserAuthorization.en-US.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

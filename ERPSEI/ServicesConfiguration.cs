@@ -5,6 +5,7 @@ using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Email;
 using ERPSEI.Resources;
+using ERPSEI.TokenProviders;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -73,7 +74,8 @@ namespace ERPSEI
             _builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddRoles<IdentityRole>()
             .AddUserManager<AppUserManager>()
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddTokenProvider<UserAuthorizationTokenProvider<AppUser>>("UserAuthorization");
         }
 
         public static void ConfigurePagesAndLocalization(WebApplicationBuilder _builder)
