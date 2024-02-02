@@ -397,15 +397,22 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateUserTokenAsync(user, "UserAuthorization", "UserAuthorization");
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
+
+                    var callbackUrlAuth = Url.Page(
                         "/Account/AuthorizeUser",
                         pageHandler: null,
-                        values: new { area = "Identity", userId = userId, code = code},
+                        values: new { area = "Identity", userId = userId, code = code, actionId = "1"},
+                        protocol: Request.Scheme);
+
+                    var callbackUrlReject = Url.Page(
+                        "/Account/AuthorizeUser",
+                        pageHandler: null,
+                        values: new { area = "Identity", userId = userId, code = code, actionId = "2" },
                         protocol: Request.Scheme);
 
                     //Se envía notificación al correo configurado para autorizar procesos de los candidatos
                     _emailSender.SendEmailAsync(ServicesConfiguration.MasterUser.Email, 
-                        _localizer["EmailSubject"], $"{_localizer["EmailBodyFP"]} {user.Email}. {_localizer["EmailBodySP"]} <a href='{callbackUrl}'>{_localizer["EmailBodyTP"]}</a>.");
+                        _localizer["EmailSubject"], $"{_localizer["EmailBodyFP"]} {user.Email}. {_localizer["EmailBodySP"]}.<br /><br />{_localizer["EmailBodyAuthA"]} <a href='{callbackUrlAuth}'>{_localizer["EmailBodyAuthB"]}</a>.<br /><br />{_localizer["EmailBodyRejectA"]} <a href='{callbackUrlReject}'>{_localizer["EmailBodyRejectB"]}</a>.");
                 }
                 else
                 {

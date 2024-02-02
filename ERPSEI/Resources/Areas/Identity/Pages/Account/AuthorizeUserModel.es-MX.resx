@@ -123,11 +123,17 @@
   <data name="ConfirmationSuccessful" xml:space="preserve">
     <value>¡Gracias por autorizar al usuario!</value>
   </data>
-  <data name="EmailBodyFP" xml:space="preserve">
+  <data name="EmailBodyFPAuth" xml:space="preserve">
     <value>Su usuario ha sido autorizado para acceder al sistema ERPSEI. ¡Ya puede iniciar sesión!</value>
   </data>
-  <data name="EmailSubject" xml:space="preserve">
+  <data name="EmailBodyFPReject" xml:space="preserve">
+    <value>Lo sentimos, su usuario ha sido rechazado.</value>
+  </data>
+  <data name="EmailSubjectAuth" xml:space="preserve">
     <value>¡Bienvenido a ERPSEI!</value>
+  </data>
+  <data name="EmailSubjectReject" xml:space="preserve">
+    <value>Usuario rechazado</value>
   </data>
   <data name="UserLoadFails" xml:space="preserve">
     <value>No se puede cargar el usuario con ID</value>

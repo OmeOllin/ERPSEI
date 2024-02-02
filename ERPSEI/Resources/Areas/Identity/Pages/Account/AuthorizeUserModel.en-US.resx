@@ -126,8 +126,14 @@
   <data name="EmailBodyFP" xml:space="preserve">
     <value>Your user has been authorized to access the ERPSEI system. You can now log in!</value>
   </data>
+  <data name="EmailBodyFPReject" xml:space="preserve">
+    <value>Sorry, your user has been rejected.</value>
+  </data>
   <data name="EmailSubject" xml:space="preserve">
     <value>Welcome to ERPSEI!</value>
+  </data>
+  <data name="EmailSubjectReject" xml:space="preserve">
+    <value>Rejected user</value>
   </data>
   <data name="UserLoadFails" xml:space="preserve">
     <value>Unable to load user with ID</value>

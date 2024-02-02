@@ -159,18 +159,6 @@
   <data name="EditLink" xml:space="preserve">
     <value>Editar</value>
   </data>
-  <data name="EmailBodyFP" xml:space="preserve">
-    <value>Un usuario nuevo con correo</value>
-  </data>
-  <data name="EmailBodySP" xml:space="preserve">
-    <value>se registró recientemente como candidato. Para autorizarlo, de clic en el siguiente enlace:</value>
-  </data>
-  <data name="EmailBodyTP" xml:space="preserve">
-    <value>Autorizar</value>
-  </data>
-  <data name="EmailSubject" xml:space="preserve">
-    <value>Autorización de usuario candidato</value>
-  </data>
   <data name="EmpleadoContactoTitle" xml:space="preserve">
     <value>Contacto de Emergencia</value>
   </data>

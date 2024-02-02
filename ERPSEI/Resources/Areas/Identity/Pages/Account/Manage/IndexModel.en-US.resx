@@ -123,6 +123,27 @@
   <data name="CURP" xml:space="preserve">
     <value>CURP</value>
   </data>
+  <data name="EmailBodyAuthA" xml:space="preserve">
+    <value>To authorize it, click on the following link:</value>
+  </data>
+  <data name="EmailBodyAuthB" xml:space="preserve">
+    <value>Autorize</value>
+  </data>
+  <data name="EmailBodyFP" xml:space="preserve">
+    <value>A new user with email</value>
+  </data>
+  <data name="EmailBodyRejectA" xml:space="preserve">
+    <value>To reject it, click on the following link:</value>
+  </data>
+  <data name="EmailBodyRejectB" xml:space="preserve">
+    <value>Reject</value>
+  </data>
+  <data name="EmailBodySP" xml:space="preserve">
+    <value>recently registered as a candidate.</value>
+  </data>
+  <data name="EmailSubject" xml:space="preserve">
+    <value>Candidate user authorization</value>
+  </data>
   <data name="ErrorEmpleadoExistenteA" xml:space="preserve">
     <value>There is already an employee registered with the</value>
   </data>
