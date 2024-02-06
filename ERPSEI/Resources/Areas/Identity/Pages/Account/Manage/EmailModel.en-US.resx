@@ -121,7 +121,7 @@
     <value>Please confirm your account by</value>
   </data>
   <data name="EmailBodySP" xml:space="preserve">
-    <value>clicking here</value>
+    <value>clicking on the following link:</value>
   </data>
   <data name="EmailChangeFails" xml:space="preserve">
     <value>Your email is unchanged.</value>

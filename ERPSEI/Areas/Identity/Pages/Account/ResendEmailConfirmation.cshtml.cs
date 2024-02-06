@@ -81,10 +81,10 @@ namespace ERPSEI.Areas.Identity.Pages.Account
                 pageHandler: null,
                 values: new { userId = userId, code = code },
                 protocol: Request.Scheme);
-            _emailSender.SendEmailAsync(
-                Input.Email,
-                _localizer["EmailSubject"],
-                $"{_localizer["EmailBodyFP"]} <a href='{callbackUrl}'> {_localizer["EmailBodySP"]}</a>.");
+
+            string emailBody = $"{_localizer["EmailBodyFP"]} {_localizer["EmailBodySP"]} {callbackUrl}";
+
+            _emailSender.SendEmailAsync(Input.Email, _localizer["EmailSubject"], emailBody);
 
             return RedirectToPage("./ResendEmailConfirmationResult");
         }

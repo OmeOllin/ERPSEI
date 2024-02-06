@@ -24,8 +24,8 @@ namespace ERPSEI.Email
                 msg.From.Add(new MailboxAddress(mailAddress, mailAddress));
                 msg.To.Add(new MailboxAddress(email, email));
                 msg.Subject = subject;
-                msg.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message };
-
+                //msg.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message };
+                msg.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = message };
                 using (var client = new SmtpClient())
                 {
                     //Esta instrucción elimina la validación del certificado del servidor de correos.

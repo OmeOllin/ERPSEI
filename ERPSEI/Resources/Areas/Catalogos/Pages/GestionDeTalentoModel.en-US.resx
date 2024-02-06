@@ -130,7 +130,7 @@
     <value>You have recieved an invitation to ERPSEI system, please confirm your account by</value>
   </data>
   <data name="EmailBodySP" xml:space="preserve">
-    <value>clicking here</value>
+    <value>clicking on the following link:</value>
   </data>
   <data name="EmailBodyTP" xml:space="preserve">
     <value>To log in, use the following information:</value>

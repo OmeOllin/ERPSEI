@@ -912,10 +912,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 							values: new { area = "Identity", userId = user.Id, code = userCode },
 							protocol: Request.Scheme)??string.Empty;
 
-						_emailSender.SendEmailAsync(
-							emp.Email,
-							_strLocalizer["EmailSubject"],
-							$"{_strLocalizer["EmailBodyFP"]} <a href='{HtmlEncoder.Default.Encode(userURL)}'>{_strLocalizer["EmailBodySP"]}</a>. " +
+						string emailBody = $"" +
+							$"{_strLocalizer["EmailBodyFP"]} {_strLocalizer["EmailBodySP"]} {HtmlEncoder.Default.Encode(userURL)}" +
 							$"<br />" +
 							$"<br />" +
 							$"{_strLocalizer["EmailBodyTP"]}" +
@@ -926,8 +924,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 							$"Password: {password}" +
 							$"<br />" +
 							$"<br />" +
-							$"{_strLocalizer["EmailBodyFOP"]}"
-						);
+							$"{_strLocalizer["EmailBodyFOP"]}";
+
+                        _emailSender.SendEmailAsync(emp.Email,_strLocalizer["EmailSubject"], emailBody);
 
 						resp.TieneError = false;
 						resp.Mensaje = _strLocalizer["EmpleadoInvitadoSuccessfully"];

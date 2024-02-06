@@ -121,7 +121,7 @@
     <value>Por favor confirme su cuenta dando</value>
   </data>
   <data name="EmailBodySP" xml:space="preserve">
-    <value>clic aquí</value>
+    <value>clic en el siguiente enlace:</value>
   </data>
   <data name="EmailChangeFails" xml:space="preserve">
     <value>Su correo electrónico no se cambió.</value>

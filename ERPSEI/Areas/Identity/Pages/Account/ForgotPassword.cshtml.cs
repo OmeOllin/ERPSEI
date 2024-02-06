@@ -11,6 +11,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Microsoft.Extensions.Localization;
 using ERPSEI.Data.Entities;
+using System.Text.Encodings.Web;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
 {
@@ -72,10 +73,11 @@ namespace ERPSEI.Areas.Identity.Pages.Account
                     values: new { area = "Identity", code },
                     protocol: Request.Scheme);
 
-                _emailSender.SendEmailAsync(
-                    Input.Email,
-                    _localizer["EmailSubject"],
-                    $"{_localizer["EmailBodyFP"]} <a href='{callbackUrl}'>{_localizer["EmailBodySP"]}</a>.");
+                callbackUrl = HtmlEncoder.Default.Encode(callbackUrl);
+
+                string emailBody = $"{_localizer["EmailBodyFP"]} {_localizer["EmailBodySP"]} {callbackUrl}";
+
+                _emailSender.SendEmailAsync(Input.Email, _localizer["EmailSubject"], emailBody);
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }
