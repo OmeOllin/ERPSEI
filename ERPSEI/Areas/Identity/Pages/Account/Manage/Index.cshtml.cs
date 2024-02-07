@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
-using static ERPSEI.Areas.Catalogos.Pages.GestionDeTalentoModel;
 
 namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 {

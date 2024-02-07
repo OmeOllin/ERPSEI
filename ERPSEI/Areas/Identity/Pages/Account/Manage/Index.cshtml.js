@@ -1,10 +1,4 @@
-﻿// Loaded via <script> tag, create shortcut to access PDF.js exports.
-var pdfjsLib = window['pdfjs-dist/build/pdf'];
-
-// The workerSrc property shall be specified.
-pdfjsLib.GlobalWorkerOptions.workerSrc = '../../../lib/pdfjs/pdf.worker.js';
-
-const maxFileSizeInBytes = 5242880; //5mb = (5 * 1024) * 1024;
+﻿const maxFileSizeInBytes = 5242880; //5mb = (5 * 1024) * 1024;
 const oneMegabyteSizeInBytes = 1048576; // 1mb = (1 * 1024) * 1024
 
 document.addEventListener("DOMContentLoaded", async function (event) {
