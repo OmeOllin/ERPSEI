@@ -129,8 +129,14 @@
   <data name="DisabilitiesMenu" xml:space="preserve">
     <value>Incapacidades</value>
   </data>
+  <data name="EmpresasCatalogMenu" xml:space="preserve">
+    <value>Empresas</value>
+  </data>
   <data name="ERPMenu" xml:space="preserve">
     <value>ERP</value>
+  </data>
+  <data name="FacturacionMenu" xml:space="preserve">
+    <value>Facturación</value>
   </data>
   <data name="HomeMenu" xml:space="preserve">
     <value>Inicio</value>

@@ -1,24 +1,86 @@
 ﻿@using ERPSEI.Data.Entities
+@using ERPSEI.Data.Managers;
+@using ERPSEI.Data.Entities.Empleados;
 @using Microsoft.AspNetCore.Mvc.Localization
 @inject SignInManager<AppUser> SignInManager
 @inject AppUserManager UserManager
 @inject IViewLocalizer Localizer;
+@inject IEmpleadoManager EmpleadoManager;
+@inject IArchivoEmpleadoManager ArchivoEmpleadoManager;
+@{
+    string? profilePic = string.Empty;
+    if (SignInManager.IsSignedIn(User) && !(this.Context.Session.GetString("profilePic") != null && this.Context.Session.GetString("profilePic")?.Length >= 1))
+    {
+        ProfilePicture? profilePicFile;
+        AppUser? u = UserManager.FindByNameAsync(User.Identity?.Name??"").Result;
+        Empleado? e = EmpleadoManager.GetEmpleadoLogin(u?.EmpleadoId??0).Result;
 
+        profilePicFile = await ArchivoEmpleadoManager.GetProfilePicByEmpleadoId(u?.EmpleadoId??0);
+
+        //Si el archivo tiene contenido
+        if (profilePicFile != null && profilePicFile.Archivo.Length >= 1)
+        {
+            //Asigna la información del archivo al arreglo de datos.
+            string b64 = Convert.ToBase64String(profilePicFile.Archivo);
+            bool isJPG = profilePicFile.Extension == "jpg" || profilePicFile.Extension == "jpeg";
+            bool isPNG = profilePicFile.Extension == "png";
+
+            if (isJPG)
+            {
+                profilePic = $"data:image/jpeg;base64,{b64}";
+            }
+            else if (isPNG)
+            {
+                profilePic = $"data:image/png;base64,{b64}";
+            }
+        }
+        
+        this.Context.Session.SetString("profilePic", profilePic);
+    }
+
+    profilePic = (this.Context.Session.GetString("profilePic") != null && this.Context.Session.GetString("profilePic")?.Length >= 1) ? this.Context.Session.GetString("profilePic") : "/img/default_profile_pic.png";
+}
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
-            <i class="bi bi-person-circle"></i> @Localizer["Greeting"] <b>@User.Identity?.Name</b>!
-        </a>
+    <li class="nav-item dropdown">
+        <div class="dropstart">
+            <a class="nav-link" href="#" id="navbarDropdownMenuLinkAccount" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img id="profilePicContainerA" class="mini-profile-pic" src="@profilePic" />
+            </a>
+            <!-- Dropdown menu -->
+            <div class="dropdown-menu shadow-lg mt-0 dropdown-dynamic-width-one-column" aria-labelledby="navbarDropdownMenuLinkAccount">
+                <div class="container">
+                    <div class="row my-2">
+                        <div class="col-12 mb-3 mb-lg-0">
+                            <div class="list-group list-group-flush">
+                                <p class="list-group-item text-center">
+                                    <img id="profilePicContainerB" class="profile-pic" src="@profilePic" />
+                                    <span class="mb-3"><b>@User.Identity?.Name</b></span>
+                                </p>
+                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+                                    <i class="bi bi-person-fill"></i> @Localizer["Profile"]
+                                </a>
+                                <form class="form-inline" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="get">
+                                    <button type="submit" class="nav-link btn btn-link text-dark">
+                                        <i class="bi bi-box-arrow-left"></i> @Localizer["Logout"]
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+        </div>
     </li>
-    <li class="nav-item">
+    @* <li class="nav-item">
         <form class="form-inline" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="get" >
             <button type="submit" class="nav-link btn btn-link text-dark">
                 <i class="bi bi-box-arrow-left"></i> @Localizer["Logout"]
             </button>
         </form>
-    </li>
+    </li> *@
 }
 else
 {

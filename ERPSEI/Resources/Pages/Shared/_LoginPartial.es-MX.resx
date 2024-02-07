@@ -126,6 +126,9 @@
   <data name="Logout" xml:space="preserve">
     <value>Cerrar Sesión</value>
   </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Ir a perfil</value>
+  </data>
   <data name="Register" xml:space="preserve">
     <value>Registrarse</value>
   </data>

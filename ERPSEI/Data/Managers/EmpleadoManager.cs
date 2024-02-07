@@ -134,6 +134,14 @@ namespace ERPSEI.Data.Managers
 				.ToListAsync();
 		}
 
+		public async Task<Empleado?> GetEmpleadoLogin(int id)
+		{
+			return await db.Empleados
+				.Where(e => e.Id == id)
+				.Where(e => e.Deshabilitado == 0)
+                .FirstOrDefaultAsync();
+		}
+
 		public async Task<Empleado?> GetEmpleadoOrganigramaAsync(int id)
 		{
 			return await db.Empleados

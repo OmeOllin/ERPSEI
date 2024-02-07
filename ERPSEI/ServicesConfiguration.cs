@@ -91,6 +91,9 @@ namespace ERPSEI
                     return factory.Create(nameof(ValidationsLocalization), assemblyName.Name ?? "");
                 };
 			});
+
+            _builder.Services.AddSession();
+            _builder.Services.AddMemoryCache();
             _builder.Services.AddMvc(options =>
             {
                 var assemblyName = new AssemblyName(typeof(ModelBindingMessages).GetTypeInfo().Assembly.FullName ?? "");

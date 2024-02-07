@@ -16,27 +16,39 @@ namespace ERPSEI.Pages.Shared
         public static string Catalogos => "Catalogos";
         public static string CatalogosNavClass(ViewContext viewContext) => PageNavClass(viewContext, Catalogos);
 
+        #region Recursos Humanos
+
         public static string GestionDeTalento => "GestionDeTalento";
         public static string GestionDeTalentoNavClass(ViewContext viewContext) => PageNavClass(viewContext, GestionDeTalento);
 
-        public static string CatalogoPuestos => "CatalogoPuestos";
+        public static string CatalogoPuestos => "Puestos";
         public static string CatalogoPuestosNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoPuestos);
 
-		public static string CatalogoAreas => "CatalogoAreas";
+		public static string CatalogoAreas => "Areas";
 		public static string CatalogoAreasNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoAreas);
 
-		public static string CatalogoOficinas => "CatalogoOficinas";
+		public static string CatalogoOficinas => "Oficinas";
 		public static string CatalogoOficinasNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoOficinas);
 
-		public static string CatalogoSubareas => "CatalogoSubareas";
+		public static string CatalogoSubareas => "Subareas";
 		public static string CatalogoSubareasNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoSubareas);
 
-		public static string CatalogoUsuarios => "CatalogoUsuarios";
+		public static string CatalogoUsuarios => "Usuarios";
 		public static string CatalogoUsuariosNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoUsuarios);
 
+        #endregion
 
-		public static string ERP => "ERP";
+        #region Facturacion
+
+        public static string CatalogoEmpresas => "Empresas";
+        public static string CatalogoEmpresasNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoEmpresas);
+
+        #endregion
+
+        public static string ERP => "ERP";
         public static string ERPNavClass(ViewContext viewContext) => PageNavClass(viewContext, ERP);
+
+        #region Recursos Humanos
 
         public static string Organigrama => "Organigrama";
         public static string OrganigramaNavClass(ViewContext viewContext) => PageNavClass(viewContext, Organigrama);
@@ -49,6 +61,8 @@ namespace ERPSEI.Pages.Shared
 
         public static string Permisos => "Permisos";
         public static string PermisosNavClass(ViewContext viewContext) => PageNavClass(viewContext, Permisos);
+
+        #endregion
 
 
         public static string PageNavClass(ViewContext viewContext, string page)

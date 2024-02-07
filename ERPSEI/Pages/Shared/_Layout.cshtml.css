@@ -50,3 +50,49 @@ button.accept-policy {
 .brandimage {
     max-width: 70px;
 }
+
+/*xxl*/
+@media (min-width: 1201px) {
+    .dropdown-dynamic-width-two-columns {
+        min-width: 600px;
+    }
+    .dropdown-dynamic-width-one-column {
+        min-width: 300px;
+    }
+}
+/*xl*/
+@media (max-width: 1200px) {
+    .dropdown-dynamic-width-two-columns {
+        min-width: 600px;
+    }
+    .dropdown-dynamic-width-one-column {
+        min-width: 300px;
+    }
+}
+/*l*/
+@media (max-width: 992px) {
+    .dropdown-dynamic-width-two-columns {
+        min-width: max-content;
+    }
+    .dropdown-dynamic-width-one-column {
+        min-width: max-content;
+    }
+}
+/*m*/
+@media (max-width: 768px) {
+    .dropdown-dynamic-width-two-columns {
+        min-width: max-content;
+    }
+    .dropdown-dynamic-width-one-column {
+        min-width: max-content;
+    }
+}
+/*s*/
+@media (max-width: 576px) {
+    .dropdown-dynamic-width-two-columns {
+        min-width: max-content;
+    }
+    .dropdown-dynamic-width-one-column {
+        min-width: max-content;
+    }
+}

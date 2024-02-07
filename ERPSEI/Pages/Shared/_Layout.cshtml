@@ -15,7 +15,144 @@
 </head>
 <body>
     <header>
+        @* <nav class="navbar navbar-expand-lg navbar-light bg-light"> *@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
+            <!-- Container wrapper -->
+            <div class="container">
+                <!-- Brand logo -->
+                <a class="navbar-brand" asp-area="" asp-page="/Index">
+                    <img class="brandimage" src="@Context.Request.Scheme://@Context.Request.Host/img/brand_dark.png" />
+                </a>
+                <!-- Toggle button -->
+                <button class="navbar-toggler px-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarExample3" aria-controls="navbarExample3" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <!-- Collapsible wrapper -->
+                <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between" id="navbarExample3">
+                    <!-- Left links -->
+                    <ul class="navbar-nav flex-grow-1">
+                        @if (!SignInManager.IsSignedIn(User))
+                        {
+                            //Si el usuario no está logueado, muestra menú básico
+                            <li class="nav-item">
+                                <a class="nav-link @_LayoutPages.InicioNavClass(ViewContext)" asp-area="" asp-page="/Index">
+                                    <i class="bi bi-house-door-fill"></i> @Localizer["HomeMenu"]
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @_LayoutPages.AvisoPrivacidadNavClass(ViewContext)" asp-area="" asp-page="/Privacy">
+                                    <i class="bi bi-shield-fill-check"></i> @Localizer["PrivacyMenu"]
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @_LayoutPages.OrganigramaNavClass(ViewContext)" asp-area="ERP" asp-page="/Organigrama">
+                                    <i class="bi bi-diagram-3-fill"></i> @Localizer["OrganizationChartMenu"]
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            @if (User.IsInRole(ServicesConfiguration.RolMaster) || User.IsInRole(ServicesConfiguration.RolAdministrador))
+                            {
+                                //Si el usuario es Master o Admin, entonces muestra la sección de los catálogos
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle @_LayoutPages.CatalogosNavClass(ViewContext)" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-list-task"></i> @Localizer["CatalogsMenu"]
+                                    </a>
+                                    <!-- Dropdown menu -->
+                                    <div class="dropdown-menu shadow-lg mt-0 dropdown-dynamic-width-two-columns" aria-labelledby="navbarDropdownMenuLink">
+                                        <div class="container">
+                                            <div class="row my-2">
+                                                <div class="col-sm-12 col-md-12 col-lg-6 mb-3 mb-lg-0">
+                                                    <div class="list-group list-group-flush">
+                                                        <p class="mb-0 list-group-item text-uppercase text-center">
+                                                            <b>@Localizer["HumanResourcesMenu"]</b>
+                                                        </p>
+                                                        <a class="dropdown-item p-2 @_LayoutPages.GestionDeTalentoNavClass(ViewContext)" asp-area="Catalogos" asp-page="/GestionDeTalento">
+                                                            <i class="bi bi-people-fill"></i> @Localizer["PersonalCatalogMenu"]
+                                                        </a>
+                                                        <a class="dropdown-item p-2 @_LayoutPages.CatalogoUsuariosNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Usuarios">
+                                                            <i class="bi bi-person-fill-gear"></i> @Localizer["UsersCatalogMenu"]
+                                                        </a>
+                                                        <a class="dropdown-item p-2 @_LayoutPages.CatalogoPuestosNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Puestos">
+                                                            <i class="bi bi-briefcase-fill"></i> @Localizer["PositionsCatalogMenu"]
+                                                        </a>
+                                                        <a class="dropdown-item p-2 @_LayoutPages.CatalogoAreasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Areas">
+                                                            <i class="bi bi-boxes"></i> @Localizer["AreasCatalogMenu"]
+                                                        </a>
+                                                        <a class="dropdown-item p-2 @_LayoutPages.CatalogoSubareasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Subareas">
+                                                            <i class="bi bi-box"></i> @Localizer["SubareasCatalogMenu"]
+                                                        </a>
+                                                        <a class="dropdown-item p-2 @_LayoutPages.CatalogoOficinasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Oficinas">
+                                                            <i class="bi bi-building-fill"></i> @Localizer["OfficesCatalogMenu"]
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 col-md-12 col-lg-6 mb-3 mb-lg-0">
+                                                    <div class="list-group list-group-flush">
+                                                        <p class="mb-0 list-group-item text-uppercase text-center">
+                                                            <b>@Localizer["FacturacionMenu"]</b>
+                                                        </p>
+                                                        <a class="dropdown-item p-2 @_LayoutPages.CatalogoEmpresasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Empresas">
+                                                            <i class="bi bi-buildings"></i> @Localizer["EmpresasCatalogMenu"]
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                            if (User.IsInRole(ServicesConfiguration.RolMaster) ||
+                                User.IsInRole(ServicesConfiguration.RolAdministrador) ||
+                                User.IsInRole(ServicesConfiguration.RolUsuario)
+                               )
+                            {
+                                //Si el usuario es Master, Administrador o Usuario, muestra el menú ERP
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle @_LayoutPages.ERPNavClass(ViewContext)" href="#" id="navbarDropdownMenuLinkERP" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-columns-gap"></i> @Localizer["ERPMenu"]
+                                    </a>
+                                    <!-- Dropdown menu -->
+                                    <div class="dropdown-menu shadow-lg mt-0 dropdown-dynamic-width-one-column" aria-labelledby="navbarDropdownMenuLinkERP">
+                                        <div class="container">
+                                            <div class="row my-2">
+                                                <div class="col-12 mb-3 mb-lg-0">
+                                                    <div class="list-group list-group-flush">
+                                                        <p class="mb-0 list-group-item text-uppercase text-center">
+                                                            <b>@Localizer["HumanResourcesMenu"]</b>
+                                                        </p>
+                                                        <a class="dropdown-item p-2 @_LayoutPages.OrganigramaNavClass(ViewContext)" asp-area="ERP" asp-page="/Organigrama">
+                                                            <i class="bi bi-diagram-3-fill"></i> @Localizer["OrganizationChartMenu"]
+                                                        </a>
+                                                        <a class="dropdown-item p-2 @_LayoutPages.VacacionesNavClass(ViewContext)" asp-area="" asp-page="/Building">
+                                                            <i class="bi bi-airplane-engines-fill"></i> @Localizer["VacationMenu"]
+                                                        </a>
+                                                        <a class="dropdown-item p-2 @_LayoutPages.IncapacidadesNavClass(ViewContext)" asp-area="" asp-page="/Building">
+                                                            <i class="bi bi-heart-pulse-fill"></i> @Localizer["DisabilitiesMenu"]
+                                                        </a>
+                                                        <a class="dropdown-item p-2 @_LayoutPages.PermisosNavClass(ViewContext)" asp-area="" asp-page="/Building">
+                                                            <i class="bi bi-calendar-check-fill"></i> @Localizer["PermissionsMenu"]
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        }
+                    </ul>
+                    <!-- Left links -->
+                    <!-- Right links-->
+                    <partial name="_LoginPartial" />
+                    <!-- Right links-->
+                </div>
+                <!-- Collapsible wrapper -->
+            </div>
+            <!-- Container wrapper -->
+        </nav>
+        @* <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-page="/Index">
                     <img class="brandimage" src="@Context.Request.Scheme://@Context.Request.Host/img/brand_dark.png" />
@@ -51,28 +188,45 @@
                             {
                                 //Si el usuario es Master o Admin, entonces muestra la sección de los catálogos
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle @_LayoutPages.CatalogosNavClass(ViewContext)" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <a class="nav-link dropdown-toggle @_LayoutPages.CatalogosNavClass(ViewContext)" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
                                         <i class="bi bi-list-task"></i> @Localizer["CatalogsMenu"]
                                     </a>
                                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                        <a class="dropdown-item @_LayoutPages.GestionDeTalentoNavClass(ViewContext)" asp-area="Catalogos" asp-page="/GestionDeTalento">
-                                            <i class="bi bi-people-fill"></i> @Localizer["PersonalCatalogMenu"]
-                                        </a>
-                                        <a class="dropdown-item @_LayoutPages.CatalogoUsuariosNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Usuarios">
-                                            <i class="bi bi-person-fill-gear"></i> @Localizer["UsersCatalogMenu"]
-                                        </a>
-                                        <a class="dropdown-item @_LayoutPages.CatalogoPuestosNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Puestos">
-                                            <i class="bi bi-briefcase-fill"></i> @Localizer["PositionsCatalogMenu"]
-                                        </a>
-                                        <a class="dropdown-item @_LayoutPages.CatalogoAreasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Areas">
-                                            <i class="bi bi-boxes"></i> @Localizer["AreasCatalogMenu"]
-                                        </a>
-                                        <a class="dropdown-item @_LayoutPages.CatalogoSubareasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Subareas">
-                                            <i class="bi bi-box"></i> @Localizer["SubareasCatalogMenu"]
-                                        </a>
-                                        <a class="dropdown-item @_LayoutPages.CatalogoOficinasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Oficinas">
-                                            <i class="bi bi-building-fill"></i> @Localizer["OfficesCatalogMenu"]
-                                        </a>
+                                        <div class="dropend">
+                                            <a class="dropdown-item nav-link dropdown-toggle p-3" data-bs-toggle="dropdown" href="#">
+                                                <i class="bi bi-file-person-fill"></i> @Localizer["HumanResourcesMenu"]
+                                            </a>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item p-2 @_LayoutPages.GestionDeTalentoNavClass(ViewContext)" asp-area="Catalogos" asp-page="/GestionDeTalento">
+                                                    <i class="bi bi-people-fill"></i> @Localizer["PersonalCatalogMenu"]
+                                                </a>
+                                                <a class="dropdown-item p-2 @_LayoutPages.CatalogoUsuariosNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Usuarios">
+                                                    <i class="bi bi-person-fill-gear"></i> @Localizer["UsersCatalogMenu"]
+                                                </a>
+                                                <a class="dropdown-item p-2 @_LayoutPages.CatalogoPuestosNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Puestos">
+                                                    <i class="bi bi-briefcase-fill"></i> @Localizer["PositionsCatalogMenu"]
+                                                </a>
+                                                <a class="dropdown-item p-2 @_LayoutPages.CatalogoAreasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Areas">
+                                                    <i class="bi bi-boxes"></i> @Localizer["AreasCatalogMenu"]
+                                                </a>
+                                                <a class="dropdown-item p-2 @_LayoutPages.CatalogoSubareasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Subareas">
+                                                    <i class="bi bi-box"></i> @Localizer["SubareasCatalogMenu"]
+                                                </a>
+                                                <a class="dropdown-item p-2 @_LayoutPages.CatalogoOficinasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Oficinas">
+                                                    <i class="bi bi-building-fill"></i> @Localizer["OfficesCatalogMenu"]
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="dropend">
+                                            <a class="dropdown-item nav-link dropdown-toggle p-3" data-bs-toggle="dropdown" href="#">
+                                                <i class="bi bi-receipt"></i> @Localizer["FacturacionMenu"]
+                                            </a>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item p-2 @_LayoutPages.CatalogoEmpresasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Empresas">
+                                                    <i class="bi bi-buildings"></i> @Localizer["EmpresasCatalogMenu"]
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </li>
                             }
@@ -85,35 +239,28 @@
                                 <li class="nav-item dropdown">
                                     <!--Los menues que tengan otro menú hijo deben llevar el atributo data-bs-auto-close="outside" para que el menú padre permanezca abierto al dar clic-->
                                     <a class="nav-link dropdown-toggle @_LayoutPages.ERPNavClass(ViewContext)" href="#" id="navbarDropdownMenuLinkERP" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-                                        <i class="bi bi-buildings-fill"></i> @Localizer["ERPMenu"]
+                                        <i class="bi bi-columns-gap"></i> @Localizer["ERPMenu"]
                                     </a>
                                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkERP">
                                         <div class="dropend">
-                                            <a class="dropdown-item nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
+                                            <a class="dropdown-item nav-link dropdown-toggle p-3" data-bs-toggle="dropdown" href="#">
                                                 <i class="bi bi-file-person-fill"></i> @Localizer["HumanResourcesMenu"]
                                             </a>
                                             <div class="dropdown-menu">
-                                                <a class="dropdown-item @_LayoutPages.OrganigramaNavClass(ViewContext)" asp-area="ERP" asp-page="/Organigrama">
+                                                <a class="dropdown-item p-2 @_LayoutPages.OrganigramaNavClass(ViewContext)" asp-area="ERP" asp-page="/Organigrama">
                                                     <i class="bi bi-diagram-3-fill"></i> @Localizer["OrganizationChartMenu"]
                                                 </a>
-                                                <a class="dropdown-item @_LayoutPages.VacacionesNavClass(ViewContext)" asp-area="" asp-page="/Building">
+                                                <a class="dropdown-item p-2 @_LayoutPages.VacacionesNavClass(ViewContext)" asp-area="" asp-page="/Building">
                                                     <i class="bi bi-airplane-engines-fill"></i> @Localizer["VacationMenu"]
                                                 </a>
-                                                <a class="dropdown-item @_LayoutPages.IncapacidadesNavClass(ViewContext)" asp-area="" asp-page="/Building">
+                                                <a class="dropdown-item p-2 @_LayoutPages.IncapacidadesNavClass(ViewContext)" asp-area="" asp-page="/Building">
                                                     <i class="bi bi-heart-pulse-fill"></i> @Localizer["DisabilitiesMenu"]
                                                 </a>
-                                                <a class="dropdown-item @_LayoutPages.PermisosNavClass(ViewContext)" asp-area="" asp-page="/Building">
+                                                <a class="dropdown-item p-2 @_LayoutPages.PermisosNavClass(ViewContext)" asp-area="" asp-page="/Building">
                                                     <i class="bi bi-calendar-check-fill"></i> @Localizer["PermissionsMenu"]
                                                 </a>
                                             </div>
                                         </div>
-                                        @* <div class="dropend">
-                                            <a class="dropdown-item dropdown-toggle text-dark" data-bs-toggle="dropdown" href="#">@Localizer["AccountingMenu"]</a>
-                                            <div class="dropdown-menu">
-                                            <a class="dropdown-item text-dark" asp-area="" asp-page="/Building">@Localizer["Item1"]</a>
-                                            <a class="dropdown-item text-dark" asp-area="" asp-page="/Building">@Localizer["Item2"]</a>
-                                            </div>
-                                        </div> *@
                                     </div>
                                 </li>
                             }
@@ -122,7 +269,7 @@
                     <partial name="_LoginPartial" />
                 </div>
             </div>
-        </nav>
+        </nav> *@
     </header>
     <div class="container">
         <main role="main" class="pb-3">

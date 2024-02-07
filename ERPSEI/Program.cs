@@ -51,6 +51,8 @@ using(IServiceScope scope = app.Services.CreateScope())
     }
 }
 
+app.UseSession();
+
 app.UseRequestLocalization();
 
 // Configure the HTTP request pipeline.

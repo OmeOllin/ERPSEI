@@ -55,6 +55,13 @@ namespace ERPSEI.Data.Managers
 			if (archivos != null && archivos.Count >= 1) { db.ArchivosEmpleado.RemoveRange(archivos); }
 		}
 
+        public async Task<ProfilePicture?> GetProfilePicByEmpleadoId(int empleadoId)
+        {
+            FormattableString sql = $"SELECT Id, Nombre, Extension, Archivo FROM ArchivosEmpleado WHERE EmpleadoId = {empleadoId} AND TipoArchivoId = {FileTypes.ImagenPerfil}";
+            var resp = await db.Database.SqlQuery<ProfilePicture>(sql).FirstOrDefaultAsync();
+            return resp;
+        }
+
 		public async Task<List<SemiArchivoEmpleado>> GetFilesByEmpleadoIdAsync(int empleadoId)
         {
             FormattableString sql = $"SELECT Id, Nombre, Extension, 0x AS Archivo, DATALENGTH(Archivo) AS FileSize, TipoArchivoId, EmpleadoId FROM ArchivosEmpleado WHERE EmpleadoId = {empleadoId}";
