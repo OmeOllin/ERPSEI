@@ -9,6 +9,11 @@ document.addEventListener("DOMContentLoaded", async function (event) {
     hideLoading()
 });
 
+//Functión para capturar el clic del botón guardar
+function onUpdateProfileButtonClick() {
+    showLoading();
+}
+
 //Función para capturar el clic en el botón de edición, que dispara la apertura del selector de archivo.
 function onEditDocumentClick(button) {
     let inputName = button.getAttribute("inputName");
