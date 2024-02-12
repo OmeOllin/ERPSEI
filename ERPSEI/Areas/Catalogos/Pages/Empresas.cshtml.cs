@@ -127,6 +127,23 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Display(Name = "PhoneNumberField")]
 			public string Telefono { get; set; } = string.Empty;
 
+            [DataType(DataType.Text)]
+            [StringLength(100, ErrorMessage = "FieldLength", MinimumLength = 2)]
+            [Required(ErrorMessage = "Required")]
+            [Display(Name = "ActividadEconomicaField")]
+            public string ActividadEconomica {  get; set; } = string.Empty;
+
+            [DataType(DataType.Text)]
+            [StringLength(100, ErrorMessage = "FieldLength", MinimumLength = 2)]
+            [Required(ErrorMessage = "Required")]
+            [Display(Name = "ObjetoSocialField")]
+            public string ObjetoSocial {  get; set; } = string.Empty;
+
+            [DataType(DataType.Text)]
+            [StringLength(100, ErrorMessage = "FieldLength", MinimumLength = 2)]
+            [Display(Name = "URLWebField")]
+            public string URLWeb { get; set; } = string.Empty;
+
 			public ArchivoModel?[] Archivos { get; set; } = Array.Empty<ArchivoModel>();
 		}
 
@@ -167,10 +184,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
         private async Task<string> GetDatosAdicionalesEmpresa(int idEmpresa)
         {
-            string jsonResponse;
+            string jsonResponse = string.Empty;
             Empresa? e = await _empresaManager.GetByIdWithAdicionalesAsync(idEmpresa);
 
-            if (e == null) { throw new Exception($"No se encontró información de la empresa id {idEmpresa}"); }
+            if (e == null) { return jsonResponse; }
 
 			List<string> jsonBancos;
 			jsonBancos = getListJsonBancos(e.BancosEmpresa);
@@ -454,16 +471,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			//Valido que no exista empresa que tenga los mismos datos.
 			coincidences = emps.Where(e => (e.CorreoGeneral ?? "").Length >= 1 && e.CorreoGeneral == emp.CorreoGeneral).ToList();
-			if (coincidences.Count() >= 1) { return $"Ya existe una empresa registrada con el correo general {emp.CorreoGeneral}. Por favor verifique la información"; }
-
-			coincidences = emps.Where(e => (e.CorreoBancos ?? "").Length >= 1 && e.CorreoBancos == emp.CorreoBancos).ToList();
-			if (coincidences.Count() >= 1) { return $"Ya existe una empresa registrada con el correo bancos {emp.CorreoBancos}. Por favor verifique la información"; }
-
-			coincidences = emps.Where(e => (e.CorreoFiscal ?? "").Length >= 1 && e.CorreoFiscal == emp.CorreoFiscal).ToList();
-			if (coincidences.Count() >= 1) { return $"Ya existe una empresa registrada con el correo fiscal {emp.CorreoFiscal}. Por favor verifique la información"; }
+            if (coincidences.Count() >= 1) { return $"{_strLocalizer["ErrorEmpresaExistenteA"]} {_strLocalizer["RazonSocial"]} {emp.RazonSocial}. {_strLocalizer["ErrorEmpresaExistenteB"]}."; }
 
 			coincidences = emps.Where(e => (e.RFC ?? "").Length >= 1 && e.RFC == emp.RFC).ToList();
-			if (coincidences.Count() >= 1) { return $"Ya existe una empresa registrada con el RFC {emp.RFC}. Por favor verifique la información"; }
+			if (coincidences.Count() >= 1) { return $"{_strLocalizer["ErrorEmpresaExistenteA"]} {_strLocalizer["RFC"]} {emp.RFC}. {_strLocalizer["ErrorEmpresaExistenteB"]}."; }
 
 			return string.Empty;
 		}
@@ -487,6 +498,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				empresa.RazonSocial = e.RazonSocial;
 				empresa.Origen = e.Origen;
 				empresa.Nivel = e.Nivel;
+				empresa.FechaInicioOperacion = e.FechaInicioOperacion;
 				empresa.RFC = e.RFC ?? string.Empty;
 				empresa.DomicilioFiscal = e.DomicilioFiscal ?? string.Empty;
 				empresa.Administrador = e.Administrador ?? string.Empty;
@@ -495,6 +507,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				empresa.CorreoBancos = e.CorreoBancos;
 				empresa.CorreoFiscal = e.CorreoFiscal;
 				empresa.Telefono = e.Telefono;
+				empresa.ActividadEconomica = e.ActividadEconomica;
+				empresa.ObjetoSocial = e.ObjetoSocial;
+				empresa.URLWeb = e.URLWeb;
 
 				if (idEmpresa >= 1)
 				{
@@ -584,28 +599,36 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		{
 			string validationMsg = string.Empty;
 
-			EmpresaModel e = new EmpresaModel() {
+            DateTime fi;
+            DateTime.TryParse(row[3].ToString(), out fi);
+
+            EmpresaModel e = new EmpresaModel() {
 				RazonSocial = row[0].ToString() ?? string.Empty,
-				Origen = row[0].ToString() ?? string.Empty,
-				Nivel = row[0].ToString() ?? string.Empty,
-				RFC = row[20].ToString() ?? string.Empty,
-				DomicilioFiscal = row[0].ToString() ?? string.Empty,
-				Administrador = row[0].ToString() ?? string.Empty,
-				Accionista = row[0].ToString() ?? string.Empty,
-				CorreoGeneral = row[0].ToString() ?? string.Empty,
-				CorreoBancos = row[0].ToString() ?? string.Empty,
-				CorreoFiscal = row[0].ToString() ?? string.Empty,
-				Telefono = row[0].ToString() ?? string.Empty,
+				Origen = row[1].ToString() ?? string.Empty,
+				Nivel = row[2].ToString() ?? string.Empty,
+				FechaInicioOperacion = fi,
+				RFC = row[4].ToString() ?? string.Empty,
+				DomicilioFiscal = row[5].ToString() ?? string.Empty,
+				Administrador = row[6].ToString() ?? string.Empty,
+				Accionista = row[7].ToString() ?? string.Empty,
+				CorreoGeneral = row[8].ToString() ?? string.Empty,
+				CorreoBancos = row[9].ToString() ?? string.Empty,
+				CorreoFiscal = row[10].ToString() ?? string.Empty,
+				Telefono = row[11].ToString() ?? string.Empty,
+				ActividadEconomica = row[12].ToString() ?? string.Empty,
+				ObjetoSocial = row[13].ToString() ?? string.Empty,
+				URLWeb = row[14].ToString() ?? string.Empty
 			};
 
-			List<ArchivoModel> archivos = new List<ArchivoModel>();
-			//Crea los archivos de la empresa.
-			foreach (Data.Entities.Empresas.FileTypes i in Enum.GetValues(typeof(Data.Entities.Empresas.FileTypes)))
-			{
-				archivos.Add(new ArchivoModel() { extension = "", imgSrc = "", nombre = "", tipoArchivoId = (int)i });
-			}
 
-			e.Archivos = archivos.ToArray();
+			//List<ArchivoModel> archivos = new List<ArchivoModel>();
+			////Crea los archivos de la empresa.
+			//foreach (Data.Entities.Empresas.FileTypes i in Enum.GetValues(typeof(Data.Entities.Empresas.FileTypes)))
+			//{
+			//	archivos.Add(new ArchivoModel() { extension = "", imgSrc = "", nombre = "", tipoArchivoId = (int)i });
+			//}
+
+			//e.Archivos = archivos.ToArray();
 
 			//Valida que no exista una empresa registrada con los mismos datos. En caso de haber, se deja el mensaje en resp.Mensajes para ser mostrado al usuario.
 			validationMsg = await validarSiExisteEmpresa(e, true);

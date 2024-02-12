@@ -14,19 +14,15 @@ namespace ERPSEI.Data.Entities.Empresas
 
 		public string Nivel { get; set; } = string.Empty;
 
+		public DateTime FechaInicioOperacion {  get; set; } = DateTime.MinValue;
+
         public string RFC {  get; set; } = string.Empty;
 
 		public string DomicilioFiscal { get; set; } = string.Empty;
 
-		public string ActividadEconomica {  get; set; } = string.Empty;
-
-		public string ObjetoSocial { get; set; } = string.Empty;
-
 		public string Administrador { get; set; } = string.Empty;
 
 		public string Accionista { get; set; } = string.Empty;
-
-		public string URLWeb {  get; set; } = string.Empty; 
 
 		public string CorreoGeneral { get; set; } = string.Empty;
 
@@ -35,6 +31,12 @@ namespace ERPSEI.Data.Entities.Empresas
 		public string CorreoFiscal { get; set; } = string.Empty;
 
 		public string Telefono { get; set; } = string.Empty;
+
+		public string ActividadEconomica {  get; set; } = string.Empty;
+
+		public string ObjetoSocial { get; set; } = string.Empty;
+
+		public string URLWeb {  get; set; } = string.Empty; 
 
         public int Deshabilitado { get; set; } = 0;
 
