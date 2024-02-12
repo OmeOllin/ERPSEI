@@ -47,12 +47,11 @@ function responseHandler(res) {
 }
 //Función para dar formato al detalle de empresa
 function detailFormatter(index, row) {
-    let h = `<div class="container alert alert-primary">
+    return `<div class="container-fluid alert alert-primary mb-0">
                 <div class="row">
                     
                 </div>
             </div>`;
-    return h;
 }
 //Función para dar formato a los iconos de operación de los registros
 function operateFormatter(value, row, index) {
@@ -120,7 +119,8 @@ function onAgregarClick() {
             tipoArchivoId: a,
             extension: "",
             imgSrc: "",
-            htmlContainer: ""
+            htmlContainer: "",
+            fileSize: 0
         });
     }
 
@@ -206,37 +206,46 @@ function initTable() {
     table.on('all.bs.table', function (e, name, args) {
         console.log(name, args)
     })
-    buttonRemove.click(function () {
-        askConfirmation(dlgDeleteTitle, dlgDeleteQuestion, function () {
-            let oParams = { ids: selections };
+    buttonRemove.click(function () { onDeleteEmpresaClick(); });
+}
+//Función para capturar el click de los botones para dar de baja empresas. Ejecuta una llamada ajax para dar de baja empresas.
+function onDeleteEmpresaClick(ids = null) {
+    askConfirmation(dlgDeleteTitle, dlgDeleteQuestion, function () {
+        let oParams = {};
 
-            doAjax(
-                "/Catalogos/Empresas/DeleteEmpresa",
-                oParams,
-                function (resp) {
-                    if (resp.tieneError) {
-                        showError(dlgDeleteTitle, resp.mensaje);
-                        return;
-                    }
+        if (ids != null) { oParams.ids = ids; }
+        else { oParams.ids = [document.getElementById("inpEmpresaId").value]; }
 
-                    table.bootstrapTable('remove', {
-                        field: 'id',
-                        values: selections
-                    })
-                    selections = [];
+        doAjax(
+            "/Catalogos/Empresas/DisableEmpresas",
+            oParams,
+            function (resp) {
+                if (resp.tieneError) {
+                    showError(dlgDeleteTitle, resp.mensaje);
+                    return;
+                }
+
+                table.bootstrapTable('remove', {
+                    field: 'id',
+                    values: oParams.ids
+                });
+
+                if (ids != null) {
+                    ids = [];
+                    selections = null;
                     buttonRemove.prop('disabled', true);
+                }
 
-                    onBuscarClick();
+                onBuscarClick();
 
-                    showSuccess(dlgDeleteTitle, resp.mensaje);
-                }, function (error) {
-                    showError(dlgDeleteTitle, error);
-                },
-                postOptions
-            );
+                showSuccess(dlgDeleteTitle, resp.mensaje);
+            }, function (error) {
+                showError(dlgDeleteTitle, error);
+            },
+            postOptions
+        );
 
-        });
-    })
+    });
 }
 ////////////////////////////////
 
@@ -350,6 +359,51 @@ function initEmpresaDialog(action, row) {
     telefonoField.value = row.telefono;
     fechaInicioOperacionField.value = row.fechaInicioOperacionJS;
 
+    if (action == NUEVO || (row.hasDatosAdicionales || false)) {
+        establecerDatosAdicionales(row, action);
+        initializeDisableableButtons(false);
+        dlgEmpresaModal.toggle();
+        return;
+    }
+
+    doAjax(
+        "/Catalogos/Empresas/DatosAdicionalesEmpresa",
+        {idEmpresa: row.id},
+        function (resp) {
+            if (resp.tieneError) {
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    let summary = ``;
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                }
+                showError(btnBuscar.innerHTML, resp.mensaje);
+                return;
+            }
+
+            //Se establece el row con los datos adicionales.
+            if (typeof resp.datos == "string" && resp.datos.length >= 1) { resp.datos = JSON.parse(resp.datos); };
+            row.bancos = resp.datos.bancos || [];
+            row.archivos = resp.datos.archivos || [];
+            row.hasDatosAdicionales = true;
+
+            //Actualiza el row para no tener que volver a obtener los datos la próxima vez.
+            table.bootstrapTable('updateByUniqueId', { id: row.id, row: row });
+
+            establecerDatosAdicionales(row, action);
+            initializeDisableableButtons(action == VER);
+            dlgEmpresaModal.toggle();
+
+        }, function (error) {
+            showError("Error", error);
+        },
+        postOptions
+    );
+}
+//Función para establecer los datos adicionales de la empresa
+function establecerDatosAdicionales(row, action) {
+    //Se establecen los bancos
     $("#bodyBancos").html("");
     row.bancos = row.bancos || [];
     let j = 1;
@@ -379,25 +433,25 @@ function initEmpresaDialog(action, row) {
         j++;
     });
 
+    //Se establecen los archivos.
     $("#bodyArchivos").html("");
     row.archivos = row.archivos || [];
     let i = 1;
     row.archivos.forEach(function (a) {
-        let srcElements = (a.imgSrc || "").split(",");
-        let b64 = srcElements.length >= 1 ? srcElements[1]||"" : "";
-
         let containerClass = "document-container-empty";
         let iconClass = "opacity-25";
         let nameClass = "opacity-25";
         let nameHTML = `<div class="overflowed-text">${emptySelectItemText}</div>`;
         let editDisabled = action == VER ? "disabled" : "";
+        let itemVerHTML = "";
 
-        if (b64.length >= 1) {
-            //Si trae base64, agrega un archivo al DOM con la información.
+        if (parseInt(a.fileSize) >= 1) {
+            //Si el tamaño del archivo es mayor o igual a 1 byte, agrega un archivo al DOM con la información.
             containerClass = "document-container-filled";
             iconClass = "document-icon-filled";
             nameClass = "document-name-filled";
             nameHTML = `<div class="overflowed-text">${a.nombre}</div>.<div>${a.extension}</div>`;
+            itemVerHTML = `<li><a class='dropdown-item' onclick='onVerDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-search'></i> ${btnVerTitle}</a></li>`;
         }
 
         $("#bodyArchivos").append(
@@ -407,9 +461,17 @@ function initEmpresaDialog(action, row) {
                     <div id="fileIcon${a.tipoArchivoId}" class="align-self-center col-1 ${iconClass}"><i class='bi bi-file-image' style='font-size:25px'></i></div>
                     <div id="fileName${a.tipoArchivoId}" class="align-self-center col-10 ${nameClass} p-2" style="display:flex; color:dimgray">${nameHTML}</div>
                     <div class="align-self-center col-1">
-                        <input type="file" id="selector${a.tipoArchivoId}" b64="${b64}" sourceName="${a.nombre}.${a.extension}" sourceLength="${(b64||"").length}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-                        <a class='btn btn-sm btn-primary ${editDisabled} mb-1' onclick='onEditDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-pencil-fill'></i></a>
-                        <a class="btn btn-sm btn-primary disableable mb-1" inputName="selector${a.tipoArchivoId}" onclick="onDeleteClick(this);" sourceId="selector${a.tipoArchivoId}" sourceLength="${(a.archivo || []).length}"><i class="bi bi-x-lg"></i></a>
+                        <input type="file" id="selector${a.tipoArchivoId}" sourceId="${a.id}" sourceName="${a.nombre}.${a.extension}" sourceLength="${a.fileSize}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                        <div class="dropdown">
+                            <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-three-dots-vertical success"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                ${itemVerHTML}
+                                <li><a class='dropdown-item ${editDisabled}' onclick='onEditDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-pencil-fill'></i> ${btnEditarTitle}</a></li>
+                                <li><a class="dropdown-item disableable" inputName="selector${a.tipoArchivoId}" onclick="onDeleteClick(this);" sourceId="selector${a.tipoArchivoId}" sourceLength="${a.fileSize}"><i class="bi bi-x-lg"></i> ${btnEliminarTitle}</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>`
@@ -417,9 +479,6 @@ function initEmpresaDialog(action, row) {
 
         i++;
     });
-
-    initializeDisableableButtons(action == VER);
-    dlgEmpleadoModal.toggle();
 }
 //Función para habilitar/deshabilitar los botones de visualización en base a si existe contenido o no para visualizar.
 function initializeDisableableButtons(isConsulta = false) {
@@ -432,7 +491,8 @@ function initializeDisableableButtons(isConsulta = false) {
             let button = buttons[i];
             let inputName = button.getAttribute("inputName");
             let input = document.getElementById(inputName);
-            let sourceLength = (input.getAttribute("b64")||"").length;
+            let sourceLength = (input.getAttribute("b64") || "").length;
+            if (sourceLength <= 0) { sourceLength = parseInt(input.getAttribute("sourceLength") || "0"); }
             let hasFile = sourceLength >= 1;
             if (hasFile && !isConsulta) {
                 button.classList.remove("disabled");
@@ -442,6 +502,14 @@ function initializeDisableableButtons(isConsulta = false) {
             }
         }
     }
+}
+//Función para capturar el clic en el botón de ver, que dispara la visualización del archivo.
+function onVerDocumentClick(button) {
+    let inputName = button.getAttribute("inputName");
+    let input = document.getElementById(inputName);
+    let oParams = {id: input.getAttribute("sourceId")}
+
+    window.open(`/FileViewer?id=${oParams.id}`, "_blank");
 }
 //Función para capturar el clic en el botón de edición, que dispara la apertura del selector de archivo.
 function onEditDocumentClick(button) {
@@ -461,7 +529,7 @@ function onDeleteClick(button) {
         let fileIcon = document.getElementById(fileIconName);
         let fileName = document.getElementById(fileNameName);
 
-        fileInput.files = null;
+        fileInput.value = null;
         fileInput.setAttribute("b64", "");
 
         container.classList.remove("document-container-filled");
@@ -595,15 +663,24 @@ function onGuardarClick() {
     let btnClose = document.getElementById("dlgEmpresaBtnCancelar");
 
     let idField = document.getElementById("inpEmpresaId");
+    let razonSocialField = document.getElementById("inpEmpresaRazonSocial");
     let rfcField = document.getElementById("inpEmpresaRFC");
+    let origenField = document.getElementById("inpEmpresaOrigen");
+    let nivelField = document.getElementById("inpEmpresaNivel");
+    let administradorField = document.getElementById("inpEmpresaAdministrador");
+    let accionistaField = document.getElementById("inpEmpresaAccionista");
+    let domicilioFiscalField = document.getElementById("txtEmpresaDomicilioFiscal");
+    let correoGeneralField = document.getElementById("inpEmpresaCorreoGeneral");
+    let correoBancosField = document.getElementById("inpEmpresaCorreoBancos");
+    let correoFiscalField = document.getElementById("inpEmpresaCorreoFiscal");
+    let telefonoField = document.getElementById("inpEmpresaTelefono");
+    let fechaInicioOperacionField = document.getElementById("inpEmpresaFechaInicioOperacion");
 
     let dlgTitle = document.getElementById("dlgEmpresaTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 
     let files = [];
-    let profilePic = getFile("profilePicSelector");
-    if (profilePic) { files.push(profilePic); }
     $("#bodyArchivos input").each(function (i, a) {
         let id = a.getAttribute("id");
         let file = getFile(id);
@@ -612,7 +689,18 @@ function onGuardarClick() {
 
     let oParams = {
         id: idField.value == nuevoRegistro ? 0 : idField.value,
+        razonSocial: razonSocialField.value.trim(),
         rfc: rfcField.value.trim(),
+        origen: origenField.value.trim(),
+        nivel: nivelField.value.trim(),
+        administrador: administradorField.value.trim(),
+        accionista: accionistaField.value.trim(),
+        domicilioFiscal: domicilioFiscalField.value.trim(),
+        correoGeneral: correoGeneralField.value.trim(),
+        correoBancos: correoBancosField.value.trim(),
+        correoFiscal: correoFiscalField.value.trim(),
+        telefono: telefonoField.value.trim(),
+        fechaInicioOperacion: fechaInicioOperacionField.value,
         archivos: files
     };
 

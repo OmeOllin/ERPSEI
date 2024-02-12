@@ -55,8 +55,10 @@ namespace ERPSEI.Data
 			b.Entity<TipoArchivoEmpresa>()
 				.HasData(
 					new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.CSF, "CSF"),
-					new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.RFC, "RFC")
-				);
+					new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.INE, "INE"),
+                    new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.RFC, "RFC"),
+                    new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.Otro, "Otro")
+                );
 		}
 
 		private void buildEmpleados(ModelBuilder b)
@@ -203,10 +205,6 @@ namespace ERPSEI.Data
 			b.Entity<Oficina>().HasData(dataOficinas);
 		}
 
-		private void buildUsuarios(ModelBuilder b)
-		{
-			//b.Entity<AppUser>().HasOne(u => u.Empleado).WithOne(e => e.User).OnDelete(DeleteBehavior.NoAction);
-		}
 
 	}
 }

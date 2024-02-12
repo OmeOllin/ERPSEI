@@ -18,9 +18,15 @@ namespace ERPSEI.Data.Entities.Empresas
 
 		public string DomicilioFiscal { get; set; } = string.Empty;
 
+		public string ActividadEconomica {  get; set; } = string.Empty;
+
+		public string ObjetoSocial { get; set; } = string.Empty;
+
 		public string Administrador { get; set; } = string.Empty;
 
 		public string Accionista { get; set; } = string.Empty;
+
+		public string URLWeb {  get; set; } = string.Empty; 
 
 		public string CorreoGeneral { get; set; } = string.Empty;
 
@@ -30,7 +36,11 @@ namespace ERPSEI.Data.Entities.Empresas
 
 		public string Telefono { get; set; } = string.Empty;
 
-		public ICollection<ArchivoEmpresa>? ArchivosEmpresa { get; }
+        public int Deshabilitado { get; set; } = 0;
+
+        public ICollection<BancoEmpresa>? BancosEmpresa { get; }
+
+        public ICollection<ArchivoEmpresa>? ArchivosEmpresa { get; }
 
 	}
 }

@@ -55,6 +55,20 @@ namespace ERPSEI.Data.Managers.Empresas
             await db.SaveChangesAsync();
         }
 
+        public async Task DisableByIdAsync(int id)
+        {
+            Empresa? empresa = await GetByIdAsync(id);
+
+            if (empresa != null)
+            {
+                //Deshabilita el empleado
+                empresa.Deshabilitado = 1;
+                
+                db.Update(empresa);
+                await db.SaveChangesAsync();
+            }
+        }
+
         public async Task DeleteByIdAsync(int id)
         {
 			Empresa? e = await GetByIdAsync(id);
@@ -91,11 +105,30 @@ namespace ERPSEI.Data.Managers.Empresas
             }
         }
 
-        public async Task<List<Empresa>> GetAllAsync()
+        public async Task<List<Empresa>> GetAllAsync(
+            string? origen = null,
+            string? nivel = null,
+            string? administrador = null,
+            string? accionista = null
+        )
         {
             return await db.Empresas
+                .Where(e => e.Deshabilitado == 0)
+                .Where(e => e.Origen == origen)
+                .Where(e => e.Nivel == nivel)
+                .Where(e => e.Administrador == administrador)
+                .Where(e => e.Accionista == accionista)
                 .Include(e => e.ArchivosEmpresa)
                 .ToListAsync();
+        }
+
+        public async Task<Empresa?> GetByIdWithAdicionalesAsync(int id)
+        {
+            return await db.Empresas
+                .Where(e => e.Deshabilitado == 0)
+                .Where(e => e.Id == id)
+                .Include(e => e.BancosEmpresa)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<Empresa?> GetByIdAsync(int id)

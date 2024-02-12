@@ -2,9 +2,10 @@
 {
     public enum FileTypes
     {
-        ImagenPerfil = 1,
-        CSF,
-        RFC
+        CSF = 1,
+        INE,
+        RFC,
+        Otro
     }
     public class TipoArchivoEmpresa
     {

@@ -14,7 +14,7 @@ namespace ERPSEI.Data.Managers.Empresas
 
         public Task DeleteByEmpresaIdAsync(int eId);
 
-        public Task<List<ArchivoEmpresa>> GetFilesByEmpresaIdAsync(int eId);
+        public Task<List<SemiArchivoEmpresa>> GetFilesByEmpresaIdAsync(int eId);
 
 		ArchivoEmpresa? GetFileById(string id);
     }

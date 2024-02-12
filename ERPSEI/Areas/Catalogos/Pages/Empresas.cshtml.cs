@@ -1,7 +1,5 @@
 using ERPSEI.Data;
-using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.Empresas;
-using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
@@ -50,8 +48,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		public class EmpresaModel
 		{
 			public int Id { get; set; }
-
-			public IFormFile? ProfilePicture { get; set; }
 
 			[DataType(DataType.Text)]
 			[StringLength(100, ErrorMessage = "FieldLength", MinimumLength = 2)]
@@ -169,26 +165,49 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			InputImportar = new ImportarModel();
 		}
 
-		private async Task<string> getListaEmpresas(FiltroModel? filtro = null)
+        private async Task<string> GetDatosAdicionalesEmpresa(int idEmpresa)
+        {
+            string jsonResponse;
+            Empresa? e = await _empresaManager.GetByIdWithAdicionalesAsync(idEmpresa);
+
+            if (e == null) { throw new Exception($"No se encontró información de la empresa id {idEmpresa}"); }
+
+			List<string> jsonBancos;
+			jsonBancos = getListJsonBancos(e.BancosEmpresa);
+
+            List<string> jsonArchivos;
+            List<SemiArchivoEmpresa> archivos = await _archivoEmpresaManager.GetFilesByEmpresaIdAsync(idEmpresa);
+            jsonArchivos = getListJsonArchivos(archivos);
+
+            jsonResponse = $"{{" +
+								$"\"bancos\": [{string.Join(",", jsonBancos)}], " +
+                                $"\"archivos\": [{string.Join(",", jsonArchivos)}] " +
+                            $"}}";
+
+            return jsonResponse;
+        }
+        private async Task<string> getListaEmpresas(FiltroModel? filtro = null)
 		{
 			string jsonResponse;
 			List<string> jsonEmpresas = new List<string>();
-			List<Empresa> empresas = await _empresaManager.GetAllAsync();
+			List<Empresa> empresas;
 
 			if(filtro != null)
 			{
-				if(filtro.Origen != null) { empresas = empresas.Where(e => e.Origen == filtro.Origen).ToList(); }
-				if (filtro.Nivel != null) { empresas = empresas.Where(e => e.Nivel == filtro.Nivel).ToList(); }
-				if (filtro.Administrador != null) { empresas = empresas.Where(e => e.Administrador == filtro.Administrador).ToList(); }
-				if (filtro.Accionista != null) { empresas = empresas.Where(e => e.Accionista == filtro.Accionista).ToList(); }
+				empresas = await _empresaManager.GetAllAsync(
+					filtro.Origen,
+					filtro.Nivel,
+					filtro.Administrador,
+					filtro.Accionista
+				);
+            }
+			else
+			{
+				empresas = await _empresaManager.GetAllAsync();
 			}
 
 			foreach (Empresa e in empresas)
 			{
-				List<string> jsonArchivos;
-
-				jsonArchivos = getListJsonArchivos(e.ArchivosEmpresa);
-
 				jsonEmpresas.Add(
 					"{" +
 						$"\"id\": {e.Id}," +
@@ -197,13 +216,15 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						$"\"nivel\": \"{e.Nivel}\", " +
 						$"\"rfc\": \"{e.RFC}\", " +
 						$"\"domicilioFiscal\": \"{e.DomicilioFiscal}\", " +
-						$"\"administrador\": \"{e.Administrador}\", " +
+                        $"\"actividadEconomica\": \"{e.ActividadEconomica}\", " +
+                        $"\"objetoSocial\": \"{e.ObjetoSocial}\", " +
+                        $"\"administrador\": \"{e.Administrador}\", " +
 						$"\"accionista\": \"{e.Accionista}\", " +
-						$"\"correoGeneral\": \"{e.CorreoGeneral}\", " +
+                        $"\"URLWeb\": \"{e.URLWeb}\", " +
+                        $"\"correoGeneral\": \"{e.CorreoGeneral}\", " +
 						$"\"correoBancos\": \"{e.CorreoBancos}\", " +
 						$"\"correoFiscal\": \"{e.CorreoFiscal}\", " +
-						$"\"telefono\": \"{e.Telefono}\", " +
-						$"\"archivos\": [{string.Join(",", jsonArchivos)}] " +
+						$"\"telefono\": \"{e.Telefono}\"" +
 					"}"
 				);
 			}
@@ -212,23 +233,45 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return jsonResponse;
 		}
-		private List<string> getListJsonArchivos(ICollection<ArchivoEmpresa>? archivos)
+        private List<string> getListJsonBancos(ICollection<BancoEmpresa>? bancos)
+        {
+            List<string> jsonBancos = new List<string>();
+            if (bancos != null)
+            {
+                foreach (BancoEmpresa b in bancos)
+                {
+                    string id = Guid.NewGuid().ToString();
+
+                    jsonBancos.Add(
+                        "{" +
+                            $"\"id\": \"{b.Id}\"," +
+                            $"\"banco\": \"{b.Banco}\"," +
+                            $"\"responsable\": \"{b.Responsable}\"," +
+                            $"\"firmante\": \"{b.Firmante}\"" +
+                        "}"
+                    );
+                }
+            }
+
+            return jsonBancos;
+        }
+        private List<string> getListJsonArchivos(ICollection<SemiArchivoEmpresa>? archivos)
 		{
 			List<string> jsonArchivos = new List<string>();
 			if (archivos != null)
 			{
 				//Si la empresa ya tiene archivos, se llena el arreglo de datos a partir de ellos.					
-				List<ArchivoEmpresa> empresaFiles = (from empresaFile in archivos
+				List<SemiArchivoEmpresa> empresaFiles = (from empresaFile in archivos
 												   orderby empresaFile.TipoArchivoId ascending
 												   select empresaFile).ToList();
 
-				foreach (ArchivoEmpresa a in empresaFiles)
+				foreach (SemiArchivoEmpresa a in empresaFiles)
 				{
 					string htmlContainer = string.Empty;
 					string imgSrc = string.Empty;
 					string id = Guid.NewGuid().ToString();
 					//Si el archivo tiene contenido
-					if (a.Archivo != null && a.Archivo.Length >= 1)
+					if (a.FileSize >= 1)
 					{
 						//Asigna la información del archivo al arreglo de datos.
 						string b64 = Convert.ToBase64String(a.Archivo);
@@ -262,8 +305,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 							$"\"tipoArchivoId\": {a.TipoArchivoId}," +
 							$"\"extension\": \"{a.Extension}\"," +
 							$"\"imgSrc\": \"{imgSrc}\"," +
-							$"\"htmlContainer\": \"{htmlContainer}\"" +
-						"}"
+							$"\"htmlContainer\": \"{htmlContainer}\"," +
+                            $"\"fileSize\": \"{a.FileSize}\"" +
+                        "}"
 					);
 				}
 			}
@@ -284,8 +328,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 							$"\"tipoArchivoId\": {(int)i}," +
 							$"\"extension\": \"\"," +
 							$"\"imgSrc\": \"{imgSrc}\"," +
-							$"\"htmlContainer\": \"{htmlContainer}\"" +
-						"}"
+							$"\"htmlContainer\": \"{htmlContainer}\"," +
+                            $"\"fileSize\": \"0\"" +
+                        "}"
 					);
 				}
 			}
@@ -298,7 +343,23 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			return File("/templates/PlantillaEmpresas.xlsx", MediaTypeNames.Application.Octet, "PlantillaEmpresas.xlsx");
 		}
 
-		public async Task<JsonResult> OnPostFiltrarEmpresas()
+        public async Task<JsonResult> OnPostDatosAdicionalesEmpresa(int idEmpresa)
+        {
+            ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpresaConsultadaUnsuccessfully"]);
+            try
+            {
+                resp.Datos = await GetDatosAdicionalesEmpresa(idEmpresa);
+                resp.TieneError = false;
+                resp.Mensaje = _strLocalizer["EmpresaConsultadaSuccessfully"];
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
+
+            return new JsonResult(resp);
+        }
+        public async Task<JsonResult> OnPostFiltrarEmpresas()
 		{
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpresasFiltradasUnsuccessfully"]);
 			try
@@ -315,7 +376,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			return new JsonResult(resp);
 		}
 		
-		public async Task<JsonResult> OnPostDeleteEmpresas(string[] ids)
+		public async Task<JsonResult> OnPostDisableEmpresas(string[] ids)
 		{
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpresasDeletedUnsuccessfully"]);
 			await _db.Database.BeginTransactionAsync();
@@ -324,9 +385,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
                 foreach (string id in ids)
                 {
 					int intId = Convert.ToInt32(id);
-					//Elimina dependencias y posteriormente la empresa.
-					await _archivoEmpresaManager.DeleteByEmpresaIdAsync(intId);
-					await _empresaManager.DeleteByIdAsync(intId);
+					await _empresaManager.DisableByIdAsync(intId);
                 }
 
 				resp.TieneError = false;
