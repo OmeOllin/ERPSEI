@@ -120,6 +120,9 @@
   <data name="AccionistaField" xml:space="preserve">
     <value>Accionista</value>
   </data>
+  <data name="ActividadEconomicaField" xml:space="preserve">
+    <value>Actividad económica</value>
+  </data>
   <data name="AdministradorField" xml:space="preserve">
     <value>Administrador</value>
   </data>
@@ -234,6 +237,9 @@
   <data name="Numeric" xml:space="preserve">
     <value>El campo {0} solo permite números.</value>
   </data>
+  <data name="ObjetoSocialField" xml:space="preserve">
+    <value>Objeto social</value>
+  </data>
   <data name="OficinaField" xml:space="preserve">
     <value>Oficina</value>
   </data>
@@ -278,6 +284,9 @@
   </data>
   <data name="SubareaField" xml:space="preserve">
     <value>Subárea</value>
+  </data>
+  <data name="URLWeb" xml:space="preserve">
+    <value>URL Web</value>
   </data>
   <data name="UserNameField" xml:space="preserve">
     <value>Nombre de usuario</value>

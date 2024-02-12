@@ -141,4 +141,16 @@
   <data name="EmpresasImportadasUnsuccessfully" xml:space="preserve">
     <value>Error al importar las empresas</value>
   </data>
+  <data name="ErrorEmpresaExistenteA" xml:space="preserve">
+    <value>Ya existe una empresa registrada con</value>
+  </data>
+  <data name="ErrorEmpresaExistenteB" xml:space="preserve">
+    <value>Por favor verifique la información</value>
+  </data>
+  <data name="RazonSocial" xml:space="preserve">
+    <value>Razón Social</value>
+  </data>
+  <data name="RFC" xml:space="preserve">
+    <value>RFC</value>
+  </data>
 </root>
