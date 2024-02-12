@@ -28,7 +28,7 @@ namespace ERPSEI.Data.Managers
 			int? oficinaId = null
 		);
 
-		public Task<Empleado?> GetEmpleadoLogin(int id);
+		public Task<Empleado?> GetEmpleadoLoginAsync(int id);
 
         public Task<Empleado?> GetEmpleadoOrganigramaAsync(int id);
 

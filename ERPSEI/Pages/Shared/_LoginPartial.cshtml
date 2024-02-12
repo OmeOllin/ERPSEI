@@ -13,7 +13,7 @@
     {
         ProfilePicture? profilePicFile;
         AppUser? u = UserManager.FindByNameAsync(User.Identity?.Name??"").Result;
-        Empleado? e = EmpleadoManager.GetEmpleadoLogin(u?.EmpleadoId??0).Result;
+        Empleado? e = EmpleadoManager.GetEmpleadoLoginAsync(u?.EmpleadoId??0).Result;
 
         profilePicFile = await ArchivoEmpleadoManager.GetProfilePicByEmpleadoId(u?.EmpleadoId??0);
 

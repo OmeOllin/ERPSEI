@@ -134,7 +134,7 @@ namespace ERPSEI.Data.Managers
 				.ToListAsync();
 		}
 
-		public async Task<Empleado?> GetEmpleadoLogin(int id)
+		public async Task<Empleado?> GetEmpleadoLoginAsync(int id)
 		{
 			return await db.Empleados
 				.Where(e => e.Id == id)
