@@ -1,6 +1,7 @@
 ﻿using ERPSEI.Data;
 using ERPSEI.Data.Entities;
 using ERPSEI.Data.Entities.Empleados;
+using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Email;
@@ -52,8 +53,12 @@ namespace ERPSEI
 
             _builder.Services.AddScoped<RoleManager, RoleManager>();
 
+            _builder.Services.AddScoped<IBancoEmpresaManager, BancoEmpresaManager>();
 			_builder.Services.AddScoped<IArchivoEmpresaManager, ArchivoEmpresaManager>();
 			_builder.Services.AddScoped<IEmpresaManager, EmpresaManager>();
+            _builder.Services.AddScoped<IRWCatalogoManager<Origen>, OrigenManager>();
+			_builder.Services.AddScoped<IRWCatalogoManager<Nivel>, NivelManager>();
+			_builder.Services.AddScoped<IRWCatalogoManager<ActividadEconomica>, ActividadEconomicaManager>();
 
 			_builder.Services.AddScoped<IArchivoEmpleadoManager, ArchivoEmpleadoManager>();
 			_builder.Services.AddScoped<IContactoEmergenciaManager, ContactoEmergenciaManager>();
