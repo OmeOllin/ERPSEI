@@ -100,14 +100,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			public string? NombrePreferido { get; set; } = string.Empty;
 
 			[Required(ErrorMessage = "Required")]
-			[StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
+			[StringLength(30, ErrorMessage = "FieldLength", MinimumLength = 2)]
 			[RegularExpression(RegularExpressions.PersonName, ErrorMessage = "PersonName")]
 			[DataType(DataType.Text)]
 			[Display(Name = "FathersLastNameField")]
 			public string ApellidoPaterno { get; set; } = string.Empty;
 
 			[Required(ErrorMessage = "Required")]
-			[StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
+			[StringLength(30, ErrorMessage = "FieldLength", MinimumLength = 2)]
 			[RegularExpression(RegularExpressions.PersonName, ErrorMessage = "PersonName")]
 			[DataType(DataType.Text)]
 			[Display(Name = "MothersLastNameField")]
