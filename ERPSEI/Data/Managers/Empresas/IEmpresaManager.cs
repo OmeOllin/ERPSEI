@@ -18,10 +18,9 @@ namespace ERPSEI.Data.Managers.Empresas
         public Task DeleteMultipleByIdAsync(string[] ids);
 
         public Task<List<Empresa>> GetAllAsync(
-            string? origen = null,
-            string? nivel = null,
-            string? administrador = null,
-            string? accionista = null
+            int? origen = null,
+            int? nivel = null,
+            int? actividadEconomica = null
         );
 
         public Task<Empresa?> GetByIdWithAdicionalesAsync(int id);

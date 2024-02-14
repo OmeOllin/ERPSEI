@@ -35,26 +35,20 @@
 					<div class="row">
 						<div class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<input id="inpFiltroOrigen" type="text" asp-for="InputFiltro.Origen" class="form-control" placeholder="@Localizer["OrigenPlaceholder"]" />
-								<label for="inpFiltroOrigen" asp-for="InputFiltro.Origen" class="form-label"></label>
+								<input id="inpFiltroOrigen" type="text" asp-for="InputFiltro.OrigenId" class="form-control" placeholder="@Localizer["OrigenPlaceholder"]" />
+								<label for="inpFiltroOrigen" asp-for="InputFiltro.OrigenId" class="form-label"></label>
 							</div>
 						</div>
 						<div class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<input id="inpFiltroNivel" type="text" asp-for="InputFiltro.Nivel" class="form-control" placeholder="@Localizer["NivelPlaceholder"]" />
-								<label for="inpFiltroNivel" asp-for="InputFiltro.Nivel" class="form-label"></label>
+								<input id="inpFiltroNivel" type="text" asp-for="InputFiltro.NivelId" class="form-control" placeholder="@Localizer["NivelPlaceholder"]" />
+								<label for="inpFiltroNivel" asp-for="InputFiltro.NivelId" class="form-label"></label>
 							</div>
 						</div>
 						<div class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<input id="inpFiltroAdministrador" type="text" asp-for="InputFiltro.Administrador" class="form-control" placeholder="@Localizer["AdministradorPlaceholder"]" />
-								<label for="inpFiltroAdministrador" asp-for="InputFiltro.Administrador" class="form-label"></label>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-6 col-lg-3">
-							<div class="form-floating mb-3">
-								<input id="inpFiltroAccionista" type="text" asp-for="InputFiltro.Accionista" class="form-control" placeholder="@Localizer["AccionistaPlaceholder"]" />
-								<label for="inpFiltroAccionista" asp-for="InputFiltro.Accionista" class="form-label"></label>
+								<input id="inpFiltroAdministrador" type="text" asp-for="InputFiltro.ActividadEconomicaId" class="form-control" placeholder="@Localizer["ActividadEconomicaPlaceholder"]" />
+								<label for="inpFiltroAdministrador" asp-for="InputFiltro.ActividadEconomicaId" class="form-label"></label>
 							</div>
 						</div>
 					</div>
@@ -154,16 +148,16 @@
 							</div>
 							<div class="col-sm-12 col-md-6 col-lg-4">
 								<div class="form-floating mb-3">
-									<input id="inpEmpresaOrigen" asp-for="InputEmpresa.Origen" type="text" class="form-control formInput" placeholder="@Localizer["OrigenPlaceholder"]" />
-									<label for="inpEmpresaOrigen" asp-for="InputEmpresa.Origen" class="form-label"></label>
-									<span asp-validation-for="InputEmpresa.Origen" class="text-danger"></span>
+									<input id="inpEmpresaOrigen" asp-for="InputEmpresa.OrigenId" type="text" class="form-control formInput" placeholder="@Localizer["OrigenPlaceholder"]" />
+									<label for="inpEmpresaOrigen" asp-for="InputEmpresa.OrigenId" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.OrigenId" class="text-danger"></span>
 								</div>
 							</div>
 							<div class="col-sm-12 col-md-6 col-lg-4">
 								<div class="form-floating mb-3">
-									<input id="inpEmpresaNivel" asp-for="InputEmpresa.Nivel" type="text" class="form-control formInput" placeholder="@Localizer["NivelPlaceholder"]" />
-									<label for="inpEmpresaNivel" asp-for="InputEmpresa.Nivel" class="form-label"></label>
-									<span asp-validation-for="InputEmpresa.Nivel" class="text-danger"></span>
+									<input id="inpEmpresaNivel" asp-for="InputEmpresa.NivelId" type="text" class="form-control formInput" placeholder="@Localizer["NivelPlaceholder"]" />
+									<label for="inpEmpresaNivel" asp-for="InputEmpresa.NivelId" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.NivelId" class="text-danger"></span>
 								</div>
 							</div>
 							<div class="col-sm-12 col-md-6 col-lg-4">

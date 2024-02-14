@@ -1,5 +1,4 @@
-﻿using ERPSEI.Data.Entities.Empleados;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERPSEI.Data.Entities.Empresas
 {
@@ -10,11 +9,19 @@ namespace ERPSEI.Data.Entities.Empresas
 
 		public string RazonSocial { get; set; } = string.Empty;
 
-		public string Origen { get; set; } = string.Empty;
+		public int? OrigenId { get; set; }
+		public Origen? Origen { get; set; }
 
-		public string Nivel { get; set; } = string.Empty;
+		public int? NivelId { get; set; }
+		public Nivel? Nivel { get; set; }
+
+        public DateTime FechaConstitucion { get; set; } = DateTime.MinValue;
 
 		public DateTime FechaInicioOperacion {  get; set; } = DateTime.MinValue;
+
+        public DateTime FechaInicioFacturacion { get; set; } = DateTime.MinValue;
+
+        public DateTime FechaInicioAsimilados { get; set; } = DateTime.MinValue;
 
         public string RFC {  get; set; } = string.Empty;
 
@@ -30,13 +37,14 @@ namespace ERPSEI.Data.Entities.Empresas
 
 		public string CorreoFiscal { get; set; } = string.Empty;
 
+		public string CorreoFacturacion {  get; set; } = string.Empty;
+
 		public string Telefono { get; set; } = string.Empty;
 
-		public string ActividadEconomica {  get; set; } = string.Empty;
+		public int? ActividadEconomicaId {  get; set; }
+		public ActividadEconomica? ActividadEconomica { get; set; }
 
-		public string ObjetoSocial { get; set; } = string.Empty;
-
-		public string URLWeb {  get; set; } = string.Empty; 
+		public string ObjetoSocial { get; set; } = string.Empty; 
 
         public int Deshabilitado { get; set; } = 0;
 

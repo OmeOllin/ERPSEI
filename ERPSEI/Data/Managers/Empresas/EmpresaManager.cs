@@ -35,8 +35,8 @@ namespace ERPSEI.Data.Managers.Empresas
             if (dbE != null)
             {
                 dbE.RazonSocial = e.RazonSocial;
-				dbE.Origen = e.Origen;
-				dbE.Nivel = e.Nivel;
+				dbE.OrigenId = e.OrigenId;
+				dbE.NivelId = e.NivelId;
 				dbE.RFC = e.RFC;
 				dbE.DomicilioFiscal = e.DomicilioFiscal;
 				dbE.Administrador = e.Administrador;
@@ -106,18 +106,16 @@ namespace ERPSEI.Data.Managers.Empresas
         }
 
         public async Task<List<Empresa>> GetAllAsync(
-            string? origen = null,
-            string? nivel = null,
-            string? administrador = null,
-            string? accionista = null
+            int? origenId = null,
+            int? nivelId = null,
+            int? actividadEconomicaId = null
         )
         {
             return await db.Empresas
                 .Where(e => e.Deshabilitado == 0)
-                .Where(e => e.Origen == origen)
-                .Where(e => e.Nivel == nivel)
-                .Where(e => e.Administrador == administrador)
-                .Where(e => e.Accionista == accionista)
+                .Where(e => origenId != null ? e.OrigenId == origenId : true)
+                .Where(e => nivelId != null ? e.NivelId == nivelId : true)
+                .Where(e => actividadEconomicaId != null ? e.ActividadEconomicaId == actividadEconomicaId : true)
                 .Include(e => e.ArchivosEmpresa)
                 .ToListAsync();
         }

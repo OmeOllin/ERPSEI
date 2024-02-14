@@ -5,6 +5,7 @@
         CSF = 1,
         INE,
         RFC,
+        ComprobanteDomicilio,
         Otro
     }
     public class TipoArchivoEmpresa

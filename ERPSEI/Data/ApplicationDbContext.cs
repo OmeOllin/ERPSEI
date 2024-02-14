@@ -1,5 +1,4 @@
-﻿using ERPSEI.Areas.Catalogos.Pages;
-using ERPSEI.Data.Entities;
+﻿using ERPSEI.Data.Entities;
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.Empresas;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -9,20 +8,28 @@ namespace ERPSEI.Data
 {
     public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
-		//Tablas de trabajo
+		//Tablas de trabajo Empleados
         public DbSet<ArchivoEmpleado> ArchivosEmpleado { get; set; }
 		public DbSet<Empleado> Empleados { get; set; }
 		public DbSet<ContactoEmergencia> ContactosEmergencia { get; set; }
+
+		//Tablas de trabajo Empresas
+		public DbSet<BancoEmpresa> BancosEmpresa { get; set; }
 		public DbSet<ArchivoEmpresa> ArchivosEmpresa { get; set; }
 		public DbSet<Empresa> Empresas {  get; set; }
 
-		//Catálogos Administrables
+		//Catálogos Administrables Empleados
 		public DbSet<Puesto> Puestos { get; set; }
 		public DbSet<Area> Areas { get; set; }
 		public DbSet<Oficina> Oficinas { get; set; }
 		public DbSet<Subarea> Subareas { get; set; }
 
-		//Catálogos no Administrables
+		//Catálogos Administrables Empresas
+		public DbSet<ActividadEconomica> ActividadesEconomicas { get; set; }
+		public DbSet<Origen> Origenes { get; set; }
+		public DbSet<Nivel> Niveles { get; set; }
+
+		//Catálogos no Administrables Empleados
 		public DbSet<EstadoCivil> EstadosCiviles { get; set; }
 		public DbSet<Genero> Generos { get; set; }
 
@@ -41,14 +48,15 @@ namespace ERPSEI.Data
 
 			//Empleados
 			buildEmpleados(modelBuilder);
-
-			//Usuarios
-			//buildUsuarios(modelBuilder);
 		}
 
 		private void buildEmpresas(ModelBuilder b) 
 		{
-			b.Entity<Empresa>().HasMany(e => e.ArchivosEmpresa).WithOne(a => a.Empresa).OnDelete(DeleteBehavior.NoAction);
+            b.Entity<Empresa>().HasOne(e => e.Origen).WithMany(o => o.Empresas).OnDelete(DeleteBehavior.NoAction);
+            b.Entity<Empresa>().HasOne(e => e.Nivel).WithMany(o => o.Empresas).OnDelete(DeleteBehavior.NoAction);
+            b.Entity<Empresa>().HasOne(e => e.ActividadEconomica).WithMany(o => o.Empresas).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Empresa>().HasMany(e => e.BancosEmpresa).WithOne(b => b.Empresa).OnDelete(DeleteBehavior.NoAction);
+            b.Entity<Empresa>().HasMany(e => e.ArchivosEmpresa).WithOne(a => a.Empresa).OnDelete(DeleteBehavior.NoAction);
 
 			b.Entity<ArchivoEmpresa>().HasOne(a => a.TipoArchivo).WithMany(ta => ta.ArchivosEmpresa).OnDelete(DeleteBehavior.NoAction);
 
@@ -57,6 +65,7 @@ namespace ERPSEI.Data
 					new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.CSF, "CSF"),
 					new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.INE, "INE"),
                     new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.RFC, "RFC"),
+                    new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.ComprobanteDomicilio, "ComprobanteDomicilio"),
                     new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.Otro, "Otro")
                 );
 		}
@@ -65,7 +74,6 @@ namespace ERPSEI.Data
 		{
 			b.Entity<ArchivoEmpleado>().HasOne(ae => ae.TipoArchivo).WithMany(ta => ta.ArchivosEmpleado).OnDelete(DeleteBehavior.NoAction);
 
-			//b.Entity<Empleado>().HasOne(e => e.User).WithOne(u => u.Empleado).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Empleado>().HasOne(e => e.EstadoCivil).WithMany(ec => ec.Empleados).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Empleado>().HasOne(e => e.Genero).WithMany(g => g.Empleados).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Empleado>().HasOne(e => e.Puesto).WithMany(p => p.Empleados).OnDelete(DeleteBehavior.NoAction);

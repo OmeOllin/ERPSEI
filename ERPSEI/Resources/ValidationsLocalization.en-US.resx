@@ -147,6 +147,9 @@
   <data name="CorreoEmpresarialField" xml:space="preserve">
     <value>Business email</value>
   </data>
+  <data name="CorreoFacturacionField" xml:space="preserve">
+    <value>Billing email</value>
+  </data>
   <data name="CorreoFiscalField" xml:space="preserve">
     <value>Fiscal email</value>
   </data>
@@ -177,6 +180,9 @@
   <data name="FathersLastNameField" xml:space="preserve">
     <value>Father's last name</value>
   </data>
+  <data name="FechaConstitucionField" xml:space="preserve">
+    <value>Constitution date</value>
+  </data>
   <data name="FechaIngresoField" xml:space="preserve">
     <value>Admission date</value>
   </data>
@@ -185,6 +191,12 @@
   </data>
   <data name="FechaIngresoInicioField" xml:space="preserve">
     <value>Admission date (Start)</value>
+  </data>
+  <data name="FechaInicioAsimiladosField" xml:space="preserve">
+    <value>Assimilated start date</value>
+  </data>
+  <data name="FechaInicioFacturacionField" xml:space="preserve">
+    <value>Billing start date</value>
   </data>
   <data name="FechaInicioOperacionField" xml:space="preserve">
     <value>Operation start date</value>

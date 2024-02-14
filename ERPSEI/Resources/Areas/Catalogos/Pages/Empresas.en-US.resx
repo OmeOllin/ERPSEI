@@ -120,6 +120,9 @@
   <data name="AccionistaPlaceholder" xml:space="preserve">
     <value>Shareholder</value>
   </data>
+  <data name="ActividadEconomicaPlaceholder" xml:space="preserve">
+    <value>Economic activity</value>
+  </data>
   <data name="AddButton" xml:space="preserve">
     <value>Add</value>
   </data>

@@ -130,7 +130,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasIndex("TipoArchivoId");
 
-                    b.ToTable("ArchivosEmpleado");
+                    b.ToTable("ArchivosEmpleado", (string)null);
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.Area", b =>
@@ -144,7 +144,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Areas");
+                    b.ToTable("Areas", (string)null);
 
                     b.HasData(
                         new
@@ -244,7 +244,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasIndex("EmpleadoId");
 
-                    b.ToTable("ContactosEmergencia");
+                    b.ToTable("ContactosEmergencia", (string)null);
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.Empleado", b =>
@@ -343,7 +343,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasIndex("SubareaId");
 
-                    b.ToTable("Empleados");
+                    b.ToTable("Empleados", (string)null);
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.EstadoCivil", b =>
@@ -357,7 +357,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EstadosCiviles");
+                    b.ToTable("EstadosCiviles", (string)null);
 
                     b.HasData(
                         new
@@ -383,7 +383,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Generos");
+                    b.ToTable("Generos", (string)null);
 
                     b.HasData(
                         new
@@ -395,11 +395,6 @@ namespace ERPSEI.Data.Migrations
                         {
                             Id = 2,
                             Nombre = "Femenino"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Nombre = "Otro"
                         });
                 });
 
@@ -414,7 +409,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Oficinas");
+                    b.ToTable("Oficinas", (string)null);
 
                     b.HasData(
                         new
@@ -515,7 +510,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Puestos");
+                    b.ToTable("Puestos", (string)null);
 
                     b.HasData(
                         new
@@ -636,7 +631,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasIndex("AreaId");
 
-                    b.ToTable("Subareas");
+                    b.ToTable("Subareas", (string)null);
 
                     b.HasData(
                         new
@@ -709,7 +704,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TipoArchivo");
+                    b.ToTable("TipoArchivo", (string)null);
 
                     b.HasData(
                         new
@@ -798,34 +793,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasIndex("TipoArchivoId");
 
-                    b.ToTable("ArchivosEmpresa");
-                });
-
-            modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.BancoEmpresa", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Banco")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("EmpresaId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Firmante")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Responsable")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmpresaId");
-
-                    b.ToTable("BancoEmpresa");
+                    b.ToTable("ArchivosEmpresa", (string)null);
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.Empresa", b =>
@@ -834,10 +802,6 @@ namespace ERPSEI.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Accionista")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ActividadEconomica")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -857,18 +821,11 @@ namespace ERPSEI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Deshabilitado")
-                        .HasColumnType("int");
-
                     b.Property<string>("DomicilioFiscal")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nivel")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ObjetoSocial")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -888,13 +845,9 @@ namespace ERPSEI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("URLWeb")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
-                    b.ToTable("Empresas");
+                    b.ToTable("Empresas", (string)null);
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.TipoArchivoEmpresa", b =>
@@ -911,28 +864,18 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TipoArchivoEmpresa");
+                    b.ToTable("TipoArchivoEmpresa", (string)null);
 
                     b.HasData(
                         new
                         {
-                            Id = 1,
-                            Description = "CSF"
-                        },
-                        new
-                        {
                             Id = 2,
-                            Description = "INE"
+                            Description = "CSF"
                         },
                         new
                         {
                             Id = 3,
                             Description = "RFC"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Description = "Otro"
                         });
                 });
 
@@ -1181,13 +1124,6 @@ namespace ERPSEI.Data.Migrations
                     b.Navigation("TipoArchivo");
                 });
 
-            modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.BancoEmpresa", b =>
-                {
-                    b.HasOne("ERPSEI.Data.Entities.Empresas.Empresa", null)
-                        .WithMany("BancosEmpresa")
-                        .HasForeignKey("EmpresaId");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1286,8 +1222,6 @@ namespace ERPSEI.Data.Migrations
             modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.Empresa", b =>
                 {
                     b.Navigation("ArchivosEmpresa");
-
-                    b.Navigation("BancosEmpresa");
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.TipoArchivoEmpresa", b =>

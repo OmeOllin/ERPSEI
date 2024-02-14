@@ -12,5 +12,8 @@ namespace ERPSEI.Data.Entities.Empresas
         public string Responsable { get; set; } = string.Empty;
 
         public string Firmante { get; set; } = string.Empty;
-    }
+
+		public int? EmpresaId { get; set; }
+		public Empresa? Empresa { get; set; }
+	}
 }
