@@ -49,9 +49,12 @@ namespace ERPSEI.Pages.Shared
         public static string CatalogoNiveles => "Niveles";
         public static string CatalogoNivelesNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoNiveles);
 
-        #endregion
+		public static string CatalogoActividadesEconomicas => "ActividadesEconomicas";
+		public static string CatalogoActividadesEconomicasNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoActividadesEconomicas);
 
-        public static string ERP => "ERP";
+		#endregion
+
+		public static string ERP => "ERP";
         public static string ERPNavClass(ViewContext viewContext) => PageNavClass(viewContext, ERP);
 
         #region Recursos Humanos

@@ -1,0 +1,120 @@
+using ERPSEI.Data.Entities.Empresas;
+using ERPSEI.Data.Managers;
+using ERPSEI.Requests;
+using ERPSEI.Resources;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Localization;
+using System.ComponentModel.DataAnnotations;
+
+namespace ERPSEI.Areas.Catalogos.Pages
+{
+    [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
+    public class ActividadesEconomicasModel : PageModel
+    {
+		private readonly IRWCatalogoManager<ActividadEconomica> _catalogoManager;
+		private readonly IStringLocalizer<ActividadesEconomicasModel> _strLocalizer;
+		private readonly ILogger<ActividadesEconomicasModel> _logger;
+
+		[BindProperty]
+		public InputModel Input { get; set; }
+
+		public class InputModel
+		{
+			[Display(Name = "Id")]
+			public int Id { get; set; }
+
+			[StringLength(50, ErrorMessage = "FieldLength", MinimumLength = 1)]
+			[RegularExpression(RegularExpressions.AlphanumSpace, ErrorMessage = "AlphanumSpace")]
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "NameField")]
+			public string Nombre { get; set; } = string.Empty;
+		}
+
+		public ActividadesEconomicasModel(
+			IRWCatalogoManager<ActividadEconomica> catalogoManager,
+			IStringLocalizer<ActividadesEconomicasModel> stringLocalizer,
+			ILogger<ActividadesEconomicasModel> logger
+		)
+		{
+			Input = new InputModel();
+			_catalogoManager = catalogoManager;
+			_strLocalizer = stringLocalizer;
+			_logger = logger;
+		}
+
+		public JsonResult OnGetActividadesEconomicasList()
+        {
+			List<ActividadEconomica> actividadesEconomicas = _catalogoManager.GetAllAsync().Result;
+
+			return new JsonResult(actividadesEconomicas);
+		}
+
+		public async Task<JsonResult> OnPostDeleteActividadesEconomicas(string[] ids)
+		{
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["DeletedUnsuccessfully"]);
+			try
+			{
+				await _catalogoManager.DeleteMultipleByIdAsync(ids);
+				resp.TieneError = false;
+				resp.Mensaje = _strLocalizer["DeletedSuccessfully"];
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+			}
+
+			return new JsonResult(resp);
+		}
+
+		public async Task<JsonResult> OnPostSaveActividadEconomica()
+		{
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["SavedUnsuccessfully"]);
+
+			try
+			{
+				if (!ModelState.IsValid)
+				{
+					resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray();
+				}
+				else
+				{
+                    //Busca el registro por Id
+                    ActividadEconomica? actividadEconomica = await _catalogoManager.GetByIdAsync(Input.Id);
+
+					if (actividadEconomica != null)
+					{
+						//El registro ya existe, por lo que solo se actualiza.
+						actividadEconomica.Nombre = Input.Nombre;
+						await _catalogoManager.UpdateAsync(actividadEconomica);
+
+						resp.TieneError = false;
+						resp.Mensaje = _strLocalizer["SavedSuccessfully"];
+					}
+					else
+					{
+						//Se busca si ya existe un registro con el mismo nombre.
+						actividadEconomica = await _catalogoManager.GetByNameAsync(Input.Nombre);
+						if (actividadEconomica != null) {
+							resp.Mensaje = _strLocalizer["ErrorExistente"];
+						}
+						else
+						{
+							await _catalogoManager.CreateAsync(new ActividadEconomica() { Nombre = Input.Nombre });
+
+							resp.TieneError = false;
+							resp.Mensaje = _strLocalizer["SavedSuccessfully"];
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+			}
+
+			return new JsonResult(resp);
+		}
+	}
+}

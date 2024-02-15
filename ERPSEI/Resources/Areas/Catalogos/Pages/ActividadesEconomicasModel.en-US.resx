@@ -117,70 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AccountingMenu" xml:space="preserve">
-    <value>Accounting</value>
+  <data name="DeletedSuccessfully" xml:space="preserve">
+    <value>Records deleted succesfully!</value>
   </data>
-  <data name="AreasCatalogMenu" xml:space="preserve">
-    <value>Areas</value>
+  <data name="DeletedUnsuccessfully" xml:space="preserve">
+    <value>Error deleting records</value>
   </data>
-  <data name="CatalogsMenu" xml:space="preserve">
-    <value>Catalogs</value>
+  <data name="ErrorExistente" xml:space="preserve">
+    <value>There is already a registered economic activity with the same name. Please use another name for the new economic activity.</value>
   </data>
-  <data name="DisabilitiesMenu" xml:space="preserve">
-    <value>Disabilities</value>
+  <data name="SavedSuccessfully" xml:space="preserve">
+    <value>Economic activity saved successfully!</value>
   </data>
-  <data name="EconomicActivitiesCatalogMenu" xml:space="preserve">
-    <value>Economic activities</value>
-  </data>
-  <data name="EmpresasCatalogMenu" xml:space="preserve">
-    <value>Companies</value>
-  </data>
-  <data name="ERPMenu" xml:space="preserve">
-    <value>ERP</value>
-  </data>
-  <data name="FacturacionMenu" xml:space="preserve">
-    <value>Billing</value>
-  </data>
-  <data name="HomeMenu" xml:space="preserve">
-    <value>Home</value>
-  </data>
-  <data name="HumanResourcesMenu" xml:space="preserve">
-    <value>Human resources</value>
-  </data>
-  <data name="LevelsCatalogMenu" xml:space="preserve">
-    <value>Levels</value>
-  </data>
-  <data name="OfficesCatalogMenu" xml:space="preserve">
-    <value>Offices</value>
-  </data>
-  <data name="OrganizationChartMenu" xml:space="preserve">
-    <value>Organization chart</value>
-  </data>
-  <data name="OriginsCatalogMenu" xml:space="preserve">
-    <value>Origins</value>
-  </data>
-  <data name="PermissionsMenu" xml:space="preserve">
-    <value>Permissions</value>
-  </data>
-  <data name="PersonalCatalogMenu" xml:space="preserve">
-    <value>Talent management</value>
-  </data>
-  <data name="PositionsCatalogMenu" xml:space="preserve">
-    <value>Positions</value>
-  </data>
-  <data name="PrivacyMenu" xml:space="preserve">
-    <value>Privacy</value>
-  </data>
-  <data name="RightFooter" xml:space="preserve">
-    <value>Images by &lt;a href="https://www.freepik.com/author/stories"&gt;storyset&lt;/a&gt; on Freepik.com</value>
-  </data>
-  <data name="SubareasCatalogMenu" xml:space="preserve">
-    <value>Subareas</value>
-  </data>
-  <data name="UsersCatalogMenu" xml:space="preserve">
-    <value>Users</value>
-  </data>
-  <data name="VacationMenu" xml:space="preserve">
-    <value>Vacation</value>
+  <data name="SavedUnsuccessfully" xml:space="preserve">
+    <value>Error saving economic activity</value>
   </data>
 </root>
