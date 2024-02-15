@@ -98,17 +98,23 @@ function onAgregarClick() {
     let oEmpresaNueva = {
         id: nuevoRegistro,
         razonSocial: "",
+        origenId: 0,
+        nivelId: 0,
+        fechaConstitucion: null,
+        fechaInicioOperacion: null,
+        fechaInicioFacturacion: null,
+        fechaInicioAsimilados: null,
         rfc: "",
-        origen: "",
-        nivel: "",
+        domicilioFiscal: "",
         administrador: "",
         accionista: "",
-        domicilioFiscal: "",
         correoGeneral: "",
         correoBancos: "",
         correoFiscal: "",
+        correoFacturacion: "",
         telefono: "",
-        fechaInicioOperacion: null,
+        actividadEconomicaId: 0,
+        objetoSocial: "",
         bancos: [],
         archivos: []
     };
@@ -177,8 +183,8 @@ function initTable() {
                 sortable: true
             },
             {
-                title: colAccionistaHeader,
-                field: "accionista",
+                title: colActividadEconomicaHeader,
+                field: "actividadEconomica",
                 align: "center",
                 valign: "middle",
                 sortable: true
@@ -256,14 +262,12 @@ function onBuscarClick() {
     let btnBuscar = document.getElementById("btnBuscar");
     let inpOrigen = document.getElementById("inpFiltroOrigen");
     let inpNivel = document.getElementById("inpFiltroNivel");
-    let inpAdministrador = document.getElementById("inpFiltroAdministrador");
-    let inpAccionista = document.getElementById("inpFiltroAccionista");
+    let inpActividadEconomica = document.getElementById("inpFiltroActividadEconomica");
 
     let oParams = {
         origen: inpOrigen.value,
         nivel: inpNivel.value,
-        administrador: inpAdministrador.value,
-        accionista: inpAccionista.value
+        actividadEconomica: inpActividadEconomica.value
     };
 
     //Resetea el valor de los filtros.
@@ -302,17 +306,23 @@ function onBuscarClick() {
 function initEmpresaDialog(action, row) {
     let idField = document.getElementById("inpEmpresaId");
     let razonSocialField = document.getElementById("inpEmpresaRazonSocial");
+    let origenField = document.getElementById("selEmpresaOrigen");
+    let nivelField = document.getElementById("selEmpresaNivel");
+    let fechaConstitucionField = document.getElementById("inpEmpresaFechaConstitucion");
+    let fechaInicioOperacionField = document.getElementById("inpEmpresaFechaInicioOperacion");
+    let fechaInicioFacturacionField = document.getElementById("inpEmpresaFechaInicioFacturacion");
+    let fechaInicioAsimiladosField = document.getElementById("inpEmpresaFechaInicioAsimilados");
     let rfcField = document.getElementById("inpEmpresaRFC");
-    let origenField = document.getElementById("inpEmpresaOrigen");
-    let nivelField = document.getElementById("inpEmpresaNivel");
+    let domicilioFiscalField = document.getElementById("txtEmpresaDomicilioFiscal");
     let administradorField = document.getElementById("inpEmpresaAdministrador");
     let accionistaField = document.getElementById("inpEmpresaAccionista");
-    let domicilioFiscalField = document.getElementById("txtEmpresaDomicilioFiscal");
     let correoGeneralField = document.getElementById("inpEmpresaCorreoGeneral");
     let correoBancosField = document.getElementById("inpEmpresaCorreoBancos");
     let correoFiscalField = document.getElementById("inpEmpresaCorreoFiscal");
+    let correoFacturacionField = document.getElementById("inpEmpresaCorreoFacturacion");
     let telefonoField = document.getElementById("inpEmpresaTelefono");
-    let fechaInicioOperacionField = document.getElementById("inpEmpresaFechaInicioOperacion");
+    let actividadEconomicaField = document.getElementById("selEmpresaActividadEconomica");
+    let objetoSocialField = document.getElementById("inpEmpresaObjetoSocial");
 
     let btnDesactivar = document.getElementById("dlgEmpresaBtnDesactivar");
     let dlgTitle = document.getElementById("dlgEmpresaTitle");
@@ -347,17 +357,23 @@ function initEmpresaDialog(action, row) {
 
     idField.value = row.id;
     razonSocialField.value = row.razonSocial;
-    rfcField.value = row.rfc;
     origenField.value = row.origen;
     nivelField.value = row.nivel;
+    fechaConstitucionField.value = row.fechaConstitucionJS;
+    fechaInicioOperacionField.value = row.fechaInicioOperacionJS;
+    fechaInicioFacturacionField.value = row.fechaInicioFacturacionJS;
+    fechaInicioAsimiladosField.value = row.fechaInicioAsimiladosJS;
+    rfcField.value = row.rfc;
+    domicilioFiscalField.value = row.domicilioFiscal;
     administradorField.value = row.administrador;
     accionistaField.value = row.accionista;
-    domicilioFiscalField.value = row.domicilioFiscal;
     correoGeneralField.value = row.correoGeneral;
     correoBancosField.value = row.correoBancos;
     correoFiscalField.value = row.correoFiscal;
+    correoFacturacionField.value = row.correoFacturacion;
     telefonoField.value = row.telefono;
-    fechaInicioOperacionField.value = row.fechaInicioOperacionJS;
+    actividadEconomicaField.value = row.actividadEconomica;
+    objetoSocialField.value = row.objetoSocial;
 
     if (action == NUEVO || (row.hasDatosAdicionales || false)) {
         establecerDatosAdicionales(row, action);
@@ -409,20 +425,20 @@ function establecerDatosAdicionales(row, action) {
     let j = 1;
     row.bancos.forEach(function (b) {
         $("#bodyBancos").append(
-            `<div class="col-sm-12 col-md-12 col-lg-6 rowBancos">
+            `<div rownumber="${j}" class="col-sm-12 col-md-12 col-lg-6 rowBancos">
 				<div class="row">
 					<h6 class="col-12"><i>${empresaBancoTitle} ${j}</i></h6>
-					<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 						<div class="form-floating mb-3">
-							<input id="inpEmpresaBancoTitular${j}" type="text" class="form-control formInput" placeholder="${titularPlaceholder}" />
-							<label for="inpEmpresaBancoTitular${j}" class="form-label">${titularPlaceholder}</label>
+							<input id="inpEmpresaBancoResponsable${j}" type="text" class="form-control formInput" placeholder="${responsablePlaceholder}" value="${b.responsable}" />
+							<label for="inpEmpresaBancoResponsable${j}" class="form-label">${responsablePlaceholder}</label>
 							<span class="text-danger"></span>
 						</div>
 					</div>
 					<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 						<div class="form-floating mb-3">
-							<input id="inpEmpresaBancoResponsable${j}" type="text" class="form-control formInput" placeholder="${responsablePlaceholder}" />
-							<label for="inpEmpresaBancoResponsable${j}" class="form-label">${responsablePlaceholder}</label>
+							<input id="inpEmpresaBancoFirmante${j}" type="text" class="form-control formInput" placeholder="${firmantePlaceholder}" value="${b.firmante}" />
+							<label for="inpEmpresaBancoFirmante${j}" class="form-label">${firmantePlaceholder}</label>
 							<span class="text-danger"></span>
 						</div>
 					</div>
@@ -558,20 +574,20 @@ function onAgregarBancoClick() {
     currentRows += 1;
     
     let bodyBancos = document.getElementById("bodyBancos");
-    bodyBancos.innerHTML += `<div class="col-sm-12 col-md-12 col-lg-6 rowBancos">
+    bodyBancos.innerHTML += `<div rownumber="${currentRows}" class="col-sm-12 col-md-12 col-lg-6 rowBancos">
 								<div class="row">
 									<h6 class="col-12"><i>${empresaBancoTitle} ${currentRows}</i></h6>
-									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 										<div class="form-floating mb-3">
-											<input id="inpEmpresaBancoTitular${currentRows}" type="text" class="form-control formInput" placeholder="${titularPlaceholder}" />
-											<label for="inpEmpresaBancoTitular${currentRows}" class="form-label">${titularPlaceholder}</label>
+											<input id="inpEmpresaBancoResponsable${currentRows}" type="text" class="form-control formInput" placeholder="${responsablePlaceholder}" />
+											<label for="inpEmpresaBancoResponsable${currentRows}" class="form-label">${responsablePlaceholder}</label>
 											<span class="text-danger"></span>
 										</div>
 									</div>
 									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 										<div class="form-floating mb-3">
-											<input id="inpEmpresaBancoResponsable${currentRows}" type="text" class="form-control formInput" placeholder="${responsablePlaceholder}" />
-											<label for="inpEmpresaBancoResponsable${currentRows}" class="form-label">${responsablePlaceholder}</label>
+											<input id="inpEmpresaBancoFirmante${currentRows}" type="text" class="form-control formInput" placeholder="${firmantePlaceholder}" />
+											<label for="inpEmpresaBancoFirmante${currentRows}" class="form-label">${firmantePlaceholder}</label>
 											<span class="text-danger"></span>
 										</div>
 									</div>
@@ -664,21 +680,41 @@ function onGuardarClick() {
 
     let idField = document.getElementById("inpEmpresaId");
     let razonSocialField = document.getElementById("inpEmpresaRazonSocial");
-    let rfcField = document.getElementById("inpEmpresaRFC");
     let origenField = document.getElementById("inpEmpresaOrigen");
     let nivelField = document.getElementById("inpEmpresaNivel");
+    let fechaConstitucionField = document.getElementById("inpEmpresaFechaConstitucion");
+    let fechaInicioOperacionField = document.getElementById("inpEmpresaFechaInicioOperacion");
+    let fechaInicioFacturacionField = document.getElementById("inpEmpresaFechaInicioFacturacion");
+    let fechaInicioAsimiladosField = document.getElementById("inpEmpresaFechaInicioAsimilados");
+    let rfcField = document.getElementById("inpEmpresaRFC");
+    let domicilioFiscalField = document.getElementById("txtEmpresaDomicilioFiscal");
     let administradorField = document.getElementById("inpEmpresaAdministrador");
     let accionistaField = document.getElementById("inpEmpresaAccionista");
-    let domicilioFiscalField = document.getElementById("txtEmpresaDomicilioFiscal");
     let correoGeneralField = document.getElementById("inpEmpresaCorreoGeneral");
     let correoBancosField = document.getElementById("inpEmpresaCorreoBancos");
     let correoFiscalField = document.getElementById("inpEmpresaCorreoFiscal");
+    let correoFacturacionField = document.getElementById("inpEmpresaCorreoFacturacion");
     let telefonoField = document.getElementById("inpEmpresaTelefono");
-    let fechaInicioOperacionField = document.getElementById("inpEmpresaFechaInicioOperacion");
+    let actividadEconomicaField = document.getElementById("selEmpresaActividadEconomica");
+    let objetoSocialField = document.getElementById("inpEmpresaObjetoSocial");
 
     let dlgTitle = document.getElementById("dlgEmpresaTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
+
+    let banks = [];
+    $("#bodyBancos .rowBancos").each(function (i, b) {
+        let row = b.getAttribute("rownumber");
+        let bancoNombreField = document.getElementById(`inpEmpresaBancoNombre${row}`);
+        let bancoResponsableField = document.getElementById(`inpEmpresaBancoResponsable${row}`);
+        let bancoFirmanteField = document.getElementById(`inpEmpresaBancoFirmante${row}`);
+        
+        banks.push({
+            banco: bancoNombreField.value.trim(),
+            responsable: bancoResponsableField.value.trim(),
+            firmante: bancoFirmanteField.value.trim(),
+        });
+    });
 
     let files = [];
     $("#bodyArchivos input").each(function (i, a) {
@@ -689,18 +725,25 @@ function onGuardarClick() {
 
     let oParams = {
         id: idField.value == nuevoRegistro ? 0 : idField.value,
-        razonSocial: razonSocialField.value.trim(),
+        razonSocial: razonSocialField.value == 0 ? null : parseInt(razonSocialField.value),
+        origenId: origenField.value == 0 ? null : parseInt(origenField.value),
+        nivelId: nivelField.value.trim(),
+        fechaConstitucion: fechaConstitucionField.value,
+        fechaInicioOperacion: fechaInicioOperacionField.value,
+        fechaInicioFacturacion: fechaInicioFacturacionField.value,
+        fechaInicioAsimilados: fechaInicioAsimiladosField.value,
         rfc: rfcField.value.trim(),
-        origen: origenField.value.trim(),
-        nivel: nivelField.value.trim(),
+        domicilioFiscal: domicilioFiscalField.value.trim(),
         administrador: administradorField.value.trim(),
         accionista: accionistaField.value.trim(),
-        domicilioFiscal: domicilioFiscalField.value.trim(),
         correoGeneral: correoGeneralField.value.trim(),
         correoBancos: correoBancosField.value.trim(),
         correoFiscal: correoFiscalField.value.trim(),
+        correoFacturacion: correoFacturacionField.value.trim(),
         telefono: telefonoField.value.trim(),
-        fechaInicioOperacion: fechaInicioOperacionField.value,
+        actividadEconomicaId: actividadEconomicaField.value == 0 ? null : parseInt(actividadEconomicaField.value),
+        objetoSocial: objetoSocialField.value.trim(),
+        bancos: banks,
         archivos: files
     };
 

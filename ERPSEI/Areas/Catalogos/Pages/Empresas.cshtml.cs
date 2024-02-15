@@ -85,7 +85,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
             public DateTime FechaInicioAsimilados { get; set; }
 
             [DataType(DataType.Text)]
-			[StringLength(13, ErrorMessage = "FieldLength", MinimumLength = 13)]
+			[StringLength(13, ErrorMessage = "FieldLength", MinimumLength = 12)]
 			[RegularExpression(RegularExpressions.AlphanumNoSpaceNoUnderscore, ErrorMessage = "AlphanumNoSpaceNoUnderscore")]
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "RFCField")]

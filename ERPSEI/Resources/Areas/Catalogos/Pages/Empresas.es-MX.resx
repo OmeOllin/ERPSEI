@@ -132,6 +132,9 @@
   <data name="AgregarBancoButtonText" xml:space="preserve">
     <value>Agregar Banco</value>
   </data>
+  <data name="BancoNombrePlaceholder" xml:space="preserve">
+    <value>Banco</value>
+  </data>
   <data name="CancelButtonTitle" xml:space="preserve">
     <value>Cancelar</value>
   </data>
@@ -140,6 +143,9 @@
   </data>
   <data name="ColActionsHeader" xml:space="preserve">
     <value>Acciones</value>
+  </data>
+  <data name="ColActividadEconomicaHeader" xml:space="preserve">
+    <value>Actividad Económica</value>
   </data>
   <data name="ColAdministradorHeader" xml:space="preserve">
     <value>Administrador</value>
@@ -159,8 +165,14 @@
   <data name="ColTelefonoHeader" xml:space="preserve">
     <value>Teléfono</value>
   </data>
+  <data name="ComprobanteDomicilio" xml:space="preserve">
+    <value>Comprobante de domicilio</value>
+  </data>
   <data name="CorreoBancosPlaceholder" xml:space="preserve">
     <value>Correo Bancos</value>
+  </data>
+  <data name="CorreoFacturacionPlaceholder" xml:space="preserve">
+    <value>Correo Facturación</value>
   </data>
   <data name="CorreoFiscalPlaceholder" xml:space="preserve">
     <value>Correo Fiscal</value>
@@ -213,6 +225,15 @@
   <data name="EmpresaTercerSeccionTitle" xml:space="preserve">
     <value>Documentos</value>
   </data>
+  <data name="FechaConstitucionPlaceholder" xml:space="preserve">
+    <value>Fecha constitución</value>
+  </data>
+  <data name="FechaInicioAsimiladosPlaceholder" xml:space="preserve">
+    <value>Fecha de inicio de asimilados</value>
+  </data>
+  <data name="FechaInicioFacturacionPlaceholder" xml:space="preserve">
+    <value>Fecha de inicio de facturación</value>
+  </data>
   <data name="FechaInicioOperacionPlaceholder" xml:space="preserve">
     <value>Fecha de inicio de operación</value>
   </data>
@@ -224,6 +245,9 @@
   </data>
   <data name="FilterTitle" xml:space="preserve">
     <value>Filtros de búsqueda</value>
+  </data>
+  <data name="FirmantePlaceholder" xml:space="preserve">
+    <value>Firmante</value>
   </data>
   <data name="ImportButtonText" xml:space="preserve">
     <value>Importar</value>
@@ -264,6 +288,9 @@
   <data name="Nuevo" xml:space="preserve">
     <value>Nuevo</value>
   </data>
+  <data name="ObjetoSocialPlaceholder" xml:space="preserve">
+    <value>Objeto social</value>
+  </data>
   <data name="OrigenPlaceholder" xml:space="preserve">
     <value>Origen</value>
   </data>
@@ -302,8 +329,5 @@
   </data>
   <data name="Title" xml:space="preserve">
     <value>Gestión de empresas</value>
-  </data>
-  <data name="TitularPlaceholder" xml:space="preserve">
-    <value>Titular de la cuenta</value>
   </data>
 </root>

@@ -4,9 +4,11 @@
 @using Microsoft.AspNetCore.Mvc.Localization;
 @using ERPSEI.Areas.Catalogos.Pages;
 @using ERPSEI.Data.Entities.Empresas;
-@using ERPSEI.Data.Entities.Empleados;
 @model EmpresasModel
 @inject IViewLocalizer Localizer;
+@inject IRWCatalogoManager<Origen> OrigenesManager;
+@inject IRWCatalogoManager<Nivel> NivelesManager;
+@inject IRWCatalogoManager<ActividadEconomica> ActividadesEconomicasManager;
 @{
 	ViewData["Title"] = Localizer["Title"];
 
@@ -17,6 +19,10 @@
 	System.Globalization.CultureInfo? culture = rqf != null ? rqf.RequestCulture.Culture : new System.Globalization.CultureInfo("es-MX");
 
 	string cultureName = culture.Name;
+
+	List<Origen> origenes = await OrigenesManager.GetAllAsync();
+	List<Nivel> niveles = await NivelesManager.GetAllAsync();
+	List<ActividadEconomica> actividadesEconomicas = await ActividadesEconomicasManager.GetAllAsync();
 }
 <h3 class="title mb-3">@ViewData["Title"]</h3>
 
@@ -33,22 +39,46 @@
 			<div class="accordion-body">
 				<form id="filtros" method="post">
 					<div class="row">
-						<div class="col-sm-6 col-md-6 col-lg-3">
+						<div class="col-sm-6 col-md-6 col-lg-4">
 							<div class="form-floating mb-3">
-								<input id="inpFiltroOrigen" type="text" asp-for="InputFiltro.OrigenId" class="form-control" placeholder="@Localizer["OrigenPlaceholder"]" />
-								<label for="inpFiltroOrigen" asp-for="InputFiltro.OrigenId" class="form-label"></label>
+								<select id="selFiltroOrigen" asp-for="InputFiltro.OrigenId" class="form-select" placeholder="@Localizer["OrigenPlaceholder"]">
+									<option value="0">Seleccione...</option>
+									@{
+										foreach (Origen origen in origenes)
+										{
+											<option value='@origen.Id'>@origen.Nombre</option>
+										}
+									}
+								</select>
+								<label for="selFiltroOrigen" asp-for="InputFiltro.OrigenId" class="form-label"></label>
 							</div>
 						</div>
-						<div class="col-sm-6 col-md-6 col-lg-3">
+						<div class="col-sm-6 col-md-6 col-lg-4">
 							<div class="form-floating mb-3">
-								<input id="inpFiltroNivel" type="text" asp-for="InputFiltro.NivelId" class="form-control" placeholder="@Localizer["NivelPlaceholder"]" />
-								<label for="inpFiltroNivel" asp-for="InputFiltro.NivelId" class="form-label"></label>
+								<select id="selFiltroNivel" asp-for="InputFiltro.NivelId" class="form-select" placeholder="@Localizer["NivelPlaceholder"]">
+									<option value="0">Seleccione...</option>
+									@{
+										foreach (Nivel nivel in niveles)
+										{
+											<option value='@nivel.Id'>@nivel.Nombre</option>
+										}
+									}
+								</select>
+								<label for="selFiltroNivel" asp-for="InputFiltro.NivelId" class="form-label"></label>
 							</div>
 						</div>
-						<div class="col-sm-6 col-md-6 col-lg-3">
+						<div class="col-sm-6 col-md-6 col-lg-4">
 							<div class="form-floating mb-3">
-								<input id="inpFiltroAdministrador" type="text" asp-for="InputFiltro.ActividadEconomicaId" class="form-control" placeholder="@Localizer["ActividadEconomicaPlaceholder"]" />
-								<label for="inpFiltroAdministrador" asp-for="InputFiltro.ActividadEconomicaId" class="form-label"></label>
+								<select id="selFiltroActividadEconomica" asp-for="InputFiltro.ActividadEconomicaId" class="form-select" placeholder="@Localizer["ActividadEconomicaPlaceholder"]">
+									<option value="0">Seleccione...</option>
+									@{
+										foreach (ActividadEconomica actividad in actividadesEconomicas)
+										{
+											<option value='@actividad.Id'>@actividad.Nombre</option>
+										}
+									}
+								</select>
+								<label for="selFiltroActividadEconomica" asp-for="InputFiltro.ActividadEconomicaId" class="form-label"></label>
 							</div>
 						</div>
 					</div>
@@ -131,49 +161,76 @@
 						<h5>@Localizer["EmpresaPrimerSeccionTitle"]</h5>
 						<hr />
 						<div id="saveValidationSummary" class="text-danger mb-3" role="alert"></div>
-						<div class="row mb-5">
-							<div class="col-sm-12 col-md-6 col-lg-4">
+						<div class="row">
+							<div class="col-sm-12 col-md-12 col-lg-4">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaRazonSocial" asp-for="InputEmpresa.RazonSocial" type="text" class="form-control formInput" placeholder="@Localizer["RazonSocialPlaceholder"]" />
 									<label for="inpEmpresaRazonSocial" asp-for="InputEmpresa.RazonSocial" class="form-label"></label>
 									<span asp-validation-for="InputEmpresa.RazonSocial" class="text-danger"></span>
 								</div>
 							</div>
-							<div class="col-sm-12 col-md-6 col-lg-4">
-								<div class="form-floating mb-3">
-									<input id="inpEmpresaRFC" asp-for="InputEmpresa.RFC" type="text" class="form-control formInput" placeholder="@Localizer["RFCPlaceholder"]" />
-									<label for="inpEmpresaRFC" asp-for="InputEmpresa.RFC" class="form-label"></label>
-									<span asp-validation-for="InputEmpresa.RFC" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-sm-12 col-md-6 col-lg-4">
-								<div class="form-floating mb-3">
-									<input id="inpEmpresaOrigen" asp-for="InputEmpresa.OrigenId" type="text" class="form-control formInput" placeholder="@Localizer["OrigenPlaceholder"]" />
-									<label for="inpEmpresaOrigen" asp-for="InputEmpresa.OrigenId" class="form-label"></label>
-									<span asp-validation-for="InputEmpresa.OrigenId" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-sm-12 col-md-6 col-lg-4">
-								<div class="form-floating mb-3">
-									<input id="inpEmpresaNivel" asp-for="InputEmpresa.NivelId" type="text" class="form-control formInput" placeholder="@Localizer["NivelPlaceholder"]" />
-									<label for="inpEmpresaNivel" asp-for="InputEmpresa.NivelId" class="form-label"></label>
-									<span asp-validation-for="InputEmpresa.NivelId" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="col-sm-12 col-md-12 col-lg-4">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaAdministrador" type="text" asp-for="InputEmpresa.Administrador" class="form-control" placeholder="@Localizer["AdministradorPlaceholder"]" />
 									<label for="inpEmpresaAdministrador" asp-for="InputEmpresa.Administrador" class="form-label"></label>
 									<span asp-validation-for="InputEmpresa.Administrador" class="text-danger"></span>
 								</div>
 							</div>
-							<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="col-sm-12 col-md-12 col-lg-4">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaAccionista" type="text" asp-for="InputEmpresa.Accionista" class="form-control" placeholder="@Localizer["AccionistaPlaceholder"]" />
 									<label for="inpEmpresaAccionista" asp-for="InputEmpresa.Accionista" class="form-label"></label>
 									<span asp-validation-for="InputEmpresa.Accionista" class="text-danger"></span>
 								</div>
 							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<input id="inpEmpresaRFC" asp-for="InputEmpresa.RFC" type="text" class="form-control formInput" placeholder="@Localizer["RFCPlaceholder"]" />
+									<label for="inpEmpresaRFC" asp-for="InputEmpresa.RFC" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.RFC" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<select id="selEmpresaOrigen" asp-for="InputEmpresa.OrigenId" class="form-select" placeholder="@Localizer["OrigenPlaceholder"]">
+										<option value="0">Seleccione...</option>
+										@{
+											foreach (Origen origen in origenes)
+											{
+												<option value='@origen.Id'>@origen.Nombre</option>
+											}
+										}
+									</select>
+									<label for="selEmpresaOrigen" asp-for="InputEmpresa.OrigenId" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.OrigenId" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<select id="selEmpresaNivel" asp-for="InputFiltro.NivelId" class="form-select" placeholder="@Localizer["NivelPlaceholder"]">
+										<option value="0">Seleccione...</option>
+										@{
+											foreach (Nivel nivel in niveles)
+											{
+												<option value='@nivel.Id'>@nivel.Nombre</option>
+											}
+										}
+									</select>
+									<label for="selEmpresaNivel" asp-for="InputEmpresa.NivelId" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.NivelId" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<input id="inpEmpresaTelefono" asp-for="InputEmpresa.Telefono" type="text" class="form-control formInput" placeholder="@Localizer["PhonePlaceholder"]" />
+									<label for="inpEmpresaTelefono" asp-for="InputEmpresa.Telefono" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.Telefono" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
 									<textarea id="txtEmpresaDomicilioFiscal" maxlength="135" asp-for="InputEmpresa.DomicilioFiscal" class="form-control dynamic-height formInput" placeholder="@Localizer["DireccionPlaceholder"]"></textarea>
@@ -181,41 +238,96 @@
 									<span asp-validation-for="InputEmpresa.DomicilioFiscal" class="text-danger"></span>
 								</div>
 							</div>
-							<div class="col-sm-12 col-md-6 col-lg-4">
+						</div>
+						<div class="row">
+							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaCorreoGeneral" asp-for="InputEmpresa.CorreoGeneral" type="text" class="form-control formInput" placeholder="@Localizer["CorreoGeneralPlaceholder"]" />
 									<label for="inpEmpresaCorreoGeneral" asp-for="InputEmpresa.CorreoGeneral" class="form-label"></label>
 									<span asp-validation-for="InputEmpresa.CorreoGeneral" class="text-danger"></span>
 								</div>
 							</div>
-							<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaCorreoBancos" asp-for="InputEmpresa.CorreoBancos" type="text" class="form-control formInput" placeholder="@Localizer["CorreoBancosPlaceholder"]" />
 									<label for="inpEmpresaCorreoBancos" asp-for="InputEmpresa.CorreoBancos" class="form-label"></label>
 									<span asp-validation-for="InputEmpresa.CorreoBancos" class="text-danger"></span>
 								</div>
 							</div>
-							<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaCorreoFiscal" asp-for="InputEmpresa.CorreoFiscal" type="text" class="form-control formInput" placeholder="@Localizer["CorreoFiscalPlaceholder"]" />
 									<label for="inpEmpresaCorreoFiscal" asp-for="InputEmpresa.CorreoFiscal" class="form-label"></label>
 									<span asp-validation-for="InputEmpresa.CorreoFiscal" class="text-danger"></span>
 								</div>
 							</div>
-							<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
 								<div class="form-floating mb-3">
-									<input id="inpEmpresaTelefono" asp-for="InputEmpresa.Telefono" type="text" class="form-control formInput" placeholder="@Localizer["PhonePlaceholder"]" />
-									<label for="inpEmpresaTelefono" asp-for="InputEmpresa.Telefono" class="form-label"></label>
-									<span asp-validation-for="InputEmpresa.Telefono" class="text-danger"></span>
+									<input id="inpEmpresaCorreoFacturacion" asp-for="InputEmpresa.CorreoFacturacion" type="text" class="form-control formInput" placeholder="@Localizer["CorreoFacturacionPlaceholder"]" />
+									<label for="inpEmpresaCorreoFacturacion" asp-for="InputEmpresa.CorreoFacturacion" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.CorreoFacturacion" class="text-danger"></span>
 								</div>
 							</div>
-							<div class="col-sm-12 col-md-6 col-lg-4">
+						</div>
+						<div class="row">
+							<div class="col-xs-12 col-sm-6 col-md-12 col-lg-6 col-xl-3">
+								<div class="form-floating mb-3">
+									<div class="form-floating mb-3">
+										<input id="inpEmpresaFechaConstitucion" type="date" asp-for="InputEmpresa.FechaConstitucion" class="form-control formInput" placeholder="@Localizer["FechaConstitucionPlaceholder"]" />
+										<label for="inpEmpresaFechaConstitucion" asp-for="InputEmpresa.FechaConstitucion" class="form-label required"></label>
+										<span asp-validation-for="InputEmpresa.FechaConstitucion" class="text-danger"></span>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-12 col-sm-6 col-md-12 col-lg-6 col-xl-3">
 								<div class="form-floating mb-3">
 									<div class="form-floating mb-3">
 										<input id="inpEmpresaFechaInicioOperacion" type="date" asp-for="InputEmpresa.FechaInicioOperacion" class="form-control formInput" placeholder="@Localizer["FechaInicioOperacionPlaceholder"]" />
 										<label for="inpEmpresaFechaInicioOperacion" asp-for="InputEmpresa.FechaInicioOperacion" class="form-label required"></label>
 										<span asp-validation-for="InputEmpresa.FechaInicioOperacion" class="text-danger"></span>
 									</div>
+								</div>
+							</div>
+							<div class="col-xs-12 col-sm-6 col-md-12 col-lg-6 col-xl-3">
+								<div class="form-floating mb-3">
+									<div class="form-floating mb-3">
+										<input id="inpEmpresaFechaInicioFacturacion" type="date" asp-for="InputEmpresa.FechaInicioFacturacion" class="form-control formInput" placeholder="@Localizer["FechaInicioFacturacionPlaceholder"]" />
+										<label for="inpEmpresaFechaInicioFacturacion" asp-for="InputEmpresa.FechaInicioFacturacion" class="form-label required"></label>
+										<span asp-validation-for="InputEmpresa.FechaInicioFacturacion" class="text-danger"></span>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-12 col-sm-6 col-md-12 col-lg-6 col-xl-3">
+								<div class="form-floating mb-3">
+									<div class="form-floating mb-3">
+										<input id="inpEmpresaFechaInicioAsimilados" type="date" asp-for="InputEmpresa.FechaInicioAsimilados" class="form-control formInput" placeholder="@Localizer["FechaInicioAsimiladosPlaceholder"]" />
+										<label for="inpEmpresaFechaInicioAsimilados" asp-for="InputEmpresa.FechaInicioAsimilados" class="form-label required"></label>
+										<span asp-validation-for="InputEmpresa.FechaInicioAsimilados" class="text-danger"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-sm-12 col-md-12 col-lg-6">
+								<div class="form-floating mb-3">
+									<select id="selEmpresaActividadEconomica" asp-for="InputEmpresa.ActividadEconomicaId" class="form-select" placeholder="@Localizer["ActividadEconomicaPlaceholder"]">
+										<option value="0">Seleccione...</option>
+										@{
+											foreach (ActividadEconomica actividad in actividadesEconomicas)
+											{
+												<option value='@actividad.Id'>@actividad.Nombre</option>
+											}
+										}
+									</select>
+									<label for="selEmpresaActividadEconomica" asp-for="InputEmpresa.ActividadEconomicaId" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.ActividadEconomicaId" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-12 col-lg-6">
+								<div class="form-floating mb-3">
+									<input id="inpEmpresaObjetoSocial" asp-for="InputEmpresa.ObjetoSocial" type="text" class="form-control formInput" placeholder="@Localizer["ObjetoSocialPlaceholder"]" />
+									<label for="inpEmpresaObjetoSocial" asp-for="InputEmpresa.ObjetoSocial" class="form-label"></label>
+									<span asp-validation-for="InputEmpresa.ObjetoSocial" class="text-danger"></span>
 								</div>
 							</div>
 						</div>
@@ -345,6 +457,7 @@
 		var colNivelHeader = '@Localizer["ColNivelHeader"]';
 		var colAdministradorHeader = '@Localizer["ColAdministradorHeader"]';
 		var colAccionistaHeader = '@Localizer["ColAccionistaHeader"]';
+		var colActividadEconomicaHeader = '@Localizer["ColActividadEconomicaHeader"]';
 		var colTelefonoHeader = '@Localizer["ColTelefonoHeader"]';
 		var colCorreoHeader = '@Localizer["ColCorreoHeader"]';
 		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
@@ -356,12 +469,14 @@
 		var nuevoRegistro = '@Localizer["Nuevo"]';
 		var emptySelectItemText = '@Localizer["Seleccione"]';
 		var empresaBancoTitle = '@Localizer["EmpresaBancoTitle"]';
-		var titularPlaceholder = '@Localizer["TitularPlaceholder"]';
+		var bancoNombrePlaceholder = '@Localizer["BancoNombrePlaceholder"]';
 		var responsablePlaceholder = '@Localizer["ResponsablePlaceholder"]';
+		var firmantePlaceholder = '@Localizer["FirmantePlaceholder"]';
 		var arrTiposDocumentos = {
 			"1": '@Localizer["CSF"]',
 			"2": '@Localizer["INE"]',
 			"3": '@Localizer["RFC"]',
+			"4": '@Localizer["ComprobanteDomicilio"]',
 			"4": '@Localizer["Otro"]'
 		};
 		var invalidFormatTitle = '@Localizer["InvalidFormatTitle"]';
