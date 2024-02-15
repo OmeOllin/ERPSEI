@@ -1,6 +1,7 @@
 ﻿var table;
 var buttonRemove;
 var selections = [];
+var dlgEmpresa = null;
 var dlgEmpresaModal = null;
 
 const NUEVO = 0;
@@ -15,7 +16,12 @@ const postOptions = { headers: { "RequestVerificationToken": $('input[name="__Re
 document.addEventListener("DOMContentLoaded", function (event) {
     table = $("#table");
     buttonRemove = $("#remove");
-    dlgEmpresaModal = new bootstrap.Modal(document.getElementById('dlgEmpresa'), null);
+    dlgEmpresa = document.getElementById('dlgEmpresa');
+    dlgEmpresaModal = new bootstrap.Modal(dlgEmpresa, null);
+    //Función para limpiar el cuadro de diálogo cuando es cerrado
+    dlgEmpresa.addEventListener('hidden.bs.modal', function (event) {
+        onCerrarClick();
+    });
 
     initTable();
 

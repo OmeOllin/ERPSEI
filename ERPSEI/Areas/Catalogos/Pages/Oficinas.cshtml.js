@@ -1,6 +1,8 @@
 ﻿var table;
 var buttonRemove;
 var selections = [];
+var dlg = null;
+
 const NUEVO = 0;
 const EDITAR = 1;
 const VER = 2;
@@ -9,6 +11,11 @@ const postOptions = { headers: { "RequestVerificationToken": $('input[name="__Re
 document.addEventListener("DOMContentLoaded", function (event) {
     table = $("#table");
     buttonRemove = $("#remove");
+    dlg = document.getElementById('dlgOficina');
+    //Función para limpiar el cuadro de diálogo cuando es cerrado
+    dlg.addEventListener('hidden.bs.modal', function (event) {
+        onCerrarClick();
+    });
 
     initTable();
 });
