@@ -40,3 +40,8 @@ select {
         overflow: visible;
     }
 }
+
+.required::before {
+    content: "* ";
+    color: red;
+}

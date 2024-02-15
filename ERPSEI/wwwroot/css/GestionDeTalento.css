@@ -32,11 +32,6 @@
     text-overflow: ellipsis;
 }
 
-.required::before {
-    content: "* ";
-    color: red;
-}
-
 @media (min-width: 1201px) {
     .dynamic-height {
         height: 156px !important;
