@@ -266,14 +266,14 @@ function onDeleteEmpresaClick(ids = null) {
 //Función para filtrar los datos de la tabla.
 function onBuscarClick() {
     let btnBuscar = document.getElementById("btnBuscar");
-    let inpOrigen = document.getElementById("inpFiltroOrigen");
-    let inpNivel = document.getElementById("inpFiltroNivel");
-    let inpActividadEconomica = document.getElementById("inpFiltroActividadEconomica");
+    let selOrigen = document.getElementById("selFiltroOrigen");
+    let selNivel = document.getElementById("selFiltroNivel");
+    let selActividadEconomica = document.getElementById("selFiltroActividadEconomica");
 
     let oParams = {
-        origen: inpOrigen.value,
-        nivel: inpNivel.value,
-        actividadEconomica: inpActividadEconomica.value
+        origen: selOrigen.value,
+        nivel: selNivel.value,
+        actividadEconomica: selActividadEconomica.value
     };
 
     //Resetea el valor de los filtros.
