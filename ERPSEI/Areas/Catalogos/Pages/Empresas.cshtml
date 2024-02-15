@@ -165,21 +165,21 @@
 							<div class="col-sm-12 col-md-12 col-lg-4">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaRazonSocial" asp-for="InputEmpresa.RazonSocial" type="text" class="form-control formInput" placeholder="@Localizer["RazonSocialPlaceholder"]" />
-									<label for="inpEmpresaRazonSocial" asp-for="InputEmpresa.RazonSocial" class="form-label"></label>
+									<label for="inpEmpresaRazonSocial" asp-for="InputEmpresa.RazonSocial" class="form-label required"></label>
 									<span asp-validation-for="InputEmpresa.RazonSocial" class="text-danger"></span>
 								</div>
 							</div>
 							<div class="col-sm-12 col-md-12 col-lg-4">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaAdministrador" type="text" asp-for="InputEmpresa.Administrador" class="form-control" placeholder="@Localizer["AdministradorPlaceholder"]" />
-									<label for="inpEmpresaAdministrador" asp-for="InputEmpresa.Administrador" class="form-label"></label>
+									<label for="inpEmpresaAdministrador" asp-for="InputEmpresa.Administrador" class="form-label required"></label>
 									<span asp-validation-for="InputEmpresa.Administrador" class="text-danger"></span>
 								</div>
 							</div>
 							<div class="col-sm-12 col-md-12 col-lg-4">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaAccionista" type="text" asp-for="InputEmpresa.Accionista" class="form-control" placeholder="@Localizer["AccionistaPlaceholder"]" />
-									<label for="inpEmpresaAccionista" asp-for="InputEmpresa.Accionista" class="form-label"></label>
+									<label for="inpEmpresaAccionista" asp-for="InputEmpresa.Accionista" class="form-label required"></label>
 									<span asp-validation-for="InputEmpresa.Accionista" class="text-danger"></span>
 								</div>
 							</div>
@@ -188,14 +188,13 @@
 							<div class="col-sm-12 col-md-6 col-lg-3">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaRFC" asp-for="InputEmpresa.RFC" type="text" class="form-control formInput" placeholder="@Localizer["RFCPlaceholder"]" />
-									<label for="inpEmpresaRFC" asp-for="InputEmpresa.RFC" class="form-label"></label>
+									<label for="inpEmpresaRFC" asp-for="InputEmpresa.RFC" class="form-label required"></label>
 									<span asp-validation-for="InputEmpresa.RFC" class="text-danger"></span>
 								</div>
 							</div>
 							<div class="col-sm-12 col-md-6 col-lg-3">
 								<div class="form-floating mb-3">
 									<select id="selEmpresaOrigen" asp-for="InputEmpresa.OrigenId" class="form-select" placeholder="@Localizer["OrigenPlaceholder"]">
-										<option value="0">Seleccione...</option>
 										@{
 											foreach (Origen origen in origenes)
 											{
@@ -203,14 +202,13 @@
 											}
 										}
 									</select>
-									<label for="selEmpresaOrigen" asp-for="InputEmpresa.OrigenId" class="form-label"></label>
+									<label for="selEmpresaOrigen" asp-for="InputEmpresa.OrigenId" class="form-label required"></label>
 									<span asp-validation-for="InputEmpresa.OrigenId" class="text-danger"></span>
 								</div>
 							</div>
 							<div class="col-sm-12 col-md-6 col-lg-3">
 								<div class="form-floating mb-3">
-									<select id="selEmpresaNivel" asp-for="InputFiltro.NivelId" class="form-select" placeholder="@Localizer["NivelPlaceholder"]">
-										<option value="0">Seleccione...</option>
+									<select id="selEmpresaNivel" asp-for="InputEmpresa.NivelId" class="form-select" placeholder="@Localizer["NivelPlaceholder"]">
 										@{
 											foreach (Nivel nivel in niveles)
 											{
@@ -218,14 +216,14 @@
 											}
 										}
 									</select>
-									<label for="selEmpresaNivel" asp-for="InputEmpresa.NivelId" class="form-label"></label>
+									<label for="selEmpresaNivel" asp-for="InputEmpresa.NivelId" class="form-label required"></label>
 									<span asp-validation-for="InputEmpresa.NivelId" class="text-danger"></span>
 								</div>
 							</div>
 							<div class="col-sm-12 col-md-6 col-lg-3">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaTelefono" asp-for="InputEmpresa.Telefono" type="text" class="form-control formInput" placeholder="@Localizer["PhonePlaceholder"]" />
-									<label for="inpEmpresaTelefono" asp-for="InputEmpresa.Telefono" class="form-label"></label>
+									<label for="inpEmpresaTelefono" asp-for="InputEmpresa.Telefono" class="form-label required"></label>
 									<span asp-validation-for="InputEmpresa.Telefono" class="text-danger"></span>
 								</div>
 							</div>
@@ -234,7 +232,7 @@
 							<div class="col-12">
 								<div class="form-floating mb-3">
 									<textarea id="txtEmpresaDomicilioFiscal" maxlength="135" asp-for="InputEmpresa.DomicilioFiscal" class="form-control dynamic-height formInput" placeholder="@Localizer["DireccionPlaceholder"]"></textarea>
-									<label for="txtEmpresaDomicilioFiscal" asp-for="InputEmpresa.DomicilioFiscal" class="form-label"></label>
+									<label for="txtEmpresaDomicilioFiscal" asp-for="InputEmpresa.DomicilioFiscal" class="form-label required"></label>
 									<span asp-validation-for="InputEmpresa.DomicilioFiscal" class="text-danger"></span>
 								</div>
 							</div>
@@ -243,28 +241,28 @@
 							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaCorreoGeneral" asp-for="InputEmpresa.CorreoGeneral" type="text" class="form-control formInput" placeholder="@Localizer["CorreoGeneralPlaceholder"]" />
-									<label for="inpEmpresaCorreoGeneral" asp-for="InputEmpresa.CorreoGeneral" class="form-label"></label>
+									<label for="inpEmpresaCorreoGeneral" asp-for="InputEmpresa.CorreoGeneral" class="form-label required"></label>
 									<span asp-validation-for="InputEmpresa.CorreoGeneral" class="text-danger"></span>
 								</div>
 							</div>
 							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaCorreoBancos" asp-for="InputEmpresa.CorreoBancos" type="text" class="form-control formInput" placeholder="@Localizer["CorreoBancosPlaceholder"]" />
-									<label for="inpEmpresaCorreoBancos" asp-for="InputEmpresa.CorreoBancos" class="form-label"></label>
+									<label for="inpEmpresaCorreoBancos" asp-for="InputEmpresa.CorreoBancos" class="form-label required"></label>
 									<span asp-validation-for="InputEmpresa.CorreoBancos" class="text-danger"></span>
 								</div>
 							</div>
 							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaCorreoFiscal" asp-for="InputEmpresa.CorreoFiscal" type="text" class="form-control formInput" placeholder="@Localizer["CorreoFiscalPlaceholder"]" />
-									<label for="inpEmpresaCorreoFiscal" asp-for="InputEmpresa.CorreoFiscal" class="form-label"></label>
+									<label for="inpEmpresaCorreoFiscal" asp-for="InputEmpresa.CorreoFiscal" class="form-label required"></label>
 									<span asp-validation-for="InputEmpresa.CorreoFiscal" class="text-danger"></span>
 								</div>
 							</div>
 							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaCorreoFacturacion" asp-for="InputEmpresa.CorreoFacturacion" type="text" class="form-control formInput" placeholder="@Localizer["CorreoFacturacionPlaceholder"]" />
-									<label for="inpEmpresaCorreoFacturacion" asp-for="InputEmpresa.CorreoFacturacion" class="form-label"></label>
+									<label for="inpEmpresaCorreoFacturacion" asp-for="InputEmpresa.CorreoFacturacion" class="form-label required"></label>
 									<span asp-validation-for="InputEmpresa.CorreoFacturacion" class="text-danger"></span>
 								</div>
 							</div>
@@ -311,7 +309,6 @@
 							<div class="col-sm-12 col-md-12 col-lg-6">
 								<div class="form-floating mb-3">
 									<select id="selEmpresaActividadEconomica" asp-for="InputEmpresa.ActividadEconomicaId" class="form-select" placeholder="@Localizer["ActividadEconomicaPlaceholder"]">
-										<option value="0">Seleccione...</option>
 										@{
 											foreach (ActividadEconomica actividad in actividadesEconomicas)
 											{
@@ -319,14 +316,14 @@
 											}
 										}
 									</select>
-									<label for="selEmpresaActividadEconomica" asp-for="InputEmpresa.ActividadEconomicaId" class="form-label"></label>
+									<label for="selEmpresaActividadEconomica" asp-for="InputEmpresa.ActividadEconomicaId" class="form-label required"></label>
 									<span asp-validation-for="InputEmpresa.ActividadEconomicaId" class="text-danger"></span>
 								</div>
 							</div>
 							<div class="col-sm-12 col-md-12 col-lg-6">
 								<div class="form-floating mb-3">
 									<input id="inpEmpresaObjetoSocial" asp-for="InputEmpresa.ObjetoSocial" type="text" class="form-control formInput" placeholder="@Localizer["ObjetoSocialPlaceholder"]" />
-									<label for="inpEmpresaObjetoSocial" asp-for="InputEmpresa.ObjetoSocial" class="form-label"></label>
+									<label for="inpEmpresaObjetoSocial" asp-for="InputEmpresa.ObjetoSocial" class="form-label required"></label>
 									<span asp-validation-for="InputEmpresa.ObjetoSocial" class="text-danger"></span>
 								</div>
 							</div>
@@ -361,7 +358,7 @@
 						</button>
 					</div>
 					<div class="col-7 text-end">
-						<button id="dlgEmpresaBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarClick();" data-bs-dismiss="modal">
+						<button id="dlgEmpresaBtnCancelar" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
 							<i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
 						</button>
 						<button id="dlgEmpresaBtnGuardar" type="button" class="btn btn-primary formButton" onclick="onGuardarClick();">
@@ -445,6 +442,7 @@
 		var cultureName = "@cultureName";
 		var btnImportarText = '@Localizer["ImportButtonText"]';
 		var btnImportarTitle = '@Localizer["ImportButtonTitle"]';
+		var btnEliminarTitle = '@Localizer["DeleteButton"]';
 		var btnVerTitle = '@Localizer["SeeButtonTitle"]';
 		var btnEditarTitle = '@Localizer["EditButtonTitle"]';
 		var dlgEditarTitle = '@Localizer["EditDialogTitle"]';
