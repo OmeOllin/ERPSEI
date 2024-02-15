@@ -53,7 +53,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			[DataType(DataType.Text)]
 			[StringLength(100, ErrorMessage = "FieldLength", MinimumLength = 2)]
-			[RegularExpression(RegularExpressions.AlphanumSpace, ErrorMessage = "AlphanumSpace")]
+			[RegularExpression(RegularExpressions.CompanyName, ErrorMessage = "CompanyName")]
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "RazonSocialField")]
 			public string RazonSocial { get; set; } = string.Empty;
@@ -114,25 +114,29 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			[EmailAddress(ErrorMessage = "EmailFormat")]
 			[DataType(DataType.EmailAddress)]
+			[StringLength(55, ErrorMessage = "FieldLength", MinimumLength = 1)]
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "CorreoGeneralField")]
 			public string CorreoGeneral { get; set; } = string.Empty;
 
 			[EmailAddress(ErrorMessage = "EmailFormat")]
 			[DataType(DataType.EmailAddress)]
+			[StringLength(55, ErrorMessage = "FieldLength", MinimumLength = 1)]
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "CorreoBancosField")]
 			public string CorreoBancos { get; set; } = string.Empty;
 
 			[EmailAddress(ErrorMessage = "EmailFormat")]
 			[DataType(DataType.EmailAddress)]
+			[StringLength(55, ErrorMessage = "FieldLength", MinimumLength = 1)]
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "CorreoFiscalField")]
 			public string CorreoFiscal { get; set; } = string.Empty;
 
             [EmailAddress(ErrorMessage = "EmailFormat")]
             [DataType(DataType.EmailAddress)]
-            [Required(ErrorMessage = "Required")]
+			[StringLength(55, ErrorMessage = "FieldLength", MinimumLength = 1)]
+			[Required(ErrorMessage = "Required")]
             [Display(Name = "CorreoFacturacionField")]
             public string CorreoFacturacion { get; set; } = string.Empty;
 
@@ -149,8 +153,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
             public int ActividadEconomicaId {  get; set; }
 
             [DataType(DataType.Text)]
-            [StringLength(100, ErrorMessage = "FieldLength", MinimumLength = 2)]
-            [Required(ErrorMessage = "Required")]
+            [StringLength(50, ErrorMessage = "FieldLength", MinimumLength = 2)]
+			[RegularExpression(RegularExpressions.AlphanumSpace, ErrorMessage = "AlphanumSpace")]
+			[Required(ErrorMessage = "Required")]
             [Display(Name = "ObjetoSocialField")]
             public string ObjetoSocial {  get; set; } = string.Empty;
 

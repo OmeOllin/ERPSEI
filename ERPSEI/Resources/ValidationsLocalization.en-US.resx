@@ -135,6 +135,9 @@
   <data name="AreaField" xml:space="preserve">
     <value>Area</value>
   </data>
+  <data name="CompanyName" xml:space="preserve">
+    <value>The {0} field only allows letters, numbers, underscores, spaces, commas, and periods.</value>
+  </data>
   <data name="ConfirmNewPasswordField" xml:space="preserve">
     <value>Confirm new password</value>
   </data>

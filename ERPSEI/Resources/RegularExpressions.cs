@@ -2,6 +2,8 @@
 {
 	public static class RegularExpressions
 	{
+		public const string CompanyName = @"^[áÁéÉíÍóÓúÚñÑ\w,. ]+$";
+
 		public const string PersonName = @"^[A-ZÁÉÍÓÚÑ][a-zA-ZáÁéÉíÍóÓúÚñÑ ]+$";
 
 		public const string AlphanumSpace = @"^[áÁéÉíÍóÓúÚñÑ\w ]+$";
