@@ -144,6 +144,9 @@
   <data name="HumanResourcesMenu" xml:space="preserve">
     <value>Recursos Humanos</value>
   </data>
+  <data name="LevelsCatalogMenu" xml:space="preserve">
+    <value>Niveles</value>
+  </data>
   <data name="OfficesCatalogMenu" xml:space="preserve">
     <value>Oficinas</value>
   </data>

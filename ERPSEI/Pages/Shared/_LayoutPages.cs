@@ -46,6 +46,9 @@ namespace ERPSEI.Pages.Shared
         public static string CatalogoOrigenes => "Origenes";
         public static string CatalogoOrigenesNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoOrigenes);
 
+        public static string CatalogoNiveles => "Niveles";
+        public static string CatalogoNivelesNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoNiveles);
+
         #endregion
 
         public static string ERP => "ERP";
