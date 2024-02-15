@@ -150,6 +150,9 @@
   <data name="OrganizationChartMenu" xml:space="preserve">
     <value>Organization chart</value>
   </data>
+  <data name="OriginsCatalogMenu" xml:space="preserve">
+    <value>Origins</value>
+  </data>
   <data name="PermissionsMenu" xml:space="preserve">
     <value>Permissions</value>
   </data>

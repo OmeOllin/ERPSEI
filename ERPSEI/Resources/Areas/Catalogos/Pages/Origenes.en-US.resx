@@ -117,64 +117,46 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AccountingMenu" xml:space="preserve">
-    <value>Contabilidad</value>
+  <data name="AddButton" xml:space="preserve">
+    <value>Add</value>
   </data>
-  <data name="AreasCatalogMenu" xml:space="preserve">
-    <value>Áreas</value>
+  <data name="CancelButtonTitle" xml:space="preserve">
+    <value>Cancel</value>
   </data>
-  <data name="CatalogsMenu" xml:space="preserve">
-    <value>Catálogos</value>
+  <data name="ColActionsHeader" xml:space="preserve">
+    <value>Actions</value>
   </data>
-  <data name="DisabilitiesMenu" xml:space="preserve">
-    <value>Incapacidades</value>
+  <data name="ColNameHeader" xml:space="preserve">
+    <value>Name</value>
   </data>
-  <data name="EmpresasCatalogMenu" xml:space="preserve">
-    <value>Empresas</value>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Delete</value>
   </data>
-  <data name="ERPMenu" xml:space="preserve">
-    <value>ERP</value>
+  <data name="DeleteDialogQuestion" xml:space="preserve">
+    <value>Are you sure you want to delete selected records?</value>
   </data>
-  <data name="FacturacionMenu" xml:space="preserve">
-    <value>Facturación</value>
+  <data name="DeleteDialogTitle" xml:space="preserve">
+    <value>Delete Record</value>
   </data>
-  <data name="HomeMenu" xml:space="preserve">
-    <value>Inicio</value>
+  <data name="EditButtonTitle" xml:space="preserve">
+    <value>Edit</value>
   </data>
-  <data name="HumanResourcesMenu" xml:space="preserve">
-    <value>Recursos Humanos</value>
+  <data name="EditDialogTitle" xml:space="preserve">
+    <value>Edit Record</value>
   </data>
-  <data name="OfficesCatalogMenu" xml:space="preserve">
-    <value>Oficinas</value>
+  <data name="NewDialogTitle" xml:space="preserve">
+    <value>New Record</value>
   </data>
-  <data name="OrganizationChartMenu" xml:space="preserve">
-    <value>Organigrama</value>
+  <data name="SaveButtonTitle" xml:space="preserve">
+    <value>Save</value>
   </data>
-  <data name="OriginsCatalogMenu" xml:space="preserve">
-    <value>Origenes</value>
+  <data name="SeeButtonTitle" xml:space="preserve">
+    <value>See</value>
   </data>
-  <data name="PermissionsMenu" xml:space="preserve">
-    <value>Permisos</value>
+  <data name="SeeDialogTitle" xml:space="preserve">
+    <value>See Record</value>
   </data>
-  <data name="PersonalCatalogMenu" xml:space="preserve">
-    <value>Gestión de talento</value>
-  </data>
-  <data name="PositionsCatalogMenu" xml:space="preserve">
-    <value>Puestos</value>
-  </data>
-  <data name="PrivacyMenu" xml:space="preserve">
-    <value>Aviso de privacidad</value>
-  </data>
-  <data name="RightFooter" xml:space="preserve">
-    <value>Imagenes por &lt;a href="https://www.freepik.com/author/stories"&gt;storyset&lt;/a&gt; en Freepik.com</value>
-  </data>
-  <data name="SubareasCatalogMenu" xml:space="preserve">
-    <value>Subáreas</value>
-  </data>
-  <data name="UsersCatalogMenu" xml:space="preserve">
-    <value>Usuarios</value>
-  </data>
-  <data name="VacationMenu" xml:space="preserve">
-    <value>Vacaciones</value>
+  <data name="Title" xml:space="preserve">
+    <value>Origins Catalog</value>
   </data>
 </root>
