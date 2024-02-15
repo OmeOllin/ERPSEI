@@ -58,9 +58,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Display(Name = "RazonSocialField")]
 			public string RazonSocial { get; set; } = string.Empty;
 
+			[Required(ErrorMessage = "Required")]
 			[Display(Name = "OrigenField")]
 			public int OrigenId { get; set; }
 
+			[Required(ErrorMessage = "Required")]
 			[Display(Name = "NivelField")]
 			public int NivelId { get; set; }
 
@@ -142,7 +144,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Display(Name = "PhoneNumberField")]
 			public string Telefono { get; set; } = string.Empty;
 
-            [Display(Name = "ActividadEconomicaField")]
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "ActividadEconomicaField")]
             public int ActividadEconomicaId {  get; set; }
 
             [DataType(DataType.Text)]
