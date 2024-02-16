@@ -551,7 +551,7 @@ function onAgregarBancoClick(row = {banco: "", responsable: "", firmante: ""}) {
     currentRows += 1;
     
     let bodyBancos = document.getElementById("bodyBancos");
-    bodyBancos.innerHTML += `<div class="card mb-3 shadow-sm">
+    bodyBancos.innerHTML += `<div class="card mb-3 shadow">
                                 <span class="text-end mt-2" data-effect="fadeOut">
                                     <button type="button" class="btn-close formButton" onclick="onEliminarBancoClick(this);"></button>
                                 </span>
