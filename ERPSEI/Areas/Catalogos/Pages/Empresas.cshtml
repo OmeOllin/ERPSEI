@@ -31,7 +31,7 @@
 <div class="accordion shadow mb-5" id="accordionFiltros">
 	<div class="accordion-item">
 		<h2 class="accordion-header" id="headingOne">
-			<button class="accordion-button p-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+			<button class="accordion-button p-2 bg-gradient bg-primary bg-opacity-10 text-black" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
 				<h6>@Localizer["FilterTitle"]</h6>
 			</button>
 		</h2>
@@ -156,195 +156,227 @@
 								</div>
 							</div>
 						</div>
-						<h5>@Localizer["EmpresaPrimerSeccionTitle"]</h5>
-						<hr />
 						<div id="saveValidationSummary" class="text-danger mb-3" role="alert"></div>
-						<div class="row">
-							<div class="col-sm-12 col-md-12 col-lg-4">
-								<div class="form-floating mb-3">
-									<input id="inpEmpresaRazonSocial" asp-for="InputEmpresa.RazonSocial" type="text" class="form-control formInput" placeholder="@Localizer["RazonSocialPlaceholder"]" />
-									<label for="inpEmpresaRazonSocial" asp-for="InputEmpresa.RazonSocial" class="form-label required"></label>
-									<span asp-validation-for="InputEmpresa.RazonSocial" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-sm-12 col-md-12 col-lg-4">
-								<div class="form-floating mb-3">
-									<input id="inpEmpresaAdministrador" type="text" asp-for="InputEmpresa.Administrador" class="form-control formInput" placeholder="@Localizer["AdministradorPlaceholder"]" />
-									<label for="inpEmpresaAdministrador" asp-for="InputEmpresa.Administrador" class="form-label required"></label>
-									<span asp-validation-for="InputEmpresa.Administrador" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-sm-12 col-md-12 col-lg-4">
-								<div class="form-floating mb-3">
-									<input id="inpEmpresaAccionista" type="text" asp-for="InputEmpresa.Accionista" class="form-control formInput" placeholder="@Localizer["AccionistaPlaceholder"]" />
-									<label for="inpEmpresaAccionista" asp-for="InputEmpresa.Accionista" class="form-label required"></label>
-									<span asp-validation-for="InputEmpresa.Accionista" class="text-danger"></span>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-sm-12 col-md-6 col-lg-3">
-								<div class="form-floating mb-3">
-									<input id="inpEmpresaRFC" asp-for="InputEmpresa.RFC" type="text" class="form-control formInput" placeholder="@Localizer["RFCPlaceholder"]" />
-									<label for="inpEmpresaRFC" asp-for="InputEmpresa.RFC" class="form-label required"></label>
-									<span asp-validation-for="InputEmpresa.RFC" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-sm-12 col-md-6 col-lg-3">
-								<div class="form-floating mb-3">
-									<select id="selEmpresaOrigen" asp-for="InputEmpresa.OrigenId" class="form-select formSelect" placeholder="@Localizer["OrigenPlaceholder"]">
-										@{
-											foreach (Origen origen in origenes)
-											{
-												<option value='@origen.Id'>@origen.Nombre</option>
-											}
-										}
-									</select>
-									<label for="selEmpresaOrigen" asp-for="InputEmpresa.OrigenId" class="form-label required"></label>
-									<span asp-validation-for="InputEmpresa.OrigenId" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-sm-12 col-md-6 col-lg-3">
-								<div class="form-floating mb-3">
-									<select id="selEmpresaNivel" asp-for="InputEmpresa.NivelId" class="form-select formSelect" placeholder="@Localizer["NivelPlaceholder"]">
-										@{
-											foreach (Nivel nivel in niveles)
-											{
-												<option value='@nivel.Id'>@nivel.Nombre</option>
-											}
-										}
-									</select>
-									<label for="selEmpresaNivel" asp-for="InputEmpresa.NivelId" class="form-label required"></label>
-									<span asp-validation-for="InputEmpresa.NivelId" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-sm-12 col-md-6 col-lg-3">
-								<div class="form-floating mb-3">
-									<input id="inpEmpresaTelefono" asp-for="InputEmpresa.Telefono" type="text" class="form-control formInput" placeholder="@Localizer["PhonePlaceholder"]" />
-									<label for="inpEmpresaTelefono" asp-for="InputEmpresa.Telefono" class="form-label required"></label>
-									<span asp-validation-for="InputEmpresa.Telefono" class="text-danger"></span>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-12">
-								<div class="form-floating mb-3">
-									<textarea id="txtEmpresaDomicilioFiscal" maxlength="135" asp-for="InputEmpresa.DomicilioFiscal" class="form-control dynamic-height formInput" placeholder="@Localizer["DireccionPlaceholder"]"></textarea>
-									<label for="txtEmpresaDomicilioFiscal" asp-for="InputEmpresa.DomicilioFiscal" class="form-label required"></label>
-									<span asp-validation-for="InputEmpresa.DomicilioFiscal" class="text-danger"></span>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
-								<div class="form-floating mb-3">
-									<input id="inpEmpresaCorreoGeneral" asp-for="InputEmpresa.CorreoGeneral" type="text" class="form-control formInput" placeholder="@Localizer["CorreoGeneralPlaceholder"]" />
-									<label for="inpEmpresaCorreoGeneral" asp-for="InputEmpresa.CorreoGeneral" class="form-label required"></label>
-									<span asp-validation-for="InputEmpresa.CorreoGeneral" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
-								<div class="form-floating mb-3">
-									<input id="inpEmpresaCorreoBancos" asp-for="InputEmpresa.CorreoBancos" type="text" class="form-control formInput" placeholder="@Localizer["CorreoBancosPlaceholder"]" />
-									<label for="inpEmpresaCorreoBancos" asp-for="InputEmpresa.CorreoBancos" class="form-label required"></label>
-									<span asp-validation-for="InputEmpresa.CorreoBancos" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
-								<div class="form-floating mb-3">
-									<input id="inpEmpresaCorreoFiscal" asp-for="InputEmpresa.CorreoFiscal" type="text" class="form-control formInput" placeholder="@Localizer["CorreoFiscalPlaceholder"]" />
-									<label for="inpEmpresaCorreoFiscal" asp-for="InputEmpresa.CorreoFiscal" class="form-label required"></label>
-									<span asp-validation-for="InputEmpresa.CorreoFiscal" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
-								<div class="form-floating mb-3">
-									<input id="inpEmpresaCorreoFacturacion" asp-for="InputEmpresa.CorreoFacturacion" type="text" class="form-control formInput" placeholder="@Localizer["CorreoFacturacionPlaceholder"]" />
-									<label for="inpEmpresaCorreoFacturacion" asp-for="InputEmpresa.CorreoFacturacion" class="form-label required"></label>
-									<span asp-validation-for="InputEmpresa.CorreoFacturacion" class="text-danger"></span>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-xs-12 col-sm-6 col-md-12 col-lg-6 col-xl-3">
-								<div class="form-floating mb-3">
-									<div class="form-floating mb-3">
-										<input id="inpEmpresaFechaConstitucion" type="date" asp-for="InputEmpresa.FechaConstitucion" class="form-control formInput" placeholder="@Localizer["FechaConstitucionPlaceholder"]" />
-										<label for="inpEmpresaFechaConstitucion" asp-for="InputEmpresa.FechaConstitucion" class="form-label required"></label>
-										<span asp-validation-for="InputEmpresa.FechaConstitucion" class="text-danger"></span>
+						<div class="accordion shadow-sm mb-5" id="accordionOne">
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="primerSeccion">
+									<button class="accordion-button p-2 bg-gradient bg-primary bg-opacity-10 text-black" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSectionOne" aria-expanded="true" aria-controls="collapseSectionOne">
+										<h5>@Localizer["EmpresaPrimerSeccionTitle"]</h5>
+									</button>
+								</h2>
+								<div id="collapseSectionOne" class="accordion-collapse collapse show" aria-labelledby="primerSeccion" data-bs-parent="#accordionOne">
+									<div class="accordion-body">
+										<div class="row">
+											<div class="col-sm-12 col-md-12 col-lg-4">
+												<div class="form-floating mb-3">
+													<input id="inpEmpresaRazonSocial" asp-for="InputEmpresa.RazonSocial" type="text" class="form-control formInput" placeholder="@Localizer["RazonSocialPlaceholder"]" />
+													<label for="inpEmpresaRazonSocial" asp-for="InputEmpresa.RazonSocial" class="form-label required"></label>
+													<span asp-validation-for="InputEmpresa.RazonSocial" class="text-danger"></span>
+												</div>
+											</div>
+											<div class="col-sm-12 col-md-12 col-lg-4">
+												<div class="form-floating mb-3">
+													<input id="inpEmpresaAdministrador" type="text" asp-for="InputEmpresa.Administrador" class="form-control formInput" placeholder="@Localizer["AdministradorPlaceholder"]" />
+													<label for="inpEmpresaAdministrador" asp-for="InputEmpresa.Administrador" class="form-label required"></label>
+													<span asp-validation-for="InputEmpresa.Administrador" class="text-danger"></span>
+												</div>
+											</div>
+											<div class="col-sm-12 col-md-12 col-lg-4">
+												<div class="form-floating mb-3">
+													<input id="inpEmpresaAccionista" type="text" asp-for="InputEmpresa.Accionista" class="form-control formInput" placeholder="@Localizer["AccionistaPlaceholder"]" />
+													<label for="inpEmpresaAccionista" asp-for="InputEmpresa.Accionista" class="form-label required"></label>
+													<span asp-validation-for="InputEmpresa.Accionista" class="text-danger"></span>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-12 col-md-6 col-lg-3">
+												<div class="form-floating mb-3">
+													<input id="inpEmpresaRFC" asp-for="InputEmpresa.RFC" type="text" class="form-control formInput" placeholder="@Localizer["RFCPlaceholder"]" />
+													<label for="inpEmpresaRFC" asp-for="InputEmpresa.RFC" class="form-label required"></label>
+													<span asp-validation-for="InputEmpresa.RFC" class="text-danger"></span>
+												</div>
+											</div>
+											<div class="col-sm-12 col-md-6 col-lg-3">
+												<div class="form-floating mb-3">
+													<select id="selEmpresaOrigen" asp-for="InputEmpresa.OrigenId" class="form-select formSelect" placeholder="@Localizer["OrigenPlaceholder"]">
+														@{
+															foreach (Origen origen in origenes)
+															{
+																<option value='@origen.Id'>@origen.Nombre</option>
+															}
+														}
+													</select>
+													<label for="selEmpresaOrigen" asp-for="InputEmpresa.OrigenId" class="form-label required"></label>
+													<span asp-validation-for="InputEmpresa.OrigenId" class="text-danger"></span>
+												</div>
+											</div>
+											<div class="col-sm-12 col-md-6 col-lg-3">
+												<div class="form-floating mb-3">
+													<select id="selEmpresaNivel" asp-for="InputEmpresa.NivelId" class="form-select formSelect" placeholder="@Localizer["NivelPlaceholder"]">
+														@{
+															foreach (Nivel nivel in niveles)
+															{
+																<option value='@nivel.Id'>@nivel.Nombre</option>
+															}
+														}
+													</select>
+													<label for="selEmpresaNivel" asp-for="InputEmpresa.NivelId" class="form-label required"></label>
+													<span asp-validation-for="InputEmpresa.NivelId" class="text-danger"></span>
+												</div>
+											</div>
+											<div class="col-sm-12 col-md-6 col-lg-3">
+												<div class="form-floating mb-3">
+													<input id="inpEmpresaTelefono" asp-for="InputEmpresa.Telefono" type="text" class="form-control formInput" placeholder="@Localizer["PhonePlaceholder"]" />
+													<label for="inpEmpresaTelefono" asp-for="InputEmpresa.Telefono" class="form-label required"></label>
+													<span asp-validation-for="InputEmpresa.Telefono" class="text-danger"></span>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-12">
+												<div class="form-floating mb-3">
+													<textarea id="txtEmpresaDomicilioFiscal" maxlength="135" asp-for="InputEmpresa.DomicilioFiscal" class="form-control dynamic-height formInput" placeholder="@Localizer["DireccionPlaceholder"]"></textarea>
+													<label for="txtEmpresaDomicilioFiscal" asp-for="InputEmpresa.DomicilioFiscal" class="form-label required"></label>
+													<span asp-validation-for="InputEmpresa.DomicilioFiscal" class="text-danger"></span>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
+												<div class="form-floating mb-3">
+													<input id="inpEmpresaCorreoGeneral" asp-for="InputEmpresa.CorreoGeneral" type="text" class="form-control formInput" placeholder="@Localizer["CorreoGeneralPlaceholder"]" />
+													<label for="inpEmpresaCorreoGeneral" asp-for="InputEmpresa.CorreoGeneral" class="form-label required"></label>
+													<span asp-validation-for="InputEmpresa.CorreoGeneral" class="text-danger"></span>
+												</div>
+											</div>
+											<div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
+												<div class="form-floating mb-3">
+													<input id="inpEmpresaCorreoBancos" asp-for="InputEmpresa.CorreoBancos" type="text" class="form-control formInput" placeholder="@Localizer["CorreoBancosPlaceholder"]" />
+													<label for="inpEmpresaCorreoBancos" asp-for="InputEmpresa.CorreoBancos" class="form-label required"></label>
+													<span asp-validation-for="InputEmpresa.CorreoBancos" class="text-danger"></span>
+												</div>
+											</div>
+											<div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
+												<div class="form-floating mb-3">
+													<input id="inpEmpresaCorreoFiscal" asp-for="InputEmpresa.CorreoFiscal" type="text" class="form-control formInput" placeholder="@Localizer["CorreoFiscalPlaceholder"]" />
+													<label for="inpEmpresaCorreoFiscal" asp-for="InputEmpresa.CorreoFiscal" class="form-label required"></label>
+													<span asp-validation-for="InputEmpresa.CorreoFiscal" class="text-danger"></span>
+												</div>
+											</div>
+											<div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
+												<div class="form-floating mb-3">
+													<input id="inpEmpresaCorreoFacturacion" asp-for="InputEmpresa.CorreoFacturacion" type="text" class="form-control formInput" placeholder="@Localizer["CorreoFacturacionPlaceholder"]" />
+													<label for="inpEmpresaCorreoFacturacion" asp-for="InputEmpresa.CorreoFacturacion" class="form-label required"></label>
+													<span asp-validation-for="InputEmpresa.CorreoFacturacion" class="text-danger"></span>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-3">
+												<div class="form-floating mb-3">
+													<div class="form-floating mb-3">
+														<input id="inpEmpresaFechaConstitucion" type="date" asp-for="InputEmpresa.FechaConstitucion" class="form-control formInput" placeholder="@Localizer["FechaConstitucionPlaceholder"]" />
+														<label for="inpEmpresaFechaConstitucion" asp-for="InputEmpresa.FechaConstitucion" class="form-label required"></label>
+														<span asp-validation-for="InputEmpresa.FechaConstitucion" class="text-danger"></span>
+													</div>
+												</div>
+											</div>
+											<div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-3">
+												<div class="form-floating mb-3">
+													<div class="form-floating mb-3">
+														<input id="inpEmpresaFechaInicioOperacion" type="date" asp-for="InputEmpresa.FechaInicioOperacion" class="form-control formInput" placeholder="@Localizer["FechaInicioOperacionPlaceholder"]" />
+														<label for="inpEmpresaFechaInicioOperacion" asp-for="InputEmpresa.FechaInicioOperacion" class="form-label required"></label>
+														<span asp-validation-for="InputEmpresa.FechaInicioOperacion" class="text-danger"></span>
+													</div>
+												</div>
+											</div>
+											<div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-3">
+												<div class="form-floating mb-3">
+													<div class="form-floating mb-3">
+														<input id="inpEmpresaFechaInicioFacturacion" type="date" asp-for="InputEmpresa.FechaInicioFacturacion" class="form-control formInput" placeholder="@Localizer["FechaInicioFacturacionPlaceholder"]" />
+														<label for="inpEmpresaFechaInicioFacturacion" asp-for="InputEmpresa.FechaInicioFacturacion" class="form-label required"></label>
+														<span asp-validation-for="InputEmpresa.FechaInicioFacturacion" class="text-danger"></span>
+													</div>
+												</div>
+											</div>
+											<div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-3">
+												<div class="form-floating mb-3">
+													<div class="form-floating mb-3">
+														<input id="inpEmpresaFechaInicioAsimilados" type="date" asp-for="InputEmpresa.FechaInicioAsimilados" class="form-control formInput" placeholder="@Localizer["FechaInicioAsimiladosPlaceholder"]" />
+														<label for="inpEmpresaFechaInicioAsimilados" asp-for="InputEmpresa.FechaInicioAsimilados" class="form-label required"></label>
+														<span asp-validation-for="InputEmpresa.FechaInicioAsimilados" class="text-danger"></span>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="row mb-3">
+											<div class="col-sm-12 col-md-12 col-lg-6">
+												<div class="form-floating mb-3">
+													<select id="selEmpresaActividadEconomica" asp-for="InputEmpresa.ActividadEconomicaId" class="form-select formSelect" placeholder="@Localizer["ActividadEconomicaPlaceholder"]">
+														@{
+															foreach (ActividadEconomica actividad in actividadesEconomicas)
+															{
+																<option value='@actividad.Id'>@actividad.Nombre</option>
+															}
+														}
+													</select>
+													<label for="selEmpresaActividadEconomica" asp-for="InputEmpresa.ActividadEconomicaId" class="form-label required"></label>
+													<span asp-validation-for="InputEmpresa.ActividadEconomicaId" class="text-danger"></span>
+												</div>
+											</div>
+											<div class="col-sm-12 col-md-12 col-lg-6">
+												<div class="form-floating mb-3">
+													<input id="inpEmpresaObjetoSocial" asp-for="InputEmpresa.ObjetoSocial" type="text" class="form-control formInput" placeholder="@Localizer["ObjetoSocialPlaceholder"]" />
+													<label for="inpEmpresaObjetoSocial" asp-for="InputEmpresa.ObjetoSocial" class="form-label required"></label>
+													<span asp-validation-for="InputEmpresa.ObjetoSocial" class="text-danger"></span>
+												</div>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
-							<div class="col-xs-12 col-sm-6 col-md-12 col-lg-6 col-xl-3">
-								<div class="form-floating mb-3">
-									<div class="form-floating mb-3">
-										<input id="inpEmpresaFechaInicioOperacion" type="date" asp-for="InputEmpresa.FechaInicioOperacion" class="form-control formInput" placeholder="@Localizer["FechaInicioOperacionPlaceholder"]" />
-										<label for="inpEmpresaFechaInicioOperacion" asp-for="InputEmpresa.FechaInicioOperacion" class="form-label required"></label>
-										<span asp-validation-for="InputEmpresa.FechaInicioOperacion" class="text-danger"></span>
-									</div>
-								</div>
-							</div>
-							<div class="col-xs-12 col-sm-6 col-md-12 col-lg-6 col-xl-3">
-								<div class="form-floating mb-3">
-									<div class="form-floating mb-3">
-										<input id="inpEmpresaFechaInicioFacturacion" type="date" asp-for="InputEmpresa.FechaInicioFacturacion" class="form-control formInput" placeholder="@Localizer["FechaInicioFacturacionPlaceholder"]" />
-										<label for="inpEmpresaFechaInicioFacturacion" asp-for="InputEmpresa.FechaInicioFacturacion" class="form-label required"></label>
-										<span asp-validation-for="InputEmpresa.FechaInicioFacturacion" class="text-danger"></span>
-									</div>
-								</div>
-							</div>
-							<div class="col-xs-12 col-sm-6 col-md-12 col-lg-6 col-xl-3">
-								<div class="form-floating mb-3">
-									<div class="form-floating mb-3">
-										<input id="inpEmpresaFechaInicioAsimilados" type="date" asp-for="InputEmpresa.FechaInicioAsimilados" class="form-control formInput" placeholder="@Localizer["FechaInicioAsimiladosPlaceholder"]" />
-										<label for="inpEmpresaFechaInicioAsimilados" asp-for="InputEmpresa.FechaInicioAsimilados" class="form-label required"></label>
-										<span asp-validation-for="InputEmpresa.FechaInicioAsimilados" class="text-danger"></span>
+						</div>
+						<div class="accordion shadow-sm mb-5" id="accordionTwo">
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="segundaSeccion">
+									<button class="accordion-button p-2 bg-gradient bg-primary bg-opacity-10 text-black" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSectionTwo" aria-expanded="true" aria-controls="collapseSectionTwo">
+										<h5>@Localizer["EmpresaSegundaSeccionTitle"]</h5>
+									</button>
+								</h2>
+								<div id="collapseSectionTwo" class="accordion-collapse collapse show" aria-labelledby="segundaSeccion" data-bs-parent="#accordionTwo">
+									<div class="accordion-body">
+										<div class="col-12 text-end mb-3">
+											<button id="dlgEmpresaBtnAgregarBanco" type="button" class="btn btn-primary formButton" onclick="onAgregarBancoClick();">
+												<i class="bi bi-plus-lg"></i> @Localizer["AgregarBancoButtonText"]
+											</button>
+										</div>
+										<div id="bodyBancos" class="row"></div>
 									</div>
 								</div>
 							</div>
 						</div>
-						<div class="row mb-3">
-							<div class="col-sm-12 col-md-12 col-lg-6">
-								<div class="form-floating mb-3">
-									<select id="selEmpresaActividadEconomica" asp-for="InputEmpresa.ActividadEconomicaId" class="form-select formSelect" placeholder="@Localizer["ActividadEconomicaPlaceholder"]">
-										@{
-											foreach (ActividadEconomica actividad in actividadesEconomicas)
-											{
-												<option value='@actividad.Id'>@actividad.Nombre</option>
-											}
-										}
-									</select>
-									<label for="selEmpresaActividadEconomica" asp-for="InputEmpresa.ActividadEconomicaId" class="form-label required"></label>
-									<span asp-validation-for="InputEmpresa.ActividadEconomicaId" class="text-danger"></span>
+
+						<div class="accordion shadow-sm mb-5" id="accordionThree">
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="terceraSeccion">
+									<button class="accordion-button p-2 bg-gradient bg-primary bg-opacity-10 text-black" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSectionThree" aria-expanded="true" aria-controls="collapseSectionThree">
+										<h5>@Localizer["EmpresaTercerSeccionTitle"]</h5>
+									</button>
+								</h2>
+								<div id="collapseSectionThree" class="accordion-collapse collapse show" aria-labelledby="terceraSeccion" data-bs-parent="#accordionThree">
+									<div class="accordion-body">
+										<div class="alert alert-primary d-flex align-items-center mb-3" role="alert">
+											<i class="bi bi-info-circle-fill me-2" style="font-size: x-large"></i>
+											<div>
+												@Localizer["DocumentSuggestion"] <a target="_blank" href="https://compressjpeg.com/es/">https://compressjpeg.com/es/</a>
+											</div>
+										</div>
+										<div id="bodyArchivos" class="row"></div>
+									</div>
 								</div>
 							</div>
-							<div class="col-sm-12 col-md-12 col-lg-6">
-								<div class="form-floating mb-3">
-									<input id="inpEmpresaObjetoSocial" asp-for="InputEmpresa.ObjetoSocial" type="text" class="form-control formInput" placeholder="@Localizer["ObjetoSocialPlaceholder"]" />
-									<label for="inpEmpresaObjetoSocial" asp-for="InputEmpresa.ObjetoSocial" class="form-label required"></label>
-									<span asp-validation-for="InputEmpresa.ObjetoSocial" class="text-danger"></span>
-								</div>
-							</div>
 						</div>
-						<div class="row">
-							<div class="col-6"><h5>@Localizer["EmpresaSegundaSeccionTitle"]</h5></div>
-							<div class="col-6 text-end">
-								<button id="dlgEmpresaBtnAgregarBanco" type="button" class="btn btn-primary formButton" onclick="onAgregarBancoClick();">
-									<i class="bi bi-plus-lg"></i> @Localizer["AgregarBancoButtonText"]
-								</button>
-							</div>
-						</div>
-						<hr />
-						<div id="bodyBancos" class="row mb-5"></div>
-						<h5>@Localizer["EmpresaTercerSeccionTitle"]</h5>
-						<hr />
-						<div class="alert alert-primary d-flex align-items-center mb-3" role="alert">
-							<i class="bi bi-info-circle-fill me-2" style="font-size: x-large"></i>
-							<div>
-								@Localizer["DocumentSuggestion"] <a target="_blank" href="https://compressjpeg.com/es/">https://compressjpeg.com/es/</a>
-							</div>
-						</div>
-						<div id="bodyArchivos" class="row"></div>
 					</div>
 				</form>
 			</div>
