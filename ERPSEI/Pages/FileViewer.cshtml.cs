@@ -14,7 +14,7 @@ namespace ERPSEI.Pages
         private readonly IArchivoEmpleadoManager _userFileManager;
         private readonly IArchivoEmpresaManager _archivoEmpresaManager;
 
-        public string iframesrc { get; set; } = string.Empty;
+        public string htmlContainer { get; set; } = string.Empty;
 
         public FileViewerModel(
             IArchivoEmpleadoManager userFileManager,
@@ -29,40 +29,37 @@ namespace ERPSEI.Pages
         {
             if (id == null || module == null) { return RedirectToPage("/404"); }
 
+            string extension = string.Empty;
+            string src = string.Empty; 
             switch (module)
             {
                 case "empleados":
                     ArchivoEmpleado? f1 = _userFileManager.GetFileById(id);
                     if (f1 == null) { return RedirectToPage("/404"); }
-                    string src1 = Convert.ToBase64String(f1.Archivo);
-                    if(f1.Extension == "pdf")
-                    {
-                        iframesrc = $"data:application/pdf;base64,{src1}";
-                    }
-                    else
-                    {
-                        iframesrc = $"data:image/{f1.Extension};base64,{src1}";
-                    }
+                    src = Convert.ToBase64String(f1.Archivo);
+                    extension = f1.Extension;
                     break;
                 case "empresas":
                     ArchivoEmpresa? f2 = _archivoEmpresaManager.GetFileById(id);
                     if (f2 == null) { return RedirectToPage("/404"); }
-                    string src2 = Convert.ToBase64String(f2.Archivo);
-                    if(f2.Extension == "pdf")
-                    {
-                        iframesrc = $"data:application/pdf;base64,{src2}";
-                    }
-                    else
-                    {
-                        iframesrc = $"data:image/{f2.Extension};base64,{src2}";
-                    }
+                    src = Convert.ToBase64String(f2.Archivo);
+                    extension = f2.Extension;
 					break;
                 default:
-                    iframesrc = string.Empty;
+                    htmlContainer = string.Empty;
                     break;
             }
             
-            if(iframesrc.Length <= 0) { return RedirectToPage("/404"); }
+            if(src.Length <= 0) { return RedirectToPage("/404"); }
+
+            if (extension == "pdf")
+            {
+                htmlContainer = $"<iframe src=\"data:application/pdf;base64,{src}\" style=\"position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;\"></iframe>";
+            }
+            else
+            {
+                htmlContainer = $"<img src=\"data:image/{extension};base64,{src}\" style=\"height:100%\" />";
+            }
 
             return Page();
         }
