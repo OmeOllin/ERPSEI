@@ -34,6 +34,7 @@ namespace ERPSEI.Pages
             switch (module)
             {
                 case "empleados":
+                case "perfil":
                     ArchivoEmpleado? f1 = _userFileManager.GetFileById(id);
                     if (f1 == null) { return RedirectToPage("/404"); }
                     src = Convert.ToBase64String(f1.Archivo);
