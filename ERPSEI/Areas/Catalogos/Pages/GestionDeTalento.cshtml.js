@@ -661,7 +661,7 @@ function onVerDocumentClick(button) {
     let input = document.getElementById(inputName);
     let oParams = {id: input.getAttribute("sourceId")}
 
-    window.open(`/FileViewer?id=${oParams.id}`, "_blank");
+    window.open(`/FileViewer?id=${oParams.id}&module=empleados`, "_blank");
 }
 //Función para capturar el clic en el botón de edición, que dispara la apertura del selector de archivo.
 function onEditDocumentClick(button) {
