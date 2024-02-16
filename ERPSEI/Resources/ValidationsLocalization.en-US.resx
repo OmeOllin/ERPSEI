@@ -184,7 +184,7 @@
     <value>Father's last name</value>
   </data>
   <data name="FechaConstitucionField" xml:space="preserve">
-    <value>Constitution date</value>
+    <value>Constitution</value>
   </data>
   <data name="FechaIngresoField" xml:space="preserve">
     <value>Admission date</value>
@@ -196,13 +196,13 @@
     <value>Admission date (Start)</value>
   </data>
   <data name="FechaInicioAsimiladosField" xml:space="preserve">
-    <value>Assimilated start date</value>
+    <value>Assimilated start</value>
   </data>
   <data name="FechaInicioFacturacionField" xml:space="preserve">
-    <value>Billing start date</value>
+    <value>Billing start</value>
   </data>
   <data name="FechaInicioOperacionField" xml:space="preserve">
-    <value>Operation start date</value>
+    <value>Operation start</value>
   </data>
   <data name="FechaNacimientoField" xml:space="preserve">
     <value>Birth date</value>

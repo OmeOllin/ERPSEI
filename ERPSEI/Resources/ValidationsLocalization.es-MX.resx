@@ -184,7 +184,7 @@
     <value>Primer apellido</value>
   </data>
   <data name="FechaConstitucionField" xml:space="preserve">
-    <value>Fecha de constitución</value>
+    <value>Constitución</value>
   </data>
   <data name="FechaIngresoField" xml:space="preserve">
     <value>Fecha Ingreso</value>
@@ -196,13 +196,13 @@
     <value>Fecha ingreso (Inicio)</value>
   </data>
   <data name="FechaInicioAsimiladosField" xml:space="preserve">
-    <value>Fecha de inicio de asimilados</value>
+    <value>Inicio de asimilados</value>
   </data>
   <data name="FechaInicioFacturacionField" xml:space="preserve">
-    <value>Fecha de inicio de facturación</value>
+    <value>Inicio de facturación</value>
   </data>
   <data name="FechaInicioOperacionField" xml:space="preserve">
-    <value>Fecha de inicio de operación</value>
+    <value>Inicio de operación</value>
   </data>
   <data name="FechaNacimientoField" xml:space="preserve">
     <value>Fecha Nacimiento</value>

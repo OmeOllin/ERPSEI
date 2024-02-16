@@ -226,16 +226,16 @@
     <value>Documents</value>
   </data>
   <data name="FechaConstitucionPlaceholder" xml:space="preserve">
-    <value>Constitution date</value>
+    <value>Constitution</value>
   </data>
   <data name="FechaInicioAsimiladosPlaceholder" xml:space="preserve">
-    <value>Assimilated start date</value>
+    <value>Assimilated start</value>
   </data>
   <data name="FechaInicioFacturacionPlaceholder" xml:space="preserve">
-    <value>Billing start date</value>
+    <value>Billing start</value>
   </data>
   <data name="FechaInicioOperacionPlaceholder" xml:space="preserve">
-    <value>Operation start date</value>
+    <value>Operation start</value>
   </data>
   <data name="FileFormatMessage" xml:space="preserve">
     <value>The file format must be .pdf, .jpg, .jpeg o .png. Please choose another file.</value>
