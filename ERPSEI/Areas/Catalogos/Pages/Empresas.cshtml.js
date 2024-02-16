@@ -302,6 +302,10 @@ function onBuscarClick() {
 ////////////////////////////////
 //Función para inicializar el cuadro de diálogo
 function initEmpresaDialog(action, row) {
+    $("#theForm .accordion-button").removeClass('collapsed');
+    $("#theForm .accordion-button").attr('aria-expanded', true);
+    $("#theForm .accordion-collapse").addClass('show');
+
     let summaryContainer = document.getElementById("saveValidationSummary");
     let idField = document.getElementById("inpEmpresaId");
     let razonSocialField = document.getElementById("inpEmpresaRazonSocial");
