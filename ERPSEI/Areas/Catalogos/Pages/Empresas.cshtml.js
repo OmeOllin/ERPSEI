@@ -515,10 +515,10 @@ function onEditDocumentClick(button) {
 }
 //Función para capturar el clic en el botón quitar, que elimina el archivo seleccionado.
 function onDeleteClick(button) {
-    let sourceId = button.getAttribute("sourceId") || "";
+    let inputName = button.getAttribute("inputName") || "";
 
-    if (sourceId.length >= 1) {
-        let fileInput = document.getElementById(sourceId);
+    if (inputName.length >= 1) {
+        let fileInput = document.getElementById(inputName);
         let containerName = fileInput.getAttribute("containerName") || "";
         let fileIconName = fileInput.getAttribute("fileIconName");
         let fileNameName = fileInput.getAttribute("fileNameName");
@@ -774,7 +774,8 @@ function getFile(inputId) {
         file = null,
         tipoArchivo = fileField.getAttribute("tipoArchivoId"),
         b64 = fileField.getAttribute("b64")||"",
-        sourceLength = parseInt(fileField.getAttribute("sourceLength") || "0");
+        sourceLength = parseInt(fileField.getAttribute("sourceLength") || "0"),
+        sourceId = fileField.getAttribute("sourceId")||"";
 
     file = fileField != null ? fileField.files : null;
     if (file) { file = file.length > 0 ? file[0] : null; }
@@ -784,6 +785,7 @@ function getFile(inputId) {
         //Si se estableció archivo en pantalla, crea el json con el archivo.
         let fileParts = (file.name||"").split(".");
         return {
+            id: sourceId,
             nombre: fileParts.length >= 1 ? fileParts[0] : "",
             tipoArchivoId: tipoArchivo,
             extension: fileParts.length >= 2 ? fileParts[1] : "",
@@ -794,6 +796,7 @@ function getFile(inputId) {
         //De lo contrario, verifica si ya venía archivo guardado en base y construye el json con dichos datos.
         let fileParts = (fileField.getAttribute("sourceName") || "").split(".");
         return {
+            id: sourceId,
             nombre: fileParts.length >= 1 ? fileParts[0] : "",
             tipoArchivoId: tipoArchivo,
             extension: fileParts.length >= 2 ? fileParts[1] : "",
@@ -803,12 +806,12 @@ function getFile(inputId) {
     else {
         //De lo contrario, devuelve un objeto de archvio vacío, indicando solamente el tipo de archvio.
         return {
+            id: "",
             nombre: "",
             tipoArchivoId: tipoArchivo,
             extension: "",
             imgSrc: ""
-        }
-;
+        };
     }
 }
 ////////////////////////////////

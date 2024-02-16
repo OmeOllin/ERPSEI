@@ -217,6 +217,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public class ArchivoModel
 		{
+			public string? Id { get; set; } = string.Empty;
 			public string? nombre { get; set; } = string.Empty;
 			public int? tipoArchivoId { get; set; }
 			public string? extension { get; set; } = string.Empty;
@@ -673,7 +674,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				empleado.RFC = e.RFC ?? string.Empty;
 				empleado.NSS = e.NSS ?? string.Empty;
 
-				if (idEmpleado >= 1)
+                //Los archivos actualizables serán aquellos que traigan imgSrc, pues significa que el usuario añadió el archivo en la vista.
+                List<ArchivoModel?> archivosActualizables = e.Archivos.Where(a => a?.imgSrc?.Length >= 1).ToList();
+
+                if (idEmpleado >= 1)
 				{
 					//Si el empleado ya existía, lo actualiza.
 					await _empleadoManager.UpdateAsync(empleado);
@@ -681,8 +685,13 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					//Elimina los contactos del empleado.
 					await _contactoEmergenciaManager.DeleteByEmpleadoIdAsync(idEmpleado);
 
-					//Elimina los archivos del usuario.
-					await _archivoEmpleadoManager.DeleteByEmpleadoIdAsync(idEmpleado);
+                    //Elimina los archivos del usuario.
+                    foreach (ArchivoModel? a in archivosActualizables)
+                    {
+                        if (a == null) { continue; }
+
+                        await _archivoEmpleadoManager.DeleteByIdAsync(a.Id ?? string.Empty);
+                    }
 				}
 				else
 				{
@@ -699,7 +708,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				);
 
 				//Crea los archivos del usuario.
-				foreach (ArchivoModel? a in e.Archivos)
+				foreach (ArchivoModel? a in archivosActualizables)
 				{
 					if (a != null)
 					{

@@ -173,6 +173,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public class ArchivoModel
 		{
+			public string? Id { get; set; } = string.Empty;
 			public string? Nombre { get; set; } = string.Empty;
 			public int? TipoArchivoId { get; set; }
 			public string? Extension { get; set; } = string.Empty;
@@ -563,7 +564,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				empresa.ActividadEconomicaId = e.ActividadEconomicaId;
 				empresa.ObjetoSocial = e.ObjetoSocial;
 
-				if (idEmpresa >= 1)
+				//Los archivos actualizables serán aquellos que traigan imgSrc, pues significa que el usuario añadió el archivo en la vista.
+				List<ArchivoModel?> archivosActualizables = e.Archivos.Where(a => a?.imgSrc?.Length >= 1).ToList();
+
+                if (idEmpresa >= 1)
 				{
 					//Si la empresa ya existía, la actualiza.
 					await _empresaManager.UpdateAsync(empresa);
@@ -572,7 +576,12 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					await _bancoEmpresaManager.DeleteByEmpresaIdAsync(idEmpresa);
 
 					//Elimina los archivos de la empresa.
-					await _archivoEmpresaManager.DeleteByEmpresaIdAsync(idEmpresa);
+					foreach(ArchivoModel? a in archivosActualizables)
+					{
+						if (a == null) { continue; }
+
+						await _archivoEmpresaManager.DeleteByIdAsync(a.Id ?? string.Empty);
+					}
 				}
 				else
 				{
@@ -592,14 +601,13 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				}
 
 				//Crea los archivos de la empresa.
-				foreach (ArchivoModel? a in e.Archivos)
+				foreach (ArchivoModel? a in archivosActualizables)
 				{
-					if (a != null)
-					{
-						await _archivoEmpresaManager.CreateAsync(
-							new ArchivoEmpresa() { Archivo = (a.imgSrc ?? string.Empty).Length >= 1 ? Convert.FromBase64String(a.imgSrc ?? string.Empty) : Array.Empty<byte>(), EmpresaId = idEmpresa, Extension = a.Extension ?? string.Empty, Nombre = a.Nombre ?? string.Empty, TipoArchivoId = a.TipoArchivoId }
-						);
-					}
+					if (a == null) { continue; }
+
+					await _archivoEmpresaManager.CreateAsync(
+						new ArchivoEmpresa() { Archivo = (a.imgSrc ?? string.Empty).Length >= 1 ? Convert.FromBase64String(a.imgSrc ?? string.Empty) : Array.Empty<byte>(), EmpresaId = idEmpresa, Extension = a.Extension ?? string.Empty, Nombre = a.Nombre ?? string.Empty, TipoArchivoId = a.TipoArchivoId }
+					);
 				}
 
 
