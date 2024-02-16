@@ -287,10 +287,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						$"\"correoBancos\": \"{e.CorreoBancos}\", " +
 						$"\"correoFiscal\": \"{e.CorreoFiscal}\", " +
 						$"\"correoFacturacion\": \"{e.CorreoFacturacion}\", " +
-						$"\"telefono\": \"{e.Telefono}\"" +
+						$"\"telefono\": \"{e.Telefono}\", " +
                         $"\"actividadEconomicaId\": \"{e.ActividadEconomicaId}\", " +
 						$"\"actividadEconomica\": \"{nombreActividadEconomica}\", " +
-						$"\"objetoSocial\": \"{e.ObjetoSocial}\", " +
+						$"\"objetoSocial\": \"{e.ObjetoSocial}\"" +
 					"}"
 				);
 			}
@@ -519,7 +519,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			}
 
 			//Valido que no exista empresa que tenga los mismos datos.
-			coincidences = emps.Where(e => (e.CorreoGeneral ?? "").Length >= 1 && e.CorreoGeneral == emp.CorreoGeneral).ToList();
+			coincidences = emps.Where(e => (e.RazonSocial ?? "").Length >= 1 && e.RazonSocial == emp.RazonSocial).ToList();
             if (coincidences.Count() >= 1) { return $"{_strLocalizer["ErrorEmpresaExistenteA"]} {_strLocalizer["RazonSocial"]} {emp.RazonSocial}. {_strLocalizer["ErrorEmpresaExistenteB"]}."; }
 
 			coincidences = emps.Where(e => (e.RFC ?? "").Length >= 1 && e.RFC == emp.RFC).ToList();
@@ -586,7 +586,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					if(b != null)
 					{
 						await _bancoEmpresaManager.CreateAsync(
-							new BancoEmpresa() { Banco = b.Banco??string.Empty, Responsable = b.Responsable??string.Empty, Firmante = b.Firmante??string.Empty }
+							new BancoEmpresa() { Banco = b.Banco??string.Empty, Responsable = b.Responsable??string.Empty, Firmante = b.Firmante??string.Empty, EmpresaId = idEmpresa }
 						);
 					}
 				}

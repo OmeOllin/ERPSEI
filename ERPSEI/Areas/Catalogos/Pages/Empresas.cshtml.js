@@ -51,14 +51,6 @@ function responseHandler(res) {
 
     return res
 }
-//Función para dar formato al detalle de empresa
-function detailFormatter(index, row) {
-    return `<div class="container-fluid alert alert-primary mb-0">
-                <div class="row">
-                    
-                </div>
-            </div>`;
-}
 //Función para dar formato a los iconos de operación de los registros
 function operateFormatter(value, row, index) {
     let icons = [];
@@ -310,6 +302,7 @@ function onBuscarClick() {
 ////////////////////////////////
 //Función para inicializar el cuadro de diálogo
 function initEmpresaDialog(action, row) {
+    let summaryContainer = document.getElementById("saveValidationSummary");
     let idField = document.getElementById("inpEmpresaId");
     let razonSocialField = document.getElementById("inpEmpresaRazonSocial");
     let origenField = document.getElementById("selEmpresaOrigen");
@@ -330,41 +323,12 @@ function initEmpresaDialog(action, row) {
     let actividadEconomicaField = document.getElementById("selEmpresaActividadEconomica");
     let objetoSocialField = document.getElementById("inpEmpresaObjetoSocial");
 
-    let btnDesactivar = document.getElementById("dlgEmpresaBtnDesactivar");
-    let dlgTitle = document.getElementById("dlgEmpresaTitle");
-    let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
-
     idField.setAttribute("disabled", true);
-    switch (action) {
-        case NUEVO:
-        case EDITAR:
-            if (action == NUEVO) {
-                btnDesactivar.hidden = true;
-                dlgTitle.innerHTML = dlgNuevoTitle;
-            }
-            else {
-                btnDesactivar.hidden = false;
-                dlgTitle.innerHTML = dlgEditarTitle;
-            }
-
-            document.querySelectorAll(".formButton").forEach(function (btn) { btn.classList.remove("disabled"); });
-            document.querySelectorAll(".formInput, .formSelect").forEach(function (e) { e.removeAttribute("disabled"); });
-            
-
-            break;
-        default:
-            dlgTitle.innerHTML = dlgVerTitle;
-
-            document.querySelectorAll(".formButton").forEach(function (btn) { btn.classList.add("disabled"); });
-            document.querySelectorAll(".formInput, .formSelect").forEach(function (e) { e.setAttribute("disabled", true); });
-            break;
-    }
-
     idField.value = row.id;
     razonSocialField.value = row.razonSocial;
-    origenField.value = row.origen;
-    nivelField.value = row.nivel;
+    origenField.value = row.origenId;
+    nivelField.value = row.nivelId;
     fechaConstitucionField.value = row.fechaConstitucionJS;
     fechaInicioOperacionField.value = row.fechaInicioOperacionJS;
     fechaInicioFacturacionField.value = row.fechaInicioFacturacionJS;
@@ -378,12 +342,13 @@ function initEmpresaDialog(action, row) {
     correoFiscalField.value = row.correoFiscal;
     correoFacturacionField.value = row.correoFacturacion;
     telefonoField.value = row.telefono;
-    actividadEconomicaField.value = row.actividadEconomica;
+    actividadEconomicaField.value = row.actividadEconomicaId;
     objetoSocialField.value = row.objetoSocial;
 
     if (action == NUEVO || (row.hasDatosAdicionales || false)) {
         establecerDatosAdicionales(row, action);
         initializeDisableableButtons(false);
+        prepareForm(action);
         dlgEmpresaModal.toggle();
         return;
     }
@@ -415,6 +380,7 @@ function initEmpresaDialog(action, row) {
 
             establecerDatosAdicionales(row, action);
             initializeDisableableButtons(action == VER);
+            prepareForm(action);
             dlgEmpresaModal.toggle();
 
         }, function (error) {
@@ -423,37 +389,42 @@ function initEmpresaDialog(action, row) {
         postOptions
     );
 }
+//Función para hablitar / deshabilitar el formulario de empresa
+function prepareForm(action) {
+    let btnDesactivar = document.getElementById("dlgEmpresaBtnDesactivar");
+    let dlgTitle = document.getElementById("dlgEmpresaTitle");
+    
+    switch (action) {
+        case NUEVO:
+        case EDITAR:
+            if (action == NUEVO) {
+                btnDesactivar.hidden = true;
+                dlgTitle.innerHTML = dlgNuevoTitle;
+            }
+            else {
+                btnDesactivar.hidden = false;
+                dlgTitle.innerHTML = dlgEditarTitle;
+            }
+
+            document.querySelectorAll(".formButton").forEach(function (btn) { btn.classList.remove("disabled"); });
+            document.querySelectorAll(".formInput, .formSelect").forEach(function (e) { e.removeAttribute("disabled"); });
+
+
+            break;
+        default:
+            dlgTitle.innerHTML = dlgVerTitle;
+
+            document.querySelectorAll(".formButton").forEach(function (btn) { btn.classList.add("disabled"); });
+            document.querySelectorAll(".formInput, .formSelect").forEach(function (e) { e.setAttribute("disabled", true); });
+            break;
+    }
+}
 //Función para establecer los datos adicionales de la empresa
 function establecerDatosAdicionales(row, action) {
     //Se establecen los bancos
     $("#bodyBancos").html("");
     row.bancos = row.bancos || [];
-    let j = 1;
-    row.bancos.forEach(function (b) {
-        $("#bodyBancos").append(
-            `<div rownumber="${j}" class="col-sm-12 col-md-12 col-lg-6 rowBancos">
-				<div class="row">
-					<h6 class="col-12"><i>${empresaBancoTitle} ${j}</i></h6>
-                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-						<div class="form-floating mb-3">
-							<input id="inpEmpresaBancoResponsable${j}" type="text" class="form-control formInput" placeholder="${responsablePlaceholder}" value="${b.responsable}" />
-							<label for="inpEmpresaBancoResponsable${j}" class="form-label">${responsablePlaceholder}</label>
-							<span class="text-danger"></span>
-						</div>
-					</div>
-					<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-						<div class="form-floating mb-3">
-							<input id="inpEmpresaBancoFirmante${j}" type="text" class="form-control formInput" placeholder="${firmantePlaceholder}" value="${b.firmante}" />
-							<label for="inpEmpresaBancoFirmante${j}" class="form-label">${firmantePlaceholder}</label>
-							<span class="text-danger"></span>
-						</div>
-					</div>
-				</div>
-			</div>`
-        );
-
-        j++;
-    });
+    row.bancos.forEach(function (b) { onAgregarBancoClick(b) });
 
     //Se establecen los archivos.
     $("#bodyArchivos").html("");
@@ -568,7 +539,7 @@ function onDeleteClick(button) {
     initializeDisableableButtons();
 }
 //Función para capturar el clic en el botón agregar banco, que añade un item de banco para capturar datos.
-function onAgregarBancoClick() {
+function onAgregarBancoClick(row = {banco: "", responsable: "", firmante: ""}) {
     let btnAgregarBanco = document.getElementById("dlgEmpresaBtnAgregarBanco");
     let currentRows = document.querySelectorAll(".rowBancos").length;
 
@@ -580,25 +551,38 @@ function onAgregarBancoClick() {
     currentRows += 1;
     
     let bodyBancos = document.getElementById("bodyBancos");
-    bodyBancos.innerHTML += `<div rownumber="${currentRows}" class="col-sm-12 col-md-12 col-lg-6 rowBancos">
-								<div class="row">
-									<h6 class="col-12"><i>${empresaBancoTitle} ${currentRows}</i></h6>
-                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-										<div class="form-floating mb-3">
-											<input id="inpEmpresaBancoResponsable${currentRows}" type="text" class="form-control formInput" placeholder="${responsablePlaceholder}" />
-											<label for="inpEmpresaBancoResponsable${currentRows}" class="form-label">${responsablePlaceholder}</label>
-											<span class="text-danger"></span>
-										</div>
-									</div>
-									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-										<div class="form-floating mb-3">
-											<input id="inpEmpresaBancoFirmante${currentRows}" type="text" class="form-control formInput" placeholder="${firmantePlaceholder}" />
-											<label for="inpEmpresaBancoFirmante${currentRows}" class="form-label">${firmantePlaceholder}</label>
-											<span class="text-danger"></span>
-										</div>
-									</div>
-								</div>
-							</div>`;
+    bodyBancos.innerHTML += `<div class="card mb-3 shadow-sm">
+                                <span class="text-end mt-2" data-effect="fadeOut">
+                                    <button type="button" class="btn-close formButton" onclick="onEliminarBancoClick(this);"></button>
+                                </span>
+                                <div rownumber="${currentRows}" class="col-sm-12 col-md-12 col-lg-12 rowBancos">
+								    <div class="row">
+									    <h6 class="col-12"><i>${empresaBancoTitle} ${currentRows}</i></h6>
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4">
+										    <div class="form-floating mb-3">
+											    <input id="inpEmpresaBancoNombre${currentRows}" type="text" class="form-control formInput" placeholder="${bancoNombrePlaceholder}" value="${row.banco}" maxlength="40" />
+											    <label for="inpEmpresaBancoNombre${currentRows}" class="form-label">${bancoNombrePlaceholder}</label>
+										    </div>
+									    </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4">
+										    <div class="form-floating mb-3">
+											    <input id="inpEmpresaBancoResponsable${currentRows}" type="text" class="form-control formInput" placeholder="${responsablePlaceholder}" value="${row.responsable}" maxlength="40" />
+											    <label for="inpEmpresaBancoResponsable${currentRows}" class="form-label">${responsablePlaceholder}</label>
+										    </div>
+									    </div>
+									    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4">
+										    <div class="form-floating mb-3">
+											    <input id="inpEmpresaBancoFirmante${currentRows}" type="text" class="form-control formInput" placeholder="${firmantePlaceholder}" value="${row.firmante}" maxlength="40" />
+											    <label for="inpEmpresaBancoFirmante${currentRows}" class="form-label">${firmantePlaceholder}</label>
+										    </div>
+									    </div>
+								    </div>
+							    </div>
+                            </div>`;
+}
+//Función para capturar el clic en el botón eliminar banco, que elimina un item de banco del listado.
+function onEliminarBancoClick(button) {
+    $(button).closest('.card').remove();
 }
 
 //Función para mostrar cualquiera de los documentos seleccionados.
@@ -686,8 +670,8 @@ function onGuardarClick() {
 
     let idField = document.getElementById("inpEmpresaId");
     let razonSocialField = document.getElementById("inpEmpresaRazonSocial");
-    let origenField = document.getElementById("inpEmpresaOrigen");
-    let nivelField = document.getElementById("inpEmpresaNivel");
+    let origenField = document.getElementById("selEmpresaOrigen");
+    let nivelField = document.getElementById("selEmpresaNivel");
     let fechaConstitucionField = document.getElementById("inpEmpresaFechaConstitucion");
     let fechaInicioOperacionField = document.getElementById("inpEmpresaFechaInicioOperacion");
     let fechaInicioFacturacionField = document.getElementById("inpEmpresaFechaInicioFacturacion");
@@ -731,9 +715,9 @@ function onGuardarClick() {
 
     let oParams = {
         id: idField.value == nuevoRegistro ? 0 : idField.value,
-        razonSocial: razonSocialField.value == 0 ? null : parseInt(razonSocialField.value),
+        razonSocial: razonSocialField.value.trim(),
         origenId: origenField.value == 0 ? null : parseInt(origenField.value),
-        nivelId: nivelField.value.trim(),
+        nivelId: nivelField.value == 0 ? null : parseInt(origenField.value),
         fechaConstitucion: fechaConstitucionField.value,
         fechaInicioOperacion: fechaInicioOperacionField.value,
         fechaInicioFacturacion: fechaInicioFacturacionField.value,

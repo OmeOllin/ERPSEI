@@ -115,10 +115,8 @@
 		data-show-fullscreen="true"
 		data-show-columns="true"
 		data-show-columns-toggle-all="true"
-		data-detail-view="true"
 		data-show-export="true"
 		data-click-to-select="true"
-		data-detail-formatter="detailFormatter"
 		data-minimum-count-columns="2"
 		data-show-pagination-switch="true"
 		data-pagination="true"
@@ -171,14 +169,14 @@
 							</div>
 							<div class="col-sm-12 col-md-12 col-lg-4">
 								<div class="form-floating mb-3">
-									<input id="inpEmpresaAdministrador" type="text" asp-for="InputEmpresa.Administrador" class="form-control" placeholder="@Localizer["AdministradorPlaceholder"]" />
+									<input id="inpEmpresaAdministrador" type="text" asp-for="InputEmpresa.Administrador" class="form-control formInput" placeholder="@Localizer["AdministradorPlaceholder"]" />
 									<label for="inpEmpresaAdministrador" asp-for="InputEmpresa.Administrador" class="form-label required"></label>
 									<span asp-validation-for="InputEmpresa.Administrador" class="text-danger"></span>
 								</div>
 							</div>
 							<div class="col-sm-12 col-md-12 col-lg-4">
 								<div class="form-floating mb-3">
-									<input id="inpEmpresaAccionista" type="text" asp-for="InputEmpresa.Accionista" class="form-control" placeholder="@Localizer["AccionistaPlaceholder"]" />
+									<input id="inpEmpresaAccionista" type="text" asp-for="InputEmpresa.Accionista" class="form-control formInput" placeholder="@Localizer["AccionistaPlaceholder"]" />
 									<label for="inpEmpresaAccionista" asp-for="InputEmpresa.Accionista" class="form-label required"></label>
 									<span asp-validation-for="InputEmpresa.Accionista" class="text-danger"></span>
 								</div>
@@ -194,7 +192,7 @@
 							</div>
 							<div class="col-sm-12 col-md-6 col-lg-3">
 								<div class="form-floating mb-3">
-									<select id="selEmpresaOrigen" asp-for="InputEmpresa.OrigenId" class="form-select" placeholder="@Localizer["OrigenPlaceholder"]">
+									<select id="selEmpresaOrigen" asp-for="InputEmpresa.OrigenId" class="form-select formSelect" placeholder="@Localizer["OrigenPlaceholder"]">
 										@{
 											foreach (Origen origen in origenes)
 											{
@@ -208,7 +206,7 @@
 							</div>
 							<div class="col-sm-12 col-md-6 col-lg-3">
 								<div class="form-floating mb-3">
-									<select id="selEmpresaNivel" asp-for="InputEmpresa.NivelId" class="form-select" placeholder="@Localizer["NivelPlaceholder"]">
+									<select id="selEmpresaNivel" asp-for="InputEmpresa.NivelId" class="form-select formSelect" placeholder="@Localizer["NivelPlaceholder"]">
 										@{
 											foreach (Nivel nivel in niveles)
 											{
@@ -308,7 +306,7 @@
 						<div class="row mb-3">
 							<div class="col-sm-12 col-md-12 col-lg-6">
 								<div class="form-floating mb-3">
-									<select id="selEmpresaActividadEconomica" asp-for="InputEmpresa.ActividadEconomicaId" class="form-select" placeholder="@Localizer["ActividadEconomicaPlaceholder"]">
+									<select id="selEmpresaActividadEconomica" asp-for="InputEmpresa.ActividadEconomicaId" class="form-select formSelect" placeholder="@Localizer["ActividadEconomicaPlaceholder"]">
 										@{
 											foreach (ActividadEconomica actividad in actividadesEconomicas)
 											{
