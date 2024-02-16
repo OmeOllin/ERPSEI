@@ -701,15 +701,15 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			List<BancoModel> bancos = new List<BancoModel>();
 			//Si existe banco 1, agrega uno al listado.
-			if (row[18].ToString()?.Length >= 1) { new BancoModel() { Banco = row[18].ToString() ?? string.Empty, Responsable = row[19].ToString() ?? string.Empty, Firmante = row[20].ToString() ?? string.Empty }; }
+			if (row[18].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[18].ToString() ?? string.Empty, Responsable = row[19].ToString() ?? string.Empty, Firmante = row[20].ToString() ?? string.Empty }); }
 			//Si existe banco 2, agrega uno al listado.
-			if (row[18].ToString()?.Length >= 1) { new BancoModel() { Banco = row[21].ToString() ?? string.Empty, Responsable = row[22].ToString() ?? string.Empty, Firmante = row[23].ToString() ?? string.Empty }; }
+			if (row[21].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[21].ToString() ?? string.Empty, Responsable = row[22].ToString() ?? string.Empty, Firmante = row[23].ToString() ?? string.Empty }); }
 			//Si existe banco 3, agrega uno al listado.
-			if (row[18].ToString()?.Length >= 1) { new BancoModel() { Banco = row[24].ToString() ?? string.Empty, Responsable = row[25].ToString() ?? string.Empty, Firmante = row[26].ToString() ?? string.Empty }; }
+			if (row[24].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[24].ToString() ?? string.Empty, Responsable = row[25].ToString() ?? string.Empty, Firmante = row[26].ToString() ?? string.Empty }); }
 			//Si existe banco 4, agrega uno al listado.
-			if (row[18].ToString()?.Length >= 1) { new BancoModel() { Banco = row[27].ToString() ?? string.Empty, Responsable = row[28].ToString() ?? string.Empty, Firmante = row[29].ToString() ?? string.Empty }; }
+			if (row[27].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[27].ToString() ?? string.Empty, Responsable = row[28].ToString() ?? string.Empty, Firmante = row[29].ToString() ?? string.Empty }); }
 			//Si existe banco 5, agrega uno al listado.
-			if (row[18].ToString()?.Length >= 1) { new BancoModel() { Banco = row[30].ToString() ?? string.Empty, Responsable = row[31].ToString() ?? string.Empty, Firmante = row[32].ToString() ?? string.Empty }; }
+			if (row[30].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[30].ToString() ?? string.Empty, Responsable = row[31].ToString() ?? string.Empty, Firmante = row[32].ToString() ?? string.Empty }); }
 
 			e.Bancos = bancos.ToArray();
 
