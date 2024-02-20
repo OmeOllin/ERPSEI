@@ -33,7 +33,7 @@ function onCargarOrganigrama() {
     oc = null;
     btnExportar.classList.add("disabled");
     doAjax(
-        "/ERP/Organigrama/FiltrarEmpleados",
+        "/Reportes/Organigrama/FiltrarEmpleados",
         oParams,
         function (resp) {
             if (resp.tieneError) {
