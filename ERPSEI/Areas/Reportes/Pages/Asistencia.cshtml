@@ -1,0 +1,19 @@
+﻿@page "{handler?}"
+@using Microsoft.AspNetCore.Localization;
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using ERPSEI.Areas.Reportes.Pages;
+@model AsistenciaModel
+@inject IViewLocalizer Localizer;
+@{
+	ViewData["Title"] = Localizer["Title"];
+}
+<h3 class="title mb-3">@ViewData["Title"]</h3>
+
+@section Scripts
+{
+	<link rel="stylesheet" href="~/css/Asistencia.css" />
+    <script src="~/../Areas/Reportes/Pages/Asistencia.cshtml.js"></script>
+	<script type="text/javascript">
+		
+	</script>
+}

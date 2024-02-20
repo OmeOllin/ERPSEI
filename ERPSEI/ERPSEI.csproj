@@ -59,6 +59,12 @@
     <EmbeddedResource Update="Resources\Areas\Identity\Pages\Account\PendingUserAuthorization.en-US.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Areas\Reportes\Pages\Asistencia.en-US.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Areas\Reportes\Pages\Asistencia.es-MX.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\ValidationsLocalization.es-MX.resx">
       <Generator></Generator>
     </EmbeddedResource>
