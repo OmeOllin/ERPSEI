@@ -171,6 +171,9 @@
   <data name="PositionsCatalogMenu" xml:space="preserve">
     <value>Positions</value>
   </data>
+  <data name="PrefacturasMenu" xml:space="preserve">
+    <value>Preinvoices</value>
+  </data>
   <data name="PrivacyMenu" xml:space="preserve">
     <value>Privacy</value>
   </data>

@@ -33,7 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\Areas\ERP\Pages\" />
     <Folder Include="wwwroot\templates\" />
   </ItemGroup>
 
@@ -48,6 +47,12 @@
       <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Areas\Catalogos\Pages\Notificador.en-US.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Areas\ERP\Pages\Prefacturas.en-US.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Areas\ERP\Pages\Prefacturas.es-MX.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Areas\Identity\Pages\Account\AccessDenied.en-US.resx">
