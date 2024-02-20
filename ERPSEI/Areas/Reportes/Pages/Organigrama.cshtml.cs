@@ -5,9 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 
-namespace ERPSEI.Areas.ERP.Pages
+namespace ERPSEI.Areas.Reportes.Pages
 {
 	public class OrganigramaModel : PageModel
     {

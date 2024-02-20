@@ -123,6 +123,9 @@
   <data name="AreasCatalogMenu" xml:space="preserve">
     <value>Áreas</value>
   </data>
+  <data name="AsistenciaMenu" xml:space="preserve">
+    <value>Asistencia</value>
+  </data>
   <data name="CatalogsMenu" xml:space="preserve">
     <value>Catálogos</value>
   </data>
@@ -170,6 +173,9 @@
   </data>
   <data name="PrivacyMenu" xml:space="preserve">
     <value>Aviso de privacidad</value>
+  </data>
+  <data name="ReportesMenu" xml:space="preserve">
+    <value>Reportes</value>
   </data>
   <data name="RightFooter" xml:space="preserve">
     <value>Imagenes por &lt;a href="https://www.freepik.com/author/stories"&gt;storyset&lt;/a&gt; en Freepik.com</value>

@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Resources\Areas\ERP\Pages\" />
     <Folder Include="wwwroot\templates\" />
   </ItemGroup>
 

@@ -8,10 +8,10 @@ namespace ERPSEI.Pages.Shared
         public static string Inicio => "Inicio";
         public static string InicioNavClass(ViewContext viewContext) => PageNavClass(viewContext, Inicio);
 
-
         public static string AvisoPrivacidad => "AvisoPrivacidad";
         public static string AvisoPrivacidadNavClass(ViewContext viewContext) => PageNavClass(viewContext, AvisoPrivacidad);
 
+        #region Catalogos
 
         public static string Catalogos => "Catalogos";
         public static string CatalogosNavClass(ViewContext viewContext) => PageNavClass(viewContext, Catalogos);
@@ -52,15 +52,16 @@ namespace ERPSEI.Pages.Shared
 		public static string CatalogoActividadesEconomicas => "ActividadesEconomicas";
 		public static string CatalogoActividadesEconomicasNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoActividadesEconomicas);
 
-		#endregion
+        #endregion
 
-		public static string ERP => "ERP";
+        #endregion
+
+        #region ERP
+
+        public static string ERP => "ERP";
         public static string ERPNavClass(ViewContext viewContext) => PageNavClass(viewContext, ERP);
 
         #region Recursos Humanos
-
-        public static string Organigrama => "Organigrama";
-        public static string OrganigramaNavClass(ViewContext viewContext) => PageNavClass(viewContext, Organigrama);
 
         public static string Vacaciones => "Vacaciones";
         public static string VacacionesNavClass(ViewContext viewContext) => PageNavClass(viewContext, Vacaciones);
@@ -73,6 +74,22 @@ namespace ERPSEI.Pages.Shared
 
         #endregion
 
+        #endregion
+
+        #region Reportes
+
+        public static string Reportes => "Reportes";
+        public static string ReportesNavClass(ViewContext viewContext) => PageNavClass(viewContext, Reportes);
+
+        #region Recuros Humanos
+        public static string Organigrama => "Organigrama";
+        public static string OrganigramaNavClass(ViewContext viewContext) => PageNavClass(viewContext, Organigrama);
+
+        public static string Asistencia => "Asistencia";
+        public static string AsistenciaNavClass(ViewContext viewContext) => PageNavClass(viewContext, Asistencia);
+        #endregion
+
+        #endregion
 
         public static string PageNavClass(ViewContext viewContext, string page)
         {
