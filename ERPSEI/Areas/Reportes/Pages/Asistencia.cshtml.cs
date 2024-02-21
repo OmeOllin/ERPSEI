@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
 
 namespace ERPSEI.Areas.Reportes.Pages
 {
+	[Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
 	public class AsistenciaModel : PageModel
     {
         private readonly IStringLocalizer<AsistenciaModel> _strLocalizer;
