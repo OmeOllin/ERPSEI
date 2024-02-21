@@ -38,6 +38,12 @@ function doAjax(url = '', oParams = null, onSuccess = function () { }, onError =
 		data: datos,
 		type: 'POST',
 		dataType: "json",
+		beforeSend: function () {
+			showLoading();
+		},
+		complete: function () {
+			hideLoading();
+		},
 		success: function (objRespuesta) { //Si la llamada es satisfactoria
 			try {
 
