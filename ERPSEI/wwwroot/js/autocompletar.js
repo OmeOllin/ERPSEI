@@ -26,6 +26,14 @@ function autoCompletar(selector, oExtend) {
 			// Arma objeto de datos para solicitud AJAX
 			let oDatos = { texto: request.term };
 
+			let _filtro = itemDOM.attr('filtro');
+			//Verifica si requiere datos adicionales para el filtro
+			if (typeof _filtro != 'undefined' && _filtro != null) {
+				_filtro = _filtro.split(',');
+				if (_filtro.length >= 1) // Agrega valores adicionales de los atributos data del elemento
+					_filtro.forEach(dataName => oDatos[dataName] = itemDOM.data(dataName));
+			} //if
+
 			// Deshabilita componentes de la UI para evitar interacción del usuario durante la petición
 			toDisable('.ui-dialog-titlebar-close, .ui-disabled-on-suggest');
 			let objDefaults = {
