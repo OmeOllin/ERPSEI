@@ -8,11 +8,170 @@
 }
 <h3 class="title mb-3">@ViewData["Title"]</h3>
 
+<div class="container-fluid">
+	<div class="row mb-3">
+		<div class="col-12 text-end">
+			<button id="btnLimpiar" type="button" class="btn btn-secondary" onclick="onLimpiarClick();">
+				<i class="bi bi-eraser-fill"></i> @Localizer["Limpiar"]
+			</button>
+			<button id="btnComparar" type="button" class="btn btn-primary" onclick="onValidarClick();">
+				<i class="bi bi-check-circle-fill"></i> @Localizer["Validar"]
+			</button>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12 col-lg-6">
+			<div class="row">
+				<div class="col-12">
+					<h4 class="title mb-3">@Localizer["Emisor"]</h4>
+				</div>
+			</div>
+			<div class="row mb-3">
+				<div class="col-12">
+					<form id="emisor" method="post" onsubmit="return false;">
+						<div class="form-floating">
+							<input id="inpEmisor" type="search" asp-for="InputEmpresa.Texto" class="form-control" placeholder="@Localizer["Emisor"]" idselected='' area="ERP" module="Prefacturas" source="GetEmpresaSuggestion" filtro="idempresa" />
+							<label for="inpEmisor" asp-for="InputEmpresa.Texto" class="form-label"></label>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div id="divFilledInfoEmisor" hidden>
+				<div class="row mb-3">
+					<div class="col-12 h6">
+						@Localizer["RFC"]
+					</div>
+					<div class="col-12">
+						<label id="lblRFCEmisor" class="form-label"></label>
+					</div>
+				</div>
+				<div class="row mb-3">
+					<div class="col-12 h6">
+						@Localizer["RazonSocial"]
+					</div>
+					<div class="col-12">
+						<label id="lblRazonSocialEmisor" class="form-label"></label>
+					</div>
+				</div>
+				<div class="row mb-3">
+					<div class="col-12 h6">
+                        @Localizer["ObjetoSocial"]
+					</div>
+					<div class="col-12">
+						<label id="lblObjetoSocialEmisor" class="form-label"></label>
+					</div>
+				</div>
+				<div class="row mb-3">
+					<div class="col-12 h6">
+						@Localizer["ActividadEconomica"]
+					</div>
+					<div class="col-12">
+						<label id="lblActividadEconomicaEmisor" class="form-label"></label>
+					</div>
+				</div>
+				<div class="row mb-3">
+					<div class="col-12 h6">
+						@Localizer["DomicilioFiscal"]
+					</div>
+					<div class="col-12">
+						<label id="lblDomicilioFiscalEmisor" class="form-label"></label>
+					</div>
+				</div>
+			</div>
+			<div id="divEmptyInfoEmisor" class="d-flex align-items-center justify-content-center opacity-25" style="height: 50vh;">
+				<div class="text-center">
+					<img class="empty-image-placeholder" src="@this.HttpContext.Request.Scheme://@this.HttpContext.Request.Host/img/empty_emitter.jpg" />
+					<p class="fs-3">@Localizer["SearchSuggestionA"]</p>
+					<p class="lead">
+						@Localizer["SearchSuggestionB"]
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="col-12 col-lg-6">
+			<div class="row">
+				<div class="col-12">
+					<h4 class="title mb-3">@Localizer["Receptor"]</h4>
+				</div>
+			</div>
+			<div class="row mb-3">
+				<div class="col-12">
+					<form id="receptor" method="post" onsubmit="return false;">
+						<div class="form-floating">
+							<input id="inpReceptor" type="search" asp-for="InputEmpresa.Texto" class="form-control" placeholder="@Localizer["Receptor"]" idselected='' area="ERP" module="Prefacturas" source="GetEmpresaSuggestion" filtro="idempresa" />
+							<label for="inpReceptor" asp-for="InputEmpresa.Texto" class="form-label"></label>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div id="divFilledInfoReceptor" hidden>
+				<div class="row mb-3">
+					<div class="col-12 h6">
+						@Localizer["RFC"]
+					</div>
+					<div class="col-12">
+						<label id="lblRFCReceptor" class="form-label"></label>
+					</div>
+				</div>
+				<div class="row mb-3">
+					<div class="col-12 h6">
+						@Localizer["RazonSocial"]
+					</div>
+					<div class="col-12">
+						<label id="lblRazonSocialReceptor" class="form-label"></label>
+					</div>
+				</div>
+				<div class="row mb-3">
+					<div class="col-12 h6">
+						@Localizer["ObjetoSocial"]
+					</div>
+					<div class="col-12">
+						<label id="lblObjetoSocialReceptor" class="form-label"></label>
+					</div>
+				</div>
+				<div class="row mb-3">
+					<div class="col-12 h6">
+						@Localizer["ActividadEconomica"]
+					</div>
+					<div class="col-12">
+						<label id="lblActividadEconomicaReceptor" class="form-label"></label>
+					</div>
+				</div>
+				<div class="row mb-3">
+					<div class="col-12 h6">
+						@Localizer["DomicilioFiscal"]
+					</div>
+					<div class="col-12">
+						<label id="lblDomicilioFiscalReceptor" class="form-label"></label>
+					</div>
+				</div>
+			</div>
+			<div id="divEmptyInfoReceptor" class="d-flex align-items-center justify-content-center opacity-25" style="height: 50vh;">
+				<div class="text-center">
+					<img class="empty-image-placeholder" src="@this.HttpContext.Request.Scheme://@this.HttpContext.Request.Host/img/empty_receiver.jpg" />
+					<p class="fs-3">@Localizer["SearchSuggestionA"]</p>
+					<p class="lead">
+						@Localizer["SearchSuggestionB"]
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 @section Scripts
-{
+{	
+	<!-- Librería autocompletar y dependencias -->
+	<link rel="stylesheet" href="~/lib/jquery-ui/jquery-ui.min.css">
+	<script src="~/lib/jquery-ui/jquery-ui.min.js"></script>
+	<script src="~/js/autocompletar.js"></script>
+
+	<!-- Scripts del módulo y dependencias -->
 	<link rel="stylesheet" href="~/css/Prefacturas.css" />
 	<script src="~/../Areas/ERP/Pages/Prefacturas.cshtml.js"></script>
 	<script type="text/javascript">
-		
+		var emptyInfo = '@Localizer["EmptyInfo"]';
 	</script>
+
+	<partial name="_ValidationScriptsPartial" />
 }

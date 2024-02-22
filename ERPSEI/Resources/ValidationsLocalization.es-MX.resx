@@ -297,6 +297,9 @@
   <data name="RolField" xml:space="preserve">
     <value>Rol</value>
   </data>
+  <data name="SearchCompanyField" xml:space="preserve">
+    <value>Tecleé razón social o rfc para buscar...</value>
+  </data>
   <data name="SubareaField" xml:space="preserve">
     <value>Subárea</value>
   </data>

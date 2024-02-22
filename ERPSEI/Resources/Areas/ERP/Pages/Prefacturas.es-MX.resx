@@ -117,7 +117,43 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ActividadEconomica" xml:space="preserve">
+    <value>Actividad Económica</value>
+  </data>
+  <data name="DomicilioFiscal" xml:space="preserve">
+    <value>Domicilio Fiscal</value>
+  </data>
+  <data name="Emisor" xml:space="preserve">
+    <value>Emisor</value>
+  </data>
+  <data name="EmptyInfo" xml:space="preserve">
+    <value>---</value>
+  </data>
+  <data name="Limpiar" xml:space="preserve">
+    <value>Limpiar</value>
+  </data>
+  <data name="ObjetoSocial" xml:space="preserve">
+    <value>Objeto Social</value>
+  </data>
+  <data name="RazonSocial" xml:space="preserve">
+    <value>Razón Social</value>
+  </data>
+  <data name="Receptor" xml:space="preserve">
+    <value>Receptor</value>
+  </data>
+  <data name="RFC" xml:space="preserve">
+    <value>RFC</value>
+  </data>
+  <data name="SearchSuggestionA" xml:space="preserve">
+    <value>Todavía no hay nada aquí</value>
+  </data>
+  <data name="SearchSuggestionB" xml:space="preserve">
+    <value>Busque una empresa para comenzar</value>
+  </data>
   <data name="Title" xml:space="preserve">
     <value>Prefacturas</value>
+  </data>
+  <data name="Validar" xml:space="preserve">
+    <value>Validar</value>
   </data>
 </root>
