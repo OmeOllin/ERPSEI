@@ -210,7 +210,7 @@ function initTable() {
     table.on('all.bs.table', function (e, name, args) {
         console.log(name, args)
     })
-    buttonRemove.click(function () { onDeleteEmpresaClick(); });
+    buttonRemove.click(function () { onDeleteEmpresaClick(selections); });
 }
 //Función para capturar el click de los botones para dar de baja empresas. Ejecuta una llamada ajax para dar de baja empresas.
 function onDeleteEmpresaClick(ids = null) {
