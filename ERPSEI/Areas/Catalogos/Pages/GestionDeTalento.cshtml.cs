@@ -744,7 +744,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 							foreach (DataRow row in result.Tables[0].Rows)
 							{
 								//Omite el procesamiento del row de encabezado
-								if (result.Tables[0].Rows.IndexOf(row) == 0) { continue; }
+								if (result.Tables[0].Rows.IndexOf(row) == 0) {
+									resp.TieneError = false;
+									resp.Mensaje = _strLocalizer["EmpleadosImportadosSuccessfully"];
+									continue; 
+								}
 
 								string vmsg = await CreateEmployeeFromExcelRow(row);
 
@@ -764,15 +768,12 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						}
 					}
 				}
-
-				if (!resp.TieneError)
-				{
-					
-				}
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex.Message);
+				resp.TieneError = true;
+				resp.Mensaje = _strLocalizer["EmpresasImportadasUnsuccessfully"];
 			}
 
 			return new JsonResult(resp);
@@ -780,13 +781,13 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		private async Task<string> CreateEmployeeFromExcelRow(DataRow row)
 		{
 			string validationMsg = string.Empty;
-			Genero? genero = await _generoManager.GetByNameAsync(row[5].ToString() ?? string.Empty);
-			EstadoCivil? estadoCivil = await _estadoCivilManager.GetByNameAsync(row[6].ToString() ?? string.Empty);
-			Puesto? puesto = await _puestoManager.GetByNameAsync(row[8].ToString() ?? string.Empty);
-			Area? area = await _areaManager.GetByNameAsync(row[9].ToString() ?? string.Empty);
-			Subarea? subarea = await _subareaManager.GetByNameAsync(row[10].ToString() ?? string.Empty);
-			Oficina? oficina = await _oficinaManager.GetByNameAsync(row[11].ToString() ?? string.Empty);
-			Empleado? jefe = await _empleadoManager.GetByNameAsync(row[12].ToString() ?? string.Empty);
+			Genero? genero = await _generoManager.GetByNameAsync(row[5].ToString()?.Trim() ?? string.Empty);
+			EstadoCivil? estadoCivil = await _estadoCivilManager.GetByNameAsync(row[6].ToString()?.Trim() ?? string.Empty);
+			Puesto? puesto = await _puestoManager.GetByNameAsync(row[8].ToString()?.Trim() ?? string.Empty);
+			Area? area = await _areaManager.GetByNameAsync(row[9].ToString()?.Trim() ?? string.Empty);
+			Subarea? subarea = await _subareaManager.GetByNameAsync(row[10].ToString()?.Trim() ?? string.Empty);
+			Oficina? oficina = await _oficinaManager.GetByNameAsync(row[11].ToString()?.Trim() ?? string.Empty);
+			Empleado? jefe = await _empleadoManager.GetByNameAsync(row[12].ToString()?.Trim() ?? string.Empty);
 
 			DateTime fn;
 			DateTime fi;
@@ -794,29 +795,29 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			DateTime.TryParse(row[13].ToString(), out fi);
 
 			EmpleadoModel e = new EmpleadoModel() {
-				Nombre = row[0].ToString() ?? string.Empty,
-				ApellidoPaterno = row[1].ToString() ?? string.Empty,
-				ApellidoMaterno = row[2].ToString() ?? string.Empty,
+				Nombre = row[0].ToString()?.Trim() ?? string.Empty,
+				ApellidoPaterno = row[1].ToString()?.Trim() ?? string.Empty,
+				ApellidoMaterno = row[2].ToString()?.Trim() ?? string.Empty,
 				FechaNacimiento = fn,
-				Telefono = row[4].ToString() ?? string.Empty,
+				Telefono = row[4].ToString()?.Trim() ?? string.Empty,
 				GeneroId = genero != null ? genero.Id : null,
 				EstadoCivilId = estadoCivil != null ? estadoCivil.Id : null,
-				Direccion = row[7].ToString() ?? string.Empty,
+				Direccion = row[7].ToString()?.Trim() ?? string.Empty,
 				PuestoId = puesto != null ? puesto.Id : 0,
 				AreaId = area != null ? area.Id : 0,
 				SubareaId = subarea != null ? subarea.Id : null,
 				OficinaId = oficina != null ? oficina.Id : null,
 				JefeId = jefe != null ? jefe.Id : null,
 				FechaIngreso = fi,
-				Email = row[14].ToString() ?? string.Empty,
-				NombreContacto1 = row[15].ToString() ?? string.Empty,
-				TelefonoContacto1 = row[16].ToString() ?? string.Empty,
-				NombreContacto2 = row[17].ToString() ?? string.Empty,
-				TelefonoContacto2 = row[18].ToString() ?? string.Empty,
-				CURP = row[19].ToString() ?? string.Empty,
-				RFC = row[20].ToString() ?? string.Empty,
-				NSS = row[21].ToString() ?? string.Empty,
-				NombrePreferido = row[22].ToString() ?? string.Empty,
+				Email = row[14].ToString()?.Trim() ?? string.Empty,
+				NombreContacto1 = row[15].ToString()?.Trim() ?? string.Empty,
+				TelefonoContacto1 = row[16].ToString()?.Trim() ?? string.Empty,
+				NombreContacto2 = row[17].ToString()?.Trim() ?? string.Empty,
+				TelefonoContacto2 = row[18].ToString()?.Trim() ?? string.Empty,
+				CURP = row[19].ToString()?.Trim() ?? string.Empty,
+				RFC = row[20].ToString()?.Trim() ?? string.Empty,
+				NSS = row[21].ToString()?.Trim() ?? string.Empty,
+				NombrePreferido = row[22].ToString()?.Trim() ?? string.Empty,
 			};
 
 			List<ArchivoModel> archivos = new List<ArchivoModel>();

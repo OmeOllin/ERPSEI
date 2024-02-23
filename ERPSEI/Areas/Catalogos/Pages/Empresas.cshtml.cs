@@ -636,7 +636,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 							foreach (DataRow row in result.Tables[0].Rows)
 							{
 								//Omite el procesamiento del row de encabezado
-								if (result.Tables[0].Rows.IndexOf(row) == 0) { continue; }
+								if (result.Tables[0].Rows.IndexOf(row) == 0) {
+									resp.TieneError = false;
+									resp.Mensaje = _strLocalizer["EmpresasImportadasSuccessfully"];
+									continue; 
+								}
 
 								string vmsg = await CreateCompanyFromExcelRow(row);
 
@@ -665,6 +669,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			catch (Exception ex)
 			{
 				_logger.LogError(ex.Message);
+				resp.TieneError = true;
+				resp.Mensaje = _strLocalizer["EmpresasImportadasUnsuccessfully"];
 			}
 
 			return new JsonResult(resp);
@@ -673,51 +679,51 @@ namespace ERPSEI.Areas.Catalogos.Pages
         {
             string validationMsg = string.Empty;
 
-            Origen? origen = await _origenManager.GetByNameAsync(row[1].ToString() ?? string.Empty);
-            Nivel? nivel = await _nivelManager.GetByNameAsync(row[2].ToString() ?? string.Empty);
-            ActividadEconomica? actividadEconomica = await _actividadEconomicaManager.GetByNameAsync(row[16].ToString() ?? string.Empty);
+            Origen? origen = await _origenManager.GetByNameAsync(row[1].ToString()?.Trim() ?? string.Empty);
+            Nivel? nivel = await _nivelManager.GetByNameAsync(row[2].ToString()?.Trim() ?? string.Empty);
+            ActividadEconomica? actividadEconomica = await _actividadEconomicaManager.GetByNameAsync(row[16].ToString()?.Trim() ?? string.Empty);
 
 			DateTime fc;
-			DateTime.TryParse(row[3].ToString(), out fc);
+			DateTime.TryParse(row[3].ToString()?.Trim(), out fc);
 			DateTime fio;
-            DateTime.TryParse(row[4].ToString(), out fio);
+            DateTime.TryParse(row[4].ToString()?.Trim(), out fio);
 			DateTime fif;
-			DateTime.TryParse(row[5].ToString(), out fif);
+			DateTime.TryParse(row[5].ToString()?.Trim(), out fif);
 			DateTime fia;
-			DateTime.TryParse(row[6].ToString(), out fia);
+			DateTime.TryParse(row[6].ToString()?.Trim(), out fia);
 
 			EmpresaModel e = new EmpresaModel() {
-				RazonSocial = row[0].ToString() ?? string.Empty,
-				OrigenId = origen != null ? origen.Id : 0,
-				NivelId = nivel != null ? nivel.Id : 0,
+				RazonSocial = row[0].ToString()?.Trim() ?? string.Empty,
+				OrigenId = origen != null ? origen.Id : null,
+				NivelId = nivel != null ? nivel.Id : null,
 				FechaConstitucion = fc,
 				FechaInicioOperacion = fio,
 				FechaInicioFacturacion = fif,
 				FechaInicioAsimilados = fia,
-				RFC = row[7].ToString() ?? string.Empty,
-				DomicilioFiscal = row[8].ToString() ?? string.Empty,
-				Administrador = row[9].ToString() ?? string.Empty,
-				Accionista = row[10].ToString() ?? string.Empty,
-				CorreoGeneral = row[11].ToString() ?? string.Empty,
-				CorreoBancos = row[12].ToString() ?? string.Empty,
-				CorreoFiscal = row[13].ToString() ?? string.Empty,
-				CorreoFacturacion = row[14].ToString() ?? string.Empty,
-				Telefono = row[15].ToString() ?? string.Empty,
-				ActividadEconomicaId = actividadEconomica != null ? actividadEconomica.Id : 0,
-				ObjetoSocial = row[17].ToString() ?? string.Empty
+				RFC = row[7].ToString()?.Trim() ?? string.Empty,
+				DomicilioFiscal = row[8].ToString()?.Trim() ?? string.Empty,
+				Administrador = row[9].ToString()?.Trim() ?? string.Empty,
+				Accionista = row[10].ToString()?.Trim() ?? string.Empty,
+				CorreoGeneral = row[11].ToString()?.Trim() ?? string.Empty,
+				CorreoBancos = row[12].ToString()?.Trim() ?? string.Empty,
+				CorreoFiscal = row[13].ToString()?.Trim() ?? string.Empty,
+				CorreoFacturacion = row[14].ToString()?.Trim() ?? string.Empty,
+				Telefono = row[15].ToString()?.Trim() ?? string.Empty,
+				ActividadEconomicaId = actividadEconomica != null ? actividadEconomica.Id : null,
+				ObjetoSocial = row[17].ToString()?.Trim() ?? string.Empty
 			};
 
 			List<BancoModel> bancos = new List<BancoModel>();
 			//Si existe banco 1, agrega uno al listado.
-			if (row[18].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[18].ToString() ?? string.Empty, Responsable = row[19].ToString() ?? string.Empty, Firmante = row[20].ToString() ?? string.Empty }); }
+			if (row[18].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[18].ToString()?.Trim() ?? string.Empty, Responsable = row[19].ToString()?.Trim() ?? string.Empty, Firmante = row[20].ToString()?.Trim() ?? string.Empty }); }
 			//Si existe banco 2, agrega uno al listado.
-			if (row[21].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[21].ToString() ?? string.Empty, Responsable = row[22].ToString() ?? string.Empty, Firmante = row[23].ToString() ?? string.Empty }); }
+			if (row[21].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[21].ToString()?.Trim() ?? string.Empty, Responsable = row[22].ToString()?.Trim() ?? string.Empty, Firmante = row[23].ToString()?.Trim() ?? string.Empty }); }
 			//Si existe banco 3, agrega uno al listado.
-			if (row[24].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[24].ToString() ?? string.Empty, Responsable = row[25].ToString() ?? string.Empty, Firmante = row[26].ToString() ?? string.Empty }); }
+			if (row[24].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[24].ToString()?.Trim() ?? string.Empty, Responsable = row[25].ToString()?.Trim() ?? string.Empty, Firmante = row[26].ToString()?.Trim() ?? string.Empty }); }
 			//Si existe banco 4, agrega uno al listado.
-			if (row[27].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[27].ToString() ?? string.Empty, Responsable = row[28].ToString() ?? string.Empty, Firmante = row[29].ToString() ?? string.Empty }); }
+			if (row[27].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[27].ToString()?.Trim() ?? string.Empty, Responsable = row[28].ToString()?.Trim() ?? string.Empty, Firmante = row[29].ToString()?.Trim() ?? string.Empty }); }
 			//Si existe banco 5, agrega uno al listado.
-			if (row[30].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[30].ToString() ?? string.Empty, Responsable = row[31].ToString() ?? string.Empty, Firmante = row[32].ToString() ?? string.Empty }); }
+			if (row[30].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[30].ToString()?.Trim() ?? string.Empty, Responsable = row[31].ToString()?.Trim() ?? string.Empty, Firmante = row[32].ToString()?.Trim() ?? string.Empty }); }
 
 			e.Bancos = bancos.ToArray();
 
