@@ -6,6 +6,8 @@
 
 		public const string PersonName = @"^[A-ZÁÉÍÓÚÑ][a-zA-ZáÁéÉíÍóÓúÚñÑ ]+$";
 
+		public const string AlphanumSpaceParenthesis = @"^[áÁéÉíÍóÓúÚñÑ()\w ]+$";
+
 		public const string AlphanumSpace = @"^[áÁéÉíÍóÓúÚñÑ\w ]+$";
 
 		public const string AlphanumNoSpace = @"^[áÁéÉíÍóÓúÚñÑ\w]+$";

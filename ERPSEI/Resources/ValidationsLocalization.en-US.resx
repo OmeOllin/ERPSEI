@@ -132,6 +132,9 @@
   <data name="AlphanumSpace" xml:space="preserve">
     <value>The {0} field only allows letters, numbers, underscores, and spaces.</value>
   </data>
+  <data name="AlphanumSpaceParenthesis" xml:space="preserve">
+    <value>The {0} field only allows letters, numbers, underscores, spaces and parenthesis.</value>
+  </data>
   <data name="AreaField" xml:space="preserve">
     <value>Area</value>
   </data>
