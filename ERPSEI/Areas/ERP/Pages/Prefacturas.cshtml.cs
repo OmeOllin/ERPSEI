@@ -76,10 +76,15 @@ namespace ERPSEI.Areas.ERP.Pages
 
 			if (empresas != null)
 			{
+				int counter = 0;
+				int empresasLimit = 20;
 				foreach (Empresa e in empresas)
 				{
 					//Si viene establecido el id empresa, omite el elemento con ese id.
 					if (idempresa >= 1 && e.Id == idempresa) { continue; }
+
+					//Solo se muestran los primeros 20 resultados
+					if(counter >= empresasLimit) { break; }
 
 					jsonEmpresas.Add($"{{" +
 										$"\"id\": {e.Id}, " +
@@ -87,10 +92,11 @@ namespace ERPSEI.Areas.ERP.Pages
 										$"\"label\": \"{e.RFC} - {e.RazonSocial}\", " +
 										$"\"rfc\": \"{e.RFC}\", " +
 										$"\"razonSocial\": \"{e.RazonSocial}\", " +
-										$"\"objetoSocial\": \"{e.ObjetoSocial}\", " +
 										$"\"actividadEconomica\": \"{e.ActividadEconomica?.Nombre}\", " +
+										$"\"objetoSocial\": \"\", " +
 										$"\"domicilioFiscal\": \"{e.DomicilioFiscal}\"" +
 									$"}}");
+					counter++;
 				}
 			}
 
