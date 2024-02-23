@@ -104,6 +104,11 @@ function onValidarClick() {
 
 //Función para capturar el clic del botón limpiar. Limpia y oculta la información del emisor y del receptor.
 function onLimpiarClick() {
+    let inpEmisor = document.getElementById("inpEmisor");
+    inpEmisor.value = null;
     toggleEmisorInfo();
+
+    let inpReceptor = document.getElementById("inpReceptor");
+    inpReceptor.value = null;
     toggleReceptorInfo();
 }
