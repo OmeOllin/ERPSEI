@@ -60,11 +60,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "OrigenField")]
-			public int OrigenId { get; set; }
+			public int? OrigenId { get; set; }
 
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "NivelField")]
-			public int NivelId { get; set; }
+			public int? NivelId { get; set; }
 
             [DataType(DataType.DateTime)]
             [Required(ErrorMessage = "Required")]
@@ -150,7 +150,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "ActividadEconomicaField")]
-            public int ActividadEconomicaId {  get; set; }
+            public int? ActividadEconomicaId {  get; set; }
 
             [DataType(DataType.Text)]
             [StringLength(50, ErrorMessage = "FieldLength", MinimumLength = 2)]
@@ -659,11 +659,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 							}
 						}
 					}
-				}
-
-				if (!resp.TieneError)
-				{
-					
 				}
 			}
 			catch (Exception ex)
