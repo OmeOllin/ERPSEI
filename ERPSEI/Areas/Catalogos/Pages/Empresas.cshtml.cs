@@ -16,7 +16,7 @@ using System.Net.Mime;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-    [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
+	[Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
     public class EmpresasModel : PageModel
 	{
 		private readonly IEmpresaManager _empresaManager;
@@ -264,6 +264,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				nombreNivel = e.Nivel != null ? e.Nivel.Nombre : string.Empty;
 				nombreActividadEconomica = e.ActividadEconomica != null ? e.ActividadEconomica.Nombre : string.Empty;
 
+				e.ObjetoSocial = jsonEscape(e.ObjetoSocial);
+
 				jsonEmpresas.Add(
 					"{" +
 						$"\"id\": {e.Id}," +
@@ -300,7 +302,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return jsonResponse;
 		}
-        private List<string> getListJsonBancos(ICollection<BancoEmpresa>? bancos)
+		private string jsonEscape(string str)
+		{
+			return str.Replace("\n", "<br />").Replace("\r", "<br />").Replace("\t", "<br />");
+		}
+		private List<string> getListJsonBancos(ICollection<BancoEmpresa>? bancos)
         {
             List<string> jsonBancos = new List<string>();
             if (bancos != null)
@@ -707,6 +713,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				ActividadEconomicaId = actividadEconomica != null ? actividadEconomica.Id : null,
 				ObjetoSocial = row[17].ToString()?.Trim() ?? string.Empty
 			};
+
+			e.ObjetoSocial = jsonEscape(e.ObjetoSocial);
 
 			List<BancoModel> bancos = new List<BancoModel>();
 			//Si existe banco 1, agrega uno al listado.

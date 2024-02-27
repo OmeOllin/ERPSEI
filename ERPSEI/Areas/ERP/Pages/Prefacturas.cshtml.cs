@@ -86,6 +86,8 @@ namespace ERPSEI.Areas.ERP.Pages
 					//Solo se muestran los primeros 20 resultados
 					if(counter >= empresasLimit) { break; }
 
+					e.ObjetoSocial = jsonEscape(e.ObjetoSocial);
+
 					jsonEmpresas.Add($"{{" +
 										$"\"id\": {e.Id}, " +
 										$"\"value\": \"{e.RazonSocial}\", " +
@@ -93,7 +95,7 @@ namespace ERPSEI.Areas.ERP.Pages
 										$"\"rfc\": \"{e.RFC}\", " +
 										$"\"razonSocial\": \"{e.RazonSocial}\", " +
 										$"\"actividadEconomica\": \"{e.ActividadEconomica?.Nombre}\", " +
-										$"\"objetoSocial\": \"\", " +
+										$"\"objetoSocial\": \"{e.ObjetoSocial}\", " +
 										$"\"domicilioFiscal\": \"{e.DomicilioFiscal}\"" +
 									$"}}");
 					counter++;
@@ -103,6 +105,10 @@ namespace ERPSEI.Areas.ERP.Pages
 			jsonResponse = $"[{string.Join(",", jsonEmpresas)}]";
 
 			return jsonResponse;
+		}
+		private string jsonEscape(string str)
+		{
+			return str.Replace("\n", "<br />").Replace("\r", "<br />").Replace("\t", "<br />");
 		}
 	}
 }
