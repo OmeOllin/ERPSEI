@@ -2,10 +2,12 @@
 
 namespace ERPSEI.Data.Entities.Empresas
 {
-    public class ActividadEconomica
+	public class ActividadEconomica
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
+
+        public string Clave { get; set; } = string.Empty;
 
         public string Nombre { get; set; } = string.Empty;
 
