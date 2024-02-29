@@ -115,14 +115,14 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             [Phone(ErrorMessage = "PhoneFormat")]
             [StringLength(10, ErrorMessage = "FieldLength", MinimumLength = 10)]
             [DataType(DataType.PhoneNumber)]
-            [RegularExpression(RegularExpressions.Numeric, ErrorMessage = "Numeric")]
-            [Display(Name = "PhoneNumberField")]
+			[RegularExpression(RegularExpressions.NumericNoRestriction, ErrorMessage = "NumericNoRestriction")]
+			[Display(Name = "PhoneNumberField")]
             public string PhoneNumber { get; set; }
 
             [Required(ErrorMessage = "Required")]
             [DataType(DataType.MultilineText)]
 			[StringLength(300, ErrorMessage = "FieldLength", MinimumLength = 1)]
-            [Display(Name = "DireccionField")]
+			[Display(Name = "DireccionField")]
             public string Direccion { get; set; } = string.Empty;
 
             [DataType(DataType.Text)]
@@ -161,8 +161,8 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             [Phone(ErrorMessage = "PhoneFormat")]
             [StringLength(10, ErrorMessage = "FieldLength", MinimumLength = 10)]
             [DataType(DataType.PhoneNumber)]
-            [RegularExpression(RegularExpressions.Numeric, ErrorMessage = "Numeric")]
-            [Display(Name = "PhoneNumberField")]
+			[RegularExpression(RegularExpressions.NumericNoRestriction, ErrorMessage = "NumericNoRestriction")]
+			[Display(Name = "PhoneNumberField")]
             public string TelefonoContacto1 { get; set; } = string.Empty;
 
             [DataType(DataType.Text)]
@@ -174,8 +174,8 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             [Phone(ErrorMessage = "PhoneFormat")]
             [StringLength(10, ErrorMessage = "FieldLength", MinimumLength = 10)]
             [DataType(DataType.PhoneNumber)]
-            [RegularExpression(RegularExpressions.Numeric, ErrorMessage = "Numeric")]
-            [Display(Name = "PhoneNumberField")]
+			[RegularExpression(RegularExpressions.NumericNoRestriction, ErrorMessage = "NumericNoRestriction")]
+			[Display(Name = "PhoneNumberField")]
             public string TelefonoContacto2 { get; set; } = string.Empty;
         }
 

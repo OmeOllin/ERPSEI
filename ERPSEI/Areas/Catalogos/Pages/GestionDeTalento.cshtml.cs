@@ -132,7 +132,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Phone(ErrorMessage = "PhoneFormat")]
 			[StringLength(10, ErrorMessage = "FieldLength", MinimumLength = 10)]
 			[DataType(DataType.PhoneNumber)]
-			[RegularExpression(RegularExpressions.Numeric, ErrorMessage = "Numeric")]
+			[RegularExpression(RegularExpressions.NumericNoRestriction, ErrorMessage = "NumericNoRestriction")]
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "PhoneNumberField")]
 			public string Telefono { get; set; } = string.Empty;
@@ -196,7 +196,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Phone(ErrorMessage = "PhoneFormat")]
 			[StringLength(10, ErrorMessage = "FieldLength", MinimumLength = 10)]
 			[DataType(DataType.PhoneNumber)]
-			[RegularExpression(RegularExpressions.Numeric, ErrorMessage = "Numeric")]
+			[RegularExpression(RegularExpressions.NumericNoRestriction, ErrorMessage = "NumericNoRestriction")]
 			[Display(Name = "PhoneNumberField")]
 			public string? TelefonoContacto1 { get; set; } = string.Empty;
 
@@ -209,7 +209,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Phone(ErrorMessage = "PhoneFormat")]
 			[StringLength(10, ErrorMessage = "FieldLength", MinimumLength = 10)]
 			[DataType(DataType.PhoneNumber)]
-			[RegularExpression(RegularExpressions.Numeric, ErrorMessage = "Numeric")]
+			[RegularExpression(RegularExpressions.NumericNoRestriction, ErrorMessage = "NumericNoRestriction")]
 			[Display(Name = "PhoneNumberField")]
 			public string? TelefonoContacto2 { get; set; } = string.Empty;
 

@@ -253,6 +253,9 @@
     <value>NSS</value>
   </data>
   <data name="Numeric" xml:space="preserve">
+    <value>El campo {0} solo permite números. El primer número debe ser diferente de cero.</value>
+  </data>
+  <data name="NumericNoRestriction" xml:space="preserve">
     <value>El campo {0} solo permite números.</value>
   </data>
   <data name="ObjetoSocialField" xml:space="preserve">

@@ -144,7 +144,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
             [Phone(ErrorMessage = "PhoneFormat")]
 			[StringLength(10, ErrorMessage = "FieldLength", MinimumLength = 10)]
 			[DataType(DataType.PhoneNumber)]
-			[RegularExpression(RegularExpressions.Numeric, ErrorMessage = "Numeric")]
+			[RegularExpression(RegularExpressions.NumericNoRestriction, ErrorMessage = "NumericNoRestriction")]
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "PhoneNumberField")]
 			public string Telefono { get; set; } = string.Empty;
@@ -153,9 +153,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Display(Name = "ActividadEconomicaField")]
             public int? ActividadEconomicaId {  get; set; }
 
-            [DataType(DataType.Text)]
-            [StringLength(5000, ErrorMessage = "FieldLength", MinimumLength = 1)]
-			[RegularExpression(RegularExpressions.AlphanumSpace, ErrorMessage = "AlphanumSpace")]
+			[DataType(DataType.MultilineText)]
+			[StringLength(5000, ErrorMessage = "FieldLength", MinimumLength = 1)]
 			[Required(ErrorMessage = "Required")]
             [Display(Name = "ObjetoSocialField")]
             public string ObjetoSocial {  get; set; } = string.Empty;
