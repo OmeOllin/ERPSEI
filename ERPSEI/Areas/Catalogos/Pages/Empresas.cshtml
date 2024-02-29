@@ -69,16 +69,8 @@
 						</div>
 						<div class="col-sm-6 col-md-6 col-lg-4">
 							<div class="form-floating mb-3">
-								<select id="selFiltroActividadEconomica" asp-for="InputFiltro.ActividadEconomicaId" class="form-select" placeholder="@Localizer["ActividadEconomicaPlaceholder"]">
-									<option value="0">Seleccione...</option>
-									@{
-										foreach (ActividadEconomica actividad in actividadesEconomicas)
-										{
-											<option value='@actividad.Id'>@actividad.Nombre</option>
-										}
-									}
-								</select>
-								<label for="selFiltroActividadEconomica" asp-for="InputFiltro.ActividadEconomicaId" class="form-label"></label>
+								<input id="inpFiltroActividadEconomica" type="search" asp-for="InputFiltro.ActividadEconomicaId" class="form-control" placeholder="@Localizer["ActividadEconomicaPlaceholder"]" idselected='' area="Catalogos" module="Empresas" source="GetActividadesEconomicasSuggestion" />
+								<label for="inpFiltroActividadEconomica" asp-for="InputFiltro.ActividadEconomicaId" class="form-label"></label>
 							</div>
 						</div>
 					</div>
@@ -311,19 +303,20 @@
 											</div>
 										</div>
 										<div class="row mb-3">
-											<div class="col-sm-12 col-md-12 col-lg-6">
+											<div class="col-12">
 												<div class="form-floating mb-3">
 													<textarea id="txtEmpresaObjetoSocial" maxlength="5000" oninput="calculateTextAreaHeight(this);" asp-for="InputEmpresa.ObjetoSocial" class="form-control formInput" placeholder="@Localizer["ObjetoSocialPlaceholder"]"></textarea>
 													<label for="txtEmpresaObjetoSocial" asp-for="InputEmpresa.ObjetoSocial" class="form-label required"></label>
 													<span asp-validation-for="InputEmpresa.ObjetoSocial" class="text-danger"></span>
 												</div>
-												</div>
 											</div>
-											<div class="col-sm-12 col-md-12 col-lg-6">
-												<div class="form-floating mb-3">
-													<input id="inpEmpresaObjetoSocial" asp-for="InputEmpresa.ObjetoSocial" type="text" class="form-control formInput" placeholder="@Localizer["ObjetoSocialPlaceholder"]" />
-													<label for="inpEmpresaObjetoSocial" asp-for="InputEmpresa.ObjetoSocial" class="form-label required"></label>
-													<span asp-validation-for="InputEmpresa.ObjetoSocial" class="text-danger"></span>
+										</div>
+										<div class="row mb-3">
+											<div class="col-12">
+												<div class="form-floating mb-3 ui-front">
+													<input id="inpEmpresaActividadEconomica" type="search" asp-for="InputEmpresa.ActividadEconomicaId" class="form-control" placeholder="@Localizer["ActividadEconomicaPlaceholder"]" idselected='' area="Catalogos" module="Empresas" source="GetActividadesEconomicasSuggestion" />
+													<label for="inpEmpresaActividadEconomica" asp-for="InputEmpresa.ActividadEconomicaId" class="form-label required"></label>
+													<span asp-validation-for="InputEmpresa.ActividadEconomicaId" class="text-danger"></span>
 												</div>
 											</div>
 										</div>
@@ -449,6 +442,11 @@
 <!-- --------------------------- -->
 
 @section Scripts {
+	<!-- Librería autocompletar y dependencias -->
+	<link rel="stylesheet" href="~/lib/jquery-ui/jquery-ui.min.css">
+	<script src="~/lib/jquery-ui/jquery-ui.min.js"></script>
+	<script src="~/js/autocompletar.js"></script>
+
 	<link rel="stylesheet" href="~/lib/bootstrap-table/bootstrap-table.min.css">
 
 	<script src="~/lib/bootstrap-table/extensions/export/tableExport.min.js"></script>

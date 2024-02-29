@@ -304,7 +304,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 		private string jsonEscape(string str)
 		{
-			return str.Replace("\n", "<br />").Replace("\r", "<br />").Replace("\t", "<br />");
+			return str.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t");
 		}
 		private List<string> getListJsonBancos(ICollection<BancoEmpresa>? bancos)
         {
@@ -750,6 +750,54 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			}
 
 			return validationMsg ?? "";
+		}
+
+		public async Task<JsonResult> OnPostGetActividadesEconomicasSuggestion(string texto)
+		{
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["ConsultadoUnsuccessfully"]);
+			try
+			{
+				resp.Datos = await GetActividadesEconomicasSuggestion(texto);
+				resp.TieneError = false;
+				resp.Mensaje = _strLocalizer["ConsultadoSuccessfully"];
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+			}
+
+			return new JsonResult(resp);
+		}
+		private async Task<string> GetActividadesEconomicasSuggestion(string texto)
+		{
+			string jsonResponse;
+			List<string> jsons = new List<string>();
+
+			List<ActividadEconomica> actividades = await _actividadEconomicaManager.GetAllAsync();
+			actividades = actividades.Where(e => e.Nombre.ToLowerInvariant().Contains(texto.ToLowerInvariant()) || e.Clave.ToLowerInvariant().Contains(texto.ToLowerInvariant())).ToList();
+
+			if (actividades != null)
+			{
+				int counter = 0;
+				int limit = 20;
+				foreach (ActividadEconomica a in actividades)
+				{
+					//Solo se muestran los primeros 20 resultados
+					if (counter >= limit) { break; }
+
+					jsons.Add($"{{" +
+										$"\"id\": {a.Id}, " +
+										$"\"value\": \"{a.Nombre}\", " +
+										$"\"label\": \"{a.Clave} - {a.Nombre}\", " +
+										$"\"clave\": \"{a.Clave}\"" +
+									$"}}");
+					counter++;
+				}
+			}
+
+			jsonResponse = $"[{string.Join(",", jsons)}]";
+
+			return jsonResponse;
 		}
 	}
 }

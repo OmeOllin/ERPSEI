@@ -32,6 +32,10 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
     let btnBuscar = document.getElementById("btnBuscar");
     btnBuscar.click();
+
+    autoCompletar("#inpFiltroActividadEconomica");
+    autoCompletar("#inpEmpresaActividadEconomica");
+
 });
 //Función para redimensionar el campo de objeto social cada que cambie el tamaño de pantalla.
 window.addEventListener('resize', function (event) {
@@ -121,6 +125,7 @@ function onAgregarClick() {
         correoFacturacion: "",
         telefono: "",
         actividadEconomicaId: 0,
+        actividadEconomica: "",
         objetoSocial: "",
         bancos: [],
         archivos: []
@@ -262,19 +267,20 @@ function onDeleteEmpresaClick(ids = null) {
 }
 ////////////////////////////////
 
+////////////////////////////////
 //Funcionalidad Filtrar
-
+////////////////////////////////
 //Función para filtrar los datos de la tabla.
 function onBuscarClick() {
     let btnBuscar = document.getElementById("btnBuscar");
     let selOrigen = document.getElementById("selFiltroOrigen");
     let selNivel = document.getElementById("selFiltroNivel");
-    let selActividadEconomica = document.getElementById("selFiltroActividadEconomica");
+    let inpActividadEconomica = document.getElementById("inpFiltroActividadEconomica");
 
     let oParams = {
-        origen: selOrigen.value,
-        nivel: selNivel.value,
-        actividadEconomica: selActividadEconomica.value
+        origenId: selOrigen.value == 0 ? null : parseInt(selOrigen.value),
+        nivelId: selNivel.value == 0 ? null : parseInt(selNivel.value),
+        actividadEconomicaId: (inpActividadEconomica.getAttribute('idselected') || "0") == "0" ? null : parseInt(inpActividadEconomica.getAttribute("idselected"))
     };
 
     //Resetea el valor de los filtros.
@@ -333,8 +339,8 @@ function initEmpresaDialog(action, row) {
     let correoFiscalField = document.getElementById("inpEmpresaCorreoFiscal");
     let correoFacturacionField = document.getElementById("inpEmpresaCorreoFacturacion");
     let telefonoField = document.getElementById("inpEmpresaTelefono");
-    let actividadEconomicaField = document.getElementById("selEmpresaActividadEconomica");
-    let objetoSocialField = document.getElementById("inpEmpresaObjetoSocial");
+    let actividadEconomicaField = document.getElementById("inpEmpresaActividadEconomica");
+    let objetoSocialField = document.getElementById("txtEmpresaObjetoSocial");
 
     summaryContainer.innerHTML = "";
     idField.setAttribute("disabled", true);
@@ -355,7 +361,8 @@ function initEmpresaDialog(action, row) {
     correoFiscalField.value = row.correoFiscal;
     correoFacturacionField.value = row.correoFacturacion;
     telefonoField.value = row.telefono;
-    actividadEconomicaField.value = row.actividadEconomicaId;
+    actividadEconomicaField.setAttribute('idselected', row.actividadEconomicaId);
+    actividadEconomicaField.value = row.actividadEconomica;
     objetoSocialField.value = row.objetoSocial;
 
     if (action == NUEVO || (row.hasDatosAdicionales || false)) {
@@ -698,8 +705,8 @@ function onGuardarClick() {
     let correoFiscalField = document.getElementById("inpEmpresaCorreoFiscal");
     let correoFacturacionField = document.getElementById("inpEmpresaCorreoFacturacion");
     let telefonoField = document.getElementById("inpEmpresaTelefono");
-    let actividadEconomicaField = document.getElementById("selEmpresaActividadEconomica");
-    let objetoSocialField = document.getElementById("inpEmpresaObjetoSocial");
+    let actividadEconomicaField = document.getElementById("inpEmpresaActividadEconomica");
+    let objetoSocialField = document.getElementById("txtEmpresaObjetoSocial");
 
     let dlgTitle = document.getElementById("dlgEmpresaTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
@@ -744,7 +751,7 @@ function onGuardarClick() {
         correoFiscal: correoFiscalField.value.trim(),
         correoFacturacion: correoFacturacionField.value.trim(),
         telefono: telefonoField.value.trim(),
-        actividadEconomicaId: actividadEconomicaField.value == 0 ? null : parseInt(actividadEconomicaField.value),
+        actividadEconomicaId: (actividadEconomicaField.getAttribute('idselected')||"0") == "0" ? null : parseInt(actividadEconomicaField.getAttribute("idselected")),
         objetoSocial: objetoSocialField.value.trim(),
         bancos: banks,
         archivos: files
