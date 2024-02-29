@@ -153,7 +153,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
             public int? ActividadEconomicaId {  get; set; }
 
             [DataType(DataType.Text)]
-            [StringLength(50, ErrorMessage = "FieldLength", MinimumLength = 2)]
+            [StringLength(5000, ErrorMessage = "FieldLength", MinimumLength = 1)]
 			[RegularExpression(RegularExpressions.AlphanumSpace, ErrorMessage = "AlphanumSpace")]
 			[Required(ErrorMessage = "Required")]
             [Display(Name = "ObjetoSocialField")]
