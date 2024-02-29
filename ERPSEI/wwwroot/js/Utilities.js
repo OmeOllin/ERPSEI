@@ -78,3 +78,25 @@ function doAjax(url = '', oParams = null, onSuccess = function () { }, onError =
 	// Llamado ajax
 	return $.ajax(objDefaults);
 } //doAjax
+
+/**
+	* Función para calcular el alto de uno o más textarea en base al contenido.
+	*
+	* @param object textarea Elemento o elementos del DOM.
+*/
+function calculateTextAreaHeight(textarea) {
+	if (NodeList.prototype.isPrototypeOf(textarea)) {
+		textarea.forEach(function (txt) { calculateTextAreaHeight(txt); });
+	}
+	else {
+		textarea.style.height = '60px';
+		let newHeight = 0;
+		if (textarea.scrollHeight < 60) {
+			newHeight = 60;
+		}
+		else {
+			newHeight = textarea.scrollHeight + 1;
+		}
+		textarea.style.height = `${newHeight}px`;
+	}
+}
