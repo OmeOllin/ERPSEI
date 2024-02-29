@@ -121,6 +121,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 
             [Required(ErrorMessage = "Required")]
             [DataType(DataType.MultilineText)]
+			[StringLength(300, ErrorMessage = "FieldLength", MinimumLength = 1)]
             [Display(Name = "DireccionField")]
             public string Direccion { get; set; } = string.Empty;
 

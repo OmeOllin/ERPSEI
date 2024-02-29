@@ -306,7 +306,7 @@
 									</div>
 									<div class="col-12">
 										<div class="form-floating mb-3">
-											<textarea id="txtEmpleadoDireccion" maxlength="135" oninput="calculateTextAreaHeight(this);" asp-for="InputEmpleado.Direccion" class="form-control formInput" placeholder="@Localizer["DireccionPlaceholder"]"></textarea>
+											<textarea id="txtEmpleadoDireccion" maxlength="300" oninput="calculateTextAreaHeight(this);" asp-for="InputEmpleado.Direccion" class="form-control formInput" placeholder="@Localizer["DireccionPlaceholder"]"></textarea>
 											<label for="txtEmpleadoDireccion" asp-for="InputEmpleado.Direccion" class="form-label required"></label>
 											<span asp-validation-for="InputEmpleado.Direccion" class="text-danger"></span>
 										</div>

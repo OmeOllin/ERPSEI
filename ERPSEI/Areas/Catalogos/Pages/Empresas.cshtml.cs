@@ -95,6 +95,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			[Required(ErrorMessage = "Required")]
 			[DataType(DataType.MultilineText)]
+			[StringLength(300, ErrorMessage = "FieldLength", MinimumLength = 1)]
 			[Display(Name = "DomicilioFiscalField")]
 			public string DomicilioFiscal { get; set; } = string.Empty;
 

@@ -118,7 +118,7 @@
                 </div>
                 <div class="col-12">
                     <div class="form-floating mb-3">
-                        <textarea id="txtEmpleadoDireccion" oninput="calculateTextAreaHeight(this);" maxlength="135" asp-for="Input.Direccion" class="form-control formInput" placeholder="@Localizer["DireccionPlaceholder"]"></textarea>
+                        <textarea id="txtEmpleadoDireccion" oninput="calculateTextAreaHeight(this);" maxlength="300" asp-for="Input.Direccion" class="form-control formInput" placeholder="@Localizer["DireccionPlaceholder"]"></textarea>
                         <label for="txtEmpleadoDireccion" asp-for="Input.Direccion" class="form-label"></label>
                         <span asp-validation-for="Input.Direccion" class="text-danger"></span>
                     </div>
