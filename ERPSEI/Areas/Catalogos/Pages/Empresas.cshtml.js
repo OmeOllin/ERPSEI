@@ -22,12 +22,21 @@ document.addEventListener("DOMContentLoaded", function (event) {
     dlgEmpresa.addEventListener('hidden.bs.modal', function (event) {
         onCerrarClick();
     });
+    //Función para ejecutar acciones posteriores al mostrado del diálogo.
+    dlgEmpresa.addEventListener('shown.bs.modal', function (e) {
+        //Este evento es necesario para poder mostrar el text area ajustado al tamaño del contenido, basado en el tamaño del scroll.
+        calculateTextAreaHeight(document.querySelectorAll("textarea"));
+    })
 
     initTable();
 
     let btnBuscar = document.getElementById("btnBuscar");
     btnBuscar.click();
 });
+//Función para redimensionar el campo de objeto social cada que cambie el tamaño de pantalla.
+window.addEventListener('resize', function (event) {
+    calculateTextAreaHeight(document.querySelectorAll("textarea"));
+}, true);
 
 ////////////////////////////////
 //Funcionalidad Tabla
