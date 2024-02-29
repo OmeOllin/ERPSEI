@@ -7,7 +7,14 @@ document.addEventListener("DOMContentLoaded", async function (event) {
     initializeDisableableButtons();
 
     hideLoading()
+
+    //Este evento es necesario para poder mostrar el text area ajustado al tamaño del contenido, basado en el tamaño del scroll.
+    calculateTextAreaHeight(document.querySelectorAll("textarea"));
 });
+//Función para redimensionar los textareas cada que cambie el tamaño de pantalla.
+window.addEventListener('resize', function (event) {
+    calculateTextAreaHeight(document.querySelectorAll("textarea"));
+}, true);
 
 //Functión para capturar el clic del botón guardar
 function onUpdateProfileButtonClick() {

@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     let btnBuscar = document.getElementById("btnBuscar");
     btnBuscar.click();
 });
-//Función para redimensionar el campo de objeto social cada que cambie el tamaño de pantalla.
+//Función para redimensionar los textareas cada que cambie el tamaño de pantalla.
 window.addEventListener('resize', function (event) {
     calculateTextAreaHeight(document.querySelectorAll("textarea"));
 }, true);
