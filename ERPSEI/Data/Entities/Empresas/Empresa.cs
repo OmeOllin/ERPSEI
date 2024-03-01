@@ -15,31 +15,34 @@ namespace ERPSEI.Data.Entities.Empresas
 		public int? NivelId { get; set; }
 		public Nivel? Nivel { get; set; }
 
-        public DateTime FechaConstitucion { get; set; } = DateTime.MinValue;
+        public DateTime? FechaConstitucion { get; set; } = DateTime.MinValue;
 
-		public DateTime FechaInicioOperacion {  get; set; } = DateTime.MinValue;
+		public DateTime? FechaInicioOperacion {  get; set; } = DateTime.MinValue;
 
-        public DateTime FechaInicioFacturacion { get; set; } = DateTime.MinValue;
+        public DateTime? FechaInicioFacturacion { get; set; } = DateTime.MinValue;
 
-        public DateTime FechaInicioAsimilados { get; set; } = DateTime.MinValue;
+        public DateTime? FechaInicioAsimilados { get; set; } = DateTime.MinValue;
 
         public string RFC {  get; set; } = string.Empty;
 
 		public string DomicilioFiscal { get; set; } = string.Empty;
 
-		public string Administrador { get; set; } = string.Empty;
+		public string? Administrador { get; set; } = string.Empty;
 
-		public string Accionista { get; set; } = string.Empty;
+		public string? Accionista { get; set; } = string.Empty;
 
-		public string CorreoGeneral { get; set; } = string.Empty;
+		public string? CorreoGeneral { get; set; } = string.Empty;
 
-		public string CorreoBancos { get; set; } = string.Empty;
+		public string? CorreoBancos { get; set; } = string.Empty;
 
-		public string CorreoFiscal { get; set; } = string.Empty;
+		public string? CorreoFiscal { get; set; } = string.Empty;
 
-		public string CorreoFacturacion {  get; set; } = string.Empty;
+		public string? CorreoFacturacion {  get; set; } = string.Empty;
 
-		public string Telefono { get; set; } = string.Empty;
+		public string? Telefono { get; set; } = string.Empty;
+
+		public int? PerfilId {  get; set; }
+		public Perfil? Perfil {  get; set; }
 
 		public int? ActividadEconomicaId {  get; set; }
 		public ActividadEconomica? ActividadEconomica { get; set; }

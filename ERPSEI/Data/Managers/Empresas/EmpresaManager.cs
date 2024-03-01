@@ -122,6 +122,11 @@ namespace ERPSEI.Data.Managers.Empresas
                 .ToListAsync();
         }
 
+        public async Task<List<Empresa>> GetAllAsync()
+        {
+			return await GetAllAsync(null, null, null);
+		}
+
         public async Task<Empresa?> GetByIdWithAdicionalesAsync(int id)
         {
             return await db.Empresas
