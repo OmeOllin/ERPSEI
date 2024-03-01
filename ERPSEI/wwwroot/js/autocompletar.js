@@ -6,6 +6,7 @@ function autoCompletar(selector, oExtend) {
 
 	// Muestra la lista de sugerencias
 	return $(selector).autocomplete({
+		position: { collision: "flip" },
 		minLength: 3,
 		search: function (event, ui) {
 			if ($(event.target).val().trim().length < $(this).autocomplete('option', 'minLength')) {
