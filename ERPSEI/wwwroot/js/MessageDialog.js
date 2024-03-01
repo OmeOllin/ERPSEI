@@ -14,7 +14,7 @@ const okIcon = `<i class="d-block bi bi-check-circle-fill me-3" style="font-size
 
 const messageDialogHTML = `<div id="messageDialog" class="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
                              <div class="modal-dialog modal-dialog-centered">
-                               <div class="modal-content">
+                               <div class="modal-content shadow-lg">
                                  <div class="modal-header">
                                    <h5 id="titleContainer" class="modal-title"></h5>
                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
