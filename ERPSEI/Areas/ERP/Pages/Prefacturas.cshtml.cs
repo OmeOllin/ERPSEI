@@ -72,21 +72,20 @@ namespace ERPSEI.Areas.ERP.Pages
 			List<string> jsonEmpresas = new List<string>();
 
 			List<Empresa> empresas = await _empresaManager.GetAllAsync();
-			empresas = empresas.Where(e => e.RazonSocial.ToLowerInvariant().Contains(texto.ToLowerInvariant()) || e.RFC.ToLowerInvariant().Contains(texto.ToLowerInvariant())).ToList();
+			empresas = empresas.Where(e => e.RazonSocial.ToLowerInvariant().Contains(texto.ToLowerInvariant()) || e.RFC.ToLowerInvariant().Contains(texto.ToLowerInvariant())).Take(20).ToList();
 
 			if (empresas != null)
 			{
 				int counter = 0;
-				int empresasLimit = 20;
 				foreach (Empresa e in empresas)
 				{
+					Empresa? emp = await _empresaManager.GetByIdWithAdicionalesAsync(e.Id);
+
 					//Si viene establecido el id empresa, omite el elemento con ese id.
 					if (idempresa >= 1 && e.Id == idempresa) { continue; }
 
-					//Solo se muestran los primeros 20 resultados
-					if(counter >= empresasLimit) { break; }
-
-					e.ObjetoSocial = jsonEscape(e.ObjetoSocial);
+					e.ObjetoSocial = jsonEscape(e.ObjetoSocial ?? string.Empty);
+					List<string> jsonActividades = getListJsonActividades(e.ActividadesEconomicasEmpresa);
 
 					jsonEmpresas.Add($"{{" +
 										$"\"id\": {e.Id}, " +
@@ -94,7 +93,7 @@ namespace ERPSEI.Areas.ERP.Pages
 										$"\"label\": \"{e.RFC} - {e.RazonSocial}\", " +
 										$"\"rfc\": \"{e.RFC}\", " +
 										$"\"razonSocial\": \"{e.RazonSocial}\", " +
-										$"\"actividadEconomica\": \"{e.ActividadEconomica?.Nombre}\", " +
+										$"\"actividadesEconomicas\": [{string.Join(",", jsonActividades)}], " +
 										$"\"objetoSocial\": \"{e.ObjetoSocial}\", " +
 										$"\"domicilioFiscal\": \"{e.DomicilioFiscal}\"" +
 									$"}}");
@@ -105,6 +104,27 @@ namespace ERPSEI.Areas.ERP.Pages
 			jsonResponse = $"[{string.Join(",", jsonEmpresas)}]";
 
 			return jsonResponse;
+		}
+		private List<string> getListJsonActividades(ICollection<ActividadEconomicaEmpresa>? actividades)
+		{
+			List<string> jsonActividades = new List<string>();
+			if (actividades != null)
+			{
+				foreach (ActividadEconomicaEmpresa a in actividades)
+				{
+					if (a.ActividadEconomica == null) { continue; }
+
+					jsonActividades.Add(
+						"{" +
+							$"\"id\": \"{a.ActividadEconomica.Id}\"," +
+							$"\"clave\": \"{a.ActividadEconomica.Clave}\"," +
+							$"\"nombre\": \"{a.ActividadEconomica.Nombre}\"" +
+						"}"
+					);
+				}
+			}
+
+			return jsonActividades;
 		}
 		private string jsonEscape(string str)
 		{

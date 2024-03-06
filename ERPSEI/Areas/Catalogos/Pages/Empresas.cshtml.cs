@@ -142,7 +142,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			[Display(Name = "SearchEconomicActivityField")]
             public int? ActividadEconomicaId {  get; set; }
-			public ActividadEconomicaEmpresaModel?[] ActividadesEconomicas { get; set; } = Array.Empty<ActividadEconomicaEmpresaModel>();
+			public int?[] ActividadesEconomicas { get; set; } = Array.Empty<int?>();
 
 			[DataType(DataType.MultilineText)]
 			[StringLength(5000, ErrorMessage = "FieldLength", MinimumLength = 1)]
@@ -160,12 +160,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
             public string? Responsable { get; set; } = string.Empty;
             public string? Firmante { get; set; } = string.Empty;
         }
-
-		public class ActividadEconomicaEmpresaModel
-		{
-			public int? ActividadEconomicaId { get; set; }
-			public int? EmpresaId { get; set; }
-		}
 
 		public class ArchivoModel
 		{
@@ -192,7 +186,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			IRWCatalogoManager<Nivel> nivelManager,
 			IActividadEconomicaEmpresaManager actividadesEconomicasEmpresaManager,
 			IRWCatalogoManager<ActividadEconomica> actividadEconomicaManager,
-		IStringLocalizer<EmpresasModel> stringLocalizer,
+			IStringLocalizer<EmpresasModel> stringLocalizer,
 			ILogger<EmpresasModel> logger,
 			ApplicationDbContext db
 		)
@@ -220,14 +214,16 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
             if (e == null) { return jsonResponse; }
 
-			List<string> jsonBancos;
-			jsonBancos = getListJsonBancos(e.BancosEmpresa);
+			List<string> jsonActividades = getListJsonActividades(e.ActividadesEconomicasEmpresa);
+
+			List<string> jsonBancos = getListJsonBancos(e.BancosEmpresa);
 
             List<string> jsonArchivos;
             List<SemiArchivoEmpresa> archivos = await _archivoEmpresaManager.GetFilesByEmpresaIdAsync(idEmpresa);
             jsonArchivos = getListJsonArchivos(archivos);
 
             jsonResponse = $"{{" +
+								$"\"actividadesEconomicas\": [{string.Join(",", jsonActividades)}], " +
 								$"\"bancos\": [{string.Join(",", jsonBancos)}], " +
                                 $"\"archivos\": [{string.Join(",", jsonArchivos)}] " +
                             $"}}";
@@ -400,7 +396,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			else
 			{
 				//Si la empresa no tiene archivos, se llena el arreglo de datos a partir del enum.
-				foreach (Data.Entities.Empresas.FileTypes i in Enum.GetValues(typeof(Data.Entities.Empresas.FileTypes)))
+				foreach (FileTypes i in Enum.GetValues(typeof(FileTypes)))
 				{
 					string imgSrc = string.Empty;
 					string htmlContainer = string.Empty;
@@ -611,12 +607,12 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				}
 
                 //Crea las actividades de la empresa
-                foreach (ActividadEconomicaEmpresaModel? a in e.ActividadesEconomicas)
+                foreach (int? id in e.ActividadesEconomicas)
                 {
-                    if(a != null)
+                    if(id != null)
 					{
 						await _actividadesEconomicasEmpresaManager.CreateAsync(
-							new ActividadEconomicaEmpresa() { ActividadId = a.ActividadEconomicaId, EmpresaId = idEmpresa }
+							new ActividadEconomicaEmpresa() { ActividadEconomicaId = id, EmpresaId = idEmpresa }
 						);
 					}
                 }
@@ -800,24 +796,18 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			List<string> jsons = new List<string>();
 
 			List<ActividadEconomica> actividades = await _actividadEconomicaManager.GetAllAsync();
-			actividades = actividades.Where(e => e.Nombre.ToLowerInvariant().Contains(texto.ToLowerInvariant()) || e.Clave.ToLowerInvariant().Contains(texto.ToLowerInvariant())).ToList();
+			actividades = actividades.Where(e => e.Nombre.ToLowerInvariant().Contains(texto.ToLowerInvariant()) || e.Clave.ToLowerInvariant().Contains(texto.ToLowerInvariant())).Take(20).ToList();
 
 			if (actividades != null)
 			{
-				int counter = 0;
-				int limit = 20;
 				foreach (ActividadEconomica a in actividades)
 				{
-					//Solo se muestran los primeros 20 resultados
-					if (counter >= limit) { break; }
-
 					jsons.Add($"{{" +
 										$"\"id\": {a.Id}, " +
 										$"\"value\": \"{a.Nombre}\", " +
 										$"\"label\": \"{a.Clave} - {a.Nombre}\", " +
 										$"\"clave\": \"{a.Clave}\"" +
 									$"}}");
-					counter++;
 				}
 			}
 

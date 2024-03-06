@@ -117,7 +117,7 @@ namespace ERPSEI.Data.Managers.Empresas
                 .Where(e => nivelId != null ? e.NivelId == nivelId : true)
                 .Include(e => e.Origen)
                 .Include(e => e.Nivel)
-                .Include(e => (e.ActividadesEconomicasEmpresa ?? new List<ActividadEconomicaEmpresa>()).Where(a => a.ActividadEconomica != null && a.ActividadEconomica.Id == actividadEconomicaId))
+                .Include(e => e.ActividadesEconomicasEmpresa.Where(a => a.ActividadEconomica != null && a.ActividadEconomica.Id == actividadEconomicaId))
                 .ToListAsync();
         }
 
@@ -132,7 +132,8 @@ namespace ERPSEI.Data.Managers.Empresas
                 .Where(e => e.Deshabilitado == 0)
                 .Where(e => e.Id == id)
                 .Include(e => e.BancosEmpresa)
-                .FirstOrDefaultAsync();
+                .Include(e => e.ActividadesEconomicasEmpresa)
+                .ThenInclude(a => a.ActividadEconomica).FirstOrDefaultAsync();
         }
 
         public async Task<Empresa?> GetByIdAsync(int id)

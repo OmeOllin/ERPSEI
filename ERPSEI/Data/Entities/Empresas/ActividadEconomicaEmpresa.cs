@@ -10,7 +10,7 @@ namespace ERPSEI.Data.Entities.Empresas
 		public int? EmpresaId { get; set; }
 		public Empresa? Empresa { get; set; }
 
-        public int? ActividadId { get; set; }
+        public int? ActividadEconomicaId { get; set; }
         public ActividadEconomica? ActividadEconomica { get; set; }
     }
 }

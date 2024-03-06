@@ -787,6 +787,26 @@ namespace ERPSEI.Data.Migrations
                     b.ToTable("ActividadesEconomicas");
                 });
 
+            modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.ActividadEconomicaEmpresa", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ActividadEconomicaId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("EmpresaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActividadEconomicaId");
+
+                    b.HasIndex("EmpresaId");
+
+                    b.ToTable("ActividadesEconomicasEmpresa");
+                });
+
             modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.ArchivoEmpresa", b =>
                 {
                     b.Property<string>("Id")
@@ -854,9 +874,6 @@ namespace ERPSEI.Data.Migrations
                     b.Property<string>("Accionista")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ActividadEconomicaId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Administrador")
                         .HasColumnType("nvarchar(max)");
 
@@ -895,7 +912,6 @@ namespace ERPSEI.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ObjetoSocial")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("OrigenId")
@@ -916,8 +932,6 @@ namespace ERPSEI.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ActividadEconomicaId");
 
                     b.HasIndex("NivelId");
 
@@ -1275,6 +1289,22 @@ namespace ERPSEI.Data.Migrations
                     b.Navigation("Area");
                 });
 
+            modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.ActividadEconomicaEmpresa", b =>
+                {
+                    b.HasOne("ERPSEI.Data.Entities.Empresas.ActividadEconomica", "ActividadEconomica")
+                        .WithMany("ActividadesEconomicasEmpresa")
+                        .HasForeignKey("ActividadEconomicaId");
+
+                    b.HasOne("ERPSEI.Data.Entities.Empresas.Empresa", "Empresa")
+                        .WithMany("ActividadesEconomicasEmpresa")
+                        .HasForeignKey("EmpresaId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("ActividadEconomica");
+
+                    b.Navigation("Empresa");
+                });
+
             modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.ArchivoEmpresa", b =>
                 {
                     b.HasOne("ERPSEI.Data.Entities.Empresas.Empresa", "Empresa")
@@ -1304,11 +1334,6 @@ namespace ERPSEI.Data.Migrations
 
             modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.Empresa", b =>
                 {
-                    b.HasOne("ERPSEI.Data.Entities.Empresas.ActividadEconomica", "ActividadEconomica")
-                        .WithMany("Empresas")
-                        .HasForeignKey("ActividadEconomicaId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("ERPSEI.Data.Entities.Empresas.Nivel", "Nivel")
                         .WithMany("Empresas")
                         .HasForeignKey("NivelId")
@@ -1323,8 +1348,6 @@ namespace ERPSEI.Data.Migrations
                         .WithMany("Empresas")
                         .HasForeignKey("PerfilId")
                         .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("ActividadEconomica");
 
                     b.Navigation("Nivel");
 
@@ -1440,11 +1463,13 @@ namespace ERPSEI.Data.Migrations
 
             modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.ActividadEconomica", b =>
                 {
-                    b.Navigation("Empresas");
+                    b.Navigation("ActividadesEconomicasEmpresa");
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.Empresa", b =>
                 {
+                    b.Navigation("ActividadesEconomicasEmpresa");
+
                     b.Navigation("ArchivosEmpresa");
 
                     b.Navigation("BancosEmpresa");

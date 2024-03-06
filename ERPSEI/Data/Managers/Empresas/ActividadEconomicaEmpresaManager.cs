@@ -35,7 +35,7 @@ namespace ERPSEI.Data.Managers.Empresas
             if (n != null)
             {
                 n.EmpresaId = a.EmpresaId;
-				n.ActividadId = a.ActividadId;
+				n.ActividadEconomicaId = a.ActividadEconomicaId;
                 await db.SaveChangesAsync();
             }
         }

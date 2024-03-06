@@ -11,6 +11,6 @@ namespace ERPSEI.Data.Entities.Empresas
 
         public string Nombre { get; set; } = string.Empty;
 
-        public ICollection<Empresa>? Empresas { get; set; }
+        public ICollection<ActividadEconomicaEmpresa>? ActividadesEconomicasEmpresa { get; set; }
     }
 }
