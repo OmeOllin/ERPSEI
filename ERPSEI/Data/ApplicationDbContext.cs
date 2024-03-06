@@ -13,16 +13,22 @@ namespace ERPSEI.Data
 		public DbSet<Empleado> Empleados { get; set; }
 		public DbSet<ContactoEmergencia> ContactosEmergencia { get; set; }
 
-		//Tablas de trabajo Empresas
-		public DbSet<BancoEmpresa> BancosEmpresa { get; set; }
-		public DbSet<ArchivoEmpresa> ArchivosEmpresa { get; set; }
-		public DbSet<Empresa> Empresas {  get; set; }
-
 		//Catálogos Administrables Empleados
 		public DbSet<Puesto> Puestos { get; set; }
 		public DbSet<Area> Areas { get; set; }
 		public DbSet<Oficina> Oficinas { get; set; }
 		public DbSet<Subarea> Subareas { get; set; }
+
+		//Catálogos no Administrables Empleados
+		public DbSet<EstadoCivil> EstadosCiviles { get; set; }
+		public DbSet<Genero> Generos { get; set; }
+
+
+		//Tablas de trabajo Empresas
+		public DbSet<BancoEmpresa> BancosEmpresa { get; set; }
+		public DbSet<ArchivoEmpresa> ArchivosEmpresa { get; set; }
+		public DbSet<Empresa> Empresas { get; set; }
+		public DbSet<ActividadEconomicaEmpresa> ActividadesEconomicasEmpresa { get; set; }
 
 		//Catálogos Administrables Empresas
 		public DbSet<ActividadEconomica> ActividadesEconomicas { get; set; }
@@ -30,10 +36,6 @@ namespace ERPSEI.Data
 		public DbSet<Nivel> Niveles { get; set; }
 		public DbSet<Perfil> Perfiles { get; set; }
 		public DbSet<ProductoServicio> ProductosServicios { get; set; }
-
-		//Catálogos no Administrables Empleados
-		public DbSet<EstadoCivil> EstadosCiviles { get; set; }
-		public DbSet<Genero> Generos { get; set; }
 
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -56,10 +58,10 @@ namespace ERPSEI.Data
 		{
 			b.Entity<Empresa>().HasOne(e => e.Perfil).WithMany(p => p.Empresas).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Empresa>().HasOne(e => e.Origen).WithMany(o => o.Empresas).OnDelete(DeleteBehavior.NoAction);
-            b.Entity<Empresa>().HasOne(e => e.Nivel).WithMany(o => o.Empresas).OnDelete(DeleteBehavior.NoAction);
-            b.Entity<Empresa>().HasOne(e => e.ActividadEconomica).WithMany(o => o.Empresas).OnDelete(DeleteBehavior.NoAction);
+            b.Entity<Empresa>().HasOne(e => e.Nivel).WithMany(o => o.Empresas).OnDelete(DeleteBehavior.NoAction);;
 			b.Entity<Empresa>().HasMany(e => e.BancosEmpresa).WithOne(b => b.Empresa).OnDelete(DeleteBehavior.NoAction);
             b.Entity<Empresa>().HasMany(e => e.ArchivosEmpresa).WithOne(a => a.Empresa).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Empresa>().HasMany(e => e.ActividadesEconomicasEmpresa).WithOne(a => a.Empresa).OnDelete(DeleteBehavior.NoAction);
 
 			b.Entity<ArchivoEmpresa>().HasOne(a => a.TipoArchivo).WithMany(ta => ta.ArchivosEmpresa).OnDelete(DeleteBehavior.NoAction);
 

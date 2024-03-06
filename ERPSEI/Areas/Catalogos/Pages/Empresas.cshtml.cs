@@ -24,7 +24,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		private readonly IArchivoEmpresaManager _archivoEmpresaManager;
         private readonly IRWCatalogoManager<Origen> _origenManager;
         private readonly IRWCatalogoManager<Nivel> _nivelManager;
-        private readonly IRWCatalogoManager<ActividadEconomica> _actividadEconomicaManager;
+		private readonly IActividadEconomicaEmpresaManager _actividadesEconomicasEmpresaManager;
+		private readonly IRWCatalogoManager<ActividadEconomica> _actividadEconomicaManager;
         private readonly IStringLocalizer<EmpresasModel> _strLocalizer;
 		private readonly ILogger<EmpresasModel> _logger;
 		private readonly ApplicationDbContext _db;
@@ -58,33 +59,27 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Display(Name = "RazonSocialField")]
 			public string RazonSocial { get; set; } = string.Empty;
 
-			[Required(ErrorMessage = "Required")]
 			[Display(Name = "OrigenField")]
 			public int? OrigenId { get; set; }
 
-			[Required(ErrorMessage = "Required")]
 			[Display(Name = "NivelField")]
 			public int? NivelId { get; set; }
 
             [DataType(DataType.DateTime)]
-            [Required(ErrorMessage = "Required")]
             [Display(Name = "FechaConstitucionField")]
-            public DateTime FechaConstitucion { get; set; }
+            public DateTime? FechaConstitucion { get; set; }
 
             [DataType(DataType.DateTime)]
-			[Required(ErrorMessage = "Required")]
 			[Display(Name = "FechaInicioOperacionField")]
-			public DateTime FechaInicioOperacion { get; set; }
+			public DateTime? FechaInicioOperacion { get; set; }
 
             [DataType(DataType.DateTime)]
-            [Required(ErrorMessage = "Required")]
             [Display(Name = "FechaInicioFacturacionField")]
-            public DateTime FechaInicioFacturacion { get; set; }
+            public DateTime? FechaInicioFacturacion { get; set; }
 
             [DataType(DataType.DateTime)]
-            [Required(ErrorMessage = "Required")]
             [Display(Name = "FechaInicioAsimiladosField")]
-            public DateTime FechaInicioAsimilados { get; set; }
+            public DateTime? FechaInicioAsimilados { get; set; }
 
             [DataType(DataType.Text)]
 			[StringLength(13, ErrorMessage = "FieldLength", MinimumLength = 12)]
@@ -102,62 +97,57 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[DataType(DataType.Text)]
 			[StringLength(100, ErrorMessage = "FieldLength", MinimumLength = 2)]
 			[RegularExpression(RegularExpressions.PersonName, ErrorMessage = "PersonName")]
-			[Required(ErrorMessage = "Required")]
-			[Display(Name = "AdministradorField")]
-			public string Administrador { get; set; } = string.Empty;
+			public string? Administrador { get; set; } = string.Empty;
 
 			[DataType(DataType.Text)]
 			[StringLength(100, ErrorMessage = "FieldLength", MinimumLength = 2)]
 			[RegularExpression(RegularExpressions.PersonName, ErrorMessage = "PersonName")]
-			[Required(ErrorMessage = "Required")]
 			[Display(Name = "AccionistaField")]
-			public string Accionista { get; set; } = string.Empty;
+			public string? Accionista { get; set; } = string.Empty;
 
 			[EmailAddress(ErrorMessage = "EmailFormat")]
 			[DataType(DataType.EmailAddress)]
 			[StringLength(55, ErrorMessage = "FieldLength", MinimumLength = 1)]
-			[Required(ErrorMessage = "Required")]
 			[Display(Name = "CorreoGeneralField")]
-			public string CorreoGeneral { get; set; } = string.Empty;
+			public string? CorreoGeneral { get; set; } = string.Empty;
 
 			[EmailAddress(ErrorMessage = "EmailFormat")]
 			[DataType(DataType.EmailAddress)]
 			[StringLength(55, ErrorMessage = "FieldLength", MinimumLength = 1)]
-			[Required(ErrorMessage = "Required")]
 			[Display(Name = "CorreoBancosField")]
-			public string CorreoBancos { get; set; } = string.Empty;
+			public string? CorreoBancos { get; set; } = string.Empty;
 
 			[EmailAddress(ErrorMessage = "EmailFormat")]
 			[DataType(DataType.EmailAddress)]
 			[StringLength(55, ErrorMessage = "FieldLength", MinimumLength = 1)]
-			[Required(ErrorMessage = "Required")]
 			[Display(Name = "CorreoFiscalField")]
-			public string CorreoFiscal { get; set; } = string.Empty;
+			public string? CorreoFiscal { get; set; } = string.Empty;
 
             [EmailAddress(ErrorMessage = "EmailFormat")]
             [DataType(DataType.EmailAddress)]
 			[StringLength(55, ErrorMessage = "FieldLength", MinimumLength = 1)]
-			[Required(ErrorMessage = "Required")]
             [Display(Name = "CorreoFacturacionField")]
-            public string CorreoFacturacion { get; set; } = string.Empty;
+            public string? CorreoFacturacion { get; set; } = string.Empty;
 
             [Phone(ErrorMessage = "PhoneFormat")]
 			[StringLength(10, ErrorMessage = "FieldLength", MinimumLength = 10)]
 			[DataType(DataType.PhoneNumber)]
 			[RegularExpression(RegularExpressions.NumericNoRestriction, ErrorMessage = "NumericNoRestriction")]
-			[Required(ErrorMessage = "Required")]
 			[Display(Name = "PhoneNumberField")]
-			public string Telefono { get; set; } = string.Empty;
+			public string? Telefono { get; set; } = string.Empty;
 
 			[Required(ErrorMessage = "Required")]
-			[Display(Name = "ActividadEconomicaField")]
+			[Display(Name = "PerfilField")]
+			public int? PerfilId { get; set; }
+
+			[Display(Name = "SearchEconomicActivityField")]
             public int? ActividadEconomicaId {  get; set; }
+			public ActividadEconomicaEmpresaModel?[] ActividadesEconomicas { get; set; } = Array.Empty<ActividadEconomicaEmpresaModel>();
 
 			[DataType(DataType.MultilineText)]
 			[StringLength(5000, ErrorMessage = "FieldLength", MinimumLength = 1)]
-			[Required(ErrorMessage = "Required")]
             [Display(Name = "ObjetoSocialField")]
-            public string ObjetoSocial {  get; set; } = string.Empty;
+            public string? ObjetoSocial {  get; set; } = string.Empty;
 
             public BancoModel?[] Bancos { get; set; } = Array.Empty<BancoModel>();
 
@@ -170,6 +160,12 @@ namespace ERPSEI.Areas.Catalogos.Pages
             public string? Responsable { get; set; } = string.Empty;
             public string? Firmante { get; set; } = string.Empty;
         }
+
+		public class ActividadEconomicaEmpresaModel
+		{
+			public int? ActividadEconomicaId { get; set; }
+			public int? EmpresaId { get; set; }
+		}
 
 		public class ArchivoModel
 		{
@@ -194,8 +190,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			IArchivoEmpresaManager archivoEmpresaManager,
 			IRWCatalogoManager<Origen> origenManager,
 			IRWCatalogoManager<Nivel> nivelManager,
+			IActividadEconomicaEmpresaManager actividadesEconomicasEmpresaManager,
 			IRWCatalogoManager<ActividadEconomica> actividadEconomicaManager,
-			IStringLocalizer<EmpresasModel> stringLocalizer,
+		IStringLocalizer<EmpresasModel> stringLocalizer,
 			ILogger<EmpresasModel> logger,
 			ApplicationDbContext db
 		)
@@ -205,7 +202,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			_archivoEmpresaManager = archivoEmpresaManager;
 			_origenManager = origenManager;
 			_nivelManager = nivelManager;
-			_actividadEconomicaManager	= actividadEconomicaManager;
+			_actividadesEconomicasEmpresaManager = actividadesEconomicasEmpresaManager;
+			_actividadEconomicaManager = actividadEconomicaManager;
 			_strLocalizer = stringLocalizer;
 			_logger = logger;
 			_db = db;
@@ -240,7 +238,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		{
 			string nombreOrigen;
 			string nombreNivel;
-			string nombreActividadEconomica;
 			string jsonResponse;
 			List<string> jsonEmpresas = new List<string>();
 			List<Empresa> empresas;
@@ -262,9 +259,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			{
 				nombreOrigen = e.Origen != null ? e.Origen.Nombre : string.Empty;
 				nombreNivel = e.Nivel != null ? e.Nivel.Nombre : string.Empty;
-				nombreActividadEconomica = e.ActividadEconomica != null ? e.ActividadEconomica.Nombre : string.Empty;
 
-				e.ObjetoSocial = jsonEscape(e.ObjetoSocial);
+				e.ObjetoSocial = jsonEscape(e.ObjetoSocial??string.Empty);
 
 				jsonEmpresas.Add(
 					"{" +
@@ -291,8 +287,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						$"\"correoFiscal\": \"{e.CorreoFiscal}\", " +
 						$"\"correoFacturacion\": \"{e.CorreoFacturacion}\", " +
 						$"\"telefono\": \"{e.Telefono}\", " +
-                        $"\"actividadEconomicaId\": \"{e.ActividadEconomicaId}\", " +
-						$"\"actividadEconomica\": \"{nombreActividadEconomica}\", " +
 						$"\"objetoSocial\": \"{e.ObjetoSocial}\"" +
 					"}"
 				);
@@ -306,6 +300,27 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		{
 			return str.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t");
 		}
+		private List<string> getListJsonActividades(ICollection<ActividadEconomicaEmpresa>? actividades)
+		{
+			List<string> jsonActividades = new List<string>();
+			if (actividades != null)
+			{
+				foreach (ActividadEconomicaEmpresa a in actividades)
+				{
+					if (a.ActividadEconomica == null) { continue; }
+
+					jsonActividades.Add(
+						"{" +
+							$"\"id\": \"{a.ActividadEconomica.Id}\"," +
+							$"\"clave\": \"{a.ActividadEconomica.Clave}\"," +
+							$"\"nombre\": \"{a.ActividadEconomica.Nombre}\"" +
+						"}"
+					);
+				}
+			}
+
+			return jsonActividades;
+		}
 		private List<string> getListJsonBancos(ICollection<BancoEmpresa>? bancos)
         {
             List<string> jsonBancos = new List<string>();
@@ -313,8 +328,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
             {
                 foreach (BancoEmpresa b in bancos)
                 {
-                    string id = Guid.NewGuid().ToString();
-
                     jsonBancos.Add(
                         "{" +
                             $"\"id\": \"{b.Id}\"," +
@@ -567,7 +580,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				empresa.CorreoFiscal = e.CorreoFiscal;
 				empresa.CorreoFacturacion = e.CorreoFacturacion;
 				empresa.Telefono = e.Telefono;
-				empresa.ActividadEconomicaId = e.ActividadEconomicaId;
 				empresa.ObjetoSocial = e.ObjetoSocial;
 
 				//Los archivos actualizables serán aquellos que traigan imgSrc, pues significa que el usuario añadió el archivo en la vista.
@@ -577,6 +589,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				{
 					//Si la empresa ya existía, la actualiza.
 					await _empresaManager.UpdateAsync(empresa);
+
+					//Elimina las actividades económicas de la empresa.
+					await _actividadesEconomicasEmpresaManager.DeleteByEmpresaIdAsync(idEmpresa);
 
 					//Elimina los bancos de la empresa.
 					await _bancoEmpresaManager.DeleteByEmpresaIdAsync(idEmpresa);
@@ -595,8 +610,19 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					idEmpresa = await _empresaManager.CreateAsync(empresa);
 				}
 
-				//Crea los bancos de la empresa
-				foreach (BancoModel? b in e.Bancos)
+                //Crea las actividades de la empresa
+                foreach (ActividadEconomicaEmpresaModel? a in e.ActividadesEconomicas)
+                {
+                    if(a != null)
+					{
+						await _actividadesEconomicasEmpresaManager.CreateAsync(
+							new ActividadEconomicaEmpresa() { ActividadId = a.ActividadEconomicaId, EmpresaId = idEmpresa }
+						);
+					}
+                }
+
+                //Crea los bancos de la empresa
+                foreach (BancoModel? b in e.Bancos)
 				{
 					if(b != null)
 					{

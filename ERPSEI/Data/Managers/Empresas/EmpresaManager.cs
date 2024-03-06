@@ -115,10 +115,9 @@ namespace ERPSEI.Data.Managers.Empresas
                 .Where(e => e.Deshabilitado == 0)
                 .Where(e => origenId != null ? e.OrigenId == origenId : true)
                 .Where(e => nivelId != null ? e.NivelId == nivelId : true)
-                .Where(e => actividadEconomicaId != null ? e.ActividadEconomicaId == actividadEconomicaId : true)
                 .Include(e => e.Origen)
                 .Include(e => e.Nivel)
-                .Include(e => e.ActividadEconomica)
+                .Include(e => (e.ActividadesEconomicasEmpresa ?? new List<ActividadEconomicaEmpresa>()).Where(a => a.ActividadEconomica != null && a.ActividadEconomica.Id == actividadEconomicaId))
                 .ToListAsync();
         }
 

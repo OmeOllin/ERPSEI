@@ -44,10 +44,9 @@ namespace ERPSEI.Data.Entities.Empresas
 		public int? PerfilId {  get; set; }
 		public Perfil? Perfil {  get; set; }
 
-		public int? ActividadEconomicaId {  get; set; }
-		public ActividadEconomica? ActividadEconomica { get; set; }
+		public ICollection<ActividadEconomicaEmpresa>? ActividadesEconomicasEmpresa { get; }
 
-		public string ObjetoSocial { get; set; } = string.Empty; 
+		public string? ObjetoSocial { get; set; } = string.Empty; 
 
         public int Deshabilitado { get; set; } = 0;
 

@@ -56,9 +56,11 @@ namespace ERPSEI
             _builder.Services.AddScoped<IBancoEmpresaManager, BancoEmpresaManager>();
 			_builder.Services.AddScoped<IArchivoEmpresaManager, ArchivoEmpresaManager>();
 			_builder.Services.AddScoped<IEmpresaManager, EmpresaManager>();
-            _builder.Services.AddScoped<IRWCatalogoManager<Origen>, OrigenManager>();
+			_builder.Services.AddScoped<IRWCatalogoManager<Perfil>, PerfilManager>();
+			_builder.Services.AddScoped<IRWCatalogoManager<Origen>, OrigenManager>();
 			_builder.Services.AddScoped<IRWCatalogoManager<Nivel>, NivelManager>();
 			_builder.Services.AddScoped<IRWCatalogoManager<ActividadEconomica>, ActividadEconomicaManager>();
+			_builder.Services.AddScoped<IActividadEconomicaEmpresaManager, ActividadEconomicaEmpresaManager>();
 
 			_builder.Services.AddScoped<IArchivoEmpleadoManager, ArchivoEmpleadoManager>();
 			_builder.Services.AddScoped<IContactoEmergenciaManager, ContactoEmergenciaManager>();

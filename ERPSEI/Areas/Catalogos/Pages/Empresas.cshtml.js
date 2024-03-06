@@ -34,7 +34,24 @@ document.addEventListener("DOMContentLoaded", function (event) {
     btnBuscar.click();
 
     autoCompletar("#inpFiltroActividadEconomica");
-    autoCompletar("#inpEmpresaActividadEconomica");
+    autoCompletar("#inpEmpresaActividadEconomica", {
+        select: function (element, item) {
+            let btnAdd = document.getElementById("dlgEmpresaBtnAgregarActividad");
+            btnAdd.classList.remove("disabled");
+        },
+        change: function (element, item) {
+            let actividadField = document.getElementById("inpEmpresaActividadEconomica");
+            if (parseInt(actividadField.getAttribute("idselected")||"0") <= 0) {
+                let btnAdd = document.getElementById("dlgEmpresaBtnAgregarActividad");
+                btnAdd.classList.add("disabled");
+            }
+        }
+    });
+
+    //jQuery.validator.setDefaults({
+    //    errorClass: "is-invalid",
+    //    validClass: "is-valid"
+    //});
 
 });
 //Función para redimensionar el campo de objeto social cada que cambie el tamaño de pantalla.
@@ -127,6 +144,8 @@ function onAgregarClick() {
         actividadEconomicaId: 0,
         actividadEconomica: "",
         objetoSocial: "",
+        perfilId: 0,
+        perfil: "",
         bancos: [],
         archivos: []
     };
@@ -341,6 +360,7 @@ function initEmpresaDialog(action, row) {
     let telefonoField = document.getElementById("inpEmpresaTelefono");
     let actividadEconomicaField = document.getElementById("inpEmpresaActividadEconomica");
     let objetoSocialField = document.getElementById("txtEmpresaObjetoSocial");
+    let perfilField = document.getElementById("selEmpresaPerfil");
 
     summaryContainer.innerHTML = "";
     idField.setAttribute("disabled", true);
@@ -364,6 +384,7 @@ function initEmpresaDialog(action, row) {
     actividadEconomicaField.setAttribute('idselected', row.actividadEconomicaId);
     actividadEconomicaField.value = row.actividadEconomica;
     objetoSocialField.value = row.objetoSocial;
+    perfilField.value = row.perfilId;
 
     if (action == NUEVO || (row.hasDatosAdicionales || false)) {
         establecerDatosAdicionales(row, action);
@@ -604,7 +625,6 @@ function onAgregarBancoClick(row = {banco: "", responsable: "", firmante: ""}) {
 function onEliminarBancoClick(button) {
     $(button).closest('.card').remove();
 }
-
 //Función para mostrar cualquiera de los documentos seleccionados.
 function onDocumentSelectorChanged(input) {
     if (input.files && (input.files.length || 0) >= 1) {
@@ -707,10 +727,18 @@ function onGuardarClick() {
     let telefonoField = document.getElementById("inpEmpresaTelefono");
     let actividadEconomicaField = document.getElementById("inpEmpresaActividadEconomica");
     let objetoSocialField = document.getElementById("txtEmpresaObjetoSocial");
+    let perfilField = document.getElementById("selEmpresaPerfil");
 
     let dlgTitle = document.getElementById("dlgEmpresaTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
+
+    let activities = [];
+    $("#listActividades li").each(function (i, a) {
+        let id = a.getAttribute("id");
+
+        banks.push({id: id});
+    });
 
     let banks = [];
     $("#bodyBancos .rowBancos").each(function (i, b) {
@@ -751,8 +779,9 @@ function onGuardarClick() {
         correoFiscal: correoFiscalField.value.trim(),
         correoFacturacion: correoFacturacionField.value.trim(),
         telefono: telefonoField.value.trim(),
-        actividadEconomicaId: (actividadEconomicaField.getAttribute('idselected')||"0") == "0" ? null : parseInt(actividadEconomicaField.getAttribute("idselected")),
+        actividadesEconomicas: activities,
         objetoSocial: objetoSocialField.value.trim(),
+        perfilId: perfilField.value == 0 ? null : parseInt(perfilField.value),
         bancos: banks,
         archivos: files
     };
@@ -829,6 +858,51 @@ function getFile(inputId) {
             imgSrc: ""
         };
     }
+}
+//Función para agregar una actividad económica al listado
+function onAgregarActividadClick() {
+    let actividadField = $(document.getElementById("inpEmpresaActividadEconomica"));
+    //Si el campo actividad económica no tiene elemento seleccionado, muestra error.
+    if (parseInt(actividadField.attr("idselected") || "0") <= 0) {
+        showAlert(msgAgregarActividad, sinActividad);
+        return;
+    }
+
+    let listItem = document.querySelector(`li[clave='${actividadField.data("clave")}']`);
+    //Si el elemento ya existe, muestra error.
+    if (listItem) {
+        showAlert(msgAgregarActividad, actividadRepetida);
+        return;
+    }
+
+    agregarActividad(actividadField.attr("idselected"), actividadField.data("clave"), actividadField.data("value"));
+
+    let btnAdd = document.getElementById("dlgEmpresaBtnAgregarActividad");
+    btnAdd.classList.add("disabled");
+
+    actividadField.val("");
+    actividadField.attr("idselected", 0);
+}
+//Función para añadir un elemento al listado de actividades
+function agregarActividad(id, clave, descripcion) {
+    let listActividades = document.getElementById("listActividades");
+
+    listActividades.innerHTML += `<li id="${id}" clave="${clave}" class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-11 border-end">
+                                          <div class="fw-bold">${clave}</div>
+                                          ${descripcion}
+                                        </div>
+                                        <div class="col-1 align-items-center d-flex justify-content-center">
+									        <button type="button" class="btn-close formButton" onclick="onEliminarActividadClick(${clave});"></button>
+                                        </div>
+                                    </div>
+								  </li>`;
+}
+//Función para eliminar una actividad económica del listado
+function onEliminarActividadClick(clave) {
+    let listItem = document.querySelector(`li[clave='${clave}']`);
+    listItem.remove();
 }
 ////////////////////////////////
 

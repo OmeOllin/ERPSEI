@@ -123,11 +123,17 @@
   <data name="ActividadEconomicaPlaceholder" xml:space="preserve">
     <value>Actividad económica</value>
   </data>
+  <data name="ActividadRepetida" xml:space="preserve">
+    <value>La actividad económica ya se encuentra en el listado</value>
+  </data>
   <data name="AddButton" xml:space="preserve">
     <value>Agregar</value>
   </data>
   <data name="AdministradorPlaceholder" xml:space="preserve">
     <value>Administrador</value>
+  </data>
+  <data name="AgregarActividad" xml:space="preserve">
+    <value>Agregar actividad económica</value>
   </data>
   <data name="AgregarBancoButtonText" xml:space="preserve">
     <value>Agregar Banco</value>
@@ -294,6 +300,9 @@
   <data name="OrigenPlaceholder" xml:space="preserve">
     <value>Origen</value>
   </data>
+  <data name="PerfilPlaceholder" xml:space="preserve">
+    <value>Perfil</value>
+  </data>
   <data name="PlantillaButtonTitle" xml:space="preserve">
     <value>Descargar plantilla</value>
   </data>
@@ -323,6 +332,9 @@
   </data>
   <data name="Seleccione" xml:space="preserve">
     <value>Seleccione...</value>
+  </data>
+  <data name="SinActividad" xml:space="preserve">
+    <value>No se ha seleccionado una actividad económica para agregar</value>
   </data>
   <data name="TelefonoPlaceholder" xml:space="preserve">
     <value>Teléfono</value>
