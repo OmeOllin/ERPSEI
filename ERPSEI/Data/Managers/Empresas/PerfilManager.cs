@@ -83,7 +83,7 @@ namespace ERPSEI.Data.Managers.Empresas
 
 		public async Task<List<Perfil>> GetAllAsync()
 		{
-			return await db.Perfiles.ToListAsync();
+			return await db.Perfiles.Include(p => p.ProductosServiciosPerfil).ToListAsync();
 		}
 
 		public async Task<Perfil?> GetByIdAsync(int id)

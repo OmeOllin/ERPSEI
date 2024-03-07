@@ -61,7 +61,7 @@
 <!-- Sección Nuevo/Editar/Ver Registro --- -->
 <form id="theForm" method="post">
 	<div id="dlg" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-dialog modal-dialog-centered modal-xl">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 id="dlgTitle" class="modal-title"></h5>
@@ -70,7 +70,7 @@
 				<div class="modal-body align-items-center">
 					<div class="container-fluid">
 						<div id="saveValidationSummary" class="text-danger mb-3" role="alert"></div>
-						<div class="row">
+						<div class="row mb-3">
 							<div class="col-3">
 								<div class="form-floating mb-3">
 									<input id="inpId" asp-for="Input.Id" type="text" class="form-control" />
@@ -79,14 +79,30 @@
 								</div>
 							</div>
 						</div>
-						<div class="row">
-							<div class="col-12">
+						<div class="row mb-3">
+							<div class="col-4">
 								<div class="form-floating mb-3">
-									<input id="inpNombre" asp-for="Input.Nombre" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<input id="inpNombre" asp-for="Input.Nombre" type="text" class="form-control formInput" placeholder="@Localizer["NombrePlaceholder"]" />
 									<label asp-for="Input.Nombre" class="form-label"></label>
 									<span asp-validation-for="Input.Nombre" class="text-danger"></span>
 								</div>
 							</div>
+						</div>
+						<div class="row mb-3">
+							<h6 class="col-12"><i>@Localizer["ProductoServicioPlaceholder"]</i></h6>
+							<div class="col-11">
+								<div class="form-floating ui-front">
+									<input id="inpProductoServicio" type="search" asp-for="Input.ProductoServicioId" class="form-control formInput" placeholder="@Localizer["ProductoServicioPlaceholder"]" idselected='' area="Catalogos" module="Perfiles" source="GetProductosServiciosSuggestion" />
+									<label for="inpProductoServicio" asp-for="Input.ProductoServicioId" class="form-label"></label>
+									<span asp-validation-for="Input.ProductoServicioId" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-1 d-flex align-items-center">
+								<button id="dlgBtnAgregarProductoServicio" type="button" class="btn btn-primary disabled" onclick="onAgregarProductoServicioClick();">
+									<i class="bi bi-plus-lg"></i>
+								</button>
+							</div>
+							<ul id="listProductosServicios" class="list-group mt-3"></ul>
 						</div>
 					</div>
 				</div>
@@ -94,7 +110,7 @@
 					<button id="dlgBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarClick();" data-bs-dismiss="modal">
 						<i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
 					</button>
-					<button id="dlgBtnGuardar" type="button" class="btn btn-primary" onclick="onGuardarClick();">
+					<button id="dlgBtnGuardar" type="button" class="btn btn-primary formButton" onclick="onGuardarClick();">
 						<i class="bi bi-floppy"></i> @Localizer["SaveButtonTitle"]
 					</button>
 				</div>
@@ -105,6 +121,11 @@
 <!-- --------------------------- -->
 <!-- --------------------------- -->
 @section Scripts {
+	<!-- Librería autocompletar y dependencias -->
+	<link rel="stylesheet" href="~/lib/jquery-ui/jquery-ui.min.css">
+	<script src="~/lib/jquery-ui/jquery-ui.min.js"></script>
+	<script src="~/js/autocompletar.js"></script>
+
 	<link rel="stylesheet" href="~/lib/bootstrap-table/bootstrap-table.min.css">
 
 	<script src="~/lib/bootstrap-table/extensions/export/tableExport.min.js"></script>

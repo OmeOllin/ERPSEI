@@ -17,8 +17,7 @@ namespace ERPSEI.Data.Entities.Empresas
 
 		public string PalabrasSimilares { get; set; } = string.Empty;
 
-		public int? PerfilId { get; set; }
-		public Perfil? Perfil { get; set; }
+		public ICollection<ProductoServicioPerfil>? ProductosServiciosPerfil { get; set; }
 
 	}
 }

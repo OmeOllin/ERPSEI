@@ -1,5 +1,7 @@
+using ERPSEI.Data;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Managers;
+using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
 using Microsoft.AspNetCore.Authorization;
@@ -10,12 +12,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-    [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
+	[Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
     public class PerfilesModel : PageModel
     {
+		private readonly IRWCatalogoManager<ProductoServicio> _productosServiciosManager;
+		private readonly IProductoServicioPerfilManager _productosServiciosPerfilManager;
 		private readonly IRWCatalogoManager<Perfil> _catalogoManager;
 		private readonly IStringLocalizer<PerfilesModel> _strLocalizer;
 		private readonly ILogger<PerfilesModel> _logger;
+		private readonly ApplicationDbContext _db;
 
 		[BindProperty]
 		public InputModel Input { get; set; }
@@ -30,18 +35,28 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "NameField")]
 			public string Nombre { get; set; } = string.Empty;
+
+			[Display(Name = "SearchProductServiceField")]
+			public int? ProductoServicioId { get; set; }
+			public int?[] ProductosServicios { get; set; } = Array.Empty<int?>();
 		}
 
 		public PerfilesModel(
+			IRWCatalogoManager<ProductoServicio> productosServiciosManager,
+			IProductoServicioPerfilManager productosServiciosPerfilManager,
 			IRWCatalogoManager<Perfil> catalogoManager,
 			IStringLocalizer<PerfilesModel> stringLocalizer,
-			ILogger<PerfilesModel> logger
+			ILogger<PerfilesModel> logger,
+			ApplicationDbContext db
 		)
 		{
 			Input = new InputModel();
+			_productosServiciosManager = productosServiciosManager;
+			_productosServiciosPerfilManager = productosServiciosPerfilManager;
 			_catalogoManager = catalogoManager;
 			_strLocalizer = stringLocalizer;
 			_logger = logger;
+			_db = db;
 		}
 
 		public JsonResult OnGetListAll()
@@ -80,33 +95,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				}
 				else
 				{
-                    //Busca el registro por Id
-                    Perfil? perfil = await _catalogoManager.GetByIdAsync(Input.Id);
+					await createOrUpdateProfile(Input);
 
-					if (perfil != null)
-					{
-						//El registro ya existe, por lo que solo se actualiza.
-						perfil.Nombre = Input.Nombre;
-						await _catalogoManager.UpdateAsync(perfil);
-
-						resp.TieneError = false;
-						resp.Mensaje = _strLocalizer["SavedSuccessfully"];
-					}
-					else
-					{
-						//Se busca si ya existe un registro con el mismo nombre.
-						perfil = await _catalogoManager.GetByNameAsync(Input.Nombre);
-						if (perfil != null) {
-							resp.Mensaje = _strLocalizer["ErrorExistente"];
-						}
-						else
-						{
-							await _catalogoManager.CreateAsync(new Perfil() { Nombre = Input.Nombre });
-
-							resp.TieneError = false;
-							resp.Mensaje = _strLocalizer["SavedSuccessfully"];
-						}
-					}
+					resp.TieneError = false;
+					resp.Mensaje = _strLocalizer["EmpresaSavedSuccessfully"];
 				}
 			}
 			catch (Exception ex)
@@ -115,6 +107,96 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			}
 
 			return new JsonResult(resp);
+		}
+		private async Task createOrUpdateProfile(InputModel p)
+		{
+			try
+			{
+				await _db.Database.BeginTransactionAsync();
+
+				int idPerfil = 0;
+				//Busca el registro por Id
+				Perfil? perfil = await _catalogoManager.GetByIdAsync(p.Id);
+
+				//Si se encontró perfil, obtiene su Id del registro existente. De lo contrario, se crea uno nuevo.
+				if (perfil != null) { idPerfil = perfil.Id; } else { perfil = new Perfil(); }
+
+				perfil.Nombre = p.Nombre;
+
+				if (idPerfil >= 1)
+				{
+					//El registro ya existe, por lo que solo se actualiza.
+					await _catalogoManager.UpdateAsync(perfil);
+
+					//Elimina los productos y servicios del perfil.
+					await _productosServiciosPerfilManager.DeleteByPerfilIdAsync(idPerfil);
+				}
+				else
+				{
+					//De lo contrario, crea a la empresa y obtiene su id.
+					idPerfil = await _catalogoManager.CreateAsync(perfil);
+				}
+
+				//Crea los productos y servicios del perfil
+				foreach (int? id in p.ProductosServicios)
+				{
+					if (id != null)
+					{
+						await _productosServiciosPerfilManager.CreateAsync(
+							new ProductoServicioPerfil() { ProductoServicioId = id, PerfilId = idPerfil }
+						);
+					}
+				}
+
+				await _db.Database.CommitTransactionAsync();
+			}
+			catch (Exception)
+			{
+				await _db.Database.RollbackTransactionAsync();
+				throw;
+			}
+		}
+
+		public async Task<JsonResult> OnPostGetProductosServiciosSuggestion(string texto)
+		{
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["ConsultadoUnsuccessfully"]);
+			try
+			{
+				resp.Datos = await GetProductosServiciosSuggestion(texto);
+				resp.TieneError = false;
+				resp.Mensaje = _strLocalizer["ConsultadoSuccessfully"];
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+			}
+
+			return new JsonResult(resp);
+		}
+		private async Task<string> GetProductosServiciosSuggestion(string texto)
+		{
+			string jsonResponse;
+			List<string> jsons = new List<string>();
+
+			List<ProductoServicio> prodserv = await _productosServiciosManager.GetAllAsync();
+			prodserv = prodserv.Where(e => e.Descripcion.ToLowerInvariant().Contains(texto.ToLowerInvariant()) || e.Clave.ToLowerInvariant().Contains(texto.ToLowerInvariant())).Take(20).ToList();
+
+			if (prodserv != null)
+			{
+				foreach (ProductoServicio a in prodserv)
+				{
+					jsons.Add($"{{" +
+									$"\"id\": {a.Id}, " +
+									$"\"value\": \"{a.Descripcion}\", " +
+									$"\"label\": \"{a.Clave} - {a.Descripcion}\", " +
+									$"\"clave\": \"{a.Clave}\"" +
+								$"}}");
+				}
+			}
+
+			jsonResponse = $"[{string.Join(",", jsons)}]";
+
+			return jsonResponse;
 		}
 	}
 }

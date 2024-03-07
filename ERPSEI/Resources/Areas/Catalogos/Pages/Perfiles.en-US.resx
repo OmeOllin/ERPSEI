@@ -147,6 +147,9 @@
   <data name="NewDialogTitle" xml:space="preserve">
     <value>New Record</value>
   </data>
+  <data name="ProductoServicioPlaceholder" xml:space="preserve">
+    <value>Product or Service</value>
+  </data>
   <data name="SaveButtonTitle" xml:space="preserve">
     <value>Save</value>
   </data>

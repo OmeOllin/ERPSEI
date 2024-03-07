@@ -312,6 +312,9 @@
   <data name="SearchEconomicActivityField" xml:space="preserve">
     <value>Tecleé descripción o clave para buscar...</value>
   </data>
+  <data name="SearchProductServiceField" xml:space="preserve">
+    <value>Tecleé descripción o clave para buscar...</value>
+  </data>
   <data name="SubareaField" xml:space="preserve">
     <value>Subárea</value>
   </data>

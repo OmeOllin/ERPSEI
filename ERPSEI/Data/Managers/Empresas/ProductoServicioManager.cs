@@ -34,7 +34,6 @@ namespace ERPSEI.Data.Managers.Empresas
 			ProductoServicio? a = db.Find<ProductoServicio>(p.Id);
             if (a != null)
             {
-				a.PerfilId = p.PerfilId;
 				a.Clave = p.Clave;
 				a.PalabrasSimilares = p.PalabrasSimilares;
 				a.IncluirIVATraslado = p.IncluirIVATraslado;

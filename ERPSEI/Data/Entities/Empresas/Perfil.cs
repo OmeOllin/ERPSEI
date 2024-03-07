@@ -11,7 +11,7 @@ namespace ERPSEI.Data.Entities.Empresas
 
         public ICollection<Empresa>? Empresas { get; }
 
-		public ICollection<ProductoServicio>? ProductosServicios { get; }
+		public ICollection<ProductoServicioPerfil>? ProductosServiciosPerfil { get; }
 
 	}
 }

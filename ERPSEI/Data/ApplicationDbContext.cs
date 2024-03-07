@@ -29,13 +29,16 @@ namespace ERPSEI.Data
 		public DbSet<ArchivoEmpresa> ArchivosEmpresa { get; set; }
 		public DbSet<Empresa> Empresas { get; set; }
 		public DbSet<ActividadEconomicaEmpresa> ActividadesEconomicasEmpresa { get; set; }
+		public DbSet<ProductoServicioPerfil> ProductosServiciosPerfil { get; set; }
 
 		//Catálogos Administrables Empresas
-		public DbSet<ActividadEconomica> ActividadesEconomicas { get; set; }
 		public DbSet<Origen> Origenes { get; set; }
 		public DbSet<Nivel> Niveles { get; set; }
 		public DbSet<Perfil> Perfiles { get; set; }
 		public DbSet<ProductoServicio> ProductosServicios { get; set; }
+
+		//Catálogos no Administrables Empresas
+		public DbSet<ActividadEconomica> ActividadesEconomicas { get; set; }
 
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -67,7 +70,9 @@ namespace ERPSEI.Data
 
 			b.Entity<ArchivoEmpresa>().HasOne(a => a.TipoArchivo).WithMany(ta => ta.ArchivosEmpresa).OnDelete(DeleteBehavior.NoAction);
 
-			b.Entity<ProductoServicio>().HasOne(p => p.Perfil).WithMany(p => p.ProductosServicios).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Perfil>().HasMany(p => p.ProductosServiciosPerfil).WithOne(p => p.Perfil).OnDelete(DeleteBehavior.NoAction);
+
+			b.Entity<ProductoServicio>().HasMany(p => p.ProductosServiciosPerfil).WithOne(p => p.ProductoServicio).OnDelete(DeleteBehavior.NoAction);
 
 			b.Entity<TipoArchivoEmpresa>()
 				.HasData(

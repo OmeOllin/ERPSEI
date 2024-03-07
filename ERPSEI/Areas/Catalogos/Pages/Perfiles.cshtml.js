@@ -18,6 +18,20 @@ document.addEventListener("DOMContentLoaded", function (event) {
     });
 
     initTable();
+
+    autoCompletar("#inpProductoServicio", {
+        select: function (element, item) {
+            let btnAdd = document.getElementById("dlgBtnAgregarProductoServicio");
+            btnAdd.classList.remove("disabled");
+        },
+        change: function (element, item) {
+            let actividadField = document.getElementById("inpProductoServicio");
+            if (parseInt(actividadField.getAttribute("idselected") || "0") <= 0) {
+                let btnAdd = document.getElementById("dlgBtnAgregarProductoServicio");
+                btnAdd.classList.add("disabled");
+            }
+        }
+    });
 });
 
 //Funcionalidad Tabla
@@ -142,36 +156,47 @@ function initTable() {
 function initDialog(action, row) {
     let idField = document.getElementById("inpId");
     let nombreField = document.getElementById("inpNombre");
-    let btnGuardar = document.getElementById("dlgBtnGuardar");
-    let dlgTitle = document.getElementById("dlgTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 
     idField.setAttribute("disabled", true);
 
+    prepareForm(action);
+
+    idField.value = row.id;
+    nombreField.value = row.nombre;
+
+    //Se establecen los productos y servicios
+    $("#listProductosServicios").html("");
+    row.productosServicios = row.productosServicios || [];
+    row.productosServicios.forEach(function (p) { agregarProductoServicio(p.id, p.clave, p.descripcion); });
+}
+//Función para hablitar / deshabilitar el formulario de empresa
+function prepareForm(action) {
+    let dlgTitle = document.getElementById("dlgTitle");
+
     switch (action) {
         case NUEVO:
-            dlgTitle.innerHTML = dlgNuevoTitle;
-
-            nombreField.removeAttribute("disabled");
-            btnGuardar.removeAttribute("disabled");
-            break;
         case EDITAR:
-            dlgTitle.innerHTML = dlgEditarTitle;
+            if (action == NUEVO) {
+                dlgTitle.innerHTML = dlgNuevoTitle;
+            }
+            else {
+                dlgTitle.innerHTML = dlgEditarTitle;
+            }
 
-            nombreField.removeAttribute("disabled");
-            btnGuardar.removeAttribute("disabled");
+            document.querySelectorAll(".formButton").forEach(function (btn) { btn.classList.remove("disabled"); });
+            document.querySelectorAll(".formInput, .formSelect").forEach(function (e) { e.removeAttribute("disabled"); });
+
+
             break;
         default:
             dlgTitle.innerHTML = dlgVerTitle;
 
-            nombreField.setAttribute("disabled", true);
-            btnGuardar.setAttribute("disabled", true);
+            document.querySelectorAll(".formButton").forEach(function (btn) { btn.classList.add("disabled"); });
+            document.querySelectorAll(".formInput, .formSelect").forEach(function (e) { e.setAttribute("disabled", true); });
             break;
     }
-
-    idField.value = row.id;
-    nombreField.value = row.nombre;
 }
 function onCerrarClick() {
     //Removes validation from input-fields
@@ -201,9 +226,17 @@ function onGuardarClick() {
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 
+    let prodserv = [];
+    $("#listProductosServicios li").each(function (i, a) {
+        let id = a.getAttribute("id");
+
+        prodserv.push({ id: id });
+    });
+
     let oParams = {
         id: idField.value == "Nuevo" ? 0 : idField.value,
-        nombre: nombreField.value
+        nombre: nombreField.value,
+        productosServicios: prodserv
     };
 
     doAjax(
@@ -232,5 +265,51 @@ function onGuardarClick() {
         },
         postOptions
     );
+}
+
+//Función para agregar un producto o servicio al listado
+function onAgregarProductoServicioClick() {
+    let productoServicioField = $(document.getElementById("inpProductoServicio"));
+    //Si el campo producto / servicio no tiene elemento seleccionado, muestra error.
+    if (parseInt(productoServicioField.attr("idselected") || "0") <= 0) {
+        showAlert(msgAgregarProductoServicio, sinProductoServicio);
+        return;
+    }
+
+    let listItem = document.querySelector(`li[clave='${productoServicioField.data("clave")}']`);
+    //Si el elemento ya existe, muestra error.
+    if (listItem) {
+        showAlert(msgAgregarProductoServicio, productoServicioRepetido);
+        return;
+    }
+
+    agregarProductoServicio(productoServicioField.attr("idselected"), productoServicioField.data("clave"), productoServicioField.data("value"));
+
+    let btnAdd = document.getElementById("dlgBtnAgregarProductoServicio");
+    btnAdd.classList.add("disabled");
+
+    productoServicioField.val("");
+    productoServicioField.attr("idselected", 0);
+}
+//Función para añadir un elemento al listado de productos y servicios
+function agregarProductoServicio(id, clave, descripcion) {
+    let listProductosServicios = document.getElementById("listProductosServicios");
+
+    listProductosServicios.innerHTML += `<li id="${id}" clave="${clave}" class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-11 border-end">
+                                          <div class="fw-bold">${clave}</div>
+                                          ${descripcion}
+                                        </div>
+                                        <div class="col-1 align-items-center d-flex justify-content-center">
+									        <button type="button" class="btn-close formButton" onclick="onEliminarProductoServicioClick(${clave});"></button>
+                                        </div>
+                                    </div>
+								  </li>`;
+}
+//Función para eliminar un producto o servicio del listado
+function onEliminarProductoServicioClick(clave) {
+    let listItem = document.querySelector(`li[clave='${clave}']`);
+    listItem.remove();
 }
 /////////////////////
