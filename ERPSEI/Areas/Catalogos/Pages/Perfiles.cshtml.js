@@ -109,7 +109,7 @@ function initTable() {
             let oParams = { ids: selections };
 
             doAjax(
-                "/Catalogos/ActividadesEconomicas/DeleteActividadesEconomicas",
+                "/Catalogos/Perfiles/Delete",
                 oParams,
                 function (resp) {
                     if (resp.tieneError) {
@@ -207,7 +207,7 @@ function onGuardarClick() {
     };
 
     doAjax(
-        "/Catalogos/ActividadesEconomicas/SaveActividadEconomica",
+        "/Catalogos/Perfiles/Save",
         oParams,
         function (resp) {
             if (resp.tieneError) {

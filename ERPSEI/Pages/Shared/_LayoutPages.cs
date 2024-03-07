@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.IdentityModel.Protocols;
 
 namespace ERPSEI.Pages.Shared
 {
-    public static class _LayoutPages
+	public static class _LayoutPages
     {
         public static string Inicio => "Inicio";
         public static string InicioNavClass(ViewContext viewContext) => PageNavClass(viewContext, Inicio);
@@ -49,8 +48,8 @@ namespace ERPSEI.Pages.Shared
         public static string CatalogoNiveles => "Niveles";
         public static string CatalogoNivelesNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoNiveles);
 
-		public static string CatalogoActividadesEconomicas => "ActividadesEconomicas";
-		public static string CatalogoActividadesEconomicasNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoActividadesEconomicas);
+		public static string CatalogoPerfiles => "Perfiles";
+		public static string CatalogoPerfilesNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoPerfiles);
 
         #endregion
 

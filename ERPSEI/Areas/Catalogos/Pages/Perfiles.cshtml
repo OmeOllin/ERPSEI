@@ -2,7 +2,7 @@
 @using ERPSEI.Areas.Catalogos.Pages;
 @using Microsoft.AspNetCore.Localization;
 @using Microsoft.AspNetCore.Mvc.Localization;
-@model ActividadesEconomicasModel
+@model PerfilesModel
 @inject IViewLocalizer Localizer;
 @{
 	ViewData["Title"] = Localizer["Title"];
@@ -48,7 +48,7 @@
 	   data-side-pagination="client"
 	   data-response-handler="responseHandler"
 	   data-buttons-class="primary"
-	   data-url="/Catalogos/ActividadesEconomicas/ActividadesEconomicasList">
+	   data-url="/Catalogos/Perfiles/ListAll">
 	<thead>
 		<tr align="center" valign="middle" class="bg-primary bg-opacity-10">
 		</tr>
@@ -114,7 +114,7 @@
 	<script src="~/lib/bootstrap-table/locale/bootstrap-table-en-US.min.js"></script>
 	<script src="~/lib/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
 
-	<script src="~/../Areas/Catalogos/Pages/ActividadesEconomicas.cshtml.js"></script>
+	<script src="~/../Areas/Catalogos/Pages/Perfiles.cshtml.js"></script>
 
 	<script type="text/javascript">
 		var cultureName = "@cultureName";

@@ -132,9 +132,6 @@
   <data name="DisabilitiesMenu" xml:space="preserve">
     <value>Disabilities</value>
   </data>
-  <data name="EconomicActivitiesCatalogMenu" xml:space="preserve">
-    <value>Economic activities</value>
-  </data>
   <data name="EmpresasCatalogMenu" xml:space="preserve">
     <value>Companies</value>
   </data>
@@ -176,6 +173,9 @@
   </data>
   <data name="PrivacyMenu" xml:space="preserve">
     <value>Privacy</value>
+  </data>
+  <data name="ProfilesCatalogMenu" xml:space="preserve">
+    <value>Profiles</value>
   </data>
   <data name="ReportesMenu" xml:space="preserve">
     <value>Reports</value>

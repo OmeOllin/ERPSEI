@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DeletedSuccessfully" xml:space="preserve">
-    <value>Records deleted succesfully!</value>
+    <value>¡Registros eliminados satisfactoriamente!</value>
   </data>
   <data name="DeletedUnsuccessfully" xml:space="preserve">
-    <value>Error deleting records</value>
+    <value>Error al eliminar los registros</value>
   </data>
   <data name="ErrorExistente" xml:space="preserve">
-    <value>There is already a registered economic activity with the same name. Please use another name for the new economic activity.</value>
+    <value>Ya existe un perfil registrado con el mismo nombre. Por favor, use otro nombre para el nuevo perfil.</value>
   </data>
   <data name="SavedSuccessfully" xml:space="preserve">
-    <value>Economic activity saved successfully!</value>
+    <value>¡Perfil guardado satisfactoriamente!</value>
   </data>
   <data name="SavedUnsuccessfully" xml:space="preserve">
-    <value>Error saving economic activity</value>
+    <value>Error al guardar el perfil</value>
   </data>
 </root>
