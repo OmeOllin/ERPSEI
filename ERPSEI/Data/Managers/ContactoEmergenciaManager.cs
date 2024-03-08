@@ -60,7 +60,8 @@ namespace ERPSEI.Data.Managers
         {
             List<ContactoEmergencia> contactos = await db.ContactosEmergencia.Where(c => c.EmpleadoId == empleadoId).ToListAsync();
             if (contactos != null && contactos.Count >= 1) { db.ContactosEmergencia.RemoveRange(contactos); }
-        }
+			await db.SaveChangesAsync();
+		}
 
 		public async Task<ICollection<ContactoEmergencia>> GetContactosByEmpleadoIdAsync(int contactoId)
         {

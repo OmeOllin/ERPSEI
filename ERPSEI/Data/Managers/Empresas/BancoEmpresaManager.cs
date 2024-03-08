@@ -64,7 +64,8 @@ namespace ERPSEI.Data.Managers.Empresas
         {
             List<BancoEmpresa> bancos = await db.BancosEmpresa.Where(a => a.EmpresaId == id).ToListAsync();
             if (bancos != null && bancos.Count >= 1) { db.BancosEmpresa.RemoveRange(bancos); }
-        }
+			await db.SaveChangesAsync();
+		}
 
         public async Task<List<BancoEmpresa>> GetBancosByEmpresaIdAsync(int id)
         {

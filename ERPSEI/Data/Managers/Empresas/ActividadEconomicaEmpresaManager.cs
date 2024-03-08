@@ -60,6 +60,7 @@ namespace ERPSEI.Data.Managers.Empresas
 		{
 			List<ActividadEconomicaEmpresa> actividades = await db.ActividadesEconomicasEmpresa.Where(a => a.EmpresaId == id).ToListAsync();
 			if (actividades != null && actividades.Count >= 1) { db.ActividadesEconomicasEmpresa.RemoveRange(actividades); }
+			await db.SaveChangesAsync();
 		}
 
 		public async Task DeleteMultipleByIdAsync(string[] ids)

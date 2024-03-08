@@ -53,6 +53,7 @@ namespace ERPSEI.Data.Managers
 		{
 			List<ArchivoEmpleado> archivos = await db.ArchivosEmpleado.Where(a => a.EmpleadoId == empleadoId).ToListAsync();
 			if (archivos != null && archivos.Count >= 1) { db.ArchivosEmpleado.RemoveRange(archivos); }
+			await db.SaveChangesAsync();
 		}
 
         public async Task<ProfilePicture?> GetProfilePicByEmpleadoId(int empleadoId)

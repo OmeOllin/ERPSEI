@@ -60,6 +60,7 @@ namespace ERPSEI.Data.Managers.Empresas
 		{
 			List<ProductoServicioPerfil> productosServicios = await db.ProductosServiciosPerfil.Where(a => a.PerfilId == id).ToListAsync();
 			if (productosServicios != null && productosServicios.Count >= 1) { db.ProductosServiciosPerfil.RemoveRange(productosServicios); }
+			await db.SaveChangesAsync();
 		}
 
 		public async Task DeleteMultipleByIdAsync(string[] ids)

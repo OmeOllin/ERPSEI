@@ -53,7 +53,8 @@ namespace ERPSEI.Data.Managers.Empresas
         {
             List<ArchivoEmpresa> archivos = await db.ArchivosEmpresa.Where(a => a.EmpresaId == eId).ToListAsync();
             if (archivos != null && archivos.Count >= 1) { db.ArchivosEmpresa.RemoveRange(archivos); }
-        }
+			await db.SaveChangesAsync();
+		}
 
         public async Task<List<SemiArchivoEmpresa>> GetFilesByEmpresaIdAsync(int id)
         {
