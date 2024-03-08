@@ -41,9 +41,13 @@ function getIdSelections() {
     })
 }
 function responseHandler(res) {
+    if (typeof res == "string" && res.length >= 1) {
+        res = JSON.parse(res);
+    }
     $.each(res, function (i, row) {
         row.state = $.inArray(row.id, selections) !== -1
-    })
+    });
+
     return res
 }
 function operateFormatter(value, row, index) {
@@ -65,7 +69,7 @@ window.operateEvents = {
     }
 }
 function onAgregarClick() {
-    initDialog(NUEVO, { id: "Nuevo", nombre: "" });
+    initDialog(NUEVO, { id: "Nuevo", nombre: "", productosServicios: [] });
 }
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
@@ -156,20 +160,26 @@ function initTable() {
 function initDialog(action, row) {
     let idField = document.getElementById("inpId");
     let nombreField = document.getElementById("inpNombre");
+    let prodservField = document.getElementById("inpProductoServicio");
+    let btnAdd = document.getElementById("dlgBtnAgregarProductoServicio");
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 
     idField.setAttribute("disabled", true);
 
-    prepareForm(action);
-
     idField.value = row.id;
     nombreField.value = row.nombre;
+
+    prodservField.value = "";
+    prodservField.setAttribute('idselected', "");
+    btnAdd.classList.add("disabled");
 
     //Se establecen los productos y servicios
     $("#listProductosServicios").html("");
     row.productosServicios = row.productosServicios || [];
     row.productosServicios.forEach(function (p) { agregarProductoServicio(p.id, p.clave, p.descripcion); });
+
+    prepareForm(action);
 }
 //Función para hablitar / deshabilitar el formulario de empresa
 function prepareForm(action) {
@@ -230,7 +240,7 @@ function onGuardarClick() {
     $("#listProductosServicios li").each(function (i, a) {
         let id = a.getAttribute("id");
 
-        prodserv.push({ id: id });
+        prodserv.push(id);
     });
 
     let oParams = {
@@ -302,7 +312,7 @@ function agregarProductoServicio(id, clave, descripcion) {
                                           ${descripcion}
                                         </div>
                                         <div class="col-1 align-items-center d-flex justify-content-center">
-									        <button type="button" class="btn-close formButton" onclick="onEliminarProductoServicioClick(${clave});"></button>
+									        <button type="button" class="btn-close formButton" onclick="onEliminarProductoServicioClick('${clave}');"></button>
                                         </div>
                                     </div>
 								  </li>`;

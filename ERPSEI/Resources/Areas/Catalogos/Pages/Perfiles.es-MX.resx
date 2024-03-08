@@ -120,6 +120,9 @@
   <data name="AddButton" xml:space="preserve">
     <value>Agregar</value>
   </data>
+  <data name="AgregarProductoServicio" xml:space="preserve">
+    <value>Agregar producto o servicio</value>
+  </data>
   <data name="CancelButtonTitle" xml:space="preserve">
     <value>Cancelar</value>
   </data>
@@ -150,6 +153,9 @@
   <data name="ProductoServicioPlaceholder" xml:space="preserve">
     <value>Producto o Servicio</value>
   </data>
+  <data name="ProductoServicioRepetido" xml:space="preserve">
+    <value>El producto o servicio ya se encuentra en el listado</value>
+  </data>
   <data name="SaveButtonTitle" xml:space="preserve">
     <value>Guardar</value>
   </data>
@@ -158,6 +164,9 @@
   </data>
   <data name="SeeDialogTitle" xml:space="preserve">
     <value>Ver Registro</value>
+  </data>
+  <data name="SinProductoServicio" xml:space="preserve">
+    <value>No se ha seleccionado un producto o servicio para agregar</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Catálogo de Perfiles</value>

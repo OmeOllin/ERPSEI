@@ -30,8 +30,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Display(Name = "Id")]
 			public int Id { get; set; }
 
-			[StringLength(50, ErrorMessage = "FieldLength", MinimumLength = 1)]
-			[RegularExpression(RegularExpressions.AlphanumSpace, ErrorMessage = "AlphanumSpace")]
+			[StringLength(100, ErrorMessage = "FieldLength", MinimumLength = 1)]
+			[RegularExpression(RegularExpressions.AlphanumSpaceCommaDotParenthesis, ErrorMessage = "AlphanumSpace")]
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "NameField")]
 			public string Nombre { get; set; } = string.Empty;
@@ -61,9 +61,47 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public JsonResult OnGetListAll()
         {
+
+			string jsonResponse;
+			List<string> jsonPerfiles = new List<string>();
 			List<Perfil> perfiles = _catalogoManager.GetAllAsync().Result;
 
-			return new JsonResult(perfiles);
+			foreach ( Perfil p in perfiles)
+			{
+				List<string> jsonProdServ = getListJsonProductosServicios(p.ProductosServiciosPerfil);
+				jsonPerfiles.Add(
+									"{" +
+										$"\"id\": {p.Id}," +
+										$"\"nombre\": \"{p.Nombre}\", " +
+										$"\"productosServicios\": [{string.Join(",", jsonProdServ)}]" +
+									"}"
+								);
+			}
+
+			jsonResponse = $"[{string.Join(",", jsonPerfiles)}]";
+
+			return new JsonResult(jsonResponse);
+		}
+		private List<string> getListJsonProductosServicios(ICollection<ProductoServicioPerfil>? productosServicios)
+		{
+			List<string> jsonProdServ = new List<string>();
+			if (productosServicios != null)
+			{
+				foreach (ProductoServicioPerfil a in productosServicios)
+				{
+					if (a.ProductoServicio == null) { continue; }
+
+					jsonProdServ.Add(
+						"{" +
+							$"\"id\": \"{a.ProductoServicio.Id}\"," +
+							$"\"clave\": \"{a.ProductoServicio.Clave}\"," +
+							$"\"descripcion\": \"{a.ProductoServicio.Descripcion}\"" +
+						"}"
+					);
+				}
+			}
+
+			return jsonProdServ;
 		}
 
 		public async Task<JsonResult> OnPostDelete(string[] ids)
@@ -95,10 +133,24 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				}
 				else
 				{
-					await createOrUpdateProfile(Input);
+					//Se busca si ya existe un registro con el mismo nombre.
+					Perfil? perfil = await _catalogoManager.GetByNameAsync(Input.Nombre);
 
-					resp.TieneError = false;
-					resp.Mensaje = _strLocalizer["EmpresaSavedSuccessfully"];
+					//Si ya existe un registro con el mismo nombre y los Id's no coinciden
+					if (perfil != null && perfil.Id != Input.Id)
+					{
+						//Ya existe un elemento con el mismo nombre.
+						resp.Mensaje = _strLocalizer["ErrorExistente"];
+					}
+					else
+					{
+						//Crea o actualiza el registro
+						await createOrUpdateProfile(Input);
+
+						resp.TieneError = false;
+						resp.Mensaje = _strLocalizer["SavedSuccessfully"];
+					}
+
 				}
 			}
 			catch (Exception ex)

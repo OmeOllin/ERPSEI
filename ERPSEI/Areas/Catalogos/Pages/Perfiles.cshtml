@@ -71,7 +71,7 @@
 					<div class="container-fluid">
 						<div id="saveValidationSummary" class="text-danger mb-3" role="alert"></div>
 						<div class="row mb-3">
-							<div class="col-3">
+							<div class="col-3 col-lg-2">
 								<div class="form-floating mb-3">
 									<input id="inpId" asp-for="Input.Id" type="text" class="form-control" />
 									<label asp-for="Input.Id" class="form-label"></label>
@@ -80,7 +80,7 @@
 							</div>
 						</div>
 						<div class="row mb-3">
-							<div class="col-4">
+							<div class="col-11">
 								<div class="form-floating mb-3">
 									<input id="inpNombre" asp-for="Input.Nombre" type="text" class="form-control formInput" placeholder="@Localizer["NombrePlaceholder"]" />
 									<label asp-for="Input.Nombre" class="form-label"></label>
@@ -97,7 +97,7 @@
 									<span asp-validation-for="Input.ProductoServicioId" class="text-danger"></span>
 								</div>
 							</div>
-							<div class="col-1 d-flex align-items-center">
+							<div class="col-1 d-flex align-items-center p-0">
 								<button id="dlgBtnAgregarProductoServicio" type="button" class="btn btn-primary disabled" onclick="onAgregarProductoServicioClick();">
 									<i class="bi bi-plus-lg"></i>
 								</button>
@@ -150,6 +150,9 @@
 		var dlgDeleteQuestion = '@Localizer["DeleteDialogQuestion"]';
 		var colNombreHeader = '@Localizer["ColNameHeader"]';
 		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
+		var msgAgregarProductoServicio = '@Localizer["AgregarProductoServicio"]';
+		var sinProductoServicio = '@Localizer["SinProductoServicio"]';
+		var productoServicioRepetido = '@Localizer["ProductoServicioRepetido"]';
 	</script>
 
 	<partial name="_ValidationScriptsPartial" />
