@@ -1,10 +1,11 @@
 ﻿using ERPSEI.Data.Entities.Empresas;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 namespace ERPSEI.Data.Managers.Empresas
 {
-    public class ProductoServicioManager : IRWCatalogoManager<ProductoServicio>
-    {
+    public class ProductoServicioManager : IProductoServicioManager
+	{
         ApplicationDbContext db { get; set; }
 
         public ProductoServicioManager(ApplicationDbContext _db)
@@ -88,6 +89,14 @@ namespace ERPSEI.Data.Managers.Empresas
 		public async Task<List<ProductoServicio>> GetAllAsync()
 		{
 			return await db.ProductosServicios.ToListAsync();
+		}
+
+		public async Task<List<ProductoServicioBuscado>> SearchProductService(string texto)
+		{
+			string sql = $"SELECT TOP (20) Id, Clave, Descripcion, IncluirIVATraslado, IncluirIEPSTraslado, PalabrasSimilares FROM ProductosServicios WHERE Descripcion LIKE '%{texto}%' OR Clave LIKE '%{texto}%' OR PalabrasSimilares LIKE '%{texto}%'";
+			List<ProductoServicioBuscado> prodserv = await db.Database.SqlQueryRaw<ProductoServicioBuscado>(sql).ToListAsync();
+
+			return prodserv;
 		}
 
 		public async Task<ProductoServicio?> GetByIdAsync(int id)

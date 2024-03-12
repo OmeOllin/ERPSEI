@@ -15,7 +15,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 	[Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
     public class PerfilesModel : PageModel
     {
-		private readonly IRWCatalogoManager<ProductoServicio> _productosServiciosManager;
+		private readonly IProductoServicioManager _productosServiciosManager;
 		private readonly IProductoServicioPerfilManager _productosServiciosPerfilManager;
 		private readonly IRWCatalogoManager<Perfil> _catalogoManager;
 		private readonly IStringLocalizer<PerfilesModel> _strLocalizer;
@@ -42,7 +42,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 
 		public PerfilesModel(
-			IRWCatalogoManager<ProductoServicio> productosServiciosManager,
+			IProductoServicioManager productosServiciosManager,
 			IProductoServicioPerfilManager productosServiciosPerfilManager,
 			IRWCatalogoManager<Perfil> catalogoManager,
 			IStringLocalizer<PerfilesModel> stringLocalizer,
@@ -230,17 +230,17 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			string jsonResponse;
 			List<string> jsons = new List<string>();
 
-			List<ProductoServicio> prodserv = await _productosServiciosManager.GetAllAsync();
-			prodserv = prodserv.Where(e => e.Descripcion.ToLowerInvariant().Contains(texto.ToLowerInvariant()) || e.Clave.ToLowerInvariant().Contains(texto.ToLowerInvariant())).Take(20).ToList();
+			List<ProductoServicioBuscado> prodserv = await _productosServiciosManager.SearchProductService(texto);
 
 			if (prodserv != null)
 			{
-				foreach (ProductoServicio a in prodserv)
+				foreach (ProductoServicioBuscado a in prodserv)
 				{
+					string additional = a.PalabrasSimilares.Length >= 1 ? $" ({a.PalabrasSimilares})" : string.Empty;
 					jsons.Add($"{{" +
 									$"\"id\": {a.Id}, " +
 									$"\"value\": \"{a.Descripcion}\", " +
-									$"\"label\": \"{a.Clave} - {a.Descripcion}\", " +
+									$"\"label\": \"{a.Clave} - {a.Descripcion}{additional}\", " +
 									$"\"clave\": \"{a.Clave}\"" +
 								$"}}");
 				}
