@@ -30,6 +30,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "NameField")]
 			public string Nombre { get; set; } = string.Empty;
+
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "PuedeFacturarField")]
+			public bool PuedeFacturar { get; set; } = true;
 		}
 
 		public NivelesModel(

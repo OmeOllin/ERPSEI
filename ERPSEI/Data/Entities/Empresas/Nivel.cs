@@ -9,6 +9,8 @@ namespace ERPSEI.Data.Entities.Empresas
 
         public string Nombre { get; set; } = string.Empty;
 
+        public bool PuedeFacturar { get; set; } = true;
+
         public ICollection<Empresa>? Empresas { get; set; }
     }
 }
