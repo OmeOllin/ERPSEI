@@ -288,6 +288,9 @@
   <data name="PreferredNameField" xml:space="preserve">
     <value>Preferred name</value>
   </data>
+  <data name="PuedeFacturarField" xml:space="preserve">
+    <value>Can bill?</value>
+  </data>
   <data name="PuestoField" xml:space="preserve">
     <value>Position</value>
   </data>

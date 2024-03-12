@@ -91,6 +91,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					{
 						//El registro ya existe, por lo que solo se actualiza.
 						nivel.Nombre = Input.Nombre;
+						nivel.PuedeFacturar = Input.PuedeFacturar;
 						await _catalogoManager.UpdateAsync(nivel);
 
 						resp.TieneError = false;

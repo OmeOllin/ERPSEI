@@ -51,7 +51,7 @@ window.operateEvents = {
     }
 }
 function onAgregarClick() {
-    initDialog(NUEVO, { id: "Nuevo", nombre: "" });
+    initDialog(NUEVO, { id: "Nuevo", nombre: "", puedeFacturar: true });
 }
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
@@ -142,6 +142,7 @@ function initTable() {
 function initDialog(action, row) {
     let idField = document.getElementById("inpId");
     let nombreField = document.getElementById("inpNombre");
+    let puedeFacturarField = document.getElementById("inpPuedeFacturar");
     let btnGuardar = document.getElementById("dlgBtnGuardar");
     let dlgTitle = document.getElementById("dlgTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
@@ -154,24 +155,28 @@ function initDialog(action, row) {
             dlgTitle.innerHTML = dlgNuevoTitle;
 
             nombreField.removeAttribute("disabled");
+            puedeFacturarField.removeAttribute("disabled");
             btnGuardar.removeAttribute("disabled");
             break;
         case EDITAR:
             dlgTitle.innerHTML = dlgEditarTitle;
 
             nombreField.removeAttribute("disabled");
+            puedeFacturarField.removeAttribute("disabled");
             btnGuardar.removeAttribute("disabled");
             break;
         default:
             dlgTitle.innerHTML = dlgVerTitle;
 
             nombreField.setAttribute("disabled", true);
+            puedeFacturarField.setAttribute("disabled", true);
             btnGuardar.setAttribute("disabled", true);
             break;
     }
 
     idField.value = row.id;
     nombreField.value = row.nombre;
+    puedeFacturarField.checked = row.puedeFacturar;
 }
 function onCerrarClick() {
     //Removes validation from input-fields
@@ -197,13 +202,15 @@ function onGuardarClick() {
     let btnClose = document.getElementById("dlgBtnCancelar");
     let idField = document.getElementById("inpId");
     let nombreField = document.getElementById("inpNombre");
+    let puedeFacturarField = document.getElementById("inpPuedeFacturar");
     let dlgTitle = document.getElementById("dlgTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 
     let oParams = {
         id: idField.value == "Nuevo" ? 0 : idField.value,
-        nombre: nombreField.value
+        nombre: nombreField.value,
+        puedeFacturar: puedeFacturarField.checked
     };
 
     doAjax(

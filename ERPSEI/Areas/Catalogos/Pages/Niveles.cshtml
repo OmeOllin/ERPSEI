@@ -90,9 +90,9 @@
 						</div>
 						<div class="row">
 							<div class="col-12">
-								<div class="form-floating mb-3">
-									<input id="inpPuedeFacturar" asp-for="Input.PuedeFacturar" type="checkbox" class="form-control" />
-									<label asp-for="Input.PuedeFacturar" class="form-label"></label>
+								<div class="form-check mb-3">
+									<input class="form-check-input" type="checkbox" value="" id="inpPuedeFacturar" asp-for="Input.PuedeFacturar">
+                                    <label asp-for="Input.PuedeFacturar" class="form-check-label" for="inpPuedeFacturar"></label>
 									<span asp-validation-for="Input.PuedeFacturar" class="text-danger"></span>
 								</div>
 							</div>
