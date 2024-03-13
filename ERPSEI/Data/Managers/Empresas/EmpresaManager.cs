@@ -117,7 +117,8 @@ namespace ERPSEI.Data.Managers.Empresas
                 .Where(e => nivelId != null ? e.NivelId == nivelId : true)
                 .Include(e => e.Origen)
                 .Include(e => e.Nivel)
-                .Include(e => e.ActividadesEconomicasEmpresa.Where(a => a.ActividadEconomica != null && a.ActividadEconomica.Id == actividadEconomicaId))
+                .Include(e => e.ActividadesEconomicasEmpresa)
+                .Where(e => actividadEconomicaId != null ? e.ActividadesEconomicasEmpresa.Any(a => a.ActividadEconomicaId == actividadEconomicaId) : true)
                 .ToListAsync();
         }
 

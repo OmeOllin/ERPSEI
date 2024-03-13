@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Net.Mime;
+using System.Text;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
@@ -22,6 +23,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		private readonly IEmpresaManager _empresaManager;
 		private readonly IBancoEmpresaManager _bancoEmpresaManager;
 		private readonly IArchivoEmpresaManager _archivoEmpresaManager;
+		private readonly IRWCatalogoManager<Perfil> _perfilManager;
         private readonly IRWCatalogoManager<Origen> _origenManager;
         private readonly IRWCatalogoManager<Nivel> _nivelManager;
 		private readonly IActividadEconomicaEmpresaManager _actividadesEconomicasEmpresaManager;
@@ -84,15 +86,13 @@ namespace ERPSEI.Areas.Catalogos.Pages
             [DataType(DataType.Text)]
 			[StringLength(13, ErrorMessage = "FieldLength", MinimumLength = 12)]
 			[RegularExpression(RegularExpressions.AlphanumNoSpaceNoUnderscore, ErrorMessage = "AlphanumNoSpaceNoUnderscore")]
-			[Required(ErrorMessage = "Required")]
 			[Display(Name = "RFCField")]
-			public string RFC { get; set; } = string.Empty;
+			public string? RFC { get; set; } = string.Empty;
 
-			[Required(ErrorMessage = "Required")]
 			[DataType(DataType.MultilineText)]
 			[StringLength(300, ErrorMessage = "FieldLength", MinimumLength = 1)]
 			[Display(Name = "DomicilioFiscalField")]
-			public string DomicilioFiscal { get; set; } = string.Empty;
+			public string? DomicilioFiscal { get; set; } = string.Empty;
 
 			[DataType(DataType.Text)]
 			[StringLength(100, ErrorMessage = "FieldLength", MinimumLength = 2)]
@@ -136,7 +136,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Display(Name = "PhoneNumberField")]
 			public string? Telefono { get; set; } = string.Empty;
 
-			[Required(ErrorMessage = "Required")]
 			[Display(Name = "PerfilField")]
 			public int? PerfilId { get; set; }
 
@@ -182,7 +181,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			IEmpresaManager empresaManager,
 			IBancoEmpresaManager bancoEmpresaManager,
 			IArchivoEmpresaManager archivoEmpresaManager,
-			IRWCatalogoManager<Origen> origenManager,
+            IRWCatalogoManager<Perfil> perfilManager,
+            IRWCatalogoManager<Origen> origenManager,
 			IRWCatalogoManager<Nivel> nivelManager,
 			IActividadEconomicaEmpresaManager actividadesEconomicasEmpresaManager,
 			IRWCatalogoManager<ActividadEconomica> actividadEconomicaManager,
@@ -194,6 +194,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			_empresaManager = empresaManager;
 			_bancoEmpresaManager = bancoEmpresaManager;
 			_archivoEmpresaManager = archivoEmpresaManager;
+			_perfilManager = perfilManager;
 			_origenManager = origenManager;
 			_nivelManager = nivelManager;
 			_actividadesEconomicasEmpresaManager = actividadesEconomicasEmpresaManager;
@@ -207,7 +208,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			InputImportar = new ImportarModel();
 		}
 
-        private async Task<string> GetDatosAdicionalesEmpresa(int idEmpresa)
+        private async Task<string> getDatosAdicionalesEmpresa(int idEmpresa)
         {
             string jsonResponse = string.Empty;
             Empresa? e = await _empresaManager.GetByIdWithAdicionalesAsync(idEmpresa);
@@ -262,7 +263,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					"{" +
 						$"\"id\": {e.Id}," +
 						$"\"razonSocial\": \"{e.RazonSocial}\", " +
-						$"\"origenId\": \"{e.OrigenId}\", " +
+                        $"\"perfilId\": \"{e.PerfilId}\", " +
+                        $"\"origenId\": \"{e.OrigenId}\", " +
 						$"\"origen\": \"{nombreOrigen}\", " +
 						$"\"nivelId\": \"{e.NivelId}\", " +
 						$"\"nivel\": \"{nombreNivel}\", " +
@@ -430,7 +432,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
             ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpresaConsultadaUnsuccessfully"]);
             try
             {
-                resp.Datos = await GetDatosAdicionalesEmpresa(idEmpresa);
+                resp.Datos = await getDatosAdicionalesEmpresa(idEmpresa);
                 resp.TieneError = false;
                 resp.Mensaje = _strLocalizer["EmpresaConsultadaSuccessfully"];
             }
@@ -557,10 +559,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				if (empresa == null) { empresa = await _empresaManager.GetByRFCAsync(e.RFC ?? string.Empty); }
 
 				//Si se encontró empresa, obtiene su Id del registro existente. De lo contrario, se crea uno nuevo.
-				if (empresa != null) { idEmpresa = empresa.Id; } else { empresa = new Empresa(); }
+				if (empresa != null && empresa.RazonSocial == e.RazonSocial) { idEmpresa = empresa.Id; } else { empresa = new Empresa(); }
 
 				//Llena los datos de la empresa.
 				empresa.RazonSocial = e.RazonSocial;
+				empresa.PerfilId = e.PerfilId;
 				empresa.OrigenId = e.OrigenId;
 				empresa.NivelId = e.NivelId;
 				empresa.FechaConstitucion = e.FechaConstitucion;
@@ -578,13 +581,15 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				empresa.Telefono = e.Telefono;
 				empresa.ObjetoSocial = e.ObjetoSocial;
 
-				//Los archivos actualizables serán aquellos que traigan imgSrc, pues significa que el usuario añadió el archivo en la vista.
-				List<ArchivoModel?> archivosActualizables = e.Archivos.Where(a => a?.imgSrc?.Length >= 1).ToList();
+				List<ArchivoModel?> archivosActualizables;
 
-                if (idEmpresa >= 1)
+				if (idEmpresa >= 1)
 				{
-					//Si la empresa ya existía, la actualiza.
-					await _empresaManager.UpdateAsync(empresa);
+                    //Si la empresa ya existe, los archivos actualizables serán aquellos que traigan imgSrc, pues significa que el usuario añadió el archivo en la vista.
+                    archivosActualizables = e.Archivos.Where(a => a?.imgSrc?.Length >= 1).ToList();
+
+                    //Si la empresa ya existía, la actualiza.
+                    await _empresaManager.UpdateAsync(empresa);
 
 					//Elimina las actividades económicas de la empresa.
 					await _actividadesEconomicasEmpresaManager.DeleteByEmpresaIdAsync(idEmpresa);
@@ -602,8 +607,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				}
 				else
 				{
-					//De lo contrario, crea a la empresa y obtiene su id.
-					idEmpresa = await _empresaManager.CreateAsync(empresa);
+                    //Si la empresa es nueva, los archivos actualizables serán todos.
+                    archivosActualizables = e.Archivos.ToList();
+
+                    //De lo contrario, crea a la empresa y obtiene su id.
+                    idEmpresa = await _empresaManager.CreateAsync(empresa);
 				}
 
                 //Crea las actividades de la empresa
@@ -698,57 +706,79 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resp);
 		}
+		private string normalizePhrase(string s)
+		{
+            string[] parts = s.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+			List<string> normalizedPhrase = new List<string>();
+
+            foreach (string part in parts){ normalizedPhrase.Add(part.Trim()); }
+
+            return string.Join(" ", normalizedPhrase);
+		}
 		private async Task<string> CreateCompanyFromExcelRow(DataRow row)
         {
             string validationMsg = string.Empty;
 
-            Origen? origen = await _origenManager.GetByNameAsync(row[1].ToString()?.Trim() ?? string.Empty);
-            Nivel? nivel = await _nivelManager.GetByNameAsync(row[2].ToString()?.Trim() ?? string.Empty);
-            ActividadEconomica? actividadEconomica = await _actividadEconomicaManager.GetByNameAsync(row[16].ToString()?.Trim() ?? string.Empty);
+			Perfil? perfil = await _perfilManager.GetByNameAsync(row[1].ToString()?.Trim() ?? string.Empty);
+            Origen? origen = await _origenManager.GetByNameAsync(row[2].ToString()?.Trim() ?? string.Empty);
+            Nivel? nivel = await _nivelManager.GetByNameAsync(row[3].ToString()?.Trim() ?? string.Empty);
+
+			string actividadesEconomicas = row[17].ToString()?.Trim() ?? string.Empty;
+			string[] actividades = actividadesEconomicas.Split((char)10, StringSplitOptions.RemoveEmptyEntries);
+
+			List<int?> listActividades = new List<int?>();
+            foreach (string item in actividades)
+            {
+				string phrase = normalizePhrase(item);
+				ActividadEconomica? actividadEconomica = await _actividadEconomicaManager.GetByNameAsync(phrase);
+				if(actividadEconomica != null) { listActividades.Add(actividadEconomica.Id); } else { _logger.LogDebug($"Actividad económica {phrase} no encontrada de la empresa {row[0].ToString()?.Trim() ?? string.Empty}"); }
+            }
+
 
 			DateTime fc;
-			DateTime.TryParse(row[3].ToString()?.Trim(), out fc);
+			DateTime.TryParse(row[4].ToString()?.Trim(), out fc);
 			DateTime fio;
-            DateTime.TryParse(row[4].ToString()?.Trim(), out fio);
+            DateTime.TryParse(row[5].ToString()?.Trim(), out fio);
 			DateTime fif;
-			DateTime.TryParse(row[5].ToString()?.Trim(), out fif);
+			DateTime.TryParse(row[6].ToString()?.Trim(), out fif);
 			DateTime fia;
-			DateTime.TryParse(row[6].ToString()?.Trim(), out fia);
+			DateTime.TryParse(row[7].ToString()?.Trim(), out fia);
 
 			EmpresaModel e = new EmpresaModel() {
 				RazonSocial = row[0].ToString()?.Trim() ?? string.Empty,
+				PerfilId = perfil != null ? perfil.Id : null,
 				OrigenId = origen != null ? origen.Id : null,
 				NivelId = nivel != null ? nivel.Id : null,
 				FechaConstitucion = fc,
 				FechaInicioOperacion = fio,
 				FechaInicioFacturacion = fif,
 				FechaInicioAsimilados = fia,
-				RFC = row[7].ToString()?.Trim() ?? string.Empty,
-				DomicilioFiscal = row[8].ToString()?.Trim() ?? string.Empty,
-				Administrador = row[9].ToString()?.Trim() ?? string.Empty,
-				Accionista = row[10].ToString()?.Trim() ?? string.Empty,
-				CorreoGeneral = row[11].ToString()?.Trim() ?? string.Empty,
-				CorreoBancos = row[12].ToString()?.Trim() ?? string.Empty,
-				CorreoFiscal = row[13].ToString()?.Trim() ?? string.Empty,
-				CorreoFacturacion = row[14].ToString()?.Trim() ?? string.Empty,
-				Telefono = row[15].ToString()?.Trim() ?? string.Empty,
-				ActividadEconomicaId = actividadEconomica != null ? actividadEconomica.Id : null,
-				ObjetoSocial = row[17].ToString()?.Trim() ?? string.Empty
+				RFC = row[8].ToString()?.Trim() ?? string.Empty,
+				DomicilioFiscal = row[9].ToString()?.Trim() ?? string.Empty,
+				Administrador = row[10].ToString()?.Trim() ?? string.Empty,
+				Accionista = row[11].ToString()?.Trim() ?? string.Empty,
+				CorreoGeneral = row[12].ToString()?.Trim() ?? string.Empty,
+				CorreoBancos = row[13].ToString()?.Trim() ?? string.Empty,
+				CorreoFiscal = row[14].ToString()?.Trim() ?? string.Empty,
+				CorreoFacturacion = row[15].ToString()?.Trim() ?? string.Empty,
+				Telefono = row[16].ToString()?.Trim() ?? string.Empty,
+				ActividadesEconomicas = listActividades.ToArray(),
+                ObjetoSocial = row[18].ToString()?.Trim() ?? string.Empty
 			};
 
 			e.ObjetoSocial = jsonEscape(e.ObjetoSocial);
 
 			List<BancoModel> bancos = new List<BancoModel>();
 			//Si existe banco 1, agrega uno al listado.
-			if (row[18].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[18].ToString()?.Trim() ?? string.Empty, Responsable = row[19].ToString()?.Trim() ?? string.Empty, Firmante = row[20].ToString()?.Trim() ?? string.Empty }); }
+			if ((row[19].ToString()?.Trim() ?? string.Empty).Length >= 1) { bancos.Add(new BancoModel() { Banco = row[19].ToString()?.Trim() ?? string.Empty, Responsable = row[20].ToString()?.Trim() ?? string.Empty, Firmante = row[21].ToString()?.Trim() ?? string.Empty }); }
 			//Si existe banco 2, agrega uno al listado.
-			if (row[21].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[21].ToString()?.Trim() ?? string.Empty, Responsable = row[22].ToString()?.Trim() ?? string.Empty, Firmante = row[23].ToString()?.Trim() ?? string.Empty }); }
+			if ((row[22].ToString()?.Trim() ?? string.Empty).Length >= 1) { bancos.Add(new BancoModel() { Banco = row[22].ToString()?.Trim() ?? string.Empty, Responsable = row[23].ToString()?.Trim() ?? string.Empty, Firmante = row[24].ToString()?.Trim() ?? string.Empty }); }
 			//Si existe banco 3, agrega uno al listado.
-			if (row[24].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[24].ToString()?.Trim() ?? string.Empty, Responsable = row[25].ToString()?.Trim() ?? string.Empty, Firmante = row[26].ToString()?.Trim() ?? string.Empty }); }
+			if ((row[25].ToString()?.Trim() ?? string.Empty).Length >= 1) { bancos.Add(new BancoModel() { Banco = row[25].ToString()?.Trim() ?? string.Empty, Responsable = row[26].ToString()?.Trim() ?? string.Empty, Firmante = row[27].ToString()?.Trim() ?? string.Empty }); }
 			//Si existe banco 4, agrega uno al listado.
-			if (row[27].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[27].ToString()?.Trim() ?? string.Empty, Responsable = row[28].ToString()?.Trim() ?? string.Empty, Firmante = row[29].ToString()?.Trim() ?? string.Empty }); }
+			if ((row[28].ToString()?.Trim() ?? string.Empty).Length >= 1) { bancos.Add(new BancoModel() { Banco = row[28].ToString()?.Trim() ?? string.Empty, Responsable = row[29].ToString()?.Trim() ?? string.Empty, Firmante = row[30].ToString()?.Trim() ?? string.Empty }); }
 			//Si existe banco 5, agrega uno al listado.
-			if (row[30].ToString()?.Length >= 1) { bancos.Add(new BancoModel() { Banco = row[30].ToString()?.Trim() ?? string.Empty, Responsable = row[31].ToString()?.Trim() ?? string.Empty, Firmante = row[32].ToString()?.Trim() ?? string.Empty }); }
+			if ((row[31].ToString()?.Trim() ?? string.Empty).Length >= 1) { bancos.Add(new BancoModel() { Banco = row[31].ToString()?.Trim() ?? string.Empty, Responsable = row[32].ToString()?.Trim() ?? string.Empty, Firmante = row[33].ToString()?.Trim() ?? string.Empty }); }
 
 			e.Bancos = bancos.ToArray();
 

@@ -141,8 +141,7 @@ function onAgregarClick() {
         correoFiscal: "",
         correoFacturacion: "",
         telefono: "",
-        actividadEconomicaId: 0,
-        actividadEconomica: "",
+        actividadesEconomicas: [],
         objetoSocial: "",
         perfilId: 0,
         perfil: "",
@@ -358,7 +357,6 @@ function initEmpresaDialog(action, row) {
     let correoFiscalField = document.getElementById("inpEmpresaCorreoFiscal");
     let correoFacturacionField = document.getElementById("inpEmpresaCorreoFacturacion");
     let telefonoField = document.getElementById("inpEmpresaTelefono");
-    let actividadEconomicaField = document.getElementById("inpEmpresaActividadEconomica");
     let objetoSocialField = document.getElementById("txtEmpresaObjetoSocial");
     let perfilField = document.getElementById("selEmpresaPerfil");
 
@@ -381,8 +379,6 @@ function initEmpresaDialog(action, row) {
     correoFiscalField.value = row.correoFiscal;
     correoFacturacionField.value = row.correoFacturacion;
     telefonoField.value = row.telefono;
-    actividadEconomicaField.setAttribute('idselected', row.actividadEconomicaId);
-    actividadEconomicaField.value = row.actividadEconomica;
     objetoSocialField.value = row.objetoSocial;
     perfilField.value = row.perfilId;
 
@@ -414,6 +410,7 @@ function initEmpresaDialog(action, row) {
             if (typeof resp.datos == "string" && resp.datos.length >= 1) { resp.datos = JSON.parse(resp.datos); };
             row.bancos = resp.datos.bancos || [];
             row.archivos = resp.datos.archivos || [];
+            row.actividadesEconomicas = resp.datos.actividadesEconomicas || [];
             row.hasDatosAdicionales = true;
 
             //Actualiza el row para no tener que volver a obtener los datos la próxima vez.
@@ -462,6 +459,11 @@ function prepareForm(action) {
 }
 //Función para establecer los datos adicionales de la empresa
 function establecerDatosAdicionales(row, action) {
+    //Se establecen las actividades económicas
+    $("#listActividades").html("");
+    row.actividadesEconomicas = row.actividadesEconomicas || [];
+    row.actividadesEconomicas.forEach(function (a) { agregarActividad(a.id, a.clave, a.nombre); });
+
     //Se establecen los bancos
     $("#bodyBancos").html("");
     row.bancos = row.bancos || [];
@@ -725,7 +727,6 @@ function onGuardarClick() {
     let correoFiscalField = document.getElementById("inpEmpresaCorreoFiscal");
     let correoFacturacionField = document.getElementById("inpEmpresaCorreoFacturacion");
     let telefonoField = document.getElementById("inpEmpresaTelefono");
-    let actividadEconomicaField = document.getElementById("inpEmpresaActividadEconomica");
     let objetoSocialField = document.getElementById("txtEmpresaObjetoSocial");
     let perfilField = document.getElementById("selEmpresaPerfil");
 
@@ -737,7 +738,7 @@ function onGuardarClick() {
     $("#listActividades li").each(function (i, a) {
         let id = a.getAttribute("id");
 
-        banks.push({id: id});
+        activities.push({ id: id });
     });
 
     let banks = [];

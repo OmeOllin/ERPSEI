@@ -23,9 +23,9 @@ namespace ERPSEI.Data.Entities.Empresas
 
         public DateTime? FechaInicioAsimilados { get; set; } = DateTime.MinValue;
 
-        public string RFC {  get; set; } = string.Empty;
+        public string? RFC {  get; set; } = string.Empty;
 
-		public string DomicilioFiscal { get; set; } = string.Empty;
+		public string? DomicilioFiscal { get; set; } = string.Empty;
 
 		public string? Administrador { get; set; } = string.Empty;
 
