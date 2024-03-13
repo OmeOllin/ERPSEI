@@ -331,14 +331,14 @@
 										</div>
 										<div class="row mb-3">
 											<h6 class="col-12"><i>@Localizer["ActividadEconomicaPlaceholder"]</i></h6>
-											<div class="col-11">
+											<div class="col-10 col-lg-11 col-xl-11">
 												<div class="form-floating ui-front">
 													<input id="inpEmpresaActividadEconomica" type="search" asp-for="InputEmpresa.ActividadEconomicaId" class="form-control formInput" placeholder="@Localizer["ActividadEconomicaPlaceholder"]" idselected='' area="Catalogos" module="Empresas" source="GetActividadesEconomicasSuggestion" />
 													<label for="inpEmpresaActividadEconomica" asp-for="InputEmpresa.ActividadEconomicaId" class="form-label"></label>
 													<span asp-validation-for="InputEmpresa.ActividadEconomicaId" class="text-danger"></span>
 												</div>
 											</div>
-											<div class="col-1 d-flex align-items-center">
+											<div class="col-1 d-flex align-items-center col-2 col-lg-1 col-xl-1">
 												<button id="dlgEmpresaBtnAgregarActividad" type="button" class="btn btn-primary disabled" onclick="onAgregarActividadClick();">
 													<i class="bi bi-plus-lg"></i>
 												</button>
