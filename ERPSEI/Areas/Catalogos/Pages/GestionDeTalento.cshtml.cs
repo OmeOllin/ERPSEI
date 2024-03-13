@@ -675,11 +675,13 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				empleado.RFC = e.RFC ?? string.Empty;
 				empleado.NSS = e.NSS ?? string.Empty;
 
-                //Los archivos actualizables serán aquellos que traigan imgSrc, pues significa que el usuario añadió el archivo en la vista.
-                List<ArchivoModel?> archivosActualizables = e.Archivos.Where(a => a?.imgSrc?.Length >= 1).ToList();
+				List<ArchivoModel?> archivosActualizables;
 
                 if (idEmpleado >= 1)
 				{
+					//Si existe el empleado, los archivos actualizables serán aquellos que traigan imgSrc, pues significa que el usuario añadió el archivo en la vista.
+					archivosActualizables = e.Archivos.Where(a => a?.imgSrc?.Length >= 1).ToList();
+
 					//Si el empleado ya existía, lo actualiza.
 					await _empleadoManager.UpdateAsync(empleado);
 
@@ -696,8 +698,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				}
 				else
 				{
-					//De lo contrario, crea al empleado y obtiene su id.
-					idEmpleado = await _empleadoManager.CreateAsync(empleado);
+                    //Si no existe el empleado, los archivos actualizables serán todos.
+                    archivosActualizables = e.Archivos.ToList();
+
+                    //De lo contrario, crea al empleado y obtiene su id.
+                    idEmpleado = await _empleadoManager.CreateAsync(empleado);
 				}
 
 				//Crea dos nuevos contactos para el empleado.
