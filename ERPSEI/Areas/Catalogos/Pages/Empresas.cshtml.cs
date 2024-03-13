@@ -501,10 +501,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			try
 			{
 				//Valida que no exista una empresa registrada con los mismos datos. En caso de haber, se deja el mensaje en resp.Mensajes para ser mostrado al usuario.
-				resp.Mensaje = await validarSiExisteEmpresa(InputEmpresa, false);
+				string validacion = await validarSiExisteEmpresa(InputEmpresa, false);
 
 				//Si la longitud del mensaje de respuesta es menor o igual a cero, se considera que no hubo errores anteriores.
-				if ((resp.Mensaje ?? "").Length <= 0)
+				if ((validacion ?? string.Empty).Length <= 0)
 				{
 					//Procede a crear o actualizar la empresa.
 					await createOrUpdateCompany(InputEmpresa);
@@ -512,6 +512,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					resp.TieneError = false;
 					resp.Mensaje = _strLocalizer["EmpresaSavedSuccessfully"];
 				}
+				else
+				{
+					resp.Mensaje = validacion;
+			}
 			}
 			catch (Exception ex)
 			{

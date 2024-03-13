@@ -584,16 +584,20 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			try
 			{
 				//Valida que no exista un empleado registrado con los mismos datos. En caso de haber, se deja el mensaje en resp.Mensajes para ser mostrado al usuario.
-				resp.Mensaje = await validarSiExisteEmpleado(InputEmpleado, false);
+				string validacion = await validarSiExisteEmpleado(InputEmpleado, false);
 
 				//Si la longitud del mensaje de respuesta es menor o igual a cero, se considera que no hubo errores anteriores.
-				if ((resp.Mensaje ?? "").Length <= 0)
+				if ((validacion ?? string.Empty).Length <= 0)
 				{
 					//Procede a crear o actualizar el empleado.
 					await createOrUpdateEmployee(InputEmpleado);
 
 					resp.TieneError = false;
 					resp.Mensaje = _strLocalizer["EmpleadoSavedSuccessfully"];
+				}
+				else
+				{
+					resp.Mensaje = validacion;
 				}
 			}
 			catch (Exception ex)
