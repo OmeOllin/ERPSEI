@@ -619,13 +619,13 @@ function establecerDatosAdicionales(row, action) {
                 `<div class="col-12 col-xl-6">
                     <div><b>${arrTiposDocumentos[a.tipoArchivoId]}</b></div>
                     <div id="container${a.tipoArchivoId}" class="alert mb-2 mt-2 ${containerClass} row me-0">
-                        <div id="fileIcon${a.tipoArchivoId}" class="align-self-center col-1 ${iconClass}"><i class='bi bi-file-image' style='font-size:25px'></i></div>
+                        <div id="fileIcon${a.tipoArchivoId}" class="align-self-center col-1 ${iconClass} p-0 p-lg-2 p-xl-2"><i class='bi bi-file-image' style='font-size:25px'></i></div>
                         <div id="fileName${a.tipoArchivoId}" class="align-self-center col-10 ${nameClass} p-2" style="display:flex; color:dimgray">${nameHTML}</div>
                         <div class="align-self-center col-1">
                             <input type="file" id="selector${a.tipoArchivoId}" sourceId="${a.id}" sourceName="${a.nombre}.${a.extension}" sourceLength="${a.fileSize}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
                             <div class="dropdown">
-                                <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-three-dots-vertical success"></i>
+                                <button class="btn p-0 p-lg-2 p-xl-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots-vertical success"></i>
                                 </button>
                                 <ul class="dropdown-menu">
                                     ${itemVerHTML}

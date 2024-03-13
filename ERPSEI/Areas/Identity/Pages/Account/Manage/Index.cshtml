@@ -223,7 +223,7 @@
                 <div class="col-12 col-xl-6">
                     <div><b>@Localizer[enumName]</b></div>
                     <div id="container{@fd.TypeId}" class="alert mb-2 mt-2 @containerClass row me-0">
-                        <div id="fileIcon{@fd.TypeId}" class="align-self-center col-1 @iconClass"><i class='bi bi-file-image' style='font-size:25px'></i></div>
+                        <div id="fileIcon{@fd.TypeId}" class="align-self-center col-1 p-0 p-lg-2 p-xl-2 @iconClass"><i class='bi bi-file-image' style='font-size:25px'></i></div>
                         <div id="fileName{@fd.TypeId}" class="align-self-center col-10 @nameClass p-2" style="display:flex; color:dimgray">@Html.Raw(fileName)</div>
                         <div class="align-self-center col-1">
                             <input type="hidden" name="FilesFromGet.Index" value="@fd.FileId" />
@@ -232,8 +232,8 @@
                             <input type="hidden" name="FilesFromGet[@fd.FileId].FileSize" value="@fd.FileSize" />
                             <input name="FilesFromGet[@fd.FileId].File" type="file" id="selector{@fd.TypeId}" sourceName="@fd.FileId" sourceLength="@fd.FileSize" tipoArchivoId="@fd.TypeId" containerName="container{@fd.TypeId}" fileIconName="fileIcon{@fd.TypeId}" fileNameName="fileName{@fd.TypeId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
                             <div class="dropdown">
-                                <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-three-dots-vertical success"></i>
+                                <button class="btn p-0 p-lg-2 p-xl-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots-vertical success"></i>
                                 </button>
                                 <ul class="dropdown-menu">
                                     @if(fd.FileSize >= 1)
