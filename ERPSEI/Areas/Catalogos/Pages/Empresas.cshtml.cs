@@ -261,6 +261,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 				e.ObjetoSocial = jsonEscape(e.ObjetoSocial??string.Empty);
 
+				DateTime? fechaConstitucion = e.FechaConstitucion == DateTime.MinValue ? null : e.FechaConstitucion;
+				DateTime? fechaInicioOperacion = e.FechaInicioOperacion == DateTime.MinValue ? null : e.FechaInicioOperacion;
+				DateTime? fechaInicioFacturacion = e.FechaInicioFacturacion == DateTime.MinValue ? null : e.FechaInicioFacturacion;
+				DateTime? fechaInicioAsimilados = e.FechaInicioAsimilados == DateTime.MinValue ? null : e.FechaInicioAsimilados;
+
 				jsonEmpresas.Add(
 					"{" +
 						$"\"id\": {e.Id}," +
@@ -271,14 +276,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						$"\"origen\": \"{nombreOrigen}\", " +
 						$"\"nivelId\": \"{e.NivelId}\", " +
 						$"\"nivel\": \"{nombreNivel}\", " +
-						$"\"fechaConstitucion\": \"{e.FechaConstitucion:dd/MM/yyyy}\", " +
-						$"\"fechaConstitucionJS\": \"{e.FechaConstitucion:yyyy-MM-dd}\", " +
-						$"\"fechaInicioOperacion\": \"{e.FechaInicioOperacion:dd/MM/yyyy}\", " +
-						$"\"fechaInicioOperacionJS\": \"{e.FechaInicioOperacion:yyyy-MM-dd}\", " +
-						$"\"fechaInicioFacturacion\": \"{e.FechaInicioFacturacion:dd/MM/yyyy}\", " +
-						$"\"fechaInicioFacturacionJS\": \"{e.FechaInicioFacturacion:yyyy-MM-dd}\", " +
-						$"\"fechaInicioAsimilados\": \"{e.FechaInicioAsimilados:dd/MM/yyyy}\", " +
-						$"\"fechaInicioAsimiladosJS\": \"{e.FechaInicioAsimilados:yyyy-MM-dd}\", " +
+						$"\"fechaConstitucion\": \"{fechaConstitucion:dd/MM/yyyy}\", " +
+						$"\"fechaConstitucionJS\": \"{fechaConstitucion:yyyy-MM-dd}\", " +
+						$"\"fechaInicioOperacion\": \"{fechaInicioOperacion:dd/MM/yyyy}\", " +
+						$"\"fechaInicioOperacionJS\": \"{fechaInicioOperacion:yyyy-MM-dd}\", " +
+						$"\"fechaInicioFacturacion\": \"{fechaInicioFacturacion:dd/MM/yyyy}\", " +
+						$"\"fechaInicioFacturacionJS\": \"{fechaInicioFacturacion:yyyy-MM-dd}\", " +
+						$"\"fechaInicioAsimilados\": \"{fechaInicioAsimilados:dd/MM/yyyy}\", " +
+						$"\"fechaInicioAsimiladosJS\": \"{fechaInicioAsimilados:yyyy-MM-dd}\", " +
 						$"\"rfc\": \"{e.RFC}\", " +
 						$"\"domicilioFiscal\": \"{e.DomicilioFiscal}\", " +
                         $"\"administrador\": \"{e.Administrador}\", " +

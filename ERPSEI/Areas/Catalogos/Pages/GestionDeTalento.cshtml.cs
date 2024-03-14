@@ -362,7 +362,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				AppUser? usuario = e.UserId != null && e.UserId.Length >= 1 ? await _userManager.FindByIdAsync(e.UserId) : null;
 				usuarioConfirmado = usuario != null && usuario.EmailConfirmed;
 
-					jsonEmpleados.Add(
+				DateTime? fechaIngreso = e.FechaIngreso == DateTime.MinValue ? null : e.FechaIngreso;
+				DateTime? fechaNacimiento = e.FechaNacimiento == DateTime.MinValue ? null : e.FechaNacimiento;
+
+				jsonEmpleados.Add(
 					"{" +
 						$"\"id\": {e.Id}," +
 						$"\"nombre\": \"{e.Nombre}\", " +
@@ -370,10 +373,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						$"\"apellidoPaterno\": \"{e.ApellidoPaterno}\", " +
 						$"\"apellidoMaterno\": \"{e.ApellidoMaterno}\", " +
 						$"\"nombreCompleto\": \"{e.NombreCompleto}\", " +
-						$"\"fechaIngreso\": \"{e.FechaIngreso:dd/MM/yyyy}\", " +
-						$"\"fechaIngresoJS\": \"{e.FechaIngreso:yyyy-MM-dd}\", " +
-						$"\"fechaNacimiento\": \"{e.FechaNacimiento:dd/MM/yyyy}\", " +
-						$"\"fechaNacimientoJS\": \"{e.FechaNacimiento:yyyy-MM-dd}\", " +
+						$"\"fechaIngreso\": \"{fechaIngreso:dd/MM/yyyy}\", " +
+						$"\"fechaIngresoJS\": \"{fechaIngreso:yyyy-MM-dd}\", " +
+						$"\"fechaNacimiento\": \"{fechaNacimiento:dd/MM/yyyy}\", " +
+						$"\"fechaNacimientoJS\": \"{fechaNacimiento:yyyy-MM-dd}\", " +
 						$"\"direccion\": \"{e.Direccion.Trim()}\", " +
 						$"\"telefono\": \"{e.Telefono}\", " +
 						$"\"email\": \"{e.Email}\", " +
