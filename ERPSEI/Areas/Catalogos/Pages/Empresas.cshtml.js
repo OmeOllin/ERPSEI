@@ -305,6 +305,7 @@ function onBuscarClick() {
     //Resetea el valor de los filtros.
     document.querySelectorAll("#filtros .form-control").forEach(function (e) { e.value = ""; });
     document.querySelectorAll("#filtros .form-select").forEach(function (e) { e.value = 0; });
+    inpActividadEconomica.setAttribute("idselected", 0);
 
     doAjax(
         "/Catalogos/Empresas/FiltrarEmpresas",
