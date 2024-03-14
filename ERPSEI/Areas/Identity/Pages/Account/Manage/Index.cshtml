@@ -238,9 +238,9 @@
                                 <ul class="dropdown-menu">
                                     @if(fd.FileSize >= 1)
                                     {
-                                        <li><a class='dropdown-item disableable' asp-page="/FileViewer" asp-route-id="@fd.FileId" asp-route-module="perfil" target="_blank" inputName="selector{@fd.TypeId}"><i class='bi bi-search'></i> @Localizer["BtnVerTitle"]</a></li>
+                                        <li><a class='dropdown-item see disableable' asp-page="/FileViewer" asp-route-id="@fd.FileId" asp-route-module="perfil" target="_blank" inputName="selector{@fd.TypeId}"><i class='bi bi-search'></i> @Localizer["BtnVerTitle"]</a></li>
                                     }
-                                    <li><a class='dropdown-item' onclick='onEditDocumentClick(this);' inputName="selector{@fd.TypeId}"><i class='bi bi-pencil-fill'></i> @Localizer["BtnEditarTitle"]</a></li>
+                                    <li><a class='dropdown-item edit' onclick='onEditDocumentClick(this);' inputName="selector{@fd.TypeId}"><i class='bi bi-pencil-fill'></i> @Localizer["BtnEditarTitle"]</a></li>
                                     <li><a class="dropdown-item disableable" inputName="selector{@fd.TypeId}" onclick="onDeleteClick(this);" sourceId="selector{@fd.TypeId}" sourceLength="@fd.FileSize"><i class="bi bi-x-lg"></i> @Localizer["BtnEliminarTitle"]</a></li>
                                 </ul>
                             </div>

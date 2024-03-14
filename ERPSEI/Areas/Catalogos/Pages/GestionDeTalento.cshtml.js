@@ -615,7 +615,7 @@ function establecerDatosAdicionales(row, action) {
                 iconClass = "document-icon-filled";
                 nameClass = "document-name-filled";
                 nameHTML = `<div class="overflowed-text">${a.nombre}</div>.<div>${a.extension}</div>`;
-                itemVerHTML = `<li><a class='dropdown-item' onclick='onVerDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-search'></i> ${btnVerTitle}</a></li>`;
+                itemVerHTML = `<li><a class='dropdown-item see' onclick='onVerDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-search'></i> ${btnVerTitle}</a></li>`;
             }
 
             $("#bodyArchivos").append(
@@ -632,7 +632,7 @@ function establecerDatosAdicionales(row, action) {
                                 </button>
                                 <ul class="dropdown-menu">
                                     ${itemVerHTML}
-                                    <li><a class='dropdown-item ${editDisabled}' onclick='onEditDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-pencil-fill'></i> ${btnEditarTitle}</a></li>
+                                    <li><a class='dropdown-item edit ${editDisabled}' onclick='onEditDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-pencil-fill'></i> ${btnEditarTitle}</a></li>
                                     <li><a class="dropdown-item disableable" inputName="selector${a.tipoArchivoId}" onclick="onDeleteClick(this);" sourceId="selector${a.tipoArchivoId}" sourceLength="${a.fileSize}"><i class="bi bi-x-lg"></i> ${btnEliminarTitle}</a></li>
                                 </ul>
                             </div>
@@ -692,6 +692,10 @@ function onDeleteClick(button) {
         let container = document.getElementById(containerName);
         let fileIcon = document.getElementById(fileIconName);
         let fileName = document.getElementById(fileNameName);
+
+        //Se elimina menú para ver el documento.
+        let menuVer = document.querySelector(`a.dropdown-item.see[inputName='${inputName}']`);
+        if (menuVer != null) { menuVer.parentElement.remove(); }
 
         fileInput.value = null;
         fileInput.setAttribute("b64", "");
@@ -782,6 +786,11 @@ function onDocumentSelectorChanged(input) {
                 input.setAttribute("b64", window.btoa(binary));
                 input.setAttribute("sourceLength", "0");
                 input.setAttribute("actualizar", "1");
+
+                //Se elimina menú para ver el documento, en caso de haber uno anterior.
+                let inputName = input.getAttribute("id");
+                let menuVer = document.querySelector(`a.dropdown-item.see[inputName='${inputName}']`);
+                if (menuVer != null) { menuVer.parentElement.remove(); }
 
                 initializeDisableableButtons();
             }

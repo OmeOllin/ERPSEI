@@ -81,6 +81,11 @@ function onDocumentSelectorChanged(input) {
                 input.setAttribute("b64", window.btoa(binary));
                 input.setAttribute("sourceLength", "0");
 
+                //Se elimina menú para ver el documento, en caso de haber uno anterior.
+                let inputName = input.getAttribute("id");
+                let menuVer = document.querySelector(`a.dropdown-item.see[inputName='${inputName}']`);
+                if (menuVer != null) { menuVer.parentElement.remove(); }
+
                 initializeDisableableButtons();
             }
             reader.readAsArrayBuffer(input.files[0]);
@@ -141,6 +146,10 @@ function onDeleteClick(button) {
         let fileIcon = document.getElementById(fileIconName);
         let fileName = document.getElementById(fileNameName);
         let fileSizeInput = document.querySelector(`input[name='FilesFromGet[${sourceName}].FileSize']`);
+
+        //Se elimina menú para ver el documento.
+        let menuVer = document.querySelector(`a.dropdown-item.see[inputName='${sourceId}']`);
+        if (menuVer != null) { menuVer.parentElement.remove(); }
 
         fileInput.value = null;
         fileInput.setAttribute("b64", "");
