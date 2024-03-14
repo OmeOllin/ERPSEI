@@ -1,7 +1,6 @@
 using ERPSEI.Data;
 using ERPSEI.Data.Entities;
 using ERPSEI.Data.Entities.Empleados;
-using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Managers;
 using ERPSEI.Email;
 using ERPSEI.Requests;

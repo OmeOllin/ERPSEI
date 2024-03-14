@@ -735,6 +735,7 @@ function onProfilePicSelectorChanged(input) {
                 }
                 document.getElementById("profilePicSelector").setAttribute("b64", window.btoa(binary));
                 document.getElementById("profilePicSelector").setAttribute("sourceLength", "0");
+                document.getElementById("profilePicSelector").setAttribute("actualizar", "1");
             }
             reader.readAsArrayBuffer(input.files[0]);
         }
