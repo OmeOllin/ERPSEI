@@ -17,5 +17,7 @@ namespace ERPSEI.Data.Managers.Empresas
 
         public Task<Empresa?> GetByRFCAsync(string rfc);
 
-    }
+        public Task<List<EmpresaBuscada>> SearchEmpresas(string texto);
+
+	}
 }

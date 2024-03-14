@@ -153,5 +153,26 @@ namespace ERPSEI.Data.Managers.Empresas
             return await db.Empresas.Where(e => e.RazonSocial.ToLower() == razonSocial.ToLower()).FirstOrDefaultAsync();
         }
 
-    }
+		public async Task<List<EmpresaBuscada>> SearchEmpresas(string texto)
+		{
+			string sql = $"SELECT TOP (20) " +
+                            $"Empresas.Id, " +
+                            $"Empresas.RazonSocial, " +
+                            $"Origenes.Nombre AS Origen, " +
+                            $"Niveles.Nombre AS Nivel, " +
+                            $"Empresas.RFC, " +
+                            $"Empresas.DomicilioFiscal, " +
+                            $"Perfiles.Nombre AS Perfil, " +
+                            $"Empresas.ObjetoSocial " +
+                         $"FROM Empresas " +
+						 $"LEFT JOIN Origenes ON Empresas.OrigenId = Origenes.Id " +
+						 $"LEFT JOIN Niveles ON Empresas.NivelId = Niveles.Id " +
+                         $"LEFT JOIN Perfiles ON Empresas.PerfilId = Perfiles.Id " +
+						 $"WHERE RazonSocial LIKE '%{texto}%' OR RFC LIKE '%{texto}%'";
+			List<EmpresaBuscada> emp = await db.Database.SqlQueryRaw<EmpresaBuscada>(sql).ToListAsync();
+
+			return emp;
+		}
+
+	}
 }

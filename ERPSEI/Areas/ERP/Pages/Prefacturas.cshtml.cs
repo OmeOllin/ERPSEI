@@ -71,13 +71,11 @@ namespace ERPSEI.Areas.ERP.Pages
 			string jsonResponse;
 			List<string> jsonEmpresas = new List<string>();
 
-			List<Empresa> empresas = await _empresaManager.GetAllAsync();
-			empresas = empresas.Where(e => e.RazonSocial.ToLowerInvariant().Contains(texto.ToLowerInvariant()) || e.RFC.ToLowerInvariant().Contains(texto.ToLowerInvariant())).Take(20).ToList();
+			List<EmpresaBuscada> empresas = await _empresaManager.SearchEmpresas(texto);
 
 			if (empresas != null)
 			{
-				int counter = 0;
-				foreach (Empresa e in empresas)
+				foreach (EmpresaBuscada e in empresas)
 				{
 					Empresa? emp = await _empresaManager.GetByIdWithAdicionalesAsync(e.Id);
 
@@ -85,7 +83,7 @@ namespace ERPSEI.Areas.ERP.Pages
 					if (idempresa >= 1 && e.Id == idempresa) { continue; }
 
 					e.ObjetoSocial = jsonEscape(e.ObjetoSocial ?? string.Empty);
-					List<string> jsonActividades = getListJsonActividades(e.ActividadesEconomicasEmpresa);
+					List<string> jsonActividades = getListJsonActividades(emp?.ActividadesEconomicasEmpresa);
 
 					jsonEmpresas.Add($"{{" +
 										$"\"id\": {e.Id}, " +
@@ -97,7 +95,6 @@ namespace ERPSEI.Areas.ERP.Pages
 										$"\"objetoSocial\": \"{e.ObjetoSocial}\", " +
 										$"\"domicilioFiscal\": \"{e.DomicilioFiscal}\"" +
 									$"}}");
-					counter++;
 				}
 			}
 
