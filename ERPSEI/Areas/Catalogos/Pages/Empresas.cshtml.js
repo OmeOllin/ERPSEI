@@ -749,9 +749,9 @@ function onGuardarClick() {
 
     let activities = [];
     $("#listActividades li").each(function (i, a) {
-        let id = a.getAttribute("id");
+        let id = parseInt(a.getAttribute("id")||"0");
 
-        activities.push({ id: id });
+        activities.push(id);
     });
 
     let banks = [];

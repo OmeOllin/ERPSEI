@@ -611,7 +611,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
                 //Crea las actividades de la empresa
                 foreach (int? id in e.ActividadesEconomicas)
                 {
-                    if(id != null)
+                    if(id.HasValue)
 					{
 						await _actividadesEconomicasEmpresaManager.CreateAsync(
 							new ActividadEconomicaEmpresa() { ActividadEconomicaId = id, EmpresaId = idEmpresa }
