@@ -26,7 +26,7 @@
 					<h4 class="title mb-3">@Localizer["Emisor"]</h4>
 				</div>
 			</div>
-			<div class="row mb-3">
+			<div class="row mb-5">
 				<div class="col-12">
 					<form id="emisor" method="post" onsubmit="return false;">
 						<div class="form-floating">
@@ -37,44 +37,77 @@
 				</div>
 			</div>
 			<div id="divFilledInfoEmisor" hidden>
-				<div class="row mb-3">
-					<div class="col-12 h6">
-						@Localizer["RFC"]
+				<ul class="nav nav-tabs nav-justified" role="tablist">
+					<li class="nav-item" role="presentation">
+						<button class="nav-link active" id="tabAEmisor" data-bs-toggle="tab" data-bs-target="#infoEmpresaEmisorTab" type="button" role="tab" aria-controls="infoEmpresaEmisorTab" aria-selected="true">@Localizer["InformacionEmpresarial"]</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="tabBEmisor" data-bs-toggle="tab" data-bs-target="#actividadEmpresaEmisorTab" type="button" role="tab" aria-controls="actividadEmpresaEmisorTab" aria-selected="false">@Localizer["ActividadEconomica"]</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="tabCEmisor" data-bs-toggle="tab" data-bs-target="#objetoEmpresaEmisorTab" type="button" role="tab" aria-controls="objetoEmpresaEmisorTab" aria-selected="false">@Localizer["ObjetoSocial"]</button>
+					</li>
+				</ul>
+				<div class="tab-content pt-4">
+					<div class="tab-pane fade show active" id="infoEmpresaEmisorTab" role="tabpanel" aria-labelledby="tabAEmisor" tabindex="0">
+						<div class="row mb-3">
+							<div class="col-4 h6">
+								@Localizer["RFC"]
+							</div>
+							<div class="col-4 h6">
+								@Localizer["Origen"]
+							</div>
+							<div class="col-4 h6">
+								@Localizer["Nivel"]
+							</div>
+							<div class="col-4">
+								<label id="lblRFCEmisor" class="form-label form-control"></label>
+							</div>
+							<div class="col-4">
+								<label id="lblOrigenEmisor" class="form-label form-control"></label>
+							</div>
+							<div class="col-4">
+								<label id="lblNivelEmisor" class="form-label form-control"></label>
+							</div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-12 h6">
+								@Localizer["RazonSocial"]
+							</div>
+							<div class="col-12">
+								<label id="lblRazonSocialEmisor" class="form-label form-control"></label>
+							</div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-12 h6">
+								@Localizer["Perfil"]
+							</div>
+							<div class="col-12">
+								<label id="lblPerfilEmisor" class="form-label form-control"></label>
+							</div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-12 h6">
+								@Localizer["DomicilioFiscal"]
+							</div>
+							<div class="col-12">
+								<label id="lblDomicilioFiscalEmisor" class="form-label form-control form-control"></label>
+							</div>
+						</div>
 					</div>
-					<div class="col-12">
-						<label id="lblRFCEmisor" class="form-label"></label>
+					<div class="tab-pane fade" id="actividadEmpresaEmisorTab" role="tabpanel" aria-labelledby="tabBEmisor" tabindex="0">
+						<div class="row mb-3">
+							<div class="col-12">
+								<label id="lblActividadEconomicaEmisor" class="form-label form-control"></label>
+							</div>
+						</div>
 					</div>
-				</div>
-				<div class="row mb-3">
-					<div class="col-12 h6">
-						@Localizer["RazonSocial"]
-					</div>
-					<div class="col-12">
-						<label id="lblRazonSocialEmisor" class="form-label"></label>
-					</div>
-				</div>
-				<div class="row mb-3">
-					<div class="col-12 h6">
-                        @Localizer["ObjetoSocial"]
-					</div>
-					<div class="col-12">
-						<label id="lblObjetoSocialEmisor" class="form-label"></label>
-					</div>
-				</div>
-				<div class="row mb-3">
-					<div class="col-12 h6">
-						@Localizer["ActividadEconomica"]
-					</div>
-					<div class="col-12">
-						<label id="lblActividadEconomicaEmisor" class="form-label"></label>
-					</div>
-				</div>
-				<div class="row mb-3">
-					<div class="col-12 h6">
-						@Localizer["DomicilioFiscal"]
-					</div>
-					<div class="col-12">
-						<label id="lblDomicilioFiscalEmisor" class="form-label"></label>
+					<div class="tab-pane fade" id="objetoEmpresaEmisorTab" role="tabpanel" aria-labelledby="tabCEmisor" tabindex="0">
+						<div class="row mb-3">
+							<div class="col-12">
+								<label id="lblObjetoSocialEmisor" class="form-label form-control"></label>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -94,7 +127,7 @@
 					<h4 class="title mb-3">@Localizer["Receptor"]</h4>
 				</div>
 			</div>
-			<div class="row mb-3">
+			<div class="row mb-5">
 				<div class="col-12">
 					<form id="receptor" method="post" onsubmit="return false;">
 						<div class="form-floating">
@@ -105,44 +138,77 @@
 				</div>
 			</div>
 			<div id="divFilledInfoReceptor" hidden>
-				<div class="row mb-3">
-					<div class="col-12 h6">
-						@Localizer["RFC"]
+				<ul class="nav nav-tabs nav-justified" role="tablist">
+					<li class="nav-item" role="presentation">
+						<button class="nav-link active" id="tabAReceptor" data-bs-toggle="tab" data-bs-target="#infoEmpresaReceptorTab" type="button" role="tab" aria-controls="infoEmpresaReceptorTab" aria-selected="true">@Localizer["InformacionEmpresarial"]</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="tabBReceptor" data-bs-toggle="tab" data-bs-target="#actividadEmpresaReceptorTab" type="button" role="tab" aria-controls="actividadEmpresaReceptorTab" aria-selected="false">@Localizer["ActividadEconomica"]</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="tabCReceptor" data-bs-toggle="tab" data-bs-target="#objetoEmpresaReceptorTab" type="button" role="tab" aria-controls="objetoEmpresaReceptorTab" aria-selected="false">@Localizer["ObjetoSocial"]</button>
+					</li>
+				</ul>
+				<div class="tab-content pt-4">
+					<div class="tab-pane fade show active" id="infoEmpresaReceptorTab" role="tabpanel" aria-labelledby="tabAReceptor" tabindex="0">
+						<div class="row mb-3">
+							<div class="col-4 h6">
+								@Localizer["RFC"]
+							</div>
+							<div class="col-4 h6">
+								@Localizer["Origen"]
+							</div>
+							<div class="col-4 h6">
+								@Localizer["Nivel"]
+							</div>
+							<div class="col-4">
+								<label id="lblRFCReceptor" class="form-label form-control"></label>
+							</div>
+							<div class="col-4">
+								<label id="lblOrigenReceptor" class="form-label form-control"></label>
+							</div>
+							<div class="col-4">
+								<label id="lblNivelReceptor" class="form-label form-control"></label>
+							</div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-12 h6">
+								@Localizer["RazonSocial"]
+							</div>
+							<div class="col-12">
+								<label id="lblRazonSocialReceptor" class="form-label form-control"></label>
+							</div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-12 h6">
+								@Localizer["Perfil"]
+							</div>
+							<div class="col-12">
+								<label id="lblPerfilReceptor" class="form-label form-control"></label>
+							</div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-12 h6">
+								@Localizer["DomicilioFiscal"]
+							</div>
+							<div class="col-12">
+								<label id="lblDomicilioFiscalReceptor" class="form-label form-control"></label>
+							</div>
+						</div>
 					</div>
-					<div class="col-12">
-						<label id="lblRFCReceptor" class="form-label"></label>
+					<div class="tab-pane fade" id="actividadEmpresaReceptorTab" role="tabpanel" aria-labelledby="tabBReceptor" tabindex="0">
+						<div class="row mb-3">
+							<div class="col-12">
+								<label id="lblActividadEconomicaReceptor" class="form-label form-control"></label>
+							</div>
+						</div>
 					</div>
-				</div>
-				<div class="row mb-3">
-					<div class="col-12 h6">
-						@Localizer["RazonSocial"]
-					</div>
-					<div class="col-12">
-						<label id="lblRazonSocialReceptor" class="form-label"></label>
-					</div>
-				</div>
-				<div class="row mb-3">
-					<div class="col-12 h6">
-						@Localizer["ObjetoSocial"]
-					</div>
-					<div class="col-12">
-						<label id="lblObjetoSocialReceptor" class="form-label"></label>
-					</div>
-				</div>
-				<div class="row mb-3">
-					<div class="col-12 h6">
-						@Localizer["ActividadEconomica"]
-					</div>
-					<div class="col-12">
-						<label id="lblActividadEconomicaReceptor" class="form-label"></label>
-					</div>
-				</div>
-				<div class="row mb-3">
-					<div class="col-12 h6">
-						@Localizer["DomicilioFiscal"]
-					</div>
-					<div class="col-12">
-						<label id="lblDomicilioFiscalReceptor" class="form-label"></label>
+					<div class="tab-pane fade" id="objetoEmpresaReceptorTab" role="tabpanel" aria-labelledby="tabCReceptor" tabindex="0">
+						<div class="row mb-3">
+							<div class="col-12">
+								<label id="lblObjetoSocialReceptor" class="form-label form-control"></label>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

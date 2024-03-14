@@ -93,6 +93,9 @@ namespace ERPSEI.Areas.ERP.Pages
 										$"\"razonSocial\": \"{e.RazonSocial}\", " +
 										$"\"actividadesEconomicas\": [{string.Join(",", jsonActividades)}], " +
 										$"\"objetoSocial\": \"{e.ObjetoSocial}\", " +
+										$"\"origen\": \"{e.Origen}\", " +
+										$"\"nivel\": \"{e.Nivel}\", " +
+										$"\"perfil\": \"{e.Perfil}\", " +
 										$"\"domicilioFiscal\": \"{e.DomicilioFiscal}\"" +
 									$"}}");
 				}

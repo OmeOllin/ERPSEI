@@ -24,16 +24,49 @@ function toggleEmisorInfo(item = null) {
 
     let lblRFC = document.getElementById("lblRFCEmisor");
     let lblRazonSocial = document.getElementById("lblRazonSocialEmisor");
-    let lblObjetoSocial = document.getElementById("lblObjetoSocialEmisor");
+    let lblOrigen = document.getElementById("lblOrigenEmisor");
+    let lblNivel = document.getElementById("lblNivelEmisor");
+    let lblPerfil = document.getElementById("lblPerfilEmisor");
     let lblActividadEconomica = document.getElementById("lblActividadEconomicaEmisor");
     let lblDomicilioFiscal = document.getElementById("lblDomicilioFiscalEmisor");
+    let lblObjetoSocial = document.getElementById("lblObjetoSocialEmisor");
 
     if (item != null) {
         lblRFC.innerHTML = item.rfc;
         lblRazonSocial.innerHTML = item.razonSocial;
-        lblObjetoSocial.innerHTML = item.objetoSocial;
-        lblActividadEconomica.innerHTML = item.actividadEconomica;
+        lblOrigen.innerHTML = item.origen;
+        lblNivel.innerHTML = item.nivel;
+        lblPerfil.innerHTML = item.perfil;
+
+        let listaActividades = [];
+        item.actividadesEconomicas.forEach(function (a) {
+            listaActividades.push(`<li id="${a.id}" clave="${a.clave}" class="list-group-item border-bottom-0 bg-transparent">
+                                    <div class="row">
+                                        <div class="col-12">
+                                          <div class="fw-bold">${a.clave}</div>
+                                          ${a.nombre}
+                                        </div>
+                                    </div>
+								  </li>`);
+        });
+        lblActividadEconomica.innerHTML = `<ul class="list-group list-group-flush mt-3">${listaActividades.join("")}</ul>`;
+
         lblDomicilioFiscal.innerHTML = item.domicilioFiscal;
+
+        let osParts = item.objetoSocial.split("\n");
+        let listParts = [];
+        osParts.forEach(function (o) {
+            if (o.length >= 1) {
+                listParts.push(`<li class="list-group-item border-bottom-0 bg-transparent">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <p style="text-align: justify">${o.trim()}</p>
+                                        </div>
+                                    </div>
+				                </li>`);
+            }
+        });
+        lblObjetoSocial.innerHTML = `<ul class="list-group list-group-flush mt-3">${listParts.join("")}</ul>`;
 
         divEmptyInfoEmisor.classList.remove('d-flex');
         divEmptyInfoEmisor.setAttribute('hidden', true);
@@ -44,9 +77,12 @@ function toggleEmisorInfo(item = null) {
     else {
         lblRFC.innerHTML = emptyInfo;
         lblRazonSocial.innerHTML = emptyInfo;
-        lblObjetoSocial.innerHTML = emptyInfo;
+        lblOrigen.innerHTML = emptyInfo;
+        lblNivel.innerHTML = emptyInfo;
+        lblPerfil.innerHTML = emptyInfo;
         lblActividadEconomica.innerHTML = emptyInfo;
         lblDomicilioFiscal.innerHTML = emptyInfo;
+        lblObjetoSocial.innerHTML = emptyInfo;
 
         divEmptyInfoEmisor.removeAttribute('hidden');
         divFilledInfoEmisor.setAttribute('hidden', true);
@@ -64,16 +100,49 @@ function toggleReceptorInfo(item = null) {
 
     let lblRFC = document.getElementById("lblRFCReceptor");
     let lblRazonSocial = document.getElementById("lblRazonSocialReceptor");
-    let lblObjetoSocial = document.getElementById("lblObjetoSocialReceptor");
+    let lblOrigen = document.getElementById("lblOrigenReceptor");
+    let lblNivel = document.getElementById("lblNivelReceptor");
+    let lblPerfil = document.getElementById("lblPerfilReceptor");
     let lblActividadEconomica = document.getElementById("lblActividadEconomicaReceptor");
     let lblDomicilioFiscal = document.getElementById("lblDomicilioFiscalReceptor");
+    let lblObjetoSocial = document.getElementById("lblObjetoSocialReceptor");
 
     if (item != null) {
         lblRFC.innerHTML = item.rfc;
         lblRazonSocial.innerHTML = item.razonSocial;
-        lblObjetoSocial.innerHTML = item.objetoSocial;
-        lblActividadEconomica.innerHTML = item.actividadEconomica;
+        lblOrigen.innerHTML = item.origen;
+        lblNivel.innerHTML = item.nivel;
+        lblPerfil.innerHTML = item.perfil;
+
+        let listaActividades = [];
+        item.actividadesEconomicas.forEach(function (a) {
+            listaActividades.push(`<li id="${a.id}" clave="${a.clave}" class="list-group-item border-bottom-0 bg-transparent">
+                                    <div class="row">
+                                        <div class="col-12">
+                                          <div class="fw-bold">${a.clave}</div>
+                                          ${a.nombre}
+                                        </div>
+                                    </div>
+								  </li>`);
+        });
+        lblActividadEconomica.innerHTML = `<ul class="list-group list-group-flush mt-3">${listaActividades.join("")}</ul>`;
+
         lblDomicilioFiscal.innerHTML = item.domicilioFiscal;
+
+        let osParts = item.objetoSocial.split("\n");
+        let listParts = [];
+        osParts.forEach(function (o) {
+            if (o.length >= 1) {
+                listParts.push(`<li class="list-group-item border-bottom-0 bg-transparent">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <p style="text-align: justify">${o.trim()}</p>
+                                        </div>
+                                    </div>
+				                </li>`);
+            }
+        });
+        lblObjetoSocial.innerHTML = `<ul class="list-group list-group-flush mt-3">${listParts.join("")}</ul>`;
 
         divEmptyInfoReceptor.classList.remove('d-flex');
         divEmptyInfoReceptor.setAttribute('hidden', true);
@@ -84,9 +153,12 @@ function toggleReceptorInfo(item = null) {
     else {
         lblRFC.innerHTML = emptyInfo;
         lblRazonSocial.innerHTML = emptyInfo;
-        lblObjetoSocial.innerHTML = emptyInfo;
+        lblOrigen.innerHTML = emptyInfo;
+        lblNivel.innerHTML = emptyInfo;
+        lblPerfil.innerHTML = emptyInfo;
         lblActividadEconomica.innerHTML = emptyInfo;
         lblDomicilioFiscal.innerHTML = emptyInfo;
+        lblObjetoSocial.innerHTML = emptyInfo;
 
         divEmptyInfoReceptor.removeAttribute('hidden');
         divFilledInfoReceptor.setAttribute('hidden', true);

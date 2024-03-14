@@ -129,11 +129,23 @@
   <data name="EmptyInfo" xml:space="preserve">
     <value>---</value>
   </data>
+  <data name="InformacionEmpresarial" xml:space="preserve">
+    <value>Company information</value>
+  </data>
   <data name="Limpiar" xml:space="preserve">
     <value>Clear</value>
   </data>
+  <data name="Nivel" xml:space="preserve">
+    <value>Level</value>
+  </data>
   <data name="ObjetoSocial" xml:space="preserve">
     <value>Social Object</value>
+  </data>
+  <data name="Origen" xml:space="preserve">
+    <value>Origin</value>
+  </data>
+  <data name="Perfil" xml:space="preserve">
+    <value>Profile</value>
   </data>
   <data name="RazonSocial" xml:space="preserve">
     <value>Business Name</value>
