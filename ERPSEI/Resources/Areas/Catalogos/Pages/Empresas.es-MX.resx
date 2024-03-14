@@ -168,6 +168,9 @@
   <data name="ColOrigenHeader" xml:space="preserve">
     <value>Origen</value>
   </data>
+  <data name="ColPerfilHeader" xml:space="preserve">
+    <value>Perfil</value>
+  </data>
   <data name="ColTelefonoHeader" xml:space="preserve">
     <value>Teléfono</value>
   </data>

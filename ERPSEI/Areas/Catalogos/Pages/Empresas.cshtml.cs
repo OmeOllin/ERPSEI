@@ -235,6 +235,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		{
 			string nombreOrigen;
 			string nombreNivel;
+			string nombrePerfil;
 			string jsonResponse;
 			List<string> jsonEmpresas = new List<string>();
 			List<Empresa> empresas;
@@ -256,6 +257,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			{
 				nombreOrigen = e.Origen != null ? e.Origen.Nombre : string.Empty;
 				nombreNivel = e.Nivel != null ? e.Nivel.Nombre : string.Empty;
+				nombrePerfil = e.Perfil != null ? e.Perfil.Nombre : string.Empty;
 
 				e.ObjetoSocial = jsonEscape(e.ObjetoSocial??string.Empty);
 
@@ -264,7 +266,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						$"\"id\": {e.Id}," +
 						$"\"razonSocial\": \"{e.RazonSocial}\", " +
                         $"\"perfilId\": \"{e.PerfilId}\", " +
-                        $"\"origenId\": \"{e.OrigenId}\", " +
+						$"\"perfil\": \"{nombrePerfil}\", " +
+						$"\"origenId\": \"{e.OrigenId}\", " +
 						$"\"origen\": \"{nombreOrigen}\", " +
 						$"\"nivelId\": \"{e.NivelId}\", " +
 						$"\"nivel\": \"{nombreNivel}\", " +

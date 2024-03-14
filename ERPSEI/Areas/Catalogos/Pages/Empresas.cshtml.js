@@ -214,8 +214,8 @@ function initTable() {
                 sortable: true
             },
             {
-                title: colActividadEconomicaHeader,
-                field: "actividadEconomica",
+                title: colPerfilHeader,
+                field: "perfil",
                 align: "center",
                 valign: "middle",
                 sortable: true
