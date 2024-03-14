@@ -1,6 +1,7 @@
 using ERPSEI.Data;
 using ERPSEI.Data.Entities;
 using ERPSEI.Data.Entities.Empleados;
+using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Managers;
 using ERPSEI.Email;
 using ERPSEI.Requests;
@@ -679,32 +680,19 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				empleado.RFC = e.RFC ?? string.Empty;
 				empleado.NSS = e.NSS ?? string.Empty;
 
-				List<ArchivoModel?> archivosActualizables;
-
                 if (idEmpleado >= 1)
 				{
-					//Si existe el empleado, los archivos actualizables serán aquellos que traigan imgSrc, pues significa que el usuario añadió el archivo en la vista.
-					archivosActualizables = e.Archivos.Where(a => a?.imgSrc?.Length >= 1).ToList();
-
 					//Si el empleado ya existía, lo actualiza.
 					await _empleadoManager.UpdateAsync(empleado);
 
 					//Elimina los contactos del empleado.
 					await _contactoEmergenciaManager.DeleteByEmpleadoIdAsync(idEmpleado);
 
-                    //Elimina los archivos del usuario.
-                    foreach (ArchivoModel? a in archivosActualizables)
-                    {
-                        if (a == null) { continue; }
-
-                        await _archivoEmpleadoManager.DeleteByIdAsync(a.Id ?? string.Empty);
-                    }
-				}
+                    //Elimina los archivos del usuario que requieran actualizarse.
+                    foreach (ArchivoModel? a in e.Archivos) { await _archivoEmpleadoManager.DeleteByIdAsync(a?.Id ?? string.Empty); }
+                }
 				else
 				{
-                    //Si no existe el empleado, los archivos actualizables serán todos.
-                    archivosActualizables = e.Archivos.ToList();
-
                     //De lo contrario, crea al empleado y obtiene su id.
                     idEmpleado = await _empleadoManager.CreateAsync(empleado);
 				}
@@ -717,17 +705,23 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					new ContactoEmergencia() { Nombre = e.NombreContacto2 ?? string.Empty, Telefono = e.TelefonoContacto2 ?? string.Empty, EmpleadoId = idEmpleado }
 				);
 
-				//Crea los archivos del usuario.
-				foreach (ArchivoModel? a in archivosActualizables)
-				{
-					if (a != null)
-					{
-						await _archivoEmpleadoManager.CreateAsync(
-							new ArchivoEmpleado() { Archivo = (a.imgSrc ?? string.Empty).Length >= 1 ? Convert.FromBase64String(a.imgSrc ?? string.Empty) : Array.Empty<byte>(), EmpleadoId = idEmpleado, Extension = a.extension ?? string.Empty, Nombre = a.nombre ?? string.Empty, TipoArchivoId = a.tipoArchivoId }
-						);
-					}
-				}
+                //Crea los archivos del usuario
+                foreach (ArchivoModel? a in e.Archivos)
+                {
+                    if (a == null) { continue; }
 
+                    //Se usa la info para guardar el archivo.
+                    await _archivoEmpleadoManager.CreateAsync(
+						new ArchivoEmpleado()
+                        {
+                            Archivo = (a.imgSrc ?? string.Empty).Length >= 1 ? Convert.FromBase64String(a.imgSrc ?? string.Empty) : Array.Empty<byte>(),
+                            EmpleadoId = idEmpleado,
+                            Extension = a.extension ?? string.Empty,
+                            Nombre = a.nombre ?? string.Empty,
+                            TipoArchivoId = a.tipoArchivoId
+                        }
+                    );
+                }
 
 				await _db.Database.CommitTransactionAsync();
 			}

@@ -156,7 +156,8 @@ function onAgregarClick() {
             extension: "",
             imgSrc: "",
             htmlContainer: "",
-            fileSize: 0
+            fileSize: 0,
+            actualizar: 1
         });
     }
 
@@ -480,6 +481,7 @@ function establecerDatosAdicionales(row, action) {
         let nameHTML = `<div class="overflowed-text">${emptySelectItemText}</div>`;
         let editDisabled = action == VER ? "disabled" : "";
         let itemVerHTML = "";
+        let actualizar = a.actualizar || 0;
 
         if (parseInt(a.fileSize) >= 1) {
             //Si el tamaño del archivo es mayor o igual a 1 byte, agrega un archivo al DOM con la información.
@@ -497,7 +499,7 @@ function establecerDatosAdicionales(row, action) {
                     <div id="fileIcon${a.tipoArchivoId}" class="align-self-center col-1 ${iconClass} p-0 p-lg-2 p-xl-2"><i class='bi bi-file-image' style='font-size:25px'></i></div>
                     <div id="fileName${a.tipoArchivoId}" class="align-self-center col-10 ${nameClass} p-2" style="display:flex; color:dimgray">${nameHTML}</div>
                     <div class="align-self-center col-1">
-                        <input type="file" id="selector${a.tipoArchivoId}" sourceId="${a.id}" sourceName="${a.nombre}.${a.extension}" sourceLength="${a.fileSize}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                        <input type="file" actualizar="${actualizar}" id="selector${a.tipoArchivoId}" sourceId="${a.id}" sourceName="${a.nombre}.${a.extension}" sourceLength="${a.fileSize}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
                         <div class="dropdown">
                             <button class="btn p-0 p-lg-2 p-xl-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-three-dots-vertical success"></i>
@@ -567,6 +569,8 @@ function onDeleteClick(button) {
 
         fileInput.value = null;
         fileInput.setAttribute("b64", "");
+        fileInput.setAttribute("sourceLength", "");
+        fileInput.setAttribute("actualizar", 1);
 
         container.classList.remove("document-container-filled");
         container.classList.add("document-container-empty");
@@ -661,6 +665,7 @@ function onDocumentSelectorChanged(input) {
                 }
                 input.setAttribute("b64", window.btoa(binary));
                 input.setAttribute("sourceLength", "0");
+                input.setAttribute("actualizar", "1");
 
                 initializeDisableableButtons();
             }
@@ -819,45 +824,30 @@ function getFile(inputId) {
         file = null,
         tipoArchivo = fileField.getAttribute("tipoArchivoId"),
         b64 = fileField.getAttribute("b64")||"",
-        sourceLength = parseInt(fileField.getAttribute("sourceLength") || "0"),
-        sourceId = fileField.getAttribute("sourceId")||"";
+        sourceId = fileField.getAttribute("sourceId") || "", 
+        actualizar = parseInt(fileField.getAttribute("actualizar") || "0")
 
     file = fileField != null ? fileField.files : null;
     if (file) { file = file.length > 0 ? file[0] : null; }
 
+    let oFile = {
+        id: sourceId,
+        tipoArchivoId: tipoArchivo,
+        imgSrc: b64,
+        nombre: "",
+        extension: ""
+    }
     
     if (file) {
         //Si se estableció archivo en pantalla, crea el json con el archivo.
-        let fileParts = (file.name||"").split(".");
-        return {
-            id: sourceId,
-            nombre: fileParts.length >= 1 ? fileParts[0] : "",
-            tipoArchivoId: tipoArchivo,
-            extension: fileParts.length >= 2 ? fileParts[1] : "",
-            imgSrc: b64
-        };
+        let fileParts = (file.name || "").split(".");
+        oFile.nombre = fileParts.length >= 1 ? fileParts[0] : "";
+        oFile.extension = fileParts.length >= 2 ? fileParts[1] : "";
     }
-    else if (sourceLength >= 1) {
-        //De lo contrario, verifica si ya venía archivo guardado en base y construye el json con dichos datos.
-        let fileParts = (fileField.getAttribute("sourceName") || "").split(".");
-        return {
-            id: sourceId,
-            nombre: fileParts.length >= 1 ? fileParts[0] : "",
-            tipoArchivoId: tipoArchivo,
-            extension: fileParts.length >= 2 ? fileParts[1] : "",
-            imgSrc: b64
-        };
-    }
-    else {
-        //De lo contrario, devuelve un objeto de archvio vacío, indicando solamente el tipo de archvio.
-        return {
-            id: "",
-            nombre: "",
-            tipoArchivoId: tipoArchivo,
-            extension: "",
-            imgSrc: ""
-        };
-    }
+
+    if (actualizar) { return oFile; }
+
+    return null;
 }
 //Función para agregar una actividad económica al listado
 function onAgregarActividadClick() {

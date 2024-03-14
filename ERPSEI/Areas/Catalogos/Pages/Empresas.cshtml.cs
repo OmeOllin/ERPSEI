@@ -515,7 +515,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				else
 				{
 					resp.Mensaje = validacion;
-			}
+                }
 			}
 			catch (Exception ex)
 			{
@@ -585,13 +585,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				empresa.Telefono = e.Telefono;
 				empresa.ObjetoSocial = e.ObjetoSocial;
 
-				List<ArchivoModel?> archivosActualizables;
-
-				if (idEmpresa >= 1)
+                if (idEmpresa >= 1)
 				{
-                    //Si la empresa ya existe, los archivos actualizables serán aquellos que traigan imgSrc, pues significa que el usuario añadió el archivo en la vista.
-                    archivosActualizables = e.Archivos.Where(a => a?.imgSrc?.Length >= 1).ToList();
-
                     //Si la empresa ya existía, la actualiza.
                     await _empresaManager.UpdateAsync(empresa);
 
@@ -601,19 +596,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					//Elimina los bancos de la empresa.
 					await _bancoEmpresaManager.DeleteByEmpresaIdAsync(idEmpresa);
 
-					//Elimina los archivos de la empresa.
-					foreach(ArchivoModel? a in archivosActualizables)
-					{
-						if (a == null) { continue; }
-
-						await _archivoEmpresaManager.DeleteByIdAsync(a.Id ?? string.Empty);
-					}
+                    //Elimina los archivos de la empresa que requieran actualizarse.
+                    foreach (ArchivoModel? a in e.Archivos){ await _archivoEmpresaManager.DeleteByIdAsync(a?.Id ?? string.Empty); } 
 				}
 				else
 				{
-                    //Si la empresa es nueva, los archivos actualizables serán todos.
-                    archivosActualizables = e.Archivos.ToList();
-
                     //De lo contrario, crea a la empresa y obtiene su id.
                     idEmpresa = await _empresaManager.CreateAsync(empresa);
 				}
@@ -640,15 +627,22 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					}
 				}
 
-				//Crea los archivos de la empresa.
-				foreach (ArchivoModel? a in archivosActualizables)
+                //Crea los archivos de la empresa
+                foreach (ArchivoModel? a in e.Archivos)
 				{
 					if (a == null) { continue; }
 
+					//Se usa la info para guardar el archivo.
 					await _archivoEmpresaManager.CreateAsync(
-						new ArchivoEmpresa() { Archivo = (a.imgSrc ?? string.Empty).Length >= 1 ? Convert.FromBase64String(a.imgSrc ?? string.Empty) : Array.Empty<byte>(), EmpresaId = idEmpresa, Extension = a.Extension ?? string.Empty, Nombre = a.Nombre ?? string.Empty, TipoArchivoId = a.TipoArchivoId }
+						new ArchivoEmpresa() { 
+							Archivo = (a.imgSrc ?? string.Empty).Length >= 1 ? Convert.FromBase64String(a.imgSrc ?? string.Empty) : Array.Empty<byte>(), 
+							EmpresaId = idEmpresa, 
+							Extension = a.Extension ?? string.Empty, 
+							Nombre = a.Nombre ?? string.Empty, 
+							TipoArchivoId = a.TipoArchivoId 
+						}
 					);
-				}
+                }
 
 
 				await _db.Database.CommitTransactionAsync();
