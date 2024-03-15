@@ -45,6 +45,9 @@
 						<button class="nav-link" id="tabBEmisor" data-bs-toggle="tab" data-bs-target="#actividadEmpresaEmisorTab" type="button" role="tab" aria-controls="actividadEmpresaEmisorTab" aria-selected="false">@Localizer["ActividadEconomica"]</button>
 					</li>
 					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="tabDEmisor" data-bs-toggle="tab" data-bs-target="#conceptosEmpresaEmisorTab" type="button" role="tab" aria-controls="conceptosEmpresaEmisorTab" aria-selected="false">@Localizer["Conceptos"]</button>
+					</li>
+					<li class="nav-item" role="presentation">
 						<button class="nav-link" id="tabCEmisor" data-bs-toggle="tab" data-bs-target="#objetoEmpresaEmisorTab" type="button" role="tab" aria-controls="objetoEmpresaEmisorTab" aria-selected="false">@Localizer["ObjetoSocial"]</button>
 					</li>
 				</ul>
@@ -102,6 +105,24 @@
 							</div>
 						</div>
 					</div>
+					<div class="tab-pane fade" id="conceptosEmpresaEmisorTab" role="tabpanel" aria-labelledby="tabDEmisor" tabindex="0">
+						<div class="row mb-3">
+							<h6 class="col-12"><i>@Localizer["ProductoServicioPlaceholder"]</i></h6>
+							<div class="col-11">
+								<div class="form-floating ui-front">
+									<input id="inpProductoServicioEmisor" type="search" asp-for="Input.ProductoServicioId" class="form-control formInput" placeholder="@Localizer["ProductoServicioPlaceholder"]" idselected='' area="ERP" module="Prefacturas" source="GetProductosServiciosSuggestion" />
+									<label for="inpProductoServicioEmisor" asp-for="Input.ProductoServicioId" class="form-label"></label>
+									<span asp-validation-for="Input.ProductoServicioId" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-1 d-flex align-items-center p-0">
+								<button id="dlgBtnAgregarProductoServicioEmisor" type="button" class="btn btn-primary disabled" onclick="onAgregarProductoServicioClick(true, false);">
+									<i class="bi bi-plus-lg"></i>
+								</button>
+							</div>
+							<ul id="listProductosServiciosEmisor" class="list-group mt-3 list-group-flush"></ul>
+						</div>
+					</div>
 					<div class="tab-pane fade" id="objetoEmpresaEmisorTab" role="tabpanel" aria-labelledby="tabCEmisor" tabindex="0">
 						<div class="row mb-3">
 							<div class="col-12">
@@ -144,6 +165,9 @@
 					</li>
 					<li class="nav-item" role="presentation">
 						<button class="nav-link" id="tabBReceptor" data-bs-toggle="tab" data-bs-target="#actividadEmpresaReceptorTab" type="button" role="tab" aria-controls="actividadEmpresaReceptorTab" aria-selected="false">@Localizer["ActividadEconomica"]</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="tabDEmisor" data-bs-toggle="tab" data-bs-target="#conceptosEmpresaReceptorTab" type="button" role="tab" aria-controls="conceptosEmpresaReceptorTab" aria-selected="false">@Localizer["Conceptos"]</button>
 					</li>
 					<li class="nav-item" role="presentation">
 						<button class="nav-link" id="tabCReceptor" data-bs-toggle="tab" data-bs-target="#objetoEmpresaReceptorTab" type="button" role="tab" aria-controls="objetoEmpresaReceptorTab" aria-selected="false">@Localizer["ObjetoSocial"]</button>
@@ -203,6 +227,24 @@
 							</div>
 						</div>
 					</div>
+					<div class="tab-pane fade" id="conceptosEmpresaReceptorTab" role="tabpanel" aria-labelledby="tabDReceptor" tabindex="0">
+						<div class="row mb-3">
+							<h6 class="col-12"><i>@Localizer["ProductoServicioPlaceholder"]</i></h6>
+							<div class="col-11">
+								<div class="form-floating ui-front">
+									<input id="inpProductoServicioReceptor" type="search" asp-for="Input.ProductoServicioId" class="form-control formInput" placeholder="@Localizer["ProductoServicioPlaceholder"]" idselected='' area="ERP" module="Prefacturas" source="GetProductosServiciosSuggestion" />
+									<label for="inpProductoServicioReceptor" asp-for="Input.ProductoServicioId" class="form-label"></label>
+									<span asp-validation-for="Input.ProductoServicioId" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-1 d-flex align-items-center p-0">
+								<button id="dlgBtnAgregarProductoServicioReceptor" type="button" class="btn btn-primary disabled" onclick="onAgregarProductoServicioClick(false, true);">
+									<i class="bi bi-plus-lg"></i>
+								</button>
+							</div>
+							<ul id="listProductosServiciosReceptor" class="list-group mt-3 list-group-flush"></ul>
+						</div>
+					</div>
 					<div class="tab-pane fade" id="objetoEmpresaReceptorTab" role="tabpanel" aria-labelledby="tabCReceptor" tabindex="0">
 						<div class="row mb-3">
 							<div class="col-12">
@@ -236,15 +278,26 @@
 	<link rel="stylesheet" href="~/css/Prefacturas.css" />
 	<script src="~/../Areas/ERP/Pages/Prefacturas.cshtml.js"></script>
 	<script type="text/javascript">
+		var emisorLabel = '@Localizer["Emisor"]';
+		var receptorLabel = '@Localizer["Receptor"]';
 		var emptyInfo = '@Localizer["EmptyInfo"]';
 		var title = '@Localizer["Title"]';
 		var nivelNoPuedeFacturar = '@Localizer["NivelNoPuedeFacturar"]';
 		var sinActividadesNoPuedeFacturar = '@Localizer["SinActividadesNoPuedeFacturar"]';
-		var sapiNoPuedeFacturar = '@Localizer["SapiNoPuedeFacturar"]';
+		var sinProductosServiciosNoPuedeFacturar = '@Localizer["SinProductosServiciosNoPuedeFacturar"]';
 		var sinPerfilNoPuedeFacturar = '@Localizer["SinPerfilNoPuedeFacturar"]';
 		var mismoNivelNoPuedeFacturar = '@Localizer["MismoNivelNoPuedeFacturar"]';
 		var mismaDireccionNoPuedeFacturar = '@Localizer["MismaDireccionNoPuedeFacturar"]';
 		var puedenFacturar = '@Localizer["PuedenFacturar"]';
+		var msgAgregarProductoServicio = '@Localizer["AgregarProductoServicio"]';
+		var sinProductoServicio = '@Localizer["SinProductoServicio"]';
+		var productoServicioRepetido = '@Localizer["ProductoServicioRepetido"]';
+		var productoServicioConClave = '@Localizer["ProductoServicioConClave"]';
+		var noCorresponde = '@Localizer["NoCorresponde"]';
+		var noPuedeFacturar = '@Localizer["NoPuedeFacturar"]';
+		var faltaEmpresaParaComparar = '@Localizer["FaltaEmpresaParaComparar"]';
+		var faltanEmpresasParaComparar = '@Localizer["FaltanEmpresasParaComparar"]';
+		var almenosUnProductoServicioNecesario = '@Localizer["AlmenosUnProductoServicioNecesario"]';
 	</script>
 
 	<partial name="_ValidationScriptsPartial" />

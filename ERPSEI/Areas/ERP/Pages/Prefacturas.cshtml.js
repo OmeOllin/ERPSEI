@@ -15,6 +15,42 @@ document.addEventListener('DOMContentLoaded', function () {
             if ((inpReceptor.value || "").length <= 0) { toggleReceptorInfo(); }
         }
     });
+    autoCompletar("#inpProductoServicioEmisor", {
+        select: function (element, item) {
+            let btnAdd = document.getElementById("dlgBtnAgregarProductoServicioEmisor");
+            btnAdd.classList.remove("disabled");
+            let prodServSelectorField = document.getElementById("inpProductoServicioEmisor");
+            prodServSelectorField.classList.remove("is-invalid");
+            prodServSelectorField.classList.remove("is-valid");
+        },
+        change: function (element, item) {
+            let prodServSelectorField = document.getElementById("inpProductoServicioEmisor");
+            if (parseInt(prodServSelectorField.getAttribute("idselected") || "0") <= 0) {
+                let btnAdd = document.getElementById("dlgBtnAgregarProductoServicioEmisor");
+                btnAdd.classList.add("disabled");
+            }
+            prodServSelectorField.classList.remove("is-invalid");
+            prodServSelectorField.classList.remove("is-valid");
+        }
+    });
+    autoCompletar("#inpProductoServicioReceptor", {
+        select: function (element, item) {
+            let btnAdd = document.getElementById("dlgBtnAgregarProductoServicioReceptor");
+            btnAdd.classList.remove("disabled");
+            let prodServSelectorField = document.getElementById("inpProductoServicioReceptor");
+            prodServSelectorField.classList.remove("is-invalid");
+            prodServSelectorField.classList.remove("is-valid");
+        },
+        change: function (element, item) {
+            let prodServSelectorField = document.getElementById("inpProductoServicioReceptor");
+            if (parseInt(prodServSelectorField.getAttribute("idselected") || "0") <= 0) {
+                let btnAdd = document.getElementById("dlgBtnAgregarProductoServicioReceptor");
+                btnAdd.classList.add("disabled");
+            }
+            prodServSelectorField.classList.remove("is-invalid");
+            prodServSelectorField.classList.remove("is-valid");
+        }
+    });
 });
 
 //Función para mostrar u ocultar la información del emisor. Si se establece el parámetro item, se muestra. De lo contrario, se oculta.
@@ -101,6 +137,13 @@ function toggleEmisorInfo(item = null) {
         divEmptyInfoEmisor.classList.add('d-flex');
 
         $("#inpReceptor").data('idempresa', null);
+
+        $("#inpEmisor").data("id", null);
+        $("#inpEmisor").data("nivel", null);
+        $("#inpEmisor").data("actividadesEconomicas", null);
+        $("#inpEmisor").data("perfil", null);
+        $("#inpEmisor").data("direccion", null);
+        $("#inpEmisor").data("productosServicios", null);
     }
 
 }
@@ -189,6 +232,13 @@ function toggleReceptorInfo(item = null) {
         divEmptyInfoReceptor.classList.add('d-flex');
 
         $("#inpEmisor").data('idempresa', null);
+
+        $("#inpReceptor").data("id", null);
+        $("#inpReceptor").data("nivel", null);
+        $("#inpReceptor").data("actividadesEconomicas", null);
+        $("#inpReceptor").data("perfil", null);
+        $("#inpReceptor").data("direccion", null);
+        $("#inpReceptor").data("productosServicios", null);
     }
 
 }
@@ -198,22 +248,31 @@ function validarEmpresaSeleccionada(e, isEmisor, isReceptor) {
 
     //let tabAField = null;
     //let tabBField = null;
+    let empresaLabel = "";
     let nivelField = null;
     let actividadesField = null;
     let perfilField = null;
+    let prodServField = null;
+    let prodServSelectorField = null;
     if (isEmisor) {
+        empresaLabel = emisorLabel.toLowerCase();
         //tabAField = document.getElementById("tabAEmisor");
         //tabBField = document.getElementById("tabBEmisor");
         nivelField = document.getElementById("lblNivelEmisor");
         actividadesField = document.getElementById("lblActividadEconomicaEmisor");
         perfilField = document.getElementById("lblPerfilEmisor");
+        prodServField = document.getElementById("listProductosServiciosEmisor");
+        prodServSelectorField = document.getElementById("inpProductoServicioEmisor");
     }
     if (isReceptor) {
+        empresaLabel = receptorLabel.toLowerCase();
         //tabAField = document.getElementById("tabAReceptor");
         //tabBField = document.getElementById("tabBReceptor");
         nivelField = document.getElementById("lblNivelReceptor");
         actividadesField = document.getElementById("lblActividadEconomicaReceptor");
         perfilField = document.getElementById("lblPerfilReceptor");
+        prodServField = document.getElementById("listProductosServiciosReceptor");
+        prodServSelectorField = document.getElementById("inpProductoServicioReceptor");
     }
 
     //tabAField.classList.remove("bg-");
@@ -231,6 +290,13 @@ function validarEmpresaSeleccionada(e, isEmisor, isReceptor) {
     perfilField.classList.remove("is-invalid");
     perfilField.classList.remove("is-valid");
 
+    prodServField.classList.remove("form-control");
+    prodServField.classList.remove("is-invalid");
+    prodServField.classList.remove("is-valid");
+
+    prodServSelectorField.classList.remove("is-invalid");
+    prodServSelectorField.classList.remove("is-valid");
+
     let puedeFacturar = (e.nivel.puedeFacturar.toLowerCase() === 'true');
     if (!puedeFacturar) { 
         nivelField.classList.add("is-invalid");
@@ -245,13 +311,48 @@ function validarEmpresaSeleccionada(e, isEmisor, isReceptor) {
         showAlert(title, sinPerfilNoPuedeFacturar);
         return false;
     }
-    else if (e.perfil == "SAPI") {
-        perfilField.classList.add("is-invalid");
-        showAlert(title, sapiNoPuedeFacturar);
-        return false;
-    }
     perfilField.classList.add("is-valid");
     /*tabAField.classList.add("is-valid");*/
+
+    let prodServsAllowed = (e.productosServicios || []);
+    if (prodServsAllowed.length <= 0) {
+        perfilField.classList.add("is-invalid");
+        showAlert(title, sinProductosServiciosNoPuedeFacturar);
+        return false;
+    }
+
+    let idProdServField = prodServField.getAttribute("id");
+    let prodServsAdded = (document.querySelectorAll(`#${idProdServField} li[clave]`) || []);
+    if (prodServsAdded.length <= 0) {
+        prodServSelectorField.classList.add("is-invalid");
+        showAlert(title, almenosUnProductoServicioNecesario);
+        return false;
+    }
+
+    let hasError = false;
+    let message = "";
+    prodServsAdded.forEach(function (ps) {
+        //Si el producto o servicio agregado no está en los permitidos, entonces falla la validación.
+        let clave = ps.getAttribute("clave");
+        let found = prodServsAllowed.find((ps) => ps.clave == clave);
+        if (found == undefined) {
+            hasError = true;
+            message = `${productoServicioConClave} '${clave}' ${noCorresponde} ${empresaLabel} ${noPuedeFacturar}`;
+            return false;
+        }
+    });
+    if (hasError) {
+        prodServField.classList.add("form-control");
+        prodServField.classList.add("is-invalid");
+        showAlert(title, message);
+        return false;
+    }
+    else {
+        if (prodServsAdded.length >= 1) {
+            prodServField.classList.add("form-control");
+            prodServField.classList.add("is-valid");
+        }
+    }
 
     if ((e.actividadesEconomicas || []).length <= 0) {
         nivelField.classList.add("is-invalid");
@@ -261,6 +362,7 @@ function validarEmpresaSeleccionada(e, isEmisor, isReceptor) {
     }
     actividadesField.classList.add("is-valid");
     /*tabBField.classList.add("is-valid");*/
+
 
     return true;
 }
@@ -280,9 +382,20 @@ function validarFacturacionEntreEmpresas(emisor, receptor) {
     let nivelReceptorField = document.getElementById("lblNivelReceptor");
     let direccionReceptorField = document.getElementById("lblDomicilioFiscalReceptor");
 
-    if (!validarEmpresaSeleccionada(emisor, true, false)) { return; }
+    let hasEmisor = parseInt(emisor.id || "0") >= 1;
+    let hasReceptor = parseInt(receptor.id || "0") >= 1;
 
-    if (!validarEmpresaSeleccionada(receptor, false, true)) { return; }
+    if (hasEmisor) { if (!validarEmpresaSeleccionada(emisor, true, false)) { return; } }
+    if (hasReceptor) { if (!validarEmpresaSeleccionada(receptor, false, true)) { return; } }
+
+    if (!hasEmisor && !hasReceptor) {
+        showMessage(title, faltanEmpresasParaComparar);
+        return false;
+    }
+    else if (!hasEmisor || !hasReceptor) {
+        showMessage(title, faltaEmpresaParaComparar);
+        return false;
+    }
 
     //tabAEmisorField.classList.remove("is-invalid");
     //tabBEmisorField.classList.remove("is-valid");
@@ -326,7 +439,6 @@ function validarFacturacionEntreEmpresas(emisor, receptor) {
 
     //tabAEmisorField.classList.add("is-valid");
     //tabAReceptorField.classList.add("is-valid");
-
     return true;
 }
 
@@ -337,7 +449,8 @@ function onValidarClick() {
         nivel: $("#inpEmisor").data("nivel"),
         actividadesEconomicas: $("#inpEmisor").data("actividadesEconomicas"),
         perfil: $("#inpEmisor").data("perfil"),
-        direccion: $("#inpEmisor").data("domicilioFiscal")
+        direccion: $("#inpEmisor").data("domicilioFiscal"),
+        productosServicios: $("#inpEmisor").data("productosServicios")
     };
 
     let receptor = {
@@ -345,7 +458,8 @@ function onValidarClick() {
         nivel: $("#inpReceptor").data("nivel"),
         actividadesEconomicas: $("#inpReceptor").data("actividadesEconomicas"),
         perfil: $("#inpReceptor").data("perfil"),
-        direccion: $("#inpReceptor").data("domicilioFiscal")
+        direccion: $("#inpReceptor").data("domicilioFiscal"),
+        productosServicios: $("#inpReceptor").data("productosServicios")
     };
 
     if (validarFacturacionEntreEmpresas(emisor, receptor)) { showSuccess(title, puedenFacturar); }
@@ -370,4 +484,69 @@ function limpiarReceptor() {
     let inpReceptor = document.getElementById("inpReceptor");
     inpReceptor.value = null;
     toggleReceptorInfo();
+}
+
+//Función para agregar un producto o servicio al listado
+function onAgregarProductoServicioClick(isEmisor, isReceptor) {
+    let productoServicioField = null;
+    let btnAdd = null;
+    let idLista = "";
+    if (isEmisor) {
+        btnAdd = document.getElementById("dlgBtnAgregarProductoServicioEmisor");
+        productoServicioField = $(document.getElementById("inpProductoServicioEmisor"));
+        idLista = "listProductosServiciosEmisor";
+    }
+    else if (isReceptor) {
+        btnAdd = document.getElementById("dlgBtnAgregarProductoServicioReceptor");
+        productoServicioField = $(document.getElementById("inpProductoServicioReceptor"));
+        idLista = "listProductosServiciosReceptor";
+    }
+
+    //Si el campo producto / servicio no tiene elemento seleccionado, muestra error.
+    if (parseInt(productoServicioField.attr("idselected") || "0") <= 0) {
+        showAlert(msgAgregarProductoServicio, sinProductoServicio);
+        return;
+    }
+
+    let listItem = document.querySelector(`#${idLista} li[clave='${productoServicioField.data("clave")}']`);
+    //Si el elemento ya existe, muestra error.
+    if (listItem) {
+        showAlert(msgAgregarProductoServicio, productoServicioRepetido);
+        return;
+    }
+
+    agregarProductoServicio(productoServicioField.attr("idselected"), productoServicioField.data("clave"), productoServicioField.data("value"), idLista);
+    
+    btnAdd.classList.add("disabled");
+
+    productoServicioField.val("");
+    productoServicioField.attr("idselected", 0);
+}
+
+//Función para añadir un elemento al listado de productos y servicios
+function agregarProductoServicio(id, clave, descripcion, idListaDOM) {
+    let listProductosServicios = document.getElementById(idListaDOM);
+
+    listProductosServicios.innerHTML += `<li id="${id}" clave="${clave}" class="list-group-item">
+                                            <div class="row">
+                                                <div class="col-11 border-end">
+                                                  <div class="fw-bold">${clave}</div>
+                                                  ${descripcion}
+                                                </div>
+                                                <div class="col-1 align-items-center d-flex justify-content-center">
+									                <button type="button" class="btn-close formButton" onclick="onEliminarProductoServicioClick('${clave}', '${idListaDOM}');"></button>
+                                                </div>
+                                            </div>
+								          </li>`;
+}
+
+//Función para eliminar un producto o servicio del listado
+function onEliminarProductoServicioClick(clave, idListaDOM) {
+    let listaDOM = document.getElementById(idListaDOM);
+    let listItem = document.querySelector(`#${idListaDOM} li[clave='${clave}']`);
+
+    listItem.remove();
+    listaDOM.classList.remove("form-control");
+    listaDOM.classList.remove("is-invalid");
+    listaDOM.classList.remove("is-valid");
 }

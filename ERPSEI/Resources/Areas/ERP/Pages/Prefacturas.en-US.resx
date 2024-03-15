@@ -120,6 +120,12 @@
   <data name="ActividadEconomica" xml:space="preserve">
     <value>Economic Activity</value>
   </data>
+  <data name="AlmenosUnProductoServicioNecesario" xml:space="preserve">
+    <value>At least one product or service added to the items is required to bill</value>
+  </data>
+  <data name="Conceptos" xml:space="preserve">
+    <value>Concepts</value>
+  </data>
   <data name="DomicilioFiscal" xml:space="preserve">
     <value>Tax Address</value>
   </data>
@@ -128,6 +134,12 @@
   </data>
   <data name="EmptyInfo" xml:space="preserve">
     <value>---</value>
+  </data>
+  <data name="FaltaEmpresaParaComparar" xml:space="preserve">
+    <value>The first company seems valid. Please, select the other company to validate</value>
+  </data>
+  <data name="FaltanEmpresasParaComparar" xml:space="preserve">
+    <value>No companies have been selected to validate...</value>
   </data>
   <data name="InformacionEmpresarial" xml:space="preserve">
     <value>Company information</value>
@@ -147,6 +159,12 @@
   <data name="NivelNoPuedeFacturar" xml:space="preserve">
     <value>The selected company level does not allow billing. Please choose another company.</value>
   </data>
+  <data name="NoCorresponde" xml:space="preserve">
+    <value>does not correspond to the permitted concepts of the profile of the</value>
+  </data>
+  <data name="NoPuedeFacturar" xml:space="preserve">
+    <value>so you can't bill. Please change or eliminate the product or service.</value>
+  </data>
   <data name="ObjetoSocial" xml:space="preserve">
     <value>Social Object</value>
   </data>
@@ -155,6 +173,15 @@
   </data>
   <data name="Perfil" xml:space="preserve">
     <value>Profile</value>
+  </data>
+  <data name="ProductoServicioConClave" xml:space="preserve">
+    <value>The product or service with key</value>
+  </data>
+  <data name="ProductoServicioPlaceholder" xml:space="preserve">
+    <value>Product or Service</value>
+  </data>
+  <data name="ProductoServicioRepetido" xml:space="preserve">
+    <value>Product or service is already on the list</value>
   </data>
   <data name="PuedenFacturar" xml:space="preserve">
     <value>Excellent! Companies can bill each other</value>
@@ -168,9 +195,6 @@
   <data name="RFC" xml:space="preserve">
     <value>RFC</value>
   </data>
-  <data name="SapiNoPuedeFacturar" xml:space="preserve">
-    <value>The company profile is SAPI and does not allow billing. Please choose another company.</value>
-  </data>
   <data name="SearchSuggestionA" xml:space="preserve">
     <value>There's still nothing here</value>
   </data>
@@ -182,6 +206,12 @@
   </data>
   <data name="SinPerfilNoPuedeFacturar" xml:space="preserve">
     <value>The selected company cannot bill because it does not have a profile. Please choose another company.</value>
+  </data>
+  <data name="SinProductoServicio" xml:space="preserve">
+    <value>A product or service has not been selected to add</value>
+  </data>
+  <data name="SinProductosServiciosNoPuedeFacturar" xml:space="preserve">
+    <value>The company profile does not have products or services allowed for billing. Please choose another company.</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Preinvoices</value>

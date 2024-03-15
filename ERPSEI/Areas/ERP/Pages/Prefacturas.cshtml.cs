@@ -1,6 +1,8 @@
 using ERPSEI.Data.Entities.Empresas;
+using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Requests;
+using ERPSEI.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -12,34 +14,60 @@ namespace ERPSEI.Areas.ERP.Pages
 {
 	[Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
 	public class PrefacturasModel : PageModel
-    {
+	{
+		private readonly IRWCatalogoManager<Perfil> _perfilManager;
+		private readonly IProductoServicioManager _productosServiciosManager;
 		private readonly IEmpresaManager _empresaManager;
-        private readonly IStringLocalizer<PrefacturasModel> _strLocalizer;
-        private readonly ILogger<PrefacturasModel> _logger;
+		private readonly IStringLocalizer<PrefacturasModel> _strLocalizer;
+		private readonly ILogger<PrefacturasModel> _logger;
 
 		[BindProperty]
 		public EmpresaModel InputEmpresa { get; set; }
 
 		public class EmpresaModel()
-        {
-            
-            [DataType(DataType.Text)]
-            [DisplayName("SearchCompanyField")]
+		{
+
+			[DataType(DataType.Text)]
+			[DisplayName("SearchCompanyField")]
 			[StringLength(30, ErrorMessage = "FieldLength", MinimumLength = 2)]
-			public string Texto {  get; set; } = string.Empty;
-        }
-        
-        public PrefacturasModel(
+			public string Texto { get; set; } = string.Empty;
+		}
+
+		[BindProperty]
+		public InputModel Input { get; set; }
+
+		public class InputModel
+		{
+			[Display(Name = "Id")]
+			public int Id { get; set; }
+
+			[StringLength(100, ErrorMessage = "FieldLength", MinimumLength = 1)]
+			[RegularExpression(RegularExpressions.AlphanumSpaceCommaDotParenthesis, ErrorMessage = "AlphanumSpace")]
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "NameField")]
+			public string Nombre { get; set; } = string.Empty;
+
+			[Display(Name = "SearchProductServiceField")]
+			public int? ProductoServicioId { get; set; }
+			public int?[] ProductosServicios { get; set; } = Array.Empty<int?>();
+		}
+
+		public PrefacturasModel(
+			IRWCatalogoManager<Perfil> perfilManager,
+			IProductoServicioManager productosServiciosManager,
 			IEmpresaManager empresaManager,
             IStringLocalizer<PrefacturasModel> stringLocalizer,
             ILogger<PrefacturasModel> logger
         )
         {
+			_perfilManager = perfilManager;
+			_productosServiciosManager = productosServiciosManager;
 			_empresaManager = empresaManager;
             _strLocalizer = stringLocalizer;
             _logger = logger;
 
             InputEmpresa = new EmpresaModel();
+			Input = new InputModel();
         }
 
         public void OnGet()
@@ -78,12 +106,19 @@ namespace ERPSEI.Areas.ERP.Pages
 				foreach (EmpresaBuscada e in empresas)
 				{
 					Empresa? emp = await _empresaManager.GetByIdWithAdicionalesAsync(e.Id);
+					List<Perfil> perfiles = await _perfilManager.GetAllAsync();
+					perfiles = perfiles.Where(p => p.Id == emp?.PerfilId).ToList();
+					Perfil? perfilEmpresa = perfiles != null && perfiles.Count >= 1 ? perfiles.First() : null;
+
+					List<ProductoServicioPerfil> prodServEmpresa = new List<ProductoServicioPerfil>();
+					if (perfilEmpresa != null) { prodServEmpresa = perfilEmpresa.ProductosServiciosPerfil.ToList();  }
 
 					//Si viene establecido el id empresa, omite el elemento con ese id.
 					if (idempresa >= 1 && e.Id == idempresa) { continue; }
 
 					e.ObjetoSocial = jsonEscape(e.ObjetoSocial ?? string.Empty);
 					List<string> jsonActividades = getListJsonActividades(emp?.ActividadesEconomicasEmpresa);
+					List<string> jsonProductosServicios = getListJsonProductosServicios(prodServEmpresa);
 
 					jsonEmpresas.Add($"{{" +
 										$"\"id\": {e.Id}, " +
@@ -96,7 +131,8 @@ namespace ERPSEI.Areas.ERP.Pages
 										$"\"origen\": \"{e.Origen}\", " +
 										$"\"nivel\": {{\"nombre\": \"{e.Nivel}\", \"puedeFacturar\": \"{e.PuedeFacturar}\"}}, " +
 										$"\"perfil\": \"{e.Perfil}\", " +
-										$"\"domicilioFiscal\": \"{e.DomicilioFiscal}\"" +
+										$"\"domicilioFiscal\": \"{e.DomicilioFiscal}\", " +
+										$"\"productosServicios\": [{string.Join(",", jsonProductosServicios)}] " +
 									$"}}");
 				}
 			}
@@ -104,6 +140,26 @@ namespace ERPSEI.Areas.ERP.Pages
 			jsonResponse = $"[{string.Join(",", jsonEmpresas)}]";
 
 			return jsonResponse;
+		}
+		private List<string> getListJsonProductosServicios(ICollection<ProductoServicioPerfil>? psp)
+		{
+			List<string> jsonProdServ = new List<string>();
+			if (psp != null)
+			{
+				foreach (ProductoServicioPerfil a in psp)
+				{
+					if (a.ProductoServicio == null) { continue; }
+
+					jsonProdServ.Add(
+						"{" +
+							$"\"id\": \"{a.ProductoServicio.Id}\"," +
+							$"\"clave\": \"{a.ProductoServicio.Clave}\"" +
+						"}"
+					);
+				}
+			}
+
+			return jsonProdServ;
 		}
 		private List<string> getListJsonActividades(ICollection<ActividadEconomicaEmpresa>? actividades)
 		{
@@ -129,6 +185,48 @@ namespace ERPSEI.Areas.ERP.Pages
 		private string jsonEscape(string str)
 		{
 			return str.Replace("\n", "<br />").Replace("\r", "<br />").Replace("\t", "<br />");
+		}
+
+		public async Task<JsonResult> OnPostGetProductosServiciosSuggestion(string texto)
+		{
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["ConsultadoUnsuccessfully"]);
+			try
+			{
+				resp.Datos = await GetProductosServiciosSuggestion(texto);
+				resp.TieneError = false;
+				resp.Mensaje = _strLocalizer["ConsultadoSuccessfully"];
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+			}
+
+			return new JsonResult(resp);
+		}
+		private async Task<string> GetProductosServiciosSuggestion(string texto)
+		{
+			string jsonResponse;
+			List<string> jsons = new List<string>();
+
+			List<ProductoServicioBuscado> prodserv = await _productosServiciosManager.SearchProductService(texto);
+
+			if (prodserv != null)
+			{
+				foreach (ProductoServicioBuscado a in prodserv)
+				{
+					string additional = a.PalabrasSimilares.Length >= 1 ? $" ({a.PalabrasSimilares})" : string.Empty;
+					jsons.Add($"{{" +
+									$"\"id\": {a.Id}, " +
+									$"\"value\": \"{a.Descripcion}\", " +
+									$"\"label\": \"{a.Clave} - {a.Descripcion}{additional}\", " +
+									$"\"clave\": \"{a.Clave}\"" +
+								$"}}");
+				}
+			}
+
+			jsonResponse = $"[{string.Join(",", jsons)}]";
+
+			return jsonResponse;
 		}
 	}
 }
