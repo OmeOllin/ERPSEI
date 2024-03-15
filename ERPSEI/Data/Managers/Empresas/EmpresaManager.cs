@@ -160,7 +160,8 @@ namespace ERPSEI.Data.Managers.Empresas
                             $"Empresas.RazonSocial, " +
                             $"Origenes.Nombre AS Origen, " +
                             $"Niveles.Nombre AS Nivel, " +
-                            $"Empresas.RFC, " +
+							$"Niveles.PuedeFacturar AS PuedeFacturar, " +
+							$"Empresas.RFC, " +
                             $"Empresas.DomicilioFiscal, " +
                             $"Perfiles.Nombre AS Perfil, " +
                             $"Empresas.ObjetoSocial " +

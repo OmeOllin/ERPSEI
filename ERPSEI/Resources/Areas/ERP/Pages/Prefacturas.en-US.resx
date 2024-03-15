@@ -135,8 +135,17 @@
   <data name="Limpiar" xml:space="preserve">
     <value>Clear</value>
   </data>
+  <data name="MismaDireccionNoPuedeFacturar" xml:space="preserve">
+    <value>The sender and receiver have the address. Cannot be billed.</value>
+  </data>
+  <data name="MismoNivelNoPuedeFacturar" xml:space="preserve">
+    <value>The sender and receiver have the same level. Cannot be billed.</value>
+  </data>
   <data name="Nivel" xml:space="preserve">
     <value>Level</value>
+  </data>
+  <data name="NivelNoPuedeFacturar" xml:space="preserve">
+    <value>The selected company level does not allow billing. Please choose another company.</value>
   </data>
   <data name="ObjetoSocial" xml:space="preserve">
     <value>Social Object</value>
@@ -147,6 +156,9 @@
   <data name="Perfil" xml:space="preserve">
     <value>Profile</value>
   </data>
+  <data name="PuedenFacturar" xml:space="preserve">
+    <value>Excellent! Companies can bill each other</value>
+  </data>
   <data name="RazonSocial" xml:space="preserve">
     <value>Business Name</value>
   </data>
@@ -156,11 +168,20 @@
   <data name="RFC" xml:space="preserve">
     <value>RFC</value>
   </data>
+  <data name="SapiNoPuedeFacturar" xml:space="preserve">
+    <value>The company profile is SAPI and does not allow billing. Please choose another company.</value>
+  </data>
   <data name="SearchSuggestionA" xml:space="preserve">
     <value>There's still nothing here</value>
   </data>
   <data name="SearchSuggestionB" xml:space="preserve">
     <value>Find a company to start</value>
+  </data>
+  <data name="SinActividadesNoPuedeFacturar" xml:space="preserve">
+    <value>The selected company cannot bill because it does not have economic activities. Please choose another company.</value>
+  </data>
+  <data name="SinPerfilNoPuedeFacturar" xml:space="preserve">
+    <value>The selected company cannot bill because it does not have a profile. Please choose another company.</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Preinvoices</value>

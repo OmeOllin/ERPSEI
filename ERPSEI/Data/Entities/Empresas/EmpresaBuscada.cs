@@ -13,6 +13,8 @@ namespace ERPSEI.Data.Entities.Empresas
 
 		public string? Nivel { get; set; } = string.Empty;
 
+		public bool? PuedeFacturar {  get; set; }
+
 		public string? RFC { get; set; } = string.Empty;
 
 		public string? DomicilioFiscal { get; set; } = string.Empty;
