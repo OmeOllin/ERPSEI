@@ -68,6 +68,76 @@ function getIdSelections() {
         return row.id
     })
 }
+//Función para calcular cuantos meses hay entre dos fechas
+function monthDiff(d1, d2) {
+    var months;
+    months = (d2.getFullYear() - d1.getFullYear()) * 12;
+    months -= d1.getMonth() + 1;
+    months += d2.getMonth() + 1;
+    if (d2.getDate() < d1.getDate()) { months -= 1; }
+    return months <= 0 ? 0 : months;
+}
+//Función para establecer el estilo de los rows individualmente
+function rowStyle(row, index) {
+    let fechaActual = new Date();
+    let fechaInvalida = new Date(1, 0, 1, 0, 0, 0, 0);
+
+    let fcParts = (row.fechaConstitucionJS || "").split("-");
+    let fechaConstitucion = new Date((fcParts[0]||1), (fcParts[1]||1) - 1, (fcParts[2]||1), 0, 0, 0, 0);
+    let fifParts = (row.fechaInicioFacturacionJS || "").split("-");
+    let fechaInicioFacturacion = new Date((fifParts[0] || 1), (fifParts[1] || 1) - 1, (fifParts[2] || 1), 0, 0, 0, 0);
+    let fiaParts = (row.fechaInicioAsimiladosJS || "").split("-");
+    let fechaInicioAsimilados = new Date((fiaParts[0] || 1), (fiaParts[1] || 1) - 1, (fiaParts[2] || 1), 0, 0, 0, 0);
+
+    let alertaMesesConstituida = 32;
+    let maxMesesConstituida = 36;
+    let alertaMesesFacturando = 8;
+    let maxMesesFacturando = 12;
+    let alertaMesesAsimilados = 4;
+
+    
+    //Se verifica la fecha de consitución
+    if (fechaInvalida.toLocaleString() != fechaConstitucion.toLocaleString()) {
+        let cMonths = monthDiff(fechaConstitucion, fechaActual);
+        if (cMonths >= maxMesesConstituida) {
+            return {
+                classes: "alert-danger"
+            };
+        }
+        else if (cMonths >= alertaMesesConstituida) {
+            return {
+                classes: "alert-warning"
+            };
+        }
+    }
+
+    //Se verifica la fecha de inicio de facturación
+    if (fechaInvalida.toLocaleString() != fechaInicioFacturacion.toLocaleString()) {
+        let cMonths = monthDiff(fechaInicioFacturacion, fechaActual);
+        if (cMonths >= maxMesesFacturando) {
+            return {
+                classes: "alert-danger"
+            };
+        }
+        else if (cMonths >= alertaMesesFacturando) {
+            return {
+                classes: "alert-warning"
+            };
+        }
+    }
+
+    //Se verifica la fecha de inicio de asimilados
+    if (fechaInvalida.toLocaleString() != fechaInicioAsimilados.toLocaleString()) {
+        let cMonths = monthDiff(fechaInicioAsimilados, fechaActual);
+        if (cMonths >= alertaMesesAsimilados) {
+            return {
+                classes: "alert-warning"
+            };
+        }
+    }
+
+    return {};
+}
 //Función para procesar la respuesta del servidor al consultar datos
 function responseHandler(res) {
     if (typeof res == "string" && res.length >= 1) {
