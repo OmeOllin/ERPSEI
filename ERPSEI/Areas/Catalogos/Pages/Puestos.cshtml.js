@@ -32,15 +32,6 @@ function responseHandler(res) {
     })
     return res
 }
-function detailFormatter(index, row) {
-    var html = []
-    $.each(row, function (key, value) {
-        if (key != "state" && key != "empleados") {
-            html.push('<p><b>' + key + ':</b> ' + value + '</p>')
-        }
-    });
-    return html.join('')
-}
 function operateFormatter(value, row, index) {
     return [
         '<a class="see btn" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlgPuesto" title="' + btnVerTitle + '">',
