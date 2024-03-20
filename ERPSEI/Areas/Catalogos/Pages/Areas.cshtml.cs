@@ -1,4 +1,5 @@
 using ERPSEI.Data.Entities.Empleados;
+using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Managers;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
@@ -80,32 +81,38 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				}
 				else
 				{
-					//Busca el área por Id
-					Area? area = await _areaManager.GetByIdAsync(Input.Id);
+					//Se busca si ya existe un registro con el mismo nombre.
+					Area? area = await _areaManager.GetByNameAsync(Input.Nombre);
 
-					if (area != null)
+					//Si ya existe un registro con el mismo nombre y los Id's no coinciden
+					if (area != null && area.Id != Input.Id)
 					{
-						//El área ya existe, por lo que solo se actualiza.
-						area.Nombre = Input.Nombre;
-						await _areaManager.UpdateAsync(area);
-
-						resp.TieneError = false;
-						resp.Mensaje = _strLocalizer["AreaSavedSuccessfully"];
+						//Ya existe un elemento con el mismo nombre.
+						resp.Mensaje = _strLocalizer["ErrorAreaExistente"];
 					}
 					else
 					{
-						//Se busca si ya existe un área con el mismo nombre.
-						area = await _areaManager.GetByNameAsync(Input.Nombre);
-						if (area != null) {
-							resp.Mensaje = _strLocalizer["ErrorAreaExistente"];
+						int id = 0;
+						//Busca el registro por Id
+						area = await _areaManager.GetByIdAsync(Input.Id);
+
+						//Si se encontró área, obtiene su Id del registro existente. De lo contrario, se crea uno nuevo.
+						if (area != null) { id = area.Id; } else { area = new Area(); }
+
+						area.Nombre = Input.Nombre;
+
+						//Crea o actualiza el registro
+						if(id >= 1)
+						{
+							await _areaManager.UpdateAsync(area);
 						}
 						else
 						{
-							await _areaManager.CreateAsync(new Area() { Nombre = Input.Nombre });
-
-							resp.TieneError = false;
-							resp.Mensaje = _strLocalizer["AreaSavedSuccessfully"];
+							await _areaManager.CreateAsync(area);
 						}
+
+						resp.TieneError = false;
+						resp.Mensaje = _strLocalizer["AreaSavedSuccessfully"];
 					}
 				}
 			}

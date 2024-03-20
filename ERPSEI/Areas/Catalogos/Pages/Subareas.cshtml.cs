@@ -99,32 +99,35 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				}
 				else
 				{
-					Subarea? subarea = await _subareaManager.GetByIdAsync(Input.Id);
+					Subarea? subarea = await _subareaManager.GetByNameAsync(Input.Nombre);
 
-					if (subarea != null)
+					if (subarea != null && subarea.Id != Input.Id)
 					{
-						subarea.Nombre = Input.Nombre;
-						subarea.AreaId = Input.IdArea;
-						await _subareaManager.UpdateAsync(subarea);
-
-						resp.TieneError = false;
-						resp.Mensaje = _strLocalizer["SubareaSavedSuccessfully"];
+						resp.Mensaje = _strLocalizer["ErrorSubareaExistente"];
 					}
 					else
 					{
-						//Se busca si ya existe una subarea con el mismo nombre.
-						subarea = await _subareaManager.GetByNameAsync(Input.Nombre);
-						if (subarea != null)
+						int id = 0;
+						//Se busca por id.
+						subarea = await _subareaManager.GetByIdAsync(Input.Id);
+
+						if (subarea != null) { id = subarea.Id; } else { subarea = new Subarea(); }
+
+						subarea.Nombre = Input.Nombre;
+						subarea.AreaId = Input.IdArea;
+
+						if (id >= 1)
 						{
-							resp.Mensaje = _strLocalizer["ErrorSubareaExistente"];
+							await _subareaManager.UpdateAsync(subarea);
 						}
 						else
 						{
-							await _subareaManager.CreateAsync(new Subarea() { Nombre = Input.Nombre, AreaId = Input.IdArea });
+							await _subareaManager.CreateAsync(subarea);
 
-							resp.TieneError = false;
-							resp.Mensaje = _strLocalizer["SubareaSavedSuccessfully"];
 						}
+
+						resp.TieneError = false;
+						resp.Mensaje = _strLocalizer["SubareaSavedSuccessfully"];
 					}
 				}
 			}

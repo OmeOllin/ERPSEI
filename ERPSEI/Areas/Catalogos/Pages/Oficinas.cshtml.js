@@ -233,6 +233,7 @@ function onGuardarClick() {
                     });
                     summaryContainer.innerHTML += `<ul>${summary}</ul>`;
                 }
+                showError(dlgTitle.innerHTML, resp.mensaje);
                 return;
             }
 

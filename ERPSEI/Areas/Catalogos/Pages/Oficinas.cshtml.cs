@@ -81,31 +81,34 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				}
 				else
 				{
-					Oficina? oficina = await _oficinaManager.GetByIdAsync(Input.Id);
+					Oficina? oficina = await _oficinaManager.GetByNameAsync(Input.Nombre);
 
-					if (oficina != null)
+					if (oficina != null && oficina.Id != Input.Id)
 					{
-						oficina.Nombre = Input.Nombre;
-						await _oficinaManager.UpdateAsync(oficina);
-
-						resp.TieneError = false;
-						resp.Mensaje = _strLocalizer["OfficeSavedSuccessfully"];
+						resp.Mensaje = _strLocalizer["ErrorOficinaExistente"];
 					}
 					else
 					{
-						//Se busca si ya existe una oficina con el mismo nombre.
-						oficina = await _oficinaManager.GetByNameAsync(Input.Nombre);
-						if (oficina != null)
+						int id = 0;
+						//Se busca por id.
+						oficina = await _oficinaManager.GetByIdAsync(Input.Id);
+
+						if (oficina != null) { id = oficina.Id } else { oficina = new Oficina(); }
+
+						oficina.Nombre = Input.Nombre;
+
+						if(id >= 1)
 						{
-							resp.Mensaje = _strLocalizer["ErrorOficinaExistente"];
+							await _oficinaManager.UpdateAsync(oficina);
 						}
 						else
 						{
-							await _oficinaManager.CreateAsync(new Oficina() { Nombre = Input.Nombre });
+							await _oficinaManager.CreateAsync(oficina);
 
-							resp.TieneError = false;
-							resp.Mensaje = _strLocalizer["OfficeSavedSuccessfully"];
 						}
+
+						resp.TieneError = false;
+						resp.Mensaje = _strLocalizer["OfficeSavedSuccessfully"];
 					}
 				}
 			}

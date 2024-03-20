@@ -80,32 +80,35 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				}
 				else
 				{
-					//Busca el área por Id
-					Origen? origen = await _origenManager.GetByIdAsync(Input.Id);
+					//Busca el origen por nombre
+					Origen? origen = await _origenManager.GetByNameAsync(Input.Nombre);
 
-					if (origen != null)
+					if (origen != null && origen.Id != Input.Id)
 					{
-						//El origen ya existe, por lo que solo se actualiza.
-						origen.Nombre = Input.Nombre;
-						await _origenManager.UpdateAsync(origen);
-
-						resp.TieneError = false;
-						resp.Mensaje = _strLocalizer["SavedSuccessfully"];
+						resp.Mensaje = _strLocalizer["ErrorExistente"];
 					}
 					else
 					{
-						//Se busca si ya existe un origen con el mismo nombre.
-						origen = await _origenManager.GetByNameAsync(Input.Nombre);
-						if (origen != null) {
-							resp.Mensaje = _strLocalizer["ErrorExistente"];
+						int id = 0;
+						//Se busca por id.
+						origen = await _origenManager.GetByIdAsync(Input.Id);
+
+						if (origen != null) { id = origen.Id; } else { origen = new Origen(); }
+
+						origen.Nombre = Input.Nombre;
+
+						if (id >= 1)
+						{
+							await _origenManager.UpdateAsync(origen);
 						}
 						else
 						{
-							await _origenManager.CreateAsync(new Origen() { Nombre = Input.Nombre });
+							await _origenManager.CreateAsync(origen);
 
-							resp.TieneError = false;
-							resp.Mensaje = _strLocalizer["SavedSuccessfully"];
 						}
+
+						resp.TieneError = false;
+						resp.Mensaje = _strLocalizer["SavedSuccessfully"];
 					}
 				}
 			}

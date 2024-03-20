@@ -84,33 +84,37 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				}
 				else
 				{
-					//Busca el área por Id
-					Nivel? nivel = await _catalogoManager.GetByIdAsync(Input.Id);
+					//Busca el nivel por nombre
+					Nivel? nivel = await _catalogoManager.GetByNameAsync(Input.Nombre);
 
-					if (nivel != null)
+					if (nivel != null && nivel.Id != Input.Id)
 					{
-						//El registro ya existe, por lo que solo se actualiza.
-						nivel.Nombre = Input.Nombre;
-						nivel.PuedeFacturar = Input.PuedeFacturar;
-						await _catalogoManager.UpdateAsync(nivel);
-
-						resp.TieneError = false;
-						resp.Mensaje = _strLocalizer["SavedSuccessfully"];
+						resp.Mensaje = _strLocalizer["ErrorExistente"];
 					}
 					else
 					{
-						//Se busca si ya existe un registro con el mismo nombre.
-						nivel = await _catalogoManager.GetByNameAsync(Input.Nombre);
-						if (nivel != null) {
-							resp.Mensaje = _strLocalizer["ErrorExistente"];
+						int id = 0;
+						//Se busca por id.
+						nivel = await _catalogoManager.GetByIdAsync(Input.Id);
+
+						if (nivel != null) { id = nivel.Id } else { nivel = new Nivel(); }
+
+						//El registro ya existe, por lo que solo se actualiza.
+						nivel.Nombre = Input.Nombre;
+						nivel.PuedeFacturar = Input.PuedeFacturar;
+
+						if (id >= 1)
+						{
+							await _catalogoManager.UpdateAsync(nivel);
 						}
 						else
 						{
-							await _catalogoManager.CreateAsync(new Nivel() { Nombre = Input.Nombre });
+							await _catalogoManager.CreateAsync(nivel);
 
-							resp.TieneError = false;
-							resp.Mensaje = _strLocalizer["SavedSuccessfully"];
 						}
+
+						resp.TieneError = false;
+						resp.Mensaje = _strLocalizer["SavedSuccessfully"];
 					}
 				}
 			}
