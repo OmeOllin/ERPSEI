@@ -101,12 +101,12 @@ function rowStyle(row, index) {
         let cMonths = monthDiff(fechaConstitucion, fechaActual);
         if (cMonths >= maxMesesConstituida) {
             return {
-                classes: "alert-danger"
+                classes: "bd-callout bd-callout-danger border-5 border-top-0 border-bottom-0"
             };
         }
         else if (cMonths >= alertaMesesConstituida) {
             return {
-                classes: "alert-warning"
+                classes: "bd-callout bd-callout-warning border-5 border-top-0 border-bottom-0"
             };
         }
     }
@@ -116,12 +116,12 @@ function rowStyle(row, index) {
         let cMonths = monthDiff(fechaInicioFacturacion, fechaActual);
         if (cMonths >= maxMesesFacturando) {
             return {
-                classes: "alert-danger"
+                classes: "bd-callout bd-callout-danger border-5 border-top-0 border-bottom-0"
             };
         }
         else if (cMonths >= alertaMesesFacturando) {
             return {
-                classes: "alert-warning"
+                classes: "bd-callout bd-callout-warning border-5 border-top-0 border-bottom-0"
             };
         }
     }
@@ -131,7 +131,7 @@ function rowStyle(row, index) {
         let cMonths = monthDiff(fechaInicioAsimilados, fechaActual);
         if (cMonths >= alertaMesesAsimilados) {
             return {
-                classes: "alert-warning"
+                classes: "bd-callout bd-callout-warning border-5 border-top-0 border-bottom-0"
             };
         }
     }
