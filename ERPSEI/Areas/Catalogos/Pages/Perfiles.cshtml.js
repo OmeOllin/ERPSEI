@@ -2,6 +2,7 @@
 var buttonRemove;
 var selections = [];
 var dlg = null;
+var dlgModal = null;
 
 const NUEVO = 0;
 const EDITAR = 1;
@@ -12,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     table = $("#table");
     buttonRemove = $("#remove");
     dlg = document.getElementById('dlg');
+    dlgModal = new bootstrap.Modal(dlg, null);
     //Función para limpiar el cuadro de diálogo cuando es cerrado
     dlg.addEventListener('hidden.bs.modal', function (event) {
         onCerrarClick();
@@ -50,15 +52,21 @@ function responseHandler(res) {
 
     return res
 }
+//Función para dar formato a los iconos de operación de los registros
 function operateFormatter(value, row, index) {
-    return [
-        '<a class="see btn" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlg" title="' + btnVerTitle + '">',
-            '<i class="bi bi-search"></i>',
-        '</a>  ',
-        '<a class="edit btn" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#dlg" title="' + btnEditarTitle + '">',
-            '<i class="bi bi-pencil-fill"></i>',
-        '</a>'
-    ].join('')
+    let icons = [];
+
+    //Icono Ver
+    icons.push(`<li><a class="dropdown-item see" href="#" title="${btnVerTitle}"><i class="bi bi-search"></i> ${btnVerTitle}</a></li>`);
+    //Icono Editar
+    icons.push(`<li><a class="dropdown-item edit" href="#" title="${btnEditarTitle}"><i class="bi bi-pencil-fill"></i> ${btnEditarTitle}</a></li>`);
+
+    return `<div class="dropdown">
+              <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical success"></i>
+              </button>
+              <ul class="dropdown-menu">${icons.join("")}</ul>
+            </div>`;
 }
 window.operateEvents = {
     'click .see': function (e, value, row, index) {
@@ -180,6 +188,8 @@ function initDialog(action, row) {
     row.productosServicios.forEach(function (p) { agregarProductoServicio(p.id, p.clave, p.descripcion); });
 
     prepareForm(action);
+
+    dlgModal.toggle();
 }
 //Función para hablitar / deshabilitar el formulario de empresa
 function prepareForm(action) {
