@@ -156,6 +156,9 @@
   <data name="Nivel" xml:space="preserve">
     <value>Level</value>
   </data>
+  <data name="NivelMenorNoPuedeFacturar" xml:space="preserve">
+    <value>The level of the emitter company cannot be lower than the level of the receiving company. Please choose another company.</value>
+  </data>
   <data name="NivelNoPuedeFacturar" xml:space="preserve">
     <value>The selected company level does not allow billing. Please choose another company.</value>
   </data>

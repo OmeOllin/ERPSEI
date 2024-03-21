@@ -285,15 +285,6 @@ function validarEmpresaSeleccionada(e, isEmisor, isReceptor) {
         prodServSelectorField.classList.remove("is-invalid");
         prodServSelectorField.classList.remove("is-valid");
 
-        let puedeFacturar = (e.nivel.puedeFacturar.toLowerCase() === 'true');
-        if (!puedeFacturar) { 
-            nivelField.classList.add("is-invalid");
-            /*tabAField.classList.add("is-invalid");*/
-            showAlert(title, nivelNoPuedeFacturar);
-            return false;
-        }
-        nivelField.classList.add("is-valid");
-
         let prodServsAllowed = (e.productosServicios || []);
         if (prodServsAllowed.length <= 0) {
             perfilField.classList.add("is-invalid");
@@ -334,6 +325,15 @@ function validarEmpresaSeleccionada(e, isEmisor, isReceptor) {
             }
         }
     }
+
+    let puedeFacturar = (e.nivel.puedeFacturar.toLowerCase() === 'true');
+    if (!puedeFacturar) {
+        nivelField.classList.add("is-invalid");
+        /*tabAField.classList.add("is-invalid");*/
+        showAlert(title, nivelNoPuedeFacturar);
+        return false;
+    }
+    nivelField.classList.add("is-valid");
 
     if ((e.perfil || "").length <= 0) {
         perfilField.classList.add("is-invalid");
@@ -404,7 +404,16 @@ function validarFacturacionEntreEmpresas(emisor, receptor) {
     direccionReceptorField.classList.remove("is-invalid");
     direccionReceptorField.classList.remove("is-valid");
 
-    if (emisor.nivel.nombre === receptor.nivel.nombre) {
+    //Empresas emisoras con nivel menor a nivel del receptor no pueden facturar.
+    if (parseInt(emisor.nivel.ordinal || "0") < parseInt(receptor.nivel.ordinal || "0")) {
+        nivelEmisorField.classList.add("is-invalid");
+        nivelReceptorField.classList.add("is-invalid");
+        //tabAEmisorField.classList.add("is-invalid");
+        //tabAReceptorField.classList.add("is-invalid");
+        showAlert(title, nivelMenorNoPuedeFacturar);
+        return false;
+    }
+    if (emisor.nivel.ordinal === receptor.nivel.ordinal) {
         nivelEmisorField.classList.add("is-invalid");
         nivelReceptorField.classList.add("is-invalid");
         //tabAEmisorField.classList.add("is-invalid");
