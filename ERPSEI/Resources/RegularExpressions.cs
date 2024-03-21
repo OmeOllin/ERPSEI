@@ -14,7 +14,7 @@
 
 		public const string AlphanumNoSpaceNoUnderscore = @"^[A-Za-zñÑ\d]+$";
 
-		public const string NumericFirstDigitNonZero = @"^[1-9][\d]+$";
+		public const string NumericFirstDigitNonZero = @"^[1-9][\d]*$";
 
 		public const string NumericNoRestriction = @"^[\d]+$";
 	}

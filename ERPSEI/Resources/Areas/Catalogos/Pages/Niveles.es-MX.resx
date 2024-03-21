@@ -129,6 +129,12 @@
   <data name="ColNameHeader" xml:space="preserve">
     <value>Nombre</value>
   </data>
+  <data name="ColOrdinalHeader" xml:space="preserve">
+    <value>Ordinal</value>
+  </data>
+  <data name="ColPuedeFacturarHeader" xml:space="preserve">
+    <value>¿Puede Facturar?</value>
+  </data>
   <data name="DeleteButton" xml:space="preserve">
     <value>Eliminar</value>
   </data>

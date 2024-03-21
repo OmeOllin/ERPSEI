@@ -29,10 +29,22 @@ function getIdSelections() {
     })
 }
 function responseHandler(res) {
+    if (typeof res == "string" && res.length >= 1) {
+        res = JSON.parse(res);
+    }
     $.each(res, function (i, row) {
         row.state = $.inArray(row.id, selections) !== -1
     })
     return res
+}
+//Función para dar formato a los campos booleanos
+function booleanFormatter(value, row, index) {
+    if ((row.puedeFacturar || "False") == "True") {
+        return `<i class="bi bi-check-circle-fill text-success"></i>`;
+    }
+    else {
+        return `<i class="bi bi-x-circle-fill text-danger"></i>`;
+    }
 }
 //Función para dar formato a los iconos de operación de los registros
 function operateFormatter(value, row, index) {
@@ -88,6 +100,23 @@ function initTable() {
                 align: "center",
                 valign: "middle",
                 sortable: true
+            },
+            {
+                title: colOrdinalHeader,
+                field: "ordinal",
+                align: "center",
+                valign: "middle",
+                sortable: true,
+                width: "80px"
+            },
+            {
+                title: colPuedeFacturarHeader,
+                field: "puedeFacturar",
+                align: "center",
+                valign: "middle",
+                sortable: true,
+                formatter: booleanFormatter,
+                width: "80px"
             },
             {
                 title: colAccionesHeader,
@@ -150,6 +179,7 @@ function initTable() {
 function initDialog(action, row) {
     let idField = document.getElementById("inpId");
     let nombreField = document.getElementById("inpNombre");
+    let ordinalField = document.getElementById("inpOrdinal");
     let puedeFacturarField = document.getElementById("inpPuedeFacturar");
     let btnGuardar = document.getElementById("dlgBtnGuardar");
     let dlgTitle = document.getElementById("dlgTitle");
@@ -184,7 +214,8 @@ function initDialog(action, row) {
 
     idField.value = row.id;
     nombreField.value = row.nombre;
-    puedeFacturarField.checked = row.puedeFacturar;
+    ordinalField.value = row.ordinal;
+    puedeFacturarField.checked = (row.puedeFacturar||"False") == "True";
 
     dlgModal.toggle();
 }
@@ -212,6 +243,7 @@ function onGuardarClick() {
     let btnClose = document.getElementById("dlgBtnCancelar");
     let idField = document.getElementById("inpId");
     let nombreField = document.getElementById("inpNombre");
+    let ordinalField = document.getElementById("inpOrdinal");
     let puedeFacturarField = document.getElementById("inpPuedeFacturar");
     let dlgTitle = document.getElementById("dlgTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
@@ -220,6 +252,7 @@ function onGuardarClick() {
     let oParams = {
         id: idField.value == "Nuevo" ? 0 : idField.value,
         nombre: nombreField.value,
+        ordinal: ordinalField.value,
         puedeFacturar: puedeFacturarField.checked
     };
 
@@ -235,6 +268,7 @@ function onGuardarClick() {
                     });
                     summaryContainer.innerHTML += `<ul>${summary}</ul>`;
                 }
+                showError(dlgTitle.innerHTML, resp.mensaje);
                 return;
             }
 

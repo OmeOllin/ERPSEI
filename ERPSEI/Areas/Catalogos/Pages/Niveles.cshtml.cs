@@ -31,6 +31,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Display(Name = "NameField")]
 			public string Nombre { get; set; } = string.Empty;
 
+			[Display(Name = "OrdinalField")]
+			[Required(ErrorMessage = "Required")]
+			[RegularExpression(RegularExpressions.NumericFirstDigitNonZero, ErrorMessage = "Numeric")]
+			public int Ordinal { get; set; }
+
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "PuedeFacturarField")]
 			public bool PuedeFacturar { get; set; } = true;
@@ -48,11 +53,27 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			_logger = logger;
 		}
 
-		public JsonResult OnGetNivelesList()
+		public async Task<JsonResult> OnGetNivelesList()
         {
-			List<Nivel> niveles = _catalogoManager.GetAllAsync().Result;
+			List<Nivel> niveles = await _catalogoManager.GetAllAsync();
+			List<string> jsonNiveles = new List<string>();
+			string jsonResponse = string.Empty;
 
-			return new JsonResult(niveles);
+            foreach (Nivel n in niveles)
+            {
+				jsonNiveles.Add(
+					"{" +
+						$"\"id\": {n.Id}," +
+						$"\"nombre\": \"{n.Nombre}\", " +
+						$"\"ordinal\": \"{n.Ordinal}\", " +
+						$"\"puedeFacturar\": \"{n.PuedeFacturar}\"" +
+					"}"
+				);
+            }
+
+			jsonResponse = $"[{string.Join(",", jsonNiveles)}]";
+
+			return new JsonResult(jsonResponse);
 		}
 
 		public async Task<JsonResult> OnPostDeleteNiveles(string[] ids)
@@ -99,12 +120,13 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 						if (nivel != null) { id = nivel.Id; } else { nivel = new Nivel(); }
 
-						//El registro ya existe, por lo que solo se actualiza.
 						nivel.Nombre = Input.Nombre;
+						nivel.Ordinal = Input.Ordinal;
 						nivel.PuedeFacturar = Input.PuedeFacturar;
 
 						if (id >= 1)
 						{
+							//El registro ya existe, por lo que solo se actualiza.
 							await _catalogoManager.UpdateAsync(nivel);
 						}
 						else

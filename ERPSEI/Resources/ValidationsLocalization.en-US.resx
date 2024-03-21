@@ -267,6 +267,9 @@
   <data name="OldPasswordField" xml:space="preserve">
     <value>Old password</value>
   </data>
+  <data name="OrdinalField" xml:space="preserve">
+    <value>Ordinal</value>
+  </data>
   <data name="OrigenField" xml:space="preserve">
     <value>Origin</value>
   </data>

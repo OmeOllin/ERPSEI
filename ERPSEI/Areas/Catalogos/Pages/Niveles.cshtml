@@ -81,9 +81,20 @@
 						</div>
 						<div class="row">
 							<div class="col-12">
+								<div class="form-floating col-3">
+									<input id="inpOrdinal" asp-for="Input.Ordinal" type="text" class="form-control" />
+									<label asp-for="Input.Ordinal" class="form-label required"></label>
+								</div>
+								<div class="mb-3">
+									<span asp-validation-for="Input.Ordinal" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
 								<div class="form-floating mb-3">
 									<input id="inpNombre" asp-for="Input.Nombre" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
-									<label asp-for="Input.Nombre" class="form-label"></label>
+									<label asp-for="Input.Nombre" class="form-label required"></label>
 									<span asp-validation-for="Input.Nombre" class="text-danger"></span>
 								</div>
 							</div>
@@ -137,6 +148,8 @@
 		var dlgDeleteTitle = '@Localizer["DeleteDialogTitle"]';
 		var dlgDeleteQuestion = '@Localizer["DeleteDialogQuestion"]';
 		var colNombreHeader = '@Localizer["ColNameHeader"]';
+		var colOrdinalHeader = '@Localizer["ColOrdinalHeader"]';
+		var colPuedeFacturarHeader = '@Localizer["ColPuedeFacturarHeader"]';
 		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
 	</script>
 
