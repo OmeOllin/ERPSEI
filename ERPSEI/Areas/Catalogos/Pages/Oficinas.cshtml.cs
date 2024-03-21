@@ -93,7 +93,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						//Se busca por id.
 						oficina = await _oficinaManager.GetByIdAsync(Input.Id);
 
-						if (oficina != null) { id = oficina.Id } else { oficina = new Oficina(); }
+						if (oficina != null) { id = oficina.Id; } else { oficina = new Oficina(); }
 
 						oficina.Nombre = Input.Nombre;
 

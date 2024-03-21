@@ -97,7 +97,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						//Se busca por id.
 						nivel = await _catalogoManager.GetByIdAsync(Input.Id);
 
-						if (nivel != null) { id = nivel.Id } else { nivel = new Nivel(); }
+						if (nivel != null) { id = nivel.Id; } else { nivel = new Nivel(); }
 
 						//El registro ya existe, por lo que solo se actualiza.
 						nivel.Nombre = Input.Nombre;
