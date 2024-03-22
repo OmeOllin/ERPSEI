@@ -1,6 +1,6 @@
 ﻿//Función para el llenado de campos a autocompletar
 function autoCompletar(selector, oExtend) {
-	const classIcon = typeof oExtend != 'undefined' && typeof oExtend.icon === 'boolean' && oExtend.icon === true ? 'ui-autocomplete-icon' : '';
+	const classIcon = typeof oExtend != 'undefined' && typeof oExtend.icon === 'boolean' && oExtend.icon === true ? 'ui-icon ui-autocomplete-icon' : '';
 	selector = selector || 'input[area][module][source]';
 	oExtend = $.extend({ select: null, change: null }, oExtend);
 
@@ -13,6 +13,7 @@ function autoCompletar(selector, oExtend) {
 				$(event.target).autocomplete('close');
 				return false;
 			} //if
+			$(event.target).addClass('autocompleteLoading');
 		},
 		source: function (request, response) {
 			let itemDOM = $(this.element);
@@ -46,11 +47,9 @@ function autoCompletar(selector, oExtend) {
 				success: function (resp) { //Si la llamada es satisfactoria
 					// Habilita componentes de la UI previamente deshabilitados
 					toEnable('.ui-dialog-titlebar-close, .ui-disabled-on-suggest');
+					$(itemDOM).removeClass('autocompleteLoading');
 					try {
 						if (resp.tieneError) {
-							// Si no hay coincidencias, limpia campos relacionados
-							itemDOM.val('').attr({ idselected: '' }).removeClass('ui-autocomplete-loading');
-
 							showError('', resp.mensaje);
 							return;
 						}
@@ -65,6 +64,7 @@ function autoCompletar(selector, oExtend) {
 				error: function (xhr, estado, errdata) { //En caso de error de comunicaciones o del sitio
 					console.warn(estado);
 					console.warn(errdata);
+					$(itemDOM).removeClass('autocompleteLoading');
 					showError([JSON.stringify(estado), JSON.stringify(errdata)].join());
 					return false;
 				}
