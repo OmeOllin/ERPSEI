@@ -31,6 +31,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
     let btnBuscar = document.getElementById("btnBuscar");
     btnBuscar.click();
+
+    autoCompletar("#inpEmpleadoJefeId");
 });
 //Función para redimensionar los textareas cada que cambie el tamaño de pantalla.
 window.addEventListener('resize', function (event) {
@@ -181,6 +183,7 @@ function onAgregarClick() {
         subareaId: 0,
         oficinaId: 0,
         jefeId: 0,
+        jefe: "",
         curp: "",
         rfc: "",
         nss: "",
@@ -453,7 +456,7 @@ function initEmpleadoDialog(action, row) {
     let areaField = document.getElementById("selEmpleadoAreaId");
     let subareaField = document.getElementById("selEmpleadoSubareaId");
     let oficinaField = document.getElementById("selEmpleadoOficinaId");
-    let jefeField = document.getElementById("selEmpleadoJefeId");
+    let jefeField = document.getElementById("inpEmpleadoJefeId");
     let fechaIngresoField = document.getElementById("inpEmpleadoFechaIngreso");
     let emailField = document.getElementById("inpEmpleadoEmail");
     let curpField = document.getElementById("inpEmpleadoCURP");
@@ -507,7 +510,7 @@ function initEmpleadoDialog(action, row) {
     if (action == EDITAR) { onAreaChanged(areaField); }
     subareaField.value = row.subareaId;
     oficinaField.value = row.oficinaId;
-    jefeField.value = row.jefeId;
+    jefeField.setAttribute("idselected", row.jefeId);
     fechaIngresoField.value = row.fechaIngresoJS;
     emailField.value = row.email;
     curpField.value = row.curp;
@@ -566,6 +569,11 @@ function establecerDatosAdicionales(row, action) {
     let telefonoContacto1Field = document.getElementById("inpEmpleadoTelefonoContacto1");
     let nombreContacto2Field = document.getElementById("inpEmpleadoNombreContacto2");
     let telefonoContacto2Field = document.getElementById("inpEmpleadoTelefonoContacto2");
+    let jefeField = document.getElementById("inpEmpleadoJefeId");
+
+    //Se establece la información del Jefe
+    jefeField.setAttribute("idselected", row.jefeId);
+    jefeField.value = row.jefe;
 
     //Se establecen los contactos de emergencia
     row.contactosEmergencia = row.contactosEmergencia || [];
@@ -853,7 +861,7 @@ function onGuardarClick() {
     let areaField = document.getElementById("selEmpleadoAreaId");
     let subareaField = document.getElementById("selEmpleadoSubareaId");
     let oficinaField = document.getElementById("selEmpleadoOficinaId");
-    let jefeField = document.getElementById("selEmpleadoJefeId");
+    let jefeField = document.getElementById("inpEmpleadoJefeId");
     let fechaIngresoField = document.getElementById("inpEmpleadoFechaIngreso");
     let emailField = document.getElementById("inpEmpleadoEmail");
     let curpField = document.getElementById("inpEmpleadoCURP");
@@ -892,7 +900,7 @@ function onGuardarClick() {
         areaId: areaField.value == 0 ? null : parseInt(areaField.value),
         subareaId: subareaField.value == 0 ? null : parseInt(subareaField.value),
         oficinaId: oficinaField.value == 0 ? null : parseInt(oficinaField.value),
-        jefeId: jefeField.value == 0 ? null : parseInt(jefeField.value),
+        jefeId: (jefeField.getAttribute('idselected') || "0") == "0" ? null : parseInt(jefeField.getAttribute("idselected")),
         fechaIngreso: fechaIngresoField.value,
         email: emailField.value.trim(),
         curp: curpField.value.trim(),

@@ -957,5 +957,46 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resp);
 		}
+
+		public async Task<JsonResult> OnPostGetEmpleadosSuggestion(string texto)
+		{
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["ConsultadoUnsuccessfully"]);
+			try
+			{
+				resp.Datos = await GetEmpleadosSuggestion(texto);
+				resp.TieneError = false;
+				resp.Mensaje = _strLocalizer["ConsultadoSuccessfully"];
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+			}
+
+			return new JsonResult(resp);
+		}
+		private async Task<string> GetEmpleadosSuggestion(string texto)
+		{
+			string jsonResponse;
+			List<string> jsons = new List<string>();
+
+			List<Empleado> empleados = await _empleadoManager.GetAllAsync();
+			empleados = empleados.Where(e => e.NombreCompleto.ToLowerInvariant().Contains(texto.ToLowerInvariant())).Take(20).ToList();
+
+			if (empleados != null)
+			{
+				foreach (Empleado e in empleados)
+				{
+					jsons.Add($"{{" +
+									$"\"id\": {e.Id}, " +
+									$"\"value\": \"{e.NombreCompleto}\", " +
+									$"\"label\": \"{e.NombreCompleto}\" " +
+								$"}}");
+				}
+			}
+
+			jsonResponse = $"[{string.Join(",", jsons)}]";
+
+			return jsonResponse;
+		}
 	}
 }
