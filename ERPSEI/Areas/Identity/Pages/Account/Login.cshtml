@@ -39,7 +39,7 @@
                                         </label>
                                     </div>
                                     <div class="mb-3">
-                                        <button id="login-submit" type="submit" onclick="if(($('#userEmail').val()||'').length >= 1 && ($('#userPassword').val()||'').length >= 1){ showLoading(); }" class="w-100 btn btn-lg btn-primary">@Localizer["LoginButton"]</button>
+                                        <button id="login-submit" type="submit" onclick="onLoginClick();" class="w-100 btn btn-lg btn-primary">@Localizer["LoginButton"]</button>
                                     </div>
                                     <div>
                                         <p>
@@ -64,4 +64,9 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        function onLoginClick() {
+            if ($('#account').valid()) { showLoading(); }
+        }
+    </script>
 }

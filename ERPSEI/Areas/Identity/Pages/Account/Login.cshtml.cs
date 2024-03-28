@@ -134,7 +134,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account
                     _logger.LogWarning(_localizer["AccountBanned"]);
                     return RedirectToPage("./Lockout");
                 }
-                else if (user.PasswordResetNeeded)
+                else if (user.EmailConfirmed && user.PasswordResetNeeded)
                 {
                     //Si el usuario requiere resetear su password, redirige a pantalla de reset de password.
                     _logger.LogWarning(_localizer["ResetPasswordRequired"]);
