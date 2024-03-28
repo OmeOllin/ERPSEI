@@ -1,6 +1,5 @@
 ﻿using ERPSEI.Data.Entities;
 using ERPSEI.Data.Entities.Empleados;
-using Microsoft.CodeAnalysis.Elfie.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERPSEI.Data.Managers
@@ -208,6 +207,11 @@ namespace ERPSEI.Data.Managers
 		public async Task<Empleado?> GetByNameAsync(string name)
 		{
 			return await db.Empleados.Where(e => e.Deshabilitado == 0 && e.NombreCompleto.ToLower() == name.ToLower()).FirstOrDefaultAsync();
+		}
+
+		public async Task<Empleado?> GetByEmailAsync(string email)
+		{
+			return await db.Empleados.Where(e => e.Deshabilitado == 0 && e.Email.ToLower() == email.ToLower()).FirstOrDefaultAsync();
 		}
 
 	}

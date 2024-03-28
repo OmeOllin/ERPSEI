@@ -12,12 +12,15 @@ using System.Text;
 using Microsoft.Extensions.Localization;
 using ERPSEI.Email;
 using ERPSEI.Data.Entities;
+using ERPSEI.Data.Managers;
+using ERPSEI.Data.Entities.Empleados;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly IEmpleadoManager _empleadoManager;
         private readonly AppUserManager _userManager;
         private readonly IUserStore<AppUser> _userStore;
         private readonly IUserEmailStore<AppUser> _emailStore;
@@ -27,6 +30,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account
 
 
         public RegisterModel(
+            IEmpleadoManager empleadoManager,
             AppUserManager userManager,
             IUserStore<AppUser> userStore,
             SignInManager<AppUser> signInManager,
@@ -34,6 +38,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account
             IEmailSender emailSender,
             IStringLocalizer<RegisterModel> localizer)
         {
+            _empleadoManager = empleadoManager;
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
@@ -110,20 +115,45 @@ namespace ERPSEI.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
+                Empleado empleado = await _empleadoManager.GetByEmailAsync(Input.Email);
+
                 var user = CreateUser();
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+                //Si ya existe empleado.
+                if(empleado != null)
+                {
+					//Se considera que el preregistro ya está autorizado
+					user.IsPreregisterAuthorized = true;
+                    //Se liga el empleado al usuario.
+                    user.EmpleadoId = empleado.Id;
+                }
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("El usuario creó una nueva cuenta con contraseña.");
 
-                    //Se agrega la cuenta de usuario como candidato.
-                    await _userManager.AddToRoleAsync(user, ServicesConfiguration.RolCandidato);
-
                     var userId = await _userManager.GetUserIdAsync(user);
+
+                    //Si existe empleado que tenga el correo asignado
+                    if (empleado != null) {
+						//Se agrega la cuenta de usuario como usuario.
+						await _userManager.AddToRoleAsync(user, ServicesConfiguration.RolUsuario);
+
+						//Liga al usuario creado con el empleado existente.
+						empleado.UserId = userId;
+						await _empleadoManager.UpdateAsync(empleado);
+					}
+                    else
+                    {
+						//Se agrega la cuenta de usuario como candidato.
+						await _userManager.AddToRoleAsync(user, ServicesConfiguration.RolCandidato);
+					}
+
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(

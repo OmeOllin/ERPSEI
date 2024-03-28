@@ -42,6 +42,7 @@ namespace ERPSEI.Data.Managers
 
         public Task<Empleado?> GetByNameAsync(string name);
 
+		public Task<Empleado?> GetByEmailAsync(string email);
 
-    }
+	}
 }
