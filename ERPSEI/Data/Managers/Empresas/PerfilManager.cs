@@ -66,6 +66,10 @@ namespace ERPSEI.Data.Managers.Empresas
 					Perfil? p = await GetByIdAsync(int.Parse(id));
 					if (p != null)
 					{
+						foreach(ProductoServicioPerfil psp in p.ProductosServiciosPerfil)
+						{
+							db.Remove(psp);
+						}
 						db.Remove(p);
 						await db.SaveChangesAsync();
 					}
@@ -91,7 +95,7 @@ namespace ERPSEI.Data.Managers.Empresas
 
 		public async Task<Perfil?> GetByIdAsync(int id)
         {
-            return await db.Perfiles.Where(a => a.Id == id).FirstOrDefaultAsync();
+            return await db.Perfiles.Where(a => a.Id == id).Include(p => p.ProductosServiciosPerfil).FirstOrDefaultAsync();
         }
 
 		public async Task<Perfil?> GetByNameAsync(string name)
