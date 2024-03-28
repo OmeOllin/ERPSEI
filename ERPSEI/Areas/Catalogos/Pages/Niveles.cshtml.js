@@ -193,6 +193,7 @@ function initDialog(action, row) {
             dlgTitle.innerHTML = dlgNuevoTitle;
 
             nombreField.removeAttribute("disabled");
+            ordinalField.removeAttribute("disabled");
             puedeFacturarField.removeAttribute("disabled");
             btnGuardar.removeAttribute("disabled");
             break;
@@ -200,6 +201,7 @@ function initDialog(action, row) {
             dlgTitle.innerHTML = dlgEditarTitle;
 
             nombreField.removeAttribute("disabled");
+            ordinalField.removeAttribute("disabled");
             puedeFacturarField.removeAttribute("disabled");
             btnGuardar.removeAttribute("disabled");
             break;
@@ -207,6 +209,7 @@ function initDialog(action, row) {
             dlgTitle.innerHTML = dlgVerTitle;
 
             nombreField.setAttribute("disabled", true);
+            ordinalField.setAttribute("disabled", true);
             puedeFacturarField.setAttribute("disabled", true);
             btnGuardar.setAttribute("disabled", true);
             break;
