@@ -35,11 +35,11 @@ namespace ERPSEI.Pages.Shared
 		public static string CatalogoUsuarios => "Usuarios";
 		public static string CatalogoUsuariosNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoUsuarios);
 
-        #endregion
+		#endregion
 
-        #region Facturación
+		#region Operaciones Empresas
 
-        public static string CatalogoEmpresas => "Empresas";
+		public static string CatalogoEmpresas => "Empresas";
         public static string CatalogoEmpresasNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoEmpresas);
 
         public static string CatalogoOrigenes => "Origenes";
@@ -73,7 +73,7 @@ namespace ERPSEI.Pages.Shared
 
         #endregion
 
-        #region Facturación
+        #region Operaciones Empresas
 
         public static string Prefacturas = "Prefacturas";
         public static string PrefacturasNavClass(ViewContext viewContext) => PageNavClass(viewContext, Prefacturas);
