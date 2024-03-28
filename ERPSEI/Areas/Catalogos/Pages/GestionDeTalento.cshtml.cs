@@ -779,7 +779,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			{
 				_logger.LogError(ex.Message);
 				resp.TieneError = true;
-				resp.Mensaje = _strLocalizer["EmpresasImportadasUnsuccessfully"];
+				resp.Mensaje = _strLocalizer["EmpleadosImportadosUnsuccessfully"];
 			}
 
 			return new JsonResult(resp);
