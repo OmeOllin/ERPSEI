@@ -82,7 +82,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account
                 values: new { userId = userId, code = code },
                 protocol: Request.Scheme);
 
-            string emailBody = $"{_localizer["EmailBodyFP"]} {_localizer["EmailBodySP"]} {callbackUrl}";
+            string emailBody = $"{_localizer["EmailBodyFP"]} <a href='{callbackUrl}'>{_localizer["EmailBodySP"]}</a>";
 
             _emailSender.SendEmailAsync(Input.Email, _localizer["EmailSubject"], emailBody);
 

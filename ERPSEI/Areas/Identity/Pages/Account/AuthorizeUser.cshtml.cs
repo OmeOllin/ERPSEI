@@ -55,8 +55,8 @@ namespace ERPSEI.Areas.Identity.Pages.Account
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return NotFound($"{_localizer["UserLoadFails"]} '{userId}'.");
-            }
+				return RedirectToPage("/Index");
+			}
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             bool result = await _userManager.VerifyUserTokenAsync(user, "UserAuthorization", "UserAuthorization", code);
@@ -70,7 +70,9 @@ namespace ERPSEI.Areas.Identity.Pages.Account
                     //Se actualiza el usuario en base de datos
                     user.IsPreregisterAuthorized = true;
                     await _userManager.UpdateAsync(user);
-                    return RedirectToPage("./ConfirmUserAuthorization");
+					//Se agrega la cuenta de usuario como usuario.
+					await _userManager.AddToRoleAsync(user, ServicesConfiguration.RolUsuario);
+					return RedirectToPage("./ConfirmUserAuthorization");
                 }
                 else if(actionId == "2")
                 {

@@ -929,7 +929,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 							protocol: Request.Scheme)??string.Empty;
 
 						string emailBody = $"" +
-							$"{_strLocalizer["EmailBodyFP"]} {_strLocalizer["EmailBodySP"]} {HtmlEncoder.Default.Encode(userURL)}" +
+							$"{_strLocalizer["EmailBodyFP"]} <a href='{userURL}'>{_strLocalizer["EmailBodySP"]}</a>" +
 							$"<br />" +
 							$"<br />" +
 							$"{_strLocalizer["EmailBodyTP"]}" +

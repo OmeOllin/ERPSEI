@@ -412,7 +412,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 
                     //Se envía notificación al correo configurado para autorizar procesos de los candidatos
                     _emailSender.SendEmailAsync(ServicesConfiguration.MasterUser.Email, 
-                        _localizer["EmailSubject"], $"{_localizer["EmailBodyFP"]} {user.Email}. {_localizer["EmailBodySP"]}.<br /><br />{_localizer["EmailBodyAuthA"]} <a href='{callbackUrlAuth}'>{_localizer["EmailBodyAuthB"]}</a>.<br /><br />{_localizer["EmailBodyRejectA"]} <a href='{callbackUrlReject}'>{_localizer["EmailBodyRejectB"]}</a>.");
+                        _localizer["EmailSubject"], $"{_localizer["EmailBodyFP"]} {user.Email} {_localizer["EmailBodySP"]}.<br /><br />{_localizer["EmailBodyAuthA"]} <a href='{callbackUrlAuth}'>{_localizer["EmailBodyAuthB"]}</a><br /><br />{_localizer["EmailBodyRejectA"]} <a href='{callbackUrlReject}'>{_localizer["EmailBodyRejectB"]}</a>.");
                 }
                 else
                 {
@@ -473,7 +473,12 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 
                 //Confirma la transacción
                 await _db.Database.CommitTransactionAsync();
-            }
+
+				if (!user.IsPreregisterAuthorized)
+				{
+					return Redirect("~/Identity/Account/PendingUserAuthorization");
+				}
+			}
             catch (Exception)
             {
                 //Revierte la transacción.
