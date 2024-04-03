@@ -18,7 +18,7 @@ window.addEventListener('resize', function (event) {
 
 //Functión para capturar el clic del botón guardar
 function onUpdateProfileButtonClick() {
-    showLoading();
+    if ($('#profile-form').valid()) { showLoading(); }
 }
 
 //Función para capturar el clic en el botón de edición, que dispara la apertura del selector de archivo.
