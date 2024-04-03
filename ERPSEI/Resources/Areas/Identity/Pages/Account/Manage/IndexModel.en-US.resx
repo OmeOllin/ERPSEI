@@ -127,7 +127,7 @@
     <value>To authorize it, click on the following link:</value>
   </data>
   <data name="EmailBodyAuthB" xml:space="preserve">
-    <value>Autorize</value>
+    <value>Authorize</value>
   </data>
   <data name="EmailBodyFP" xml:space="preserve">
     <value>A new user with email</value>
