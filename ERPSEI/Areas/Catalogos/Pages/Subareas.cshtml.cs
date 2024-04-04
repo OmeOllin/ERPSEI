@@ -1,3 +1,4 @@
+using ERPSEI.Data;
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Managers;
 using ERPSEI.Requests;
@@ -13,6 +14,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 	[Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
 	public class SubareasModel : PageModel
     {
+		private readonly ApplicationDbContext _db;
+		private readonly IEmpleadoManager _empleadoManager;
 		private readonly IRWCatalogoManager<Subarea> _subareaManager;
 		private readonly IRWCatalogoManager<Area> _areaManager;
 		private readonly IStringLocalizer<SubareasModel> _strLocalizer;
@@ -38,6 +41,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 
 		public SubareasModel(
+			ApplicationDbContext db,
+			IEmpleadoManager empleadoManager,
 			IRWCatalogoManager<Subarea> subareaManager,
 			IRWCatalogoManager<Area> areaManager,
 			IStringLocalizer<SubareasModel> stringLocalizer,
@@ -45,6 +50,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		)
 		{
 			Input = new InputModel();
+			_db = db;
+			_empleadoManager = empleadoManager;
 			_subareaManager = subareaManager;
 			_areaManager = areaManager;
 			_strLocalizer = stringLocalizer;
@@ -73,12 +80,29 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["SubareasDeletedUnsuccessfully"]);
 			try
 			{
-				await _subareaManager.DeleteMultipleByIdAsync(ids);
+				await _db.Database.BeginTransactionAsync();
+
+                foreach (string id in ids)
+                {
+					int sid = 0;
+					if (!int.TryParse(id, out sid)) { sid = 0; }
+					List<Empleado> empleados = await _empleadoManager.GetAllAsync(null, null, null, null, null, null, sid, null, true);
+					foreach(Empleado e in empleados)
+					{
+						e.SubareaId = null;
+						await _empleadoManager.UpdateAsync(e);
+					}
+					await _subareaManager.DeleteByIdAsync(sid);
+                }
+
+				await _db.Database.CommitTransactionAsync();
+
 				resp.TieneError = false;
 				resp.Mensaje = _strLocalizer["SubareasDeletedSuccessfully"];
 			}
 			catch (Exception ex)
 			{
+				await _db.Database.RollbackTransactionAsync();
 				_logger.LogError(ex.Message);
 			}
 
