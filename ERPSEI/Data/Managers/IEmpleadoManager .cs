@@ -25,7 +25,8 @@ namespace ERPSEI.Data.Managers
 			int? puestoId = null,
 			int? areaId = null,
 			int? subareaId = null,
-			int? oficinaId = null
+			int? oficinaId = null,
+			bool deshabilitado = false
 		);
 
 		public Task<Empleado?> GetEmpleadoLoginAsync(int id);

@@ -110,12 +110,13 @@ namespace ERPSEI.Data.Managers
 			int? puestoId = null,
 			int? areaId = null,
 			int? subareaId = null,
-			int? oficinaId = null
+			int? oficinaId = null,
+			bool deshabilitado = false
 		)
 		{
 
 			return await db.Empleados
-				.Where(e => e.Deshabilitado == 0)
+				.Where(e => deshabilitado ? true : e.Deshabilitado == 0)
 				.Where(e => fechaIngresoInicio != null ? e.FechaIngreso >= fechaIngresoInicio : true)
 				.Where(e => fechaIngresoFin != null ? e.FechaIngreso <= fechaIngresoFin : true)
 				.Where(e => fechaNacimientoInicio != null ? e.FechaNacimiento >= fechaNacimientoInicio : true)
