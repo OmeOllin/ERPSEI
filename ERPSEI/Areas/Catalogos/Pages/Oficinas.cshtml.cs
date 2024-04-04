@@ -1,10 +1,10 @@
+using ERPSEI.Data;
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Managers;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
@@ -14,7 +14,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
     [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
     public class OficinasModel : PageModel
     {
-		private readonly IRWCatalogoManager<Oficina> _oficinaManager;
+        private readonly ApplicationDbContext _db;
+        private readonly IEmpleadoManager _empleadoManager;
+        private readonly IRWCatalogoManager<Oficina> _oficinaManager;
 		private readonly IStringLocalizer<OficinasModel> _strLocalizer;
 		private readonly ILogger<OficinasModel> _logger;
 
@@ -34,13 +36,17 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 
 		public OficinasModel(
-			IRWCatalogoManager<Oficina> oficinaManage,
+            ApplicationDbContext db,
+            IEmpleadoManager empleadoManager,
+            IRWCatalogoManager<Oficina> oficinaManage,
 			IStringLocalizer<OficinasModel> stringLocalizer,
 			ILogger<OficinasModel> logger
 		)
 		{
 			Input = new InputModel();
-			_oficinaManager = oficinaManage;
+            _db = db;
+            _empleadoManager = empleadoManager;
+            _oficinaManager = oficinaManage;
 			_strLocalizer = stringLocalizer;
 			_logger = logger;
 		}
@@ -57,13 +63,48 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["OfficesDeletedUnsuccessfully"]);
 			try
 			{
-				await _oficinaManager.DeleteMultipleByIdAsync(ids);
-				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["OfficesDeletedSuccessfully"];
-			}
+                await _db.Database.BeginTransactionAsync();
+
+                List<Oficina> oficinas = await _oficinaManager.GetAllAsync();
+                foreach (string id in ids)
+                {
+                    int sid = 0;
+                    if (!int.TryParse(id, out sid)) { sid = 0; }
+                    Oficina? oficina = oficinas.Where(p => p.Id == sid).FirstOrDefault();
+                    List<Empleado> empleados = await _empleadoManager.GetAllAsync(null, null, null, null, null, null, null, sid, true);
+                    List<Empleado> empleadosActivosRelacionados = empleados.Where(e => e.Deshabilitado == 0).ToList();
+                    //Si existen empleados que tengan el registro asignado, se le notifica al usuario.
+                    if (empleadosActivosRelacionados.Count() > 0)
+                    {
+                        List<string> names = new List<string>();
+                        foreach (Empleado e in empleadosActivosRelacionados) { names.Add($"<i>{e.Id} - {e.NombreCompleto}</i>"); }
+                        resp.TieneError = true;
+                        resp.Mensaje = $"{_strLocalizer["OfficeIsRelated"]}<br/><br/><i>{oficina?.Nombre}</i><br/><br/>{string.Join("<br/>", names)}";
+                        break;
+                    }
+                    else
+                    {
+                        //En caso de no haber empleados con el registro asignado, procede a eliminar referencias y registro.
+                        foreach (Empleado e in empleados)
+                        {
+                            e.OficinaId = null;
+                            await _empleadoManager.UpdateAsync(e);
+                        }
+                        await _oficinaManager.DeleteByIdAsync(sid);
+
+                        resp.TieneError = false;
+                        resp.Mensaje = _strLocalizer["OfficesDeletedSuccessfully"];
+                    }
+                }
+
+                if (resp.TieneError) { throw new Exception(resp.Mensaje); }
+
+                await _db.Database.CommitTransactionAsync();
+            }
 			catch (Exception ex)
 			{
-				_logger.LogError(ex.Message);
+                await _db.Database.RollbackTransactionAsync();
+                _logger.LogError(ex.Message);
 			}
 
 			return new JsonResult(resp);

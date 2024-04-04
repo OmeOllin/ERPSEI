@@ -132,4 +132,7 @@
   <data name="ErrorAreaExistente" xml:space="preserve">
     <value>There is already a registered area with the same name. Please use another name for the new area.</value>
   </data>
+  <data name="PositionIsRelated" xml:space="preserve">
+    <value>The area cannot be deleted because there are linked employees. Reassign the employees area and try again.</value>
+  </data>
 </root>

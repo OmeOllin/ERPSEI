@@ -123,6 +123,9 @@
   <data name="IdAreaIsRequired" xml:space="preserve">
     <value>The field Area is required</value>
   </data>
+  <data name="SubareaIsRelated" xml:space="preserve">
+    <value>The subarea cannot be deleted because there are linked employees. Reassign the employees subarea and try again.</value>
+  </data>
   <data name="SubareaSavedSuccessfully" xml:space="preserve">
     <value>Subarea saved successfully!</value>
   </data>

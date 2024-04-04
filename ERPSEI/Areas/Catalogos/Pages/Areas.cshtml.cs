@@ -1,5 +1,5 @@
+using ERPSEI.Data;
 using ERPSEI.Data.Entities.Empleados;
-using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Managers;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
@@ -14,7 +14,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
     [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
     public class AreasModel : PageModel
     {
-		private readonly IRWCatalogoManager<Area> _areaManager;
+        private readonly ApplicationDbContext _db;
+        private readonly IEmpleadoManager _empleadoManager;
+        private readonly IRWCatalogoManager<Area> _areaManager;
 		private readonly IStringLocalizer<AreasModel> _strLocalizer;
 		private readonly ILogger<AreasModel> _logger;
 
@@ -34,13 +36,17 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 
 		public AreasModel(
-			IRWCatalogoManager<Area> areaManager,
+            ApplicationDbContext db,
+            IEmpleadoManager empleadoManager,
+            IRWCatalogoManager<Area> areaManager,
 			IStringLocalizer<AreasModel> stringLocalizer,
 			ILogger<AreasModel> logger
 		)
 		{
 			Input = new InputModel();
-			_areaManager = areaManager;
+            _db = db;
+            _empleadoManager = empleadoManager;
+            _areaManager = areaManager;
 			_strLocalizer = stringLocalizer;
 			_logger = logger;
 		}
@@ -57,13 +63,48 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["AreasDeletedUnsuccessfully"]);
 			try
 			{
-				await _areaManager.DeleteMultipleByIdAsync(ids);
-				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["AreasDeletedSuccessfully"];
-			}
+                await _db.Database.BeginTransactionAsync();
+
+                List<Area> areas = await _areaManager.GetAllAsync();
+				foreach (string id in ids)
+				{
+                    int sid = 0;
+                    if (!int.TryParse(id, out sid)) { sid = 0; }
+                    Area? area = areas.Where(p => p.Id == sid).FirstOrDefault();
+                    List<Empleado> empleados = await _empleadoManager.GetAllAsync(null, null, null, null, null, sid, null, null, true);
+                    List<Empleado> empleadosActivosRelacionados = empleados.Where(e => e.Deshabilitado == 0).ToList();
+                    //Si existen empleados que tengan el registro asignado, se le notifica al usuario.
+                    if (empleadosActivosRelacionados.Count() > 0)
+                    {
+                        List<string> names = new List<string>();
+                        foreach (Empleado e in empleadosActivosRelacionados) { names.Add($"<i>{e.Id} - {e.NombreCompleto}</i>"); }
+                        resp.TieneError = true;
+                        resp.Mensaje = $"{_strLocalizer["AreaIsRelated"]}<br/><br/><i>{area?.Nombre}</i><br/><br/>{string.Join("<br/>", names)}";
+                        break;
+                    }
+                    else
+                    {
+                        //En caso de no haber empleados con el registro asignado, procede a eliminar referencias y registro.
+                        foreach (Empleado e in empleados)
+                        {
+                            e.AreaId = null;
+                            await _empleadoManager.UpdateAsync(e);
+                        }
+                        await _areaManager.DeleteByIdAsync(sid);
+
+                        resp.TieneError = false;
+                        resp.Mensaje = _strLocalizer["AreasDeletedSuccessfully"];
+                    }
+                }
+
+                if (resp.TieneError) { throw new Exception(resp.Mensaje); }
+
+                await _db.Database.CommitTransactionAsync();
+            }
 			catch (Exception ex)
 			{
-				_logger.LogError(ex.Message);
+                await _db.Database.RollbackTransactionAsync();
+                _logger.LogError(ex.Message);
 			}
 
 			return new JsonResult(resp);

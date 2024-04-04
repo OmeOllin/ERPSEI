@@ -132,4 +132,7 @@
   <data name="OfficesDeletedUnsuccessfully" xml:space="preserve">
     <value>Error al eliminar los registros</value>
   </data>
+  <data name="PositionIsRelated" xml:space="preserve">
+    <value>No se puede eliminar la oficina porque existen empleados vinculados. Reasigne la oficina de los empleados e inténtelo de nuevo.</value>
+  </data>
 </root>

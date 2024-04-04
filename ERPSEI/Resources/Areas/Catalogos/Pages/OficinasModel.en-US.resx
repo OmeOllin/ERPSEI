@@ -132,4 +132,7 @@
   <data name="OfficesDeletedUnsuccessfully" xml:space="preserve">
     <value>Error deleting records</value>
   </data>
+  <data name="PositionIsRelated" xml:space="preserve">
+    <value>The office cannot be deleted because there are linked employees. Reassign the employees office and try again.</value>
+  </data>
 </root>

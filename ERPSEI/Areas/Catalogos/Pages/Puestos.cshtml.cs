@@ -1,3 +1,4 @@
+using ERPSEI.Data;
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Managers;
 using ERPSEI.Requests;
@@ -13,6 +14,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
     [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
     public class PuestosModel : PageModel
     {
+		private readonly ApplicationDbContext _db;
+		private readonly IEmpleadoManager _empleadoManager;
 		private readonly IRWCatalogoManager<Puesto> _puestoManager;
 		private readonly IStringLocalizer<PuestosModel> _strLocalizer;
 		private readonly ILogger<PuestosModel> _logger;
@@ -30,12 +33,16 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 
 		public PuestosModel(
+			ApplicationDbContext db,
+			IEmpleadoManager empleadoManager,	
 			IRWCatalogoManager<Puesto> puestoManager,
 			IStringLocalizer<PuestosModel> stringLocalizer,
 			ILogger<PuestosModel> logger
 		)
 		{
 			Input = new InputModel();
+			_db = db;
+			_empleadoManager = empleadoManager;
 			_puestoManager = puestoManager;
 			_strLocalizer = stringLocalizer;
 			_logger = logger;
@@ -53,16 +60,51 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["PositionsDeletedUnsuccessfully"]);
 			try
 			{
-				await _puestoManager.DeleteMultipleByIdAsync(ids);
-				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["PositionsDeletedSuccessfully"];
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex.Message);
-			}
+                await _db.Database.BeginTransactionAsync();
 
-			return new JsonResult(resp);
+				List<Puesto> puestos = await _puestoManager.GetAllAsync();
+                foreach (string id in ids)
+                {
+                    int sid = 0;
+                    if (!int.TryParse(id, out sid)) { sid = 0; }
+					Puesto? puesto = puestos.Where(p => p.Id == sid).FirstOrDefault();
+                    List<Empleado> empleados = await _empleadoManager.GetAllAsync(null, null, null, null, sid, null, null ,null, true);
+					List<Empleado> empleadosActivosRelacionados = empleados.Where(e => e.Deshabilitado == 0).ToList();
+                    //Si existen empleados que tengan el registro asignado, se le notifica al usuario.
+                    if (empleadosActivosRelacionados.Count() > 0)
+					{
+						List<string> names = new List<string>();
+                        foreach (Empleado e in empleadosActivosRelacionados){ names.Add($"<i>{e.Id} - {e.NombreCompleto}</i>"); }
+                        resp.TieneError = true;
+                        resp.Mensaje = $"{_strLocalizer["PositionIsRelated"]}<br/><br/><i>{puesto?.Nombre}</i><br/><br/>{string.Join("<br/>", names)}";
+						break;
+                    }
+					else
+					{
+						//En caso de no haber empleados con el registro asignado, procede a eliminar referencias y registro.
+                        foreach (Empleado e in empleados)
+                        {
+                            e.PuestoId = null;
+                            await _empleadoManager.UpdateAsync(e);
+                        }
+                        await _puestoManager.DeleteByIdAsync(sid);
+
+                        resp.TieneError = false;
+                        resp.Mensaje = _strLocalizer["PositionsDeletedSuccessfully"];
+                    }
+                }
+
+				if(resp.TieneError){ throw new Exception(resp.Mensaje); }
+
+                await _db.Database.CommitTransactionAsync();
+            }
+            catch (Exception ex)
+            {
+                await _db.Database.RollbackTransactionAsync();
+                _logger.LogError(ex.Message);
+            }
+
+            return new JsonResult(resp);
 		}
 
 		public async Task<JsonResult> OnPostSavePuesto()

@@ -120,6 +120,9 @@
   <data name="ErrorPuestoExistente" xml:space="preserve">
     <value>Ya existe un puesto registrado con el mismo nombre. Por favor, use otro nombre para el nuevo puesto.</value>
   </data>
+  <data name="PositionIsRelated" xml:space="preserve">
+    <value>No se puede eliminar el puesto porque existen empleados vinculados. Reasigne el puesto de los empleados e inténtelo de nuevo.</value>
+  </data>
   <data name="PositionSavedSuccessfully" xml:space="preserve">
     <value>¡Puesto guardado satisfactoriamente!</value>
   </data>

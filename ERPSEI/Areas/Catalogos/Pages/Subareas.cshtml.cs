@@ -82,23 +82,41 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			{
 				await _db.Database.BeginTransactionAsync();
 
+                List<Subarea> subareas = await _subareaManager.GetAllAsync();
                 foreach (string id in ids)
                 {
 					int sid = 0;
 					if (!int.TryParse(id, out sid)) { sid = 0; }
-					List<Empleado> empleados = await _empleadoManager.GetAllAsync(null, null, null, null, null, null, sid, null, true);
-					foreach(Empleado e in empleados)
+                    Subarea? subarea = subareas.Where(sa => sa.Id == sid).FirstOrDefault();
+                    List<Empleado> empleados = await _empleadoManager.GetAllAsync(null, null, null, null, null, null, sid, null, true);
+                    List<Empleado> empleadosActivosRelacionados = empleados.Where(e => e.Deshabilitado == 0).ToList();
+					//Si existen empleados que tengan el registro asignado, se le notifica al usuario.
+					if (empleadosActivosRelacionados.Count() > 0)
 					{
-						e.SubareaId = null;
-						await _empleadoManager.UpdateAsync(e);
+						List<string> names = new List<string>();
+						foreach (Empleado e in empleadosActivosRelacionados){ names.Add($"<i>{e.Id} - {e.NombreCompleto}</i>"); }
+						resp.TieneError = true;
+						resp.Mensaje = $"{_strLocalizer["SubareaIsRelated"]}<br/><br/><i>{subarea?.Nombre}</i><br/><br/>{string.Join("<br/>", names)}";
+						break;
 					}
-					await _subareaManager.DeleteByIdAsync(sid);
+					else
+					{
+                        //En caso de no haber empleados con el registro asignado, procede a eliminar referencias y registro.
+                        foreach (Empleado e in empleados)
+						{
+							e.SubareaId = null;
+							await _empleadoManager.UpdateAsync(e);
+						}
+						await _subareaManager.DeleteByIdAsync(sid);
+
+                        resp.TieneError = false;
+                        resp.Mensaje = _strLocalizer["SubareasDeletedSuccessfully"];
+                    }
                 }
 
-				await _db.Database.CommitTransactionAsync();
+                if (resp.TieneError) { throw new Exception(resp.Mensaje); }
 
-				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["SubareasDeletedSuccessfully"];
+                await _db.Database.CommitTransactionAsync();
 			}
 			catch (Exception ex)
 			{

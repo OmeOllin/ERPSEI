@@ -120,6 +120,9 @@
   <data name="ErrorPuestoExistente" xml:space="preserve">
     <value>There is already a registered position with the same name. Please use another name for the new position.</value>
   </data>
+  <data name="PositionIsRelated" xml:space="preserve">
+    <value>The position cannot be deleted because there are linked employees. Reassign the employees position and try again.</value>
+  </data>
   <data name="PositionSavedSuccessfully" xml:space="preserve">
     <value>Position saved successfully!</value>
   </data>

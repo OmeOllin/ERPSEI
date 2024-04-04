@@ -123,6 +123,9 @@
   <data name="IdAreaIsRequired" xml:space="preserve">
     <value>El campo área es requerido</value>
   </data>
+  <data name="SubareaIsRelated" xml:space="preserve">
+    <value>No se puede eliminar la subarea porque existen empleados vinculados. Reasigne la subarea de los empleados e inténtelo de nuevo.</value>
+  </data>
   <data name="SubareaSavedSuccessfully" xml:space="preserve">
     <value>¡Subarea guardada satisfactoriamente!</value>
   </data>
