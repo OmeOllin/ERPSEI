@@ -6,6 +6,7 @@ using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Managers;
 using ERPSEI.Email;
 using ERPSEI.Resources;
+using Humanizer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -86,7 +87,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             [Required(ErrorMessage = "Required")]
             [StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
             [RegularExpression(RegularExpressions.PersonName, ErrorMessage = "PersonName")]
-            [Display(Name = "FirstNameField")]
+            [Display(Name = "NameField")]
             public string FirstName { get; set; }
 
             [StringLength(15, ErrorMessage = "FieldLength", MinimumLength = 2)]
@@ -358,18 +359,19 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             if (isNewEmployee) { emp = new Empleado(); }
 
             //Actualiza información principal del empleado.
-            emp.Nombre = Input.FirstName;
-            emp.NombrePreferido = Input.NombrePreferido ?? "";
-            emp.ApellidoPaterno = Input.FathersLastName;
-            emp.ApellidoMaterno = Input.MothersLastName;
+            emp.Nombre = Input.FirstName.Trim();
+            emp.NombrePreferido = Input.NombrePreferido.Trim() ?? "";
+            emp.ApellidoPaterno = Input.FathersLastName.Trim();
+            emp.ApellidoMaterno = Input.MothersLastName.Trim();
+            emp.NombreCompleto = $"{Input.FirstName.Trim()} {Input.FathersLastName.Trim()} {Input.MothersLastName.Trim()}";
             emp.FechaNacimiento = Input.FechaNacimiento;
             emp.Telefono = Input.PhoneNumber ?? "";
             emp.GeneroId = Input.GeneroId;
             emp.EstadoCivilId = Input.EstadoCivilId;
             emp.Direccion = Input.Direccion.Trim();
-            emp.CURP = Input.CURP;
-            emp.RFC = Input.RFC;
-            emp.NSS = Input.NSS;
+            emp.CURP = Input.CURP.Trim();
+            emp.RFC = Input.RFC.Trim();
+            emp.NSS = Input.NSS.Trim();
 
             //Actualiza información principal del usuario.
             user.PhoneNumber = Input.PhoneNumber ?? "";

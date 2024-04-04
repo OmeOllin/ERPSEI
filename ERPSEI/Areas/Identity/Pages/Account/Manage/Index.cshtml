@@ -47,7 +47,7 @@
                 <div class="col-sm-12 col-md-12 col-lg-6">
                     <div class="form-floating mb-3">
                         <input id="inpEmpleadoPrimerNombre" asp-for="Input.FirstName" type="text" class="form-control formInput" placeholder="@Localizer["NombrePlaceholder"]" />
-                        <label for="inpEmpleadoPrimerNombre" asp-for="Input.FirstName" class="form-label"></label>
+                        <label for="inpEmpleadoPrimerNombre" asp-for="Input.FirstName" class="form-label required"></label>
                         <span asp-validation-for="Input.FirstName" class="text-danger"></span>
                     </div>
                 </div>
@@ -61,14 +61,14 @@
                 <div class="col-sm-12 col-md-12 col-lg-6">
                     <div class="form-floating mb-3">
                         <input id="inpEmpleadoApellidoPaterno" asp-for="Input.FathersLastName" type="text" class="form-control formInput" placeholder="@Localizer["ApellidoPaternoPlaceholder"]" />
-                        <label for="inpEmpleadoApellidoPaterno" asp-for="Input.FathersLastName" class="form-label"></label>
+                        <label for="inpEmpleadoApellidoPaterno" asp-for="Input.FathersLastName" class="form-label required"></label>
                         <span asp-validation-for="Input.FathersLastName" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-12 col-lg-6">
                     <div class="form-floating mb-3">
                         <input id="inpEmpleadoApellidoMaterno" asp-for="Input.MothersLastName" type="text" class="form-control formInput" placeholder="@Localizer["ApellidoMaternoPlaceholder"]" />
-                        <label for="inpEmpleadoApellidoMaterno" asp-for="Input.MothersLastName" class="form-label"></label>
+                        <label for="inpEmpleadoApellidoMaterno" asp-for="Input.MothersLastName" class="form-label required"></label>
                         <span asp-validation-for="Input.MothersLastName" class="text-danger"></span>
                     </div>
                 </div>
@@ -119,7 +119,7 @@
                 <div class="col-12">
                     <div class="form-floating mb-3">
                         <textarea id="txtEmpleadoDireccion" oninput="calculateTextAreaHeight(this);" maxlength="300" asp-for="Input.Direccion" class="form-control formInput" placeholder="@Localizer["DireccionPlaceholder"]"></textarea>
-                        <label for="txtEmpleadoDireccion" asp-for="Input.Direccion" class="form-label"></label>
+                        <label for="txtEmpleadoDireccion" asp-for="Input.Direccion" class="form-label required"></label>
                         <span asp-validation-for="Input.Direccion" class="text-danger"></span>
                     </div>
                 </div>
@@ -130,21 +130,21 @@
         <div class="col-sm-12 col-md-6 col-lg-3">
             <div class="form-floating mb-3">
                 <input id="inpEmpleadoCURP" asp-for="Input.CURP" type="text" class="form-control formInput" placeholder="@Localizer["CURPPlaceholder"]" />
-                <label for="inpEmpleadoCURP" asp-for="Input.CURP" class="form-label"></label>
+                <label for="inpEmpleadoCURP" asp-for="Input.CURP" class="form-label required"></label>
                 <span asp-validation-for="Input.CURP" class="text-danger"></span>
             </div>
         </div>
         <div class="col-sm-12 col-md-6 col-lg-3">
             <div class="form-floating mb-3">
                 <input id="inpEmpleadoRFC" asp-for="Input.RFC" type="text" class="form-control formInput" placeholder="@Localizer["RFCPlaceholder"]" />
-                <label for="inpEmpleadoRFC" asp-for="Input.RFC" class="form-label"></label>
+                <label for="inpEmpleadoRFC" asp-for="Input.RFC" class="form-label required"></label>
                 <span asp-validation-for="Input.RFC" class="text-danger"></span>
             </div>
         </div>
         <div class="col-sm-12 col-md-6 col-lg-3">
             <div class="form-floating mb-3">
                 <input id="inpEmpleadoNSS" asp-for="Input.NSS" type="text" class="form-control formInput" placeholder="@Localizer["NSSPlaceholder"]" />
-                <label for="inpEmpleadoNSS" asp-for="Input.NSS" class="form-label"></label>
+                <label for="inpEmpleadoNSS" asp-for="Input.NSS" class="form-label required"></label>
                 <span asp-validation-for="Input.NSS" class="text-danger"></span>
             </div>
         </div>
