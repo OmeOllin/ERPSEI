@@ -123,6 +123,9 @@
   <data name="ActividadEconomicaPlaceholder" xml:space="preserve">
     <value>Actividad económica</value>
   </data>
+  <data name="ActividadesEconomicasPlaceholder" xml:space="preserve">
+    <value>Actividades Económicas</value>
+  </data>
   <data name="ActividadRepetida" xml:space="preserve">
     <value>La actividad económica ya se encuentra en el listado</value>
   </data>
@@ -143,6 +146,9 @@
   </data>
   <data name="CancelButtonTitle" xml:space="preserve">
     <value>Cancelar</value>
+  </data>
+  <data name="CloseButtonTitle" xml:space="preserve">
+    <value>Cerrar</value>
   </data>
   <data name="ColAccionistaHeader" xml:space="preserve">
     <value>Accionista</value>
@@ -197,6 +203,9 @@
   </data>
   <data name="DeleteButton" xml:space="preserve">
     <value>Eliminar</value>
+  </data>
+  <data name="DeleteElementDialogQuestion" xml:space="preserve">
+    <value>¿Está seguro que desea eliminar los elementos seleccionados del listado?</value>
   </data>
   <data name="DeleteEmpresaDialogQuestion" xml:space="preserve">
     <value>¿Está seguro que desea eliminar los registros seleccionados?</value>

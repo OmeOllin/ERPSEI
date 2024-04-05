@@ -1,9 +1,11 @@
 ﻿var table;
 var buttonRemove;
+var tableActividad;
 var selections = [];
 var dlgEmpresa = null;
 var dlgEmpresaModal = null;
 
+var dialogMode = null;
 const NUEVO = 0;
 const EDITAR = 1;
 const VER = 2;
@@ -16,12 +18,11 @@ const postOptions = { headers: { "RequestVerificationToken": $('input[name="__Re
 document.addEventListener("DOMContentLoaded", function (event) {
     table = $("#table");
     buttonRemove = $("#remove");
+    tableActividad = $("#tableActividades");
     dlgEmpresa = document.getElementById('dlgEmpresa');
     dlgEmpresaModal = new bootstrap.Modal(dlgEmpresa, null);
     //Función para limpiar el cuadro de diálogo cuando es cerrado
-    dlgEmpresa.addEventListener('hidden.bs.modal', function (event) {
-        onCerrarClick();
-    });
+    dlgEmpresa.addEventListener('hidden.bs.modal', function (event) { onCerrarClick(); });
     //Función para ejecutar acciones posteriores al mostrado del diálogo.
     dlgEmpresa.addEventListener('shown.bs.modal', function (e) {
         //Este evento es necesario para poder mostrar el text area ajustado al tamaño del contenido, basado en el tamaño del scroll.
@@ -34,19 +35,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     btnBuscar.click();
 
     autoCompletar("#inpFiltroActividadEconomica");
-    autoCompletar("#inpEmpresaActividadEconomica", {
-        select: function (element, item) {
-            let btnAdd = document.getElementById("dlgEmpresaBtnAgregarActividad");
-            btnAdd.classList.remove("disabled");
-        },
-        change: function (element, item) {
-            let actividadField = document.getElementById("inpEmpresaActividadEconomica");
-            if (parseInt(actividadField.getAttribute("idselected")||"0") <= 0) {
-                let btnAdd = document.getElementById("dlgEmpresaBtnAgregarActividad");
-                btnAdd.classList.add("disabled");
-            }
-        }
-    });
+    autoCompletar("#inpEmpresaActividadEconomica");
 
     //jQuery.validator.setDefaults({
     //    errorClass: "is-invalid",
@@ -309,10 +298,7 @@ function initTable() {
             // save your data, here just save the current page
             selections = getIdSelections()
             // push or splice the selections if you want to save all data selections
-        })
-    table.on('all.bs.table', function (e, name, args) {
-        console.log(name, args)
-    })
+        });
     buttonRemove.click(function () { onDeleteEmpresaClick(selections); });
 }
 //Función para capturar el click de los botones para dar de baja empresas. Ejecuta una llamada ajax para dar de baja empresas.
@@ -433,6 +419,7 @@ function initEmpresaDialog(action, row) {
     let perfilField = document.getElementById("selEmpresaPerfil");
 
     summaryContainer.innerHTML = "";
+    dialogMode = action;
     idField.setAttribute("disabled", true);
     idField.value = row.id;
     razonSocialField.value = row.razonSocial;
@@ -531,10 +518,12 @@ function prepareForm(action) {
 }
 //Función para establecer los datos adicionales de la empresa
 function establecerDatosAdicionales(row, action) {
+    
     //Se establecen las actividades económicas
-    $("#listActividades").html("");
+    let data = [];
     row.actividadesEconomicas = row.actividadesEconomicas || [];
-    row.actividadesEconomicas.forEach(function (a) { agregarActividad(a.id, a.clave, a.nombre); });
+    row.actividadesEconomicas.forEach(function (p) { data.push(p); });
+    initTableActividad(data);
 
     //Se establecen los bancos
     $("#bodyBancos").html("");
@@ -819,11 +808,8 @@ function onGuardarClick() {
     summaryContainer.innerHTML = "";
 
     let activities = [];
-    $("#listActividades li").each(function (i, a) {
-        let id = parseInt(a.getAttribute("id")||"0");
-
-        activities.push(id);
-    });
+    let data = tableActividad.bootstrapTable('getData');
+    data.forEach(function (e) { activities.push(e.id); });
 
     let banks = [];
     $("#bodyBancos .rowBancos").each(function (i, b) {
@@ -898,6 +884,79 @@ function onGuardarClick() {
         postOptions
     );
 }
+//Función para dar formato a la descripción de los registros de actividades económicas
+function actividadDescFormatter(value, row, index) {
+    return `<div>
+                <div class="fw-bold">${row.clave}</div>
+                ${row.nombre}
+            </div>`;
+}
+//Función para dar formato a los iconos de operación de los registros de actividades económicas
+function operateFormatterActividad(value, row, index) {
+    switch (dialogMode) {
+        case NUEVO:
+        case EDITAR:
+            return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton"></i></a>`;
+            break;
+        default:
+            return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton disabled"></i></a>`;
+            break;
+    }
+}
+//Eventos de los iconos de operación
+window.operateActividadEvents = {
+    'click .delete': function (e, value, row, index) {
+        onEliminarActividadClick(row.id);
+    }
+}
+//Función para inicializar la tabla de actividades
+function initTableActividad(data = null) {
+    tableActividad.bootstrapTable('destroy').bootstrapTable({
+        locale: cultureName,
+        data: data,
+        columns: [
+            {
+                field: "state",
+                checkbox: true,
+                align: "center",
+                valign: "middle"
+            },
+            {
+                title: colActividadEconomicaHeader,
+                field: "nombre",
+                align: "left",
+                valign: "middle",
+                sortable: true,
+                formatter: actividadDescFormatter
+            },
+            {
+                title: colAccionesHeader,
+                field: "operate",
+                align: "center",
+                width: "100px",
+                clickToSelect: false,
+                events: window.operateActividadEvents,
+                formatter: operateFormatterActividad
+            }
+        ]
+    });
+    tableActividad.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+        $("#removeActividad").prop('disabled', !tableActividad.bootstrapTable('getSelections').length)
+    });
+    $("#removeActividad").click(function () {
+        askConfirmation(btnEliminarTitle, dlgDeleteElementQuestion, function () {
+            let elements = tableActividad.bootstrapTable('getSelections');
+            let data = tableActividad.bootstrapTable('getData');
+            let newData = [];
+            data.forEach(function (d) {
+                let foundElement = elements.find(f => f.id == d.id);
+                if (!foundElement) { newData.push(d); }
+            });
+            initTableActividad(newData);
+            $("#removeActividad").prop('disabled', true);
+        });
+    });
+}
 //Función para obtener el archivo de un input
 function getFile(inputId) {
     let fileField = document.getElementById(inputId),
@@ -938,7 +997,8 @@ function onAgregarActividadClick() {
         return;
     }
 
-    let listItem = document.querySelector(`li[clave='${actividadField.data("clave")}']`);
+    let data = tableActividad.bootstrapTable('getData');
+    let listItem = data.find(function (e) { return e.clave == actividadField.data("clave") });
     //Si el elemento ya existe, muestra error.
     if (listItem) {
         showAlert(msgAgregarActividad, actividadRepetida);
@@ -947,32 +1007,31 @@ function onAgregarActividadClick() {
 
     agregarActividad(actividadField.attr("idselected"), actividadField.data("clave"), actividadField.data("value"));
 
-    let btnAdd = document.getElementById("dlgEmpresaBtnAgregarActividad");
-    btnAdd.classList.add("disabled");
-
     actividadField.val("");
     actividadField.attr("idselected", 0);
 }
 //Función para añadir un elemento al listado de actividades
 function agregarActividad(id, clave, descripcion) {
-    let listActividades = document.getElementById("listActividades");
-
-    listActividades.innerHTML += `<li id="${id}" clave="${clave}" class="list-group-item">
-                                    <div class="row">
-                                        <div class="col-11 border-end">
-                                          <div class="fw-bold">${clave}</div>
-                                          ${descripcion}
-                                        </div>
-                                        <div class="col-1 align-items-center d-flex justify-content-center">
-									        <button type="button" class="btn-close formButton" onclick="onEliminarActividadClick(${clave});"></button>
-                                        </div>
-                                    </div>
-								  </li>`;
+    tableActividad.bootstrapTable('prepend', [{
+        id: id,
+        clave: clave,
+        nombre: descripcion
+    }]);
 }
 //Función para eliminar una actividad económica del listado
-function onEliminarActividadClick(clave) {
-    let listItem = document.querySelector(`li[clave='${clave}']`);
-    listItem.remove();
+function onEliminarActividadClick(id) {
+    askConfirmation(btnEliminarTitle, dlgDeleteElementQuestion, function () {
+        tableActividad.bootstrapTable('removeByUniqueId', id);
+    });
+}
+/////////////////////
+
+//Funcionalidad Diálogo Actividades Económicas
+function initDialogActividad() {
+    let actividadField = document.getElementById("inpEmpresaActividadEconomica");
+
+    actividadField.value = "";
+    actividadField.setAttribute('idselected', "");
 }
 ////////////////////////////////
 
