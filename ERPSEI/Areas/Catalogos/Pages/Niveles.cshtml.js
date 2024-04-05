@@ -71,7 +71,7 @@ window.operateEvents = {
     }
 }
 function onAgregarClick() {
-    initDialog(NUEVO, { id: "Nuevo", nombre: "", puedeFacturar: true });
+    initDialog(NUEVO, { id: "Nuevo", ordinal:"", nombre: "", puedeFacturar: true });
 }
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
