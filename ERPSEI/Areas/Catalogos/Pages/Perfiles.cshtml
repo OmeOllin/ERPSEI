@@ -90,18 +90,6 @@
 						</div>
 						<div class="row mb-3">
 							<h5 class="col-12"><i>@Localizer["ProductosServiciosPlaceholder"]</i></h5>
-							@* <div class="col-11">
-								<div class="form-floating ui-front">
-									<input id="inpProductoServicio" type="search" asp-for="Input.ProductoServicioId" class="form-control formInput" placeholder="@Localizer["ProductoServicioPlaceholder"]" idselected='' area="Catalogos" module="Perfiles" source="GetProductosServiciosSuggestion" />
-									<label for="inpProductoServicio" asp-for="Input.ProductoServicioId" class="form-label"></label>
-									<span asp-validation-for="Input.ProductoServicioId" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-1 d-flex align-items-center p-0 mb-5">
-								<button id="dlgBtnAgregarProductoServicio" type="button" class="btn btn-primary disabled" onclick="onAgregarProductoServicioClick();">
-									<i class="bi bi-plus-lg"></i>
-								</button>
-							</div> *@
 							<div id="toolbarProdServ" class="col-xl-12">
 								<button type="button" id="btnAgregarProdServ" class="btn btn-primary formButton" data-bs-toggle="modal" data-bs-target="#dlgProdServ" onclick="initDialogProdServ();">
 									<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
