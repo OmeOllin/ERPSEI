@@ -150,6 +150,9 @@
   <data name="EmpleadoInvitadoUnsuccessfully" xml:space="preserve">
     <value>Error sending invitation</value>
   </data>
+  <data name="EmpleadoIsRelated" xml:space="preserve">
+    <value>The employee cannot be deleted because is the boss of other employees. Reassign the boss of the linked employees and try again.</value>
+  </data>
   <data name="EmpleadoSavedSuccessfully" xml:space="preserve">
     <value>Employee saved successfully!</value>
   </data>

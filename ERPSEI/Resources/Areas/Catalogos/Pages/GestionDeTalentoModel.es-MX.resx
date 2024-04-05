@@ -150,6 +150,9 @@
   <data name="EmpleadoInvitadoUnsuccessfully" xml:space="preserve">
     <value>Error al enviar la invitación</value>
   </data>
+  <data name="EmpleadoIsRelated" xml:space="preserve">
+    <value>No se puede eliminar el empleado porque es jefe de otros empleados. Reasigne el jefe de los empleados vinculados e inténtelo de nuevo.</value>
+  </data>
   <data name="EmpleadoSavedSuccessfully" xml:space="preserve">
     <value>¡Empleado guardado satisfactoriamente!</value>
   </data>

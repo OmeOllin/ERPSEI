@@ -17,7 +17,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Net.Mime;
 using System.Text;
-using System.Text.Encodings.Web;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
@@ -548,20 +547,49 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		public async Task<JsonResult> OnPostDisableEmpleados(string[] ids)
 		{
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadosDisabledUnsuccessfully"]);
-			await _db.Database.BeginTransactionAsync();
 			try
 			{
+				await _db.Database.BeginTransactionAsync();
+
                 foreach (string id in ids)
                 {
 					int intId = Convert.ToInt32(id);
-					//Deshabilita el empleado y por ende, el usuario relacionado.
-					await _empleadoManager.DisableByIdAsync(intId);
+					//Se obtienen todos los empleados, incluídos los dados de baja
+                    List<Empleado> empleados = await _empleadoManager.GetAllAsync(null, null, null, null, null, null, null, null, true);
+					//Se obtiene el empleado que se está intentando dar de baja
+                    Empleado? empleado = empleados.Where(p => p.Id == intId).FirstOrDefault();
+					//Se filtran todos los empleados para obtener los que tienen asignado como jefe al empleado que se intenta dar de baja
+					empleados = empleados.Where(e => e.JefeId == intId).ToList();
+					//Se filtran todos los empleados para obtener los que no están dados de baja
+                    List<Empleado> empleadosActivosRelacionados = empleados.Where(e => e.Deshabilitado == 0).ToList();
+					//Si existen empleados que tengan el registro asignado, se le notifica al usuario.
+					if (empleadosActivosRelacionados.Count() > 0)
+					{
+                        List<string> names = new List<string>();
+                        foreach (Empleado e in empleadosActivosRelacionados) { names.Add($"<i>{e.Id} - {e.NombreCompleto}</i>"); }
+                        resp.TieneError = true;
+                        resp.Mensaje = $"{_strLocalizer["EmpleadoIsRelated"]}<br/><br/><i>{empleado?.NombreCompleto}</i><br/><br/>{string.Join("<br/>", names)}";
+                        break;
+                    }
+					else
+					{
+                        //En caso de no haber empleados con el registro asignado, procede a eliminar referencias y registro.
+                        foreach (Empleado e in empleados)
+                        {
+                            e.JefeId = null;
+                            await _empleadoManager.UpdateAsync(e);
+                        }
+                        //Deshabilita el empleado y por ende, el usuario relacionado.
+                        await _empleadoManager.DisableByIdAsync(intId);
+
+                        resp.TieneError = false;
+                        resp.Mensaje = _strLocalizer["EmpleadosDisabledSuccessfully"];
+                    }
                 }
 
-				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["EmpleadosDisabledSuccessfully"];
+                if (resp.TieneError) { throw new Exception(resp.Mensaje); }
 
-				await _db.Database.CommitTransactionAsync();
+                await _db.Database.CommitTransactionAsync();
 			}
 			catch (Exception ex)
 			{
