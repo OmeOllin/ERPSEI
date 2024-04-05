@@ -1,9 +1,11 @@
 ﻿var table;
 var buttonRemove;
+var tableProdServ;
 var selections = [];
 var dlg = null;
 var dlgModal = null;
 
+var dialogMode = null;
 const NUEVO = 0;
 const EDITAR = 1;
 const VER = 2;
@@ -12,28 +14,15 @@ const postOptions = { headers: { "RequestVerificationToken": $('input[name="__Re
 document.addEventListener("DOMContentLoaded", function (event) {
     table = $("#table");
     buttonRemove = $("#remove");
+    tableProdServ = $("#tableProductosServicios");
     dlg = document.getElementById('dlg');
     dlgModal = new bootstrap.Modal(dlg, null);
     //Función para limpiar el cuadro de diálogo cuando es cerrado
-    dlg.addEventListener('hidden.bs.modal', function (event) {
-        onCerrarClick();
-    });
+    dlg.addEventListener('hidden.bs.modal', function (event) { onCerrarClick(); });
 
     initTable();
 
-    autoCompletar("#inpProductoServicio", {
-        select: function (element, item) {
-            let btnAdd = document.getElementById("dlgBtnAgregarProductoServicio");
-            btnAdd.classList.remove("disabled");
-        },
-        change: function (element, item) {
-            let actividadField = document.getElementById("inpProductoServicio");
-            if (parseInt(actividadField.getAttribute("idselected") || "0") <= 0) {
-                let btnAdd = document.getElementById("dlgBtnAgregarProductoServicio");
-                btnAdd.classList.add("disabled");
-            }
-        }
-    });
+    autoCompletar("#inpProductoServicio");
 });
 
 //Funcionalidad Tabla
@@ -127,9 +116,6 @@ function initTable() {
             selections = getIdSelections()
             // push or splice the selections if you want to save all data selections
         })
-    table.on('all.bs.table', function (e, name, args) {
-        console.log(name, args)
-    })
     buttonRemove.click(function () {
         askConfirmation(dlgDeleteTitle, dlgDeleteQuestion, function () {
             let oParams = { ids: selections };
@@ -164,28 +150,25 @@ function initTable() {
 }
 /////////////////////
 
-//Funcionalidad Diálogo
+//Funcionalidad Diálogo perfil
 function initDialog(action, row) {
     let idField = document.getElementById("inpId");
     let nombreField = document.getElementById("inpNombre");
-    let prodservField = document.getElementById("inpProductoServicio");
-    let btnAdd = document.getElementById("dlgBtnAgregarProductoServicio");
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
+
+    dialogMode = action;
 
     idField.setAttribute("disabled", true);
 
     idField.value = row.id;
     nombreField.value = row.nombre;
 
-    prodservField.value = "";
-    prodservField.setAttribute('idselected', "");
-    btnAdd.classList.add("disabled");
-
     //Se establecen los productos y servicios
-    $("#listProductosServicios").html("");
+    let data = [];
     row.productosServicios = row.productosServicios || [];
-    row.productosServicios.forEach(function (p) { agregarProductoServicio(p.id, p.clave, p.descripcion); });
+    row.productosServicios.forEach(function (p) { data.push(p); });
+    initTableProdServ(data);
 
     prepareForm(action);
 
@@ -218,6 +201,7 @@ function prepareForm(action) {
             break;
     }
 }
+//Función para cerrar el formulario de empresa
 function onCerrarClick() {
     //Removes validation from input-fields
     $('.input-validation-error').addClass('input-validation-valid');
@@ -231,6 +215,7 @@ function onCerrarClick() {
     //Removes danger text from fields
     $(".text-danger").children().remove()
 }
+//Función para guardar la información de una empresa
 function onGuardarClick() {
     //Ejecuta la validación
     $("#theForm").validate();
@@ -247,11 +232,8 @@ function onGuardarClick() {
     summaryContainer.innerHTML = "";
 
     let prodserv = [];
-    $("#listProductosServicios li").each(function (i, a) {
-        let id = a.getAttribute("id");
-
-        prodserv.push(id);
-    });
+    let data = tableProdServ.bootstrapTable('getData');
+    data.forEach(function (e) { prodserv.push(e.id); });
 
     let oParams = {
         id: idField.value == "Nuevo" ? 0 : idField.value,
@@ -287,7 +269,79 @@ function onGuardarClick() {
         postOptions
     );
 }
-
+//Función para dar formato a la descripción de los registros de productos y servicios
+function prodServDescFormatter(value, row, index) {
+    return `<div>
+                <div class="fw-bold">${row.clave}</div>
+                ${row.descripcion}
+            </div>`;
+}
+//Función para dar formato a los iconos de operación de los registros de productos y servicios
+function operateFormatterProdServ(value, row, index) {
+    switch (dialogMode) {
+        case NUEVO:
+        case EDITAR:
+            return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton"></i></a>`;
+            break;
+        default:
+            return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton disabled"></i></a>`;
+            break;
+    }
+}
+//Eventos de los iconos de operación
+window.operateProdServEvents = {
+    'click .delete': function (e, value, row, index) {
+        onEliminarProductoServicioClick(row.id);
+    }
+}
+//Función para inicializar la tabla de productos y servicios
+function initTableProdServ(data = null) {
+    tableProdServ.bootstrapTable('destroy').bootstrapTable({
+        locale: cultureName,
+        data: data,
+        columns: [
+            {
+                field: "state",
+                checkbox: true,
+                align: "center",
+                valign: "middle"
+            },
+            {
+                title: colDescripcionHeader,
+                field: "descripcion",
+                align: "left",
+                valign: "middle",
+                sortable: true,
+                formatter: prodServDescFormatter
+            },
+            {
+                title: colAccionesHeader,
+                field: "operate",
+                align: "center",
+                width: "100px",
+                clickToSelect: false,
+                events: window.operateProdServEvents,
+                formatter: operateFormatterProdServ
+            }
+        ]
+    });
+    tableProdServ.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+        $("#removeProdServ").prop('disabled', !tableProdServ.bootstrapTable('getSelections').length)
+    });
+    $("#removeProdServ").click(function () {
+        askConfirmation(btnEliminarTitle, dlgDeleteElementQuestion, function () {
+            let elements = tableProdServ.bootstrapTable('getSelections');
+            let data = tableProdServ.bootstrapTable('getData');
+            let newData = [];
+            data.forEach(function (d) {
+                let foundElement = elements.find(f => f.id == d.id);
+                if (!foundElement) { newData.push(d); }
+            });
+            initTableProdServ(newData);
+            $("#removeProdServ").prop('disabled', true);
+        });
+    });
+}
 //Función para agregar un producto o servicio al listado
 function onAgregarProductoServicioClick() {
     let productoServicioField = $(document.getElementById("inpProductoServicio"));
@@ -297,7 +351,8 @@ function onAgregarProductoServicioClick() {
         return;
     }
 
-    let listItem = document.querySelector(`li[clave='${productoServicioField.data("clave")}']`);
+    let data = tableProdServ.bootstrapTable('getData');
+    let listItem = data.find(function (e) { return e.clave == productoServicioField.data("clave") });
     //Si el elemento ya existe, muestra error.
     if (listItem) {
         showAlert(msgAgregarProductoServicio, productoServicioRepetido);
@@ -306,31 +361,30 @@ function onAgregarProductoServicioClick() {
 
     agregarProductoServicio(productoServicioField.attr("idselected"), productoServicioField.data("clave"), productoServicioField.data("value"));
 
-    let btnAdd = document.getElementById("dlgBtnAgregarProductoServicio");
-    btnAdd.classList.add("disabled");
-
     productoServicioField.val("");
     productoServicioField.attr("idselected", 0);
 }
 //Función para añadir un elemento al listado de productos y servicios
 function agregarProductoServicio(id, clave, descripcion) {
-    let listProductosServicios = document.getElementById("listProductosServicios");
-
-    listProductosServicios.innerHTML += `<li id="${id}" clave="${clave}" class="list-group-item">
-                                    <div class="row">
-                                        <div class="col-11 border-end">
-                                          <div class="fw-bold">${clave}</div>
-                                          ${descripcion}
-                                        </div>
-                                        <div class="col-1 align-items-center d-flex justify-content-center">
-									        <button type="button" class="btn-close formButton" onclick="onEliminarProductoServicioClick('${clave}');"></button>
-                                        </div>
-                                    </div>
-								  </li>`;
+    tableProdServ.bootstrapTable('prepend', [{
+        id: id,
+        clave: clave,
+        descripcion: descripcion
+    }]);
 }
 //Función para eliminar un producto o servicio del listado
-function onEliminarProductoServicioClick(clave) {
-    let listItem = document.querySelector(`li[clave='${clave}']`);
-    listItem.remove();
+function onEliminarProductoServicioClick(id) {
+    askConfirmation(btnEliminarTitle, dlgDeleteElementQuestion, function () {
+        tableProdServ.bootstrapTable('removeByUniqueId', id);
+    });
+}
+/////////////////////
+
+//Funcionalidad Diálogo Productos Servicios
+function initDialogProdServ() {
+    let prodservField = document.getElementById("inpProductoServicio");
+
+    prodservField.value = "";
+    prodservField.setAttribute('idselected', "");
 }
 /////////////////////

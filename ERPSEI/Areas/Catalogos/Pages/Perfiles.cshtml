@@ -89,20 +89,46 @@
 							</div>
 						</div>
 						<div class="row mb-3">
-							<h6 class="col-12"><i>@Localizer["ProductoServicioPlaceholder"]</i></h6>
-							<div class="col-11">
+							<h5 class="col-12"><i>@Localizer["ProductosServiciosPlaceholder"]</i></h5>
+							@* <div class="col-11">
 								<div class="form-floating ui-front">
 									<input id="inpProductoServicio" type="search" asp-for="Input.ProductoServicioId" class="form-control formInput" placeholder="@Localizer["ProductoServicioPlaceholder"]" idselected='' area="Catalogos" module="Perfiles" source="GetProductosServiciosSuggestion" />
 									<label for="inpProductoServicio" asp-for="Input.ProductoServicioId" class="form-label"></label>
 									<span asp-validation-for="Input.ProductoServicioId" class="text-danger"></span>
 								</div>
 							</div>
-							<div class="col-1 d-flex align-items-center p-0">
+							<div class="col-1 d-flex align-items-center p-0 mb-5">
 								<button id="dlgBtnAgregarProductoServicio" type="button" class="btn btn-primary disabled" onclick="onAgregarProductoServicioClick();">
 									<i class="bi bi-plus-lg"></i>
 								</button>
+							</div> *@
+							<div id="toolbarProdServ" class="col-xl-12">
+								<button type="button" id="btnAgregarProdServ" class="btn btn-primary formButton" data-bs-toggle="modal" data-bs-target="#dlgProdServ" onclick="initDialogProdServ();">
+									<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
+								</button>
+								<button type="button" id="removeProdServ" class="btn btn-danger formButton" disabled>
+									<i class="bi bi-trash"></i> <span class="d-none d-sm-inline">@Localizer["DeleteButton"]</span>
+								</button>
 							</div>
-							<ul id="listProductosServicios" class="list-group mt-3"></ul>
+							<table id="tableProductosServicios"
+								   data-unique-id="id"
+								   data-click-to-select="true"
+								   data-toolbar="#toolbarProdServ"
+								   data-search="true"
+								   data-pagination-v-align="top"
+								   data-minimum-count-columns="2"
+								   data-pagination="true"
+								   data-id-field="id"
+								   data-page-list="[10, 25, 50, 100, all]"
+								   data-show-footer="false"
+								   data-side-pagination="client"
+								   data-response-handler="responseHandler"
+								   data-buttons-class="primary">
+								<thead>
+									<tr align="center" valign="middle" class="bg-primary bg-opacity-10">
+									</tr>
+								</thead>
+							</table>
 						</div>
 					</div>
 				</div>
@@ -120,6 +146,37 @@
 </form>
 <!-- --------------------------- -->
 <!-- --------------------------- -->
+<div id="dlgProdServ" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 id="dlgTitle" class="modal-title">@Localizer["ProductoServicioPlaceholder"]</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body align-items-center">
+				<div class="container-fluid">
+					<div class="row mb-3">
+						<div class="col-12">
+							<div class="form-floating ui-front">
+								<input id="inpProductoServicio" type="search" asp-for="Input.ProductoServicioId" class="form-control formInput" placeholder="@Localizer["ProductoServicioPlaceholder"]" idselected='' area="Catalogos" module="Perfiles" source="GetProductosServiciosSuggestion" />
+								<label for="inpProductoServicio" asp-for="Input.ProductoServicioId" class="form-label"></label>
+								<span asp-validation-for="Input.ProductoServicioId" class="text-danger"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button id="dlgBtnCancelar" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+					<i class="bi bi-x-lg"></i> @Localizer["CloseButtonTitle"]
+				</button>
+				<button id="dlgBtnAgregar" type="button" class="btn btn-primary formButton" onclick="onAgregarProductoServicioClick();">
+					<i class="bi bi-plus-lg"></i> @Localizer["AddButton"]
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
 @section Scripts {
 	<!-- Librería autocompletar y dependencias -->
 	<link rel="stylesheet" href="~/lib/jquery-ui/jquery-ui.min.css">
@@ -144,11 +201,15 @@
 		var btnVerTitle = '@Localizer["SeeButtonTitle"]';
 		var btnEditarTitle = '@Localizer["EditButtonTitle"]';
 		var dlgEditarTitle = '@Localizer["EditDialogTitle"]';
+		var btnEliminarTitle = '@Localizer["DeleteButton"]';
+		var dlgDeleteElementQuestion = '@Localizer["DeleteElementDialogQuestion"]';
 		var dlgVerTitle = '@Localizer["SeeDialogTitle"]';
 		var dlgNuevoTitle = '@Localizer["NewDialogTitle"]';
 		var dlgDeleteTitle = '@Localizer["DeleteDialogTitle"]';
 		var dlgDeleteQuestion = '@Localizer["DeleteDialogQuestion"]';
 		var colNombreHeader = '@Localizer["ColNameHeader"]';
+		var colClaveHeader = '@Localizer["ColClaveHeader"]';
+		var colDescripcionHeader = '@Localizer["ProductoServicioPlaceholder"]';
 		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
 		var msgAgregarProductoServicio = '@Localizer["AgregarProductoServicio"]';
 		var sinProductoServicio = '@Localizer["SinProductoServicio"]';

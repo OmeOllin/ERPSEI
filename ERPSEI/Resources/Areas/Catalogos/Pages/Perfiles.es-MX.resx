@@ -126,8 +126,17 @@
   <data name="CancelButtonTitle" xml:space="preserve">
     <value>Cancelar</value>
   </data>
+  <data name="CloseButtonTitle" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
   <data name="ColActionsHeader" xml:space="preserve">
     <value>Acciones</value>
+  </data>
+  <data name="ColClaveHeader" xml:space="preserve">
+    <value>Clave</value>
+  </data>
+  <data name="ColDescripcionHeader" xml:space="preserve">
+    <value>Descripción</value>
   </data>
   <data name="ColNameHeader" xml:space="preserve">
     <value>Nombre</value>
@@ -140,6 +149,9 @@
   </data>
   <data name="DeleteDialogTitle" xml:space="preserve">
     <value>Eliminar Registro</value>
+  </data>
+  <data name="DeleteElementDialogQuestion" xml:space="preserve">
+    <value>¿Está seguro que desea eliminar los elementos seleccionados del listado?</value>
   </data>
   <data name="EditButtonTitle" xml:space="preserve">
     <value>Editar</value>
@@ -155,6 +167,9 @@
   </data>
   <data name="ProductoServicioRepetido" xml:space="preserve">
     <value>El producto o servicio ya se encuentra en el listado</value>
+  </data>
+  <data name="ProductosServiciosPlaceholder" xml:space="preserve">
+    <value>Productos y Servicios</value>
   </data>
   <data name="SaveButtonTitle" xml:space="preserve">
     <value>Guardar</value>
