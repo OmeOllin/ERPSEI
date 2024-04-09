@@ -98,7 +98,7 @@
 		<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
 	</button>
 	<button id="remove" class="btn btn-danger" disabled>
-		<i class="bi bi-trash"></i> <span class="d-none d-sm-inline">@Localizer["DeleteButton"]</span>
+		<i class="bi bi-ban"></i> <span class="d-none d-sm-inline">@Localizer["DeactivateButton"]</span>
 	</button>
 </div>
 <table id="table" class="table-sm"
@@ -409,7 +409,7 @@
 			<div class="modal-footer" style="display: inline !important;">
 				<div class="container row">
 					<div class="col-5">
-						<button id="dlgEmpresaBtnDesactivar" type="button" class="btn btn-danger formButton" data-bs-dismiss="modal">
+						<button id="dlgEmpresaBtnDesactivar" type="button" class="btn btn-danger formButton" onclick="onDeleteEmpresaClick();" data-bs-dismiss="modal">
 							<i class="bi bi-ban"></i> @Localizer["DeactivateButton"]
 						</button>
 					</div>
