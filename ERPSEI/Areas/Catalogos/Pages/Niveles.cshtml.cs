@@ -1,5 +1,7 @@
+using ERPSEI.Data;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Managers;
+using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
 using Microsoft.AspNetCore.Authorization;
@@ -13,6 +15,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
     [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
     public class NivelesModel : PageModel
     {
+		private readonly ApplicationDbContext _db;
+		private readonly IEmpresaManager _empresaManager;
 		private readonly IRWCatalogoManager<Nivel> _catalogoManager;
 		private readonly IStringLocalizer<NivelesModel> _strLocalizer;
 		private readonly ILogger<NivelesModel> _logger;
@@ -42,12 +46,16 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 
 		public NivelesModel(
+			ApplicationDbContext db,
+			IEmpresaManager empresaManager,
 			IRWCatalogoManager<Nivel> catalogoManager,
 			IStringLocalizer<NivelesModel> stringLocalizer,
 			ILogger<NivelesModel> logger
 		)
 		{
 			Input = new InputModel();
+			_db = db;
+			_empresaManager = empresaManager;
 			_catalogoManager = catalogoManager;
 			_strLocalizer = stringLocalizer;
 			_logger = logger;
@@ -81,12 +89,46 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["DeletedUnsuccessfully"]);
 			try
 			{
-				await _catalogoManager.DeleteMultipleByIdAsync(ids);
-				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["DeletedSuccessfully"];
+				await _db.Database.BeginTransactionAsync();
+
+				List<Nivel> niveles = await _catalogoManager.GetAllAsync();
+				foreach (string id in ids)
+				{
+					int sid = 0;
+					if (!int.TryParse(id, out sid)) { sid = 0; }
+					Nivel? nivel = niveles.Where(o => o.Id == sid).FirstOrDefault();
+					List<Empresa> empresas = await _empresaManager.GetAllAsync();
+					empresas = empresas.Where(e => e.NivelId == sid).ToList();
+					List<Empresa> empresasActivasRelacionadas = empresas.Where(e => e.Deshabilitado == 0).ToList();
+					if (empresasActivasRelacionadas.Count() > 0)
+					{
+						List<string> names = new List<string>();
+						foreach (Empresa e in empresasActivasRelacionadas) { names.Add($"<i>{e.Id} - {e.RazonSocial}</i>"); }
+						resp.TieneError = true;
+						resp.Mensaje = $"{_strLocalizer["NivelIsRelated"]}<br/><br/><i>{nivel?.Nombre}</i><br/><br/>{string.Join("<br/>", names)}";
+						break;
+					}
+					else
+					{
+						foreach (Empresa empresa in empresas)
+						{
+							empresa.NivelId = null;
+							await _empresaManager.UpdateAsync(empresa);
+						}
+						await _catalogoManager.DeleteByIdAsync(sid);
+
+						resp.TieneError = false;
+						resp.Mensaje = _strLocalizer["DeletedSuccessfully"];
+					}
+				}
+
+				if (resp.TieneError) { throw new Exception(resp.Mensaje); }
+
+				await _db.Database.CommitTransactionAsync();
 			}
 			catch (Exception ex)
 			{
+				await _db.Database.RollbackTransactionAsync();
 				_logger.LogError(ex.Message);
 			}
 

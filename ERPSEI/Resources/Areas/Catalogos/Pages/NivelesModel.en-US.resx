@@ -126,6 +126,9 @@
   <data name="ErrorExistente" xml:space="preserve">
     <value>There is already a registered level with the same name. Please use another name for the new level.</value>
   </data>
+  <data name="NivelIsRelated" xml:space="preserve">
+    <value>The level cannot be deleted because there are linked companies. Reassign the companies level and try again.</value>
+  </data>
   <data name="SavedSuccessfully" xml:space="preserve">
     <value>Level saved successfully!</value>
   </data>

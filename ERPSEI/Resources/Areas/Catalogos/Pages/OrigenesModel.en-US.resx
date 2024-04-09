@@ -126,6 +126,9 @@
   <data name="ErrorExistente" xml:space="preserve">
     <value>There is already a registered origin with the same name. Please use another name for the new origin.</value>
   </data>
+  <data name="OrigenIsRelated" xml:space="preserve">
+    <value>The origin cannot be deleted because there are linked companies. Reassign the companies origin and try again.</value>
+  </data>
   <data name="SavedSuccessfully" xml:space="preserve">
     <value>Origin saved successfully!</value>
   </data>

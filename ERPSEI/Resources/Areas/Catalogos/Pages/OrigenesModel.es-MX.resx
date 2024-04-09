@@ -126,6 +126,9 @@
   <data name="ErrorExistente" xml:space="preserve">
     <value>Ya existe un origen registrado con el mismo nombre. Por favor, use otro nombre para el nuevo origen.</value>
   </data>
+  <data name="OrigenIsRelated" xml:space="preserve">
+    <value>No se puede eliminar el origen porque existen empresas vinculadas. Reasigne el origen de las empresas e inténtelo de nuevo.</value>
+  </data>
   <data name="SavedSuccessfully" xml:space="preserve">
     <value>¡Origen guardado satisfactoriamente!</value>
   </data>

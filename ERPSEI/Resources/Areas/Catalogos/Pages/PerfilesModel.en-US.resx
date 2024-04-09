@@ -132,6 +132,9 @@
   <data name="ErrorExistente" xml:space="preserve">
     <value>There is already a registered profile with the same name. Please use another name for the new profile.</value>
   </data>
+  <data name="PerfilIsRelated" xml:space="preserve">
+    <value>The profile cannot be deleted because there are linked companies. Reassign the companies profile and try again.</value>
+  </data>
   <data name="SavedSuccessfully" xml:space="preserve">
     <value>Profile saved successfully!</value>
   </data>

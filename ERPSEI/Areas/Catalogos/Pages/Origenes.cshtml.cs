@@ -1,5 +1,8 @@
+using ERPSEI.Data;
+using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Managers;
+using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
 using Microsoft.AspNetCore.Authorization;
@@ -13,6 +16,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
     [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
     public class OrigenesModel : PageModel
     {
+		private readonly ApplicationDbContext _db;
+		private readonly IEmpresaManager _empresaManager;
 		private readonly IRWCatalogoManager<Origen> _origenManager;
 		private readonly IStringLocalizer<OrigenesModel> _strLocalizer;
 		private readonly ILogger<OrigenesModel> _logger;
@@ -33,12 +38,16 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 
 		public OrigenesModel(
+			ApplicationDbContext db,
+			IEmpresaManager empresaManager,
 			IRWCatalogoManager<Origen> origenManager,
 			IStringLocalizer<OrigenesModel> stringLocalizer,
 			ILogger<OrigenesModel> logger
 		)
 		{
 			Input = new InputModel();
+			_db = db;
+			_empresaManager = empresaManager;
 			_origenManager = origenManager;
 			_strLocalizer = stringLocalizer;
 			_logger = logger;
@@ -56,12 +65,46 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["DeletedUnsuccessfully"]);
 			try
 			{
-				await _origenManager.DeleteMultipleByIdAsync(ids);
-				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["DeletedSuccessfully"];
+				await _db.Database.BeginTransactionAsync();
+
+				List<Origen> origenes = await _origenManager.GetAllAsync();
+                foreach (string id in ids)
+                {
+					int sid = 0;
+					if (!int.TryParse(id, out sid)) { sid = 0; }
+					Origen? origen = origenes.Where(o => o.Id == sid).FirstOrDefault();
+					List<Empresa> empresas = await _empresaManager.GetAllAsync();
+					empresas = empresas.Where(e => e.OrigenId == sid).ToList();
+					List<Empresa> empresasActivasRelacionadas = empresas.Where(e => e.Deshabilitado == 0).ToList();
+					if(empresasActivasRelacionadas.Count() > 0)
+					{
+						List<string> names = new List<string>();
+						foreach (Empresa e in empresasActivasRelacionadas) { names.Add($"<i>{e.Id} - {e.RazonSocial}</i>"); }
+						resp.TieneError = true;
+						resp.Mensaje = $"{_strLocalizer["OrigenIsRelated"]}<br/><br/><i>{origen?.Nombre}</i><br/><br/>{string.Join("<br/>", names)}";
+						break;
+					}
+					else
+					{
+                        foreach (Empresa empresa in empresas)
+                        {
+							empresa.OrigenId = null;
+							await _empresaManager.UpdateAsync(empresa);
+                        }
+                        await _origenManager.DeleteByIdAsync(sid);
+
+						resp.TieneError = false;
+						resp.Mensaje = _strLocalizer["DeletedSuccessfully"];
+					}
+                }
+
+				if(resp.TieneError) { throw new Exception(resp.Mensaje); }
+
+				await _db.Database.CommitTransactionAsync();
 			}
 			catch (Exception ex)
 			{
+				await _db.Database.RollbackTransactionAsync();
 				_logger.LogError(ex.Message);
 			}
 

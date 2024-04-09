@@ -21,6 +21,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		private readonly IStringLocalizer<PerfilesModel> _strLocalizer;
 		private readonly ILogger<PerfilesModel> _logger;
 		private readonly ApplicationDbContext _db;
+		private readonly IEmpresaManager _empresaManager;
 
 		[BindProperty]
 		public InputModel Input { get; set; }
@@ -42,6 +43,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 
 		public PerfilesModel(
+			IEmpresaManager empresaManager,
 			IProductoServicioManager productosServiciosManager,
 			IProductoServicioPerfilManager productosServiciosPerfilManager,
 			IRWCatalogoManager<Perfil> catalogoManager,
@@ -51,6 +53,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		)
 		{
 			Input = new InputModel();
+			_empresaManager = empresaManager;
 			_productosServiciosManager = productosServiciosManager;
 			_productosServiciosPerfilManager = productosServiciosPerfilManager;
 			_catalogoManager = catalogoManager;
@@ -109,12 +112,55 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["DeletedUnsuccessfully"]);
 			try
 			{
-				await _catalogoManager.DeleteMultipleByIdAsync(ids);
-				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["DeletedSuccessfully"];
+				await _db.Database.BeginTransactionAsync();
+
+				foreach (string id in ids)
+				{
+					int sid = 0;
+					if (!int.TryParse(id, out sid)) { sid = 0; }
+					Perfil? perfil = await _catalogoManager.GetByIdAsync(sid);
+					List<Empresa> empresas = await _empresaManager.GetAllAsync();
+					empresas = empresas.Where(e => e.PerfilId == sid).ToList();
+					List<Empresa> empresasActivasRelacionadas = empresas.Where(e => e.Deshabilitado == 0).ToList();
+					if (empresasActivasRelacionadas.Count() > 0)
+					{
+						List<string> names = new List<string>();
+						foreach (Empresa e in empresasActivasRelacionadas) { names.Add($"<i>{e.Id} - {e.RazonSocial}</i>"); }
+						resp.TieneError = true;
+						resp.Mensaje = $"{_strLocalizer["PerfilIsRelated"]}<br/><br/><i>{perfil?.Nombre}</i><br/><br/>{string.Join("<br/>", names)}";
+						break;
+					}
+					else
+					{
+						foreach (Empresa empresa in empresas)
+						{
+							empresa.PerfilId = null;
+							await _empresaManager.UpdateAsync(empresa);
+						}
+
+						
+						if(perfil != null)
+						{
+							foreach (ProductoServicioPerfil psp in perfil.ProductosServiciosPerfil)
+							{
+								_db.Remove(psp);
+							}
+						}
+
+						await _catalogoManager.DeleteByIdAsync(sid);
+
+						resp.TieneError = false;
+						resp.Mensaje = _strLocalizer["DeletedSuccessfully"];
+					}
+				}
+
+				if (resp.TieneError) { throw new Exception(resp.Mensaje); }
+
+				await _db.Database.CommitTransactionAsync();
 			}
 			catch (Exception ex)
 			{
+				await _db.Database.RollbackTransactionAsync();
 				_logger.LogError(ex.Message);
 			}
 

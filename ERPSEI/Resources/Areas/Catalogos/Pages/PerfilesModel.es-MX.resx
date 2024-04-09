@@ -132,6 +132,9 @@
   <data name="ErrorExistente" xml:space="preserve">
     <value>Ya existe un perfil registrado con el mismo nombre. Por favor, use otro nombre para el nuevo perfil.</value>
   </data>
+  <data name="PerfilIsRelated" xml:space="preserve">
+    <value>No se puede eliminar el perfil porque existen empresas vinculadas. Reasigne el perfil de las empresas e inténtelo de nuevo.</value>
+  </data>
   <data name="SavedSuccessfully" xml:space="preserve">
     <value>¡Perfil guardado satisfactoriamente!</value>
   </data>
