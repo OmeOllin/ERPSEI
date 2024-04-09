@@ -120,6 +120,9 @@
   <data name="ErrorOficinaExistente" xml:space="preserve">
     <value>Ya existe una oficina registrada con el mismo nombre. Por favor, use otro nombre para la nueva oficina.</value>
   </data>
+  <data name="OfficeIsRelated" xml:space="preserve">
+    <value>No se puede eliminar la oficina porque existen empleados vinculados. Reasigne la oficina de los empleados e inténtelo de nuevo.</value>
+  </data>
   <data name="OfficeSavedSuccessfully" xml:space="preserve">
     <value>¡Oficina guardada satisfactoriamente!</value>
   </data>
@@ -131,8 +134,5 @@
   </data>
   <data name="OfficesDeletedUnsuccessfully" xml:space="preserve">
     <value>Error al eliminar los registros</value>
-  </data>
-  <data name="PositionIsRelated" xml:space="preserve">
-    <value>No se puede eliminar la oficina porque existen empleados vinculados. Reasigne la oficina de los empleados e inténtelo de nuevo.</value>
   </data>
 </root>
