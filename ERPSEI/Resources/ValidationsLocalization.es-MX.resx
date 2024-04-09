@@ -183,11 +183,17 @@
   <data name="EstadoCivilField" xml:space="preserve">
     <value>Estado Civil</value>
   </data>
+  <data name="ExportacionField" xml:space="preserve">
+    <value>Exportacion</value>
+  </data>
   <data name="FathersLastNameField" xml:space="preserve">
     <value>Primer apellido</value>
   </data>
   <data name="FechaConstitucionField" xml:space="preserve">
     <value>Constitución</value>
+  </data>
+  <data name="FechaField" xml:space="preserve">
+    <value>Fecha</value>
   </data>
   <data name="FechaIngresoField" xml:space="preserve">
     <value>Fecha Ingreso</value>
@@ -225,6 +231,12 @@
   <data name="FirstNameField" xml:space="preserve">
     <value>Primer nombre</value>
   </data>
+  <data name="FolioField" xml:space="preserve">
+    <value>Folio</value>
+  </data>
+  <data name="FormaPagoField" xml:space="preserve">
+    <value>Forma de pago</value>
+  </data>
   <data name="FullNameField" xml:space="preserve">
     <value>Nombre</value>
   </data>
@@ -233,6 +245,12 @@
   </data>
   <data name="JefeField" xml:space="preserve">
     <value>Jefe</value>
+  </data>
+  <data name="MetodoPagoField" xml:space="preserve">
+    <value>Método de pago</value>
+  </data>
+  <data name="MonedaField" xml:space="preserve">
+    <value>Moneda</value>
   </data>
   <data name="MothersLastNameField" xml:space="preserve">
     <value>Segundo apellido</value>
@@ -321,6 +339,9 @@
   <data name="SearchProductServiceField" xml:space="preserve">
     <value>Tecleé descripción o clave para buscar...</value>
   </data>
+  <data name="SerieField" xml:space="preserve">
+    <value>Serie</value>
+  </data>
   <data name="SubareaField" xml:space="preserve">
     <value>Subárea</value>
   </data>
@@ -329,5 +350,8 @@
   </data>
   <data name="UserNameField" xml:space="preserve">
     <value>Nombre de usuario</value>
+  </data>
+  <data name="UsoCFDIField" xml:space="preserve">
+    <value>Uso de CFDI</value>
   </data>
 </root>

@@ -34,9 +34,9 @@ namespace ERPSEI.Areas.ERP.Pages
 		}
 
 		[BindProperty]
-		public InputModel Input { get; set; }
+		public ConceptoModel InputConceptos { get; set; }
 
-		public class InputModel
+		public class ConceptoModel
 		{
 			[Display(Name = "Id")]
 			public int Id { get; set; }
@@ -50,6 +50,29 @@ namespace ERPSEI.Areas.ERP.Pages
 			[Display(Name = "SearchProductServiceField")]
 			public int? ProductoServicioId { get; set; }
 			public int?[] ProductosServicios { get; set; } = Array.Empty<int?>();
+		}
+
+		[BindProperty]
+		public CFDIModel InputCFDI { get; set; }
+
+		public class CFDIModel
+		{
+			[Display(Name = "SerieField")]
+			public string Serie {  get; set; } = String.Empty;
+			[Display(Name = "FolioField")]
+			public string Folio { get; set; } = String.Empty;
+			[Display(Name = "FechaField")]
+			public DateTime Fecha { get; set; }
+			[Display(Name = "MonedaField")]
+			public int MonedaId { get; set; }
+			[Display(Name = "FormaPagoField")]
+			public int FormaPagoId { get; set; }
+			[Display(Name = "MetodoPagoField")]
+			public int MetodoPagoId { get; set; }
+			[Display(Name = "UsoCFDIField")]
+			public int UsoCFDIId { get; set; }
+			[Display(Name = "ExportacionField")]
+			public int ExportacionId { get; set; }
 		}
 
 		public PrefacturasModel(
@@ -67,7 +90,8 @@ namespace ERPSEI.Areas.ERP.Pages
             _logger = logger;
 
             InputEmpresa = new EmpresaModel();
-			Input = new InputModel();
+			InputConceptos = new ConceptoModel();
+			InputCFDI = new CFDIModel();
         }
 
         public void OnGet()

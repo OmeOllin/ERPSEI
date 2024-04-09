@@ -126,6 +126,9 @@
   <data name="Conceptos" xml:space="preserve">
     <value>Conceptos</value>
   </data>
+  <data name="DatosGenerales" xml:space="preserve">
+    <value>Datos Generales</value>
+  </data>
   <data name="DomicilioFiscal" xml:space="preserve">
     <value>Domicilio Fiscal</value>
   </data>

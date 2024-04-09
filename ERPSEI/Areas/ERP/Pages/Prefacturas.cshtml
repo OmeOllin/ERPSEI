@@ -20,6 +20,73 @@
 		</div>
 	</div>
 	<div class="row">
+		<div class="col-12">
+			<h4 class="title mb-3">@Localizer["DatosGenerales"]</h4>
+		</div>
+		<div class="col-xs-6 col-sm-6 col-md-4 col-lg-2">
+			<div class="form-floating mb-3">
+				<input id="inpSerie" asp-for="InputCFDI.Serie" type="text" class="form-control" placeholder="@Localizer["SeriePlaceholder"]" />
+				<label for="inpSerie" asp-for="InputCFDI.Serie" class="form-label required"></label>
+				<span asp-validation-for="InputCFDI.Serie" class="text-danger"></span>
+			</div>
+		</div>
+		<div class="col-xs-6 col-sm-6 col-md-4 col-lg-2">
+			<div class="form-floating mb-3">
+				<input id="inpFolio" asp-for="InputCFDI.Folio" type="text" class="form-control" placeholder="@Localizer["FolioPlaceholder"]" />
+				<label for="inpFolio" asp-for="InputCFDI.Folio" class="form-label required"></label>
+				<span asp-validation-for="InputCFDI.Folio" class="text-danger"></span>
+			</div>
+		</div>
+		<div class="col-xs-6 col-sm-6 col-md-4 col-lg-2">
+			<div class="form-floating mb-3">
+				<input id="inpFecha" type="date" asp-for="InputCFDI.Fecha" class="form-control formInput" placeholder="@Localizer["FechaPlaceholder"]" />
+				<label for="inpFecha" asp-for="InputCFDI.Fecha" class="form-label required"></label>
+				<span asp-validation-for="InputCFDI.Fecha" class="text-danger"></span>
+			</div>
+		</div>
+		<div class="col-xs-12 col-sm-6 col-md-8 col-lg-6">
+			<div class="form-floating mb-3">
+				<select id="selUsoCFDI" asp-for="InputCFDI.UsoCFDIId" class="form-select formSelect" placeholder="@Localizer["UsoCFDIPlaceholder"]">
+				</select>
+				<label for="selUsoCFDI" asp-for="InputCFDI.UsoCFDIId" class="form-label required"></label>
+				<span asp-validation-for="InputCFDI.UsoCFDIId" class="text-danger"></span>
+			</div>
+		</div>
+		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+			<div class="form-floating mb-3">
+				<select id="selFormaPago" asp-for="InputCFDI.FormaPagoId" class="form-select formSelect" placeholder="@Localizer["FormaPagoPlaceholder"]">
+				</select>
+				<label for="selFormaPago" asp-for="InputCFDI.FormaPagoId" class="form-label required"></label>
+				<span asp-validation-for="InputCFDI.FormaPagoId" class="text-danger"></span>
+			</div>
+		</div>
+		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+			<div class="form-floating mb-3">
+				<select id="selMetodoPago" asp-for="InputCFDI.MetodoPagoId" class="form-select formSelect" placeholder="@Localizer["MetodoPagoPlaceholder"]">
+				</select>
+				<label for="selMetodoPago" asp-for="InputCFDI.MetodoPagoId" class="form-label required"></label>
+				<span asp-validation-for="InputCFDI.MetodoPagoId" class="text-danger"></span>
+			</div>
+		</div>
+		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+			<div class="form-floating mb-3">
+				<select id="selMoneda" asp-for="InputCFDI.MonedaId" class="form-select formSelect" placeholder="@Localizer["MonedaPlaceholder"]">
+				</select>
+				<label for="selMoneda" asp-for="InputCFDI.MonedaId" class="form-label required"></label>
+				<span asp-validation-for="InputCFDI.MonedaId" class="text-danger"></span>
+			</div>
+		</div>
+		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+			<div class="form-floating mb-3">
+				<select id="selMoneda" asp-for="InputCFDI.ExportacionId" class="form-select formSelect" placeholder="@Localizer["ExportacionPlaceholder"]">
+				</select>
+				<label for="selMoneda" asp-for="InputCFDI.ExportacionId" class="form-label"></label>
+				<span asp-validation-for="InputCFDI.ExportacionId" class="text-danger"></span>
+			</div>
+		</div>
+	</div>
+	<hr />
+	<div class="row">
 		<div class="col-12 col-lg-6">
 			<div class="row">
 				<div class="col-12">
@@ -110,9 +177,9 @@
 							<h6 class="col-12"><i>@Localizer["ProductoServicioPlaceholder"]</i></h6>
 							<div class="col-11">
 								<div class="form-floating ui-front">
-									<input id="inpProductoServicioEmisor" type="search" asp-for="Input.ProductoServicioId" class="form-control formInput" placeholder="@Localizer["ProductoServicioPlaceholder"]" idselected='' area="ERP" module="Prefacturas" source="GetProductosServiciosSuggestion" />
-									<label for="inpProductoServicioEmisor" asp-for="Input.ProductoServicioId" class="form-label"></label>
-									<span asp-validation-for="Input.ProductoServicioId" class="text-danger"></span>
+									<input id="inpProductoServicioEmisor" type="search" asp-for="InputConceptos.ProductoServicioId" class="form-control formInput" placeholder="@Localizer["ProductoServicioPlaceholder"]" idselected='' area="ERP" module="Prefacturas" source="GetProductosServiciosSuggestion" />
+									<label for="inpProductoServicioEmisor" asp-for="InputConceptos.ProductoServicioId" class="form-label"></label>
+									<span asp-validation-for="InputConceptos.ProductoServicioId" class="text-danger"></span>
 								</div>
 							</div>
 							<div class="col-1 d-flex align-items-center p-0">
