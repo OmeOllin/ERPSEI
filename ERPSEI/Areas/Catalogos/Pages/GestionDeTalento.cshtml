@@ -103,7 +103,7 @@
 							</div>
 							<div class="col-sm-6 col-md-6 col-lg-3">
 								<div class="form-floating mb-3">
-									<select id="selFiltroSubarea" InputFiltro.SubareaId" class="form-select" placeholder="@Localizer["SubareaPlaceholder"]">
+									<select id="selFiltroSubarea" asp-for="InputFiltro.SubareaId" class="form-select" placeholder="@Localizer["SubareaPlaceholder"]">
 										<option value="0">Seleccione...</option>
 										@{
 											foreach (Subarea subarea in subareas)
