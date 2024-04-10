@@ -22,6 +22,35 @@ namespace ERPSEI.Areas.ERP.Pages
 		private readonly ILogger<PrefacturasModel> _logger;
 
 		[BindProperty]
+		public FiltroModel InputFiltro { get; set; }
+
+		public class FiltroModel
+		{
+			[Display(Name = "SerieField")]
+			public int? Serie { get; set; }
+
+			[DataType(DataType.DateTime)]
+			[Display(Name = "FechaInicioField")]
+			public DateTime? FechaInicio { get; set; }
+
+			[DataType(DataType.DateTime)]
+			[Display(Name = "FechaFinField")]
+			public DateTime? FechaFin { get; set; }
+
+			[Display(Name = "MonedaField")]
+			public int? MonedaId { get; set; }
+
+			[Display(Name = "FormaPagoField")]
+			public int? FormaPagoId { get; set; }
+
+			[Display(Name = "MetodoPagoField")]
+			public int? MetodoPagoId { get; set; }
+
+			[Display(Name = "UsoCFDIField")]
+			public int? UsoCFDIId { get; set; }
+		}
+
+		[BindProperty]
 		public EmpresaModel InputEmpresa { get; set; }
 
 		public class EmpresaModel()
@@ -57,20 +86,29 @@ namespace ERPSEI.Areas.ERP.Pages
 
 		public class CFDIModel
 		{
+			public int Id { get; set; }
+
 			[Display(Name = "SerieField")]
-			public string Serie {  get; set; } = String.Empty;
+			public int SerieId { get; set; }
+		
 			[Display(Name = "FolioField")]
 			public string Folio { get; set; } = String.Empty;
+
 			[Display(Name = "FechaField")]
 			public DateTime Fecha { get; set; }
+
 			[Display(Name = "MonedaField")]
 			public int MonedaId { get; set; }
+
 			[Display(Name = "FormaPagoField")]
 			public int FormaPagoId { get; set; }
+
 			[Display(Name = "MetodoPagoField")]
 			public int MetodoPagoId { get; set; }
+
 			[Display(Name = "UsoCFDIField")]
 			public int UsoCFDIId { get; set; }
+
 			[Display(Name = "ExportacionField")]
 			public int ExportacionId { get; set; }
 		}
@@ -89,6 +127,7 @@ namespace ERPSEI.Areas.ERP.Pages
             _strLocalizer = stringLocalizer;
             _logger = logger;
 
+			InputFiltro = new FiltroModel();
             InputEmpresa = new EmpresaModel();
 			InputConceptos = new ConceptoModel();
 			InputCFDI = new CFDIModel();

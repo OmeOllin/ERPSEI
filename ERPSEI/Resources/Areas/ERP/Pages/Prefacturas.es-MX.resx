@@ -120,8 +120,38 @@
   <data name="ActividadEconomica" xml:space="preserve">
     <value>Actividad Económica</value>
   </data>
+  <data name="AddButton" xml:space="preserve">
+    <value>Agregar</value>
+  </data>
   <data name="AlmenosUnProductoServicioNecesario" xml:space="preserve">
     <value>Se requiere al menos un producto o servicio agregado en los conceptos para facturar</value>
+  </data>
+  <data name="CancelButtonTitle" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="ColActionsHeader" xml:space="preserve">
+    <value>Acciones</value>
+  </data>
+  <data name="ColFechaHeader" xml:space="preserve">
+    <value>Fecha</value>
+  </data>
+  <data name="ColFolioHeader" xml:space="preserve">
+    <value>Folio</value>
+  </data>
+  <data name="ColFormaPagoHeader" xml:space="preserve">
+    <value>Forma de pago</value>
+  </data>
+  <data name="ColMetodoPagoHeader" xml:space="preserve">
+    <value>Método de pago</value>
+  </data>
+  <data name="ColMonedaHeader" xml:space="preserve">
+    <value>Moneda</value>
+  </data>
+  <data name="ColSerieHeader" xml:space="preserve">
+    <value>Serie</value>
+  </data>
+  <data name="ColUsoCFDIHeader" xml:space="preserve">
+    <value>Uso de CFDI</value>
   </data>
   <data name="Conceptos" xml:space="preserve">
     <value>Conceptos</value>
@@ -129,8 +159,26 @@
   <data name="DatosGenerales" xml:space="preserve">
     <value>Datos Generales</value>
   </data>
+  <data name="DeactivateButton" xml:space="preserve">
+    <value>Dar de baja</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="DeleteCFDIDialogQuestion" xml:space="preserve">
+    <value>¿Está seguro que desea dar de baja los registros seleccionados?</value>
+  </data>
+  <data name="DeleteCFDIDialogTitle" xml:space="preserve">
+    <value>Dar de baja empleado</value>
+  </data>
   <data name="DomicilioFiscal" xml:space="preserve">
     <value>Domicilio Fiscal</value>
+  </data>
+  <data name="EditButtonTitle" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="EditDialogTitle" xml:space="preserve">
+    <value>Editar Registro</value>
   </data>
   <data name="Emisor" xml:space="preserve">
     <value>Emisor</value>
@@ -138,11 +186,17 @@
   <data name="EmptyInfo" xml:space="preserve">
     <value>---</value>
   </data>
+  <data name="EmptySelectItemText" xml:space="preserve">
+    <value>Seleccione...</value>
+  </data>
   <data name="FaltaEmpresaParaComparar" xml:space="preserve">
     <value>La primer empresa parece válida. Por favor, seleccione la otra empresa para validar</value>
   </data>
   <data name="FaltanEmpresasParaComparar" xml:space="preserve">
     <value>No se han seleccionado empresas para validar...</value>
+  </data>
+  <data name="FilterTitle" xml:space="preserve">
+    <value>Filtros de búsqueda</value>
   </data>
   <data name="InformacionEmpresarial" xml:space="preserve">
     <value>Información de la Empresa</value>
@@ -155,6 +209,9 @@
   </data>
   <data name="MismoNivelNoPuedeFacturar" xml:space="preserve">
     <value>El emisor y el receptor tienen el mismo nivel. No se pueden facturar.</value>
+  </data>
+  <data name="NewDialogTitle" xml:space="preserve">
+    <value>Nuevo Registro</value>
   </data>
   <data name="Nivel" xml:space="preserve">
     <value>Nivel</value>
@@ -170,6 +227,9 @@
   </data>
   <data name="NoPuedeFacturar" xml:space="preserve">
     <value>por lo que no puede facturar. Por favor cambie o elimine el producto o servicio.</value>
+  </data>
+  <data name="NuevoRegistro" xml:space="preserve">
+    <value>Nuevo</value>
   </data>
   <data name="ObjetoSocial" xml:space="preserve">
     <value>Objeto Social</value>
@@ -201,11 +261,23 @@
   <data name="RFC" xml:space="preserve">
     <value>RFC</value>
   </data>
+  <data name="SaveButtonTitle" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="SearchButton" xml:space="preserve">
+    <value>Buscar</value>
+  </data>
   <data name="SearchSuggestionA" xml:space="preserve">
     <value>Todavía no hay nada aquí</value>
   </data>
   <data name="SearchSuggestionB" xml:space="preserve">
     <value>Busque una empresa para comenzar</value>
+  </data>
+  <data name="SeeButtonTitle" xml:space="preserve">
+    <value>Ver</value>
+  </data>
+  <data name="SeeDialogTitle" xml:space="preserve">
+    <value>Ver Registro</value>
   </data>
   <data name="SinActividadesNoPuedeFacturar" xml:space="preserve">
     <value>La empresa seleccionada no puede facturar porque no cuenta con actividades económicas. Por favor elija otra empresa.</value>

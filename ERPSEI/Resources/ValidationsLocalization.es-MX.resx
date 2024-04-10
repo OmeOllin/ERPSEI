@@ -195,6 +195,9 @@
   <data name="FechaField" xml:space="preserve">
     <value>Fecha</value>
   </data>
+  <data name="FechaFinField" xml:space="preserve">
+    <value>Fecha (Fin)</value>
+  </data>
   <data name="FechaIngresoField" xml:space="preserve">
     <value>Fecha Ingreso</value>
   </data>
@@ -209,6 +212,9 @@
   </data>
   <data name="FechaInicioFacturacionField" xml:space="preserve">
     <value>Inicio de facturación</value>
+  </data>
+  <data name="FechaInicioField" xml:space="preserve">
+    <value>Fecha (Inicio)</value>
   </data>
   <data name="FechaInicioOperacionField" xml:space="preserve">
     <value>Inicio de operación</value>
