@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using ERPSEI.Data.Entities.SAT;
 
 namespace ERPSEI.Data.Entities.Empresas
 {
-	public class ProductoServicioPerfil
+    public class ProductoServicioPerfil
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }

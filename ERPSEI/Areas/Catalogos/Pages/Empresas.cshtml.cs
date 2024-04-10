@@ -1,5 +1,6 @@
 using ERPSEI.Data;
 using ERPSEI.Data.Entities.Empresas;
+using ERPSEI.Data.Entities.SAT;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Requests;
@@ -17,7 +18,7 @@ using System.Text;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-	[Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
+    [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
     public class EmpresasModel : PageModel
 	{
 		private readonly IEmpresaManager _empresaManager;

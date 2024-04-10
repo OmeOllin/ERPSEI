@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using ERPSEI.Data.Entities.SAT;
 
 namespace ERPSEI.Data.Entities.Empresas
 {
-	public class ActividadEconomicaEmpresa
+    public class ActividadEconomicaEmpresa
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }

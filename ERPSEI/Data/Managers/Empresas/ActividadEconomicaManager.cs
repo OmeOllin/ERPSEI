@@ -1,9 +1,9 @@
-﻿using ERPSEI.Data.Entities.Empresas;
+﻿using ERPSEI.Data.Entities.SAT;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERPSEI.Data.Managers.Empresas
 {
-	public class ActividadEconomicaManager : IRWCatalogoManager<ActividadEconomica>
+    public class ActividadEconomicaManager : IRWCatalogoManager<ActividadEconomica>
     {
         ApplicationDbContext db { get; set; }
 

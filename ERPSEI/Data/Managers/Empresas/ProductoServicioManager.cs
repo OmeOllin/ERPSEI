@@ -1,4 +1,5 @@
 ﻿using ERPSEI.Data.Entities.Empresas;
+using ERPSEI.Data.Entities.SAT;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
 
