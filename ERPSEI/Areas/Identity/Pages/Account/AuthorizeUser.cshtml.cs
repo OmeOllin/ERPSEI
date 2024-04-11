@@ -10,8 +10,8 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
 using ERPSEI.Data.Entities;
 using ERPSEI.Email;
-using ERPSEI.Data.Managers;
 using ERPSEI.Data;
+using ERPSEI.Data.Managers.Empleados;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
 {

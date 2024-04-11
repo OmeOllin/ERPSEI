@@ -1,6 +1,6 @@
 ﻿using ERPSEI.Data.Entities.Empleados;
 
-namespace ERPSEI.Data.Managers
+namespace ERPSEI.Data.Managers.Empleados
 {
     public interface IArchivoEmpleadoManager
     {
@@ -13,7 +13,7 @@ namespace ERPSEI.Data.Managers
 
         public Task DeleteByIdAsync(string fileId);
 
-		public Task DeleteByEmpleadoIdAsync(int empleadoId);
+        public Task DeleteByEmpleadoIdAsync(int empleadoId);
 
         public Task<ProfilePicture?> GetProfilePicByEmpleadoId(int empleadoId);
 

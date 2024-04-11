@@ -1,7 +1,7 @@
 ﻿using ERPSEI.Data.Entities.Empleados;
 using Microsoft.EntityFrameworkCore;
 
-namespace ERPSEI.Data.Managers
+namespace ERPSEI.Data.Managers.Empleados
 {
     public class SubareaManager : IRWCatalogoManager<Subarea>
     {
@@ -12,15 +12,15 @@ namespace ERPSEI.Data.Managers
             db = _db;
         }
 
-		private async Task<int> getNextId()
-		{
-			List<Subarea> registros = await db.Subareas.ToListAsync();
-			Subarea? last = registros.OrderByDescending(r => r.Id).FirstOrDefault();
-			int lastId = last != null ? last.Id : 0;
-			lastId += 1;
+        private async Task<int> getNextId()
+        {
+            List<Subarea> registros = await db.Subareas.ToListAsync();
+            Subarea? last = registros.OrderByDescending(r => r.Id).FirstOrDefault();
+            int lastId = last != null ? last.Id : 0;
+            lastId += 1;
 
-			return lastId;
-		}
+            return lastId;
+        }
 
         public async Task<int> CreateAsync(Subarea subarea)
         {
@@ -47,7 +47,7 @@ namespace ERPSEI.Data.Managers
 
         public async Task DeleteByIdAsync(int id)
         {
-			Subarea? subarea = await GetByIdAsync(id);
+            Subarea? subarea = await GetByIdAsync(id);
             if (subarea != null)
             {
                 db.Remove(subarea);
@@ -55,10 +55,10 @@ namespace ERPSEI.Data.Managers
             }
         }
 
-		public async Task DeleteMultipleByIdAsync(string[] ids)
-		{
-			//Inicia una transacción.
-			await db.Database.BeginTransactionAsync();
+        public async Task DeleteMultipleByIdAsync(string[] ids)
+        {
+            //Inicia una transacción.
+            await db.Database.BeginTransactionAsync();
             try
             {
                 foreach (string id in ids)
@@ -76,12 +76,12 @@ namespace ERPSEI.Data.Managers
             catch (Exception)
             {
                 await db.Database.RollbackTransactionAsync();
-				throw;
+                throw;
 
-			}
-		}
+            }
+        }
 
-		public async Task<List<Subarea>> GetAllAsync()
+        public async Task<List<Subarea>> GetAllAsync()
         {
             return await db.Subareas.ToListAsync();
         }
@@ -91,10 +91,10 @@ namespace ERPSEI.Data.Managers
             return await db.Subareas.Where(p => p.Id == id).FirstOrDefaultAsync();
         }
 
-		public async Task<Subarea?> GetByNameAsync(string name)
-		{
-			return await db.Subareas.Where(a => a.Nombre.ToLower() == name.ToLower()).FirstOrDefaultAsync();
-		}
+        public async Task<Subarea?> GetByNameAsync(string name)
+        {
+            return await db.Subareas.Where(a => a.Nombre.ToLower() == name.ToLower()).FirstOrDefaultAsync();
+        }
 
-	}
+    }
 }

@@ -2,33 +2,33 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace ERPSEI.Data.Managers
+namespace ERPSEI.Data.Managers.Empleados
 {
     public class RoleManager : RoleManager<IdentityRole>
     {
-		ApplicationDbContext db { get; set; }
+        ApplicationDbContext db { get; set; }
 
-		public RoleManager(
+        public RoleManager(
             IRoleStore<IdentityRole> store,
             IEnumerable<IRoleValidator<IdentityRole>> roleValidators,
             ILookupNormalizer keyNormalizer,
             IdentityErrorDescriber errors,
             ILogger<RoleManager<IdentityRole>> logger,
-			ApplicationDbContext _db) :
+            ApplicationDbContext _db) :
             base(store,
-				roleValidators,
+                roleValidators,
                 keyNormalizer,
                 errors,
                 logger)
         {
-			db = _db;
-		}
+            db = _db;
+        }
 
-		public async Task<List<IdentityRole>> GetAllAsync()
-		{
+        public async Task<List<IdentityRole>> GetAllAsync()
+        {
 
-			return await db.Roles.ToListAsync();
-		}
+            return await db.Roles.ToListAsync();
+        }
 
-	}
+    }
 }

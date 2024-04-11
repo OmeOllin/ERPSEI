@@ -4,9 +4,10 @@
 @using Microsoft.AspNetCore.Mvc.Localization;
 @using ERPSEI.Areas.Catalogos.Pages;
 @using ERPSEI.Data.Entities.Empleados;
+@using ERPSEI.Data.Managers.Empleados;
 @model UsuariosModel
 @inject IViewLocalizer Localizer;
-@inject ERPSEI.Data.Managers.RoleManager RolesManager;
+@inject RoleManager RolesManager;
 @{
 	ViewData["Title"] = Localizer["Title"];
 

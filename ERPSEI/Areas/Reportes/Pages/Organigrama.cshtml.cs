@@ -1,5 +1,5 @@
 using ERPSEI.Data.Entities.Empleados;
-using ERPSEI.Data.Managers;
+using ERPSEI.Data.Managers.Empleados;
 using ERPSEI.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ERPSEI.Areas.Reportes.Pages
 {
-	public class OrganigramaModel : PageModel
+    public class OrganigramaModel : PageModel
     {
 		//Crea un elemento Empleado con el nombre de la corporación, que será el jefe en común.
 		private Empleado organizacion = new Empleado() { 

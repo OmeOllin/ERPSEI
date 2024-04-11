@@ -1,6 +1,6 @@
 ﻿using ERPSEI.Data.Entities.Empleados;
 
-namespace ERPSEI.Data.Managers
+namespace ERPSEI.Data.Managers.Empleados
 {
     public interface IContactoEmergenciaManager
     {
@@ -17,6 +17,6 @@ namespace ERPSEI.Data.Managers
 
         public Task<ICollection<ContactoEmergencia>> GetContactosByEmpleadoIdAsync(int contactoId);
 
-		ContactoEmergencia? GetById(int id);
+        ContactoEmergencia? GetById(int id);
     }
 }

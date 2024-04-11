@@ -1,4 +1,4 @@
-using ERPSEI.Data.Managers;
+using ERPSEI.Data.Managers.Empleados;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;

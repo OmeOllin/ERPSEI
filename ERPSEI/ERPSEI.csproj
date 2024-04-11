@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Data\Managers\SAT\" />
     <Folder Include="wwwroot\templates\" />
   </ItemGroup>
 

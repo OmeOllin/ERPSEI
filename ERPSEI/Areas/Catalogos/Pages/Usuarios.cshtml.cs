@@ -1,7 +1,7 @@
 using ERPSEI.Data;
 using ERPSEI.Data.Entities;
 using ERPSEI.Data.Entities.Empleados;
-using ERPSEI.Data.Managers;
+using ERPSEI.Data.Managers.Empleados;
 using ERPSEI.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -14,7 +14,7 @@ using System.Data;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-	[Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
+    [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
     public class UsuariosModel : PageModel
 	{
 		private readonly AppUserManager _usuarioManager;

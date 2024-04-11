@@ -1,7 +1,7 @@
 ﻿using ERPSEI.Data.Entities.Empleados;
 using Microsoft.EntityFrameworkCore;
 
-namespace ERPSEI.Data.Managers
+namespace ERPSEI.Data.Managers.Empleados
 {
     public class ArchivoEmpleadoManager : IArchivoEmpleadoManager
     {
@@ -12,7 +12,7 @@ namespace ERPSEI.Data.Managers
             db = _db;
         }
 
-		public async Task<string> CreateAsync(ArchivoEmpleado file)
+        public async Task<string> CreateAsync(ArchivoEmpleado file)
         {
             if (file.Id.Length <= 0) { file.Id = Guid.NewGuid().ToString(); }
             db.ArchivosEmpleado.Add(file);
@@ -49,12 +49,12 @@ namespace ERPSEI.Data.Managers
             }
         }
 
-		public async Task DeleteByEmpleadoIdAsync(int empleadoId)
-		{
-			List<ArchivoEmpleado> archivos = await db.ArchivosEmpleado.Where(a => a.EmpleadoId == empleadoId).ToListAsync();
-			if (archivos != null && archivos.Count >= 1) { db.ArchivosEmpleado.RemoveRange(archivos); }
-			await db.SaveChangesAsync();
-		}
+        public async Task DeleteByEmpleadoIdAsync(int empleadoId)
+        {
+            List<ArchivoEmpleado> archivos = await db.ArchivosEmpleado.Where(a => a.EmpleadoId == empleadoId).ToListAsync();
+            if (archivos != null && archivos.Count >= 1) { db.ArchivosEmpleado.RemoveRange(archivos); }
+            await db.SaveChangesAsync();
+        }
 
         public async Task<ProfilePicture?> GetProfilePicByEmpleadoId(int empleadoId)
         {
@@ -63,7 +63,7 @@ namespace ERPSEI.Data.Managers
             return resp;
         }
 
-		public async Task<List<SemiArchivoEmpleado>> GetFilesByEmpleadoIdAsync(int empleadoId)
+        public async Task<List<SemiArchivoEmpleado>> GetFilesByEmpleadoIdAsync(int empleadoId)
         {
             FormattableString sql = $"SELECT Id, Nombre, Extension, 0x AS Archivo, DATALENGTH(Archivo) AS FileSize, TipoArchivoId, EmpleadoId FROM ArchivosEmpleado WHERE EmpleadoId = {empleadoId}";
             var resp = await db.Database.SqlQuery<SemiArchivoEmpleado>(sql).ToListAsync();

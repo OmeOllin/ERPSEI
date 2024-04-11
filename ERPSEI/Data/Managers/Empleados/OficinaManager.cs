@@ -1,7 +1,7 @@
 ﻿using ERPSEI.Data.Entities.Empleados;
 using Microsoft.EntityFrameworkCore;
 
-namespace ERPSEI.Data.Managers
+namespace ERPSEI.Data.Managers.Empleados
 {
     public class OficinaManager : IRWCatalogoManager<Oficina>
     {
@@ -12,17 +12,17 @@ namespace ERPSEI.Data.Managers
             db = _db;
         }
 
-		private async Task<int> getNextId()
-		{
-			List<Oficina> registros = await db.Oficinas.ToListAsync();
-			Oficina? last = registros.OrderByDescending(r => r.Id).FirstOrDefault();
-			int lastId = last != null ? last.Id : 0;
-			lastId += 1;
+        private async Task<int> getNextId()
+        {
+            List<Oficina> registros = await db.Oficinas.ToListAsync();
+            Oficina? last = registros.OrderByDescending(r => r.Id).FirstOrDefault();
+            int lastId = last != null ? last.Id : 0;
+            lastId += 1;
 
-			return lastId;
-		}
+            return lastId;
+        }
 
-		public async Task<int> CreateAsync(Oficina oficina)
+        public async Task<int> CreateAsync(Oficina oficina)
         {
             oficina.Id = await getNextId();
             db.Oficinas.Add(oficina);
@@ -55,10 +55,10 @@ namespace ERPSEI.Data.Managers
             }
         }
 
-		public async Task DeleteMultipleByIdAsync(string[] ids)
-		{
-			//Inicia una transacción.
-			await db.Database.BeginTransactionAsync();
+        public async Task DeleteMultipleByIdAsync(string[] ids)
+        {
+            //Inicia una transacción.
+            await db.Database.BeginTransactionAsync();
             try
             {
                 foreach (string id in ids)
@@ -76,12 +76,12 @@ namespace ERPSEI.Data.Managers
             catch (Exception)
             {
                 await db.Database.RollbackTransactionAsync();
-				throw;
+                throw;
 
-			}
-		}
+            }
+        }
 
-		public async Task<List<Oficina>> GetAllAsync()
+        public async Task<List<Oficina>> GetAllAsync()
         {
             return await db.Oficinas.ToListAsync();
         }
@@ -91,10 +91,10 @@ namespace ERPSEI.Data.Managers
             return await db.Oficinas.Where(p => p.Id == id).FirstOrDefaultAsync();
         }
 
-		public async Task<Oficina?> GetByNameAsync(string name)
-		{
-			return await db.Oficinas.Where(a => a.Nombre.ToLower() == name.ToLower()).FirstOrDefaultAsync();
-		}
+        public async Task<Oficina?> GetByNameAsync(string name)
+        {
+            return await db.Oficinas.Where(a => a.Nombre.ToLower() == name.ToLower()).FirstOrDefaultAsync();
+        }
 
-	}
+    }
 }
