@@ -57,7 +57,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			[DataType(DataType.Text)]
 			[StringLength(100, ErrorMessage = "FieldLength", MinimumLength = 2)]
-			[RegularExpression(RegularExpressions.AlphanumSpaceCommaDotParenthesis, ErrorMessage = "CompanyName")]
+			[RegularExpression(RegularExpressions.AlphanumSpaceCommaDotParenthesisAmpersand, ErrorMessage = "CompanyName")]
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "RazonSocialField")]
 			public string RazonSocial { get; set; } = string.Empty;

@@ -71,7 +71,7 @@ namespace ERPSEI.Areas.ERP.Pages
 			public int Id { get; set; }
 
 			[StringLength(100, ErrorMessage = "FieldLength", MinimumLength = 1)]
-			[RegularExpression(RegularExpressions.AlphanumSpaceCommaDotParenthesis, ErrorMessage = "AlphanumSpace")]
+			[RegularExpression(RegularExpressions.AlphanumSpaceCommaDotParenthesisAmpersand, ErrorMessage = "AlphanumSpace")]
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "NameField")]
 			public string Nombre { get; set; } = string.Empty;
