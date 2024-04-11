@@ -6,7 +6,6 @@ using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Managers.Empleados;
 using ERPSEI.Email;
 using ERPSEI.Resources;
-using Humanizer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
