@@ -1,7 +1,7 @@
 ﻿using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.SAT;
 
-namespace ERPSEI.Data.Managers.Empresas
+namespace ERPSEI.Data.Managers.SAT
 {
     public interface IProductoServicioManager : IRWCatalogoManager<ProductoServicio>
     {

@@ -41,6 +41,23 @@ namespace ERPSEI.Data
 		//Catálogos no Administrables Empresas
 		public DbSet<ActividadEconomica> ActividadesEconomicas { get; set; }
 
+		//Catálogos no Administrables SAT
+		public DbSet<Exportacion> Exportaciones { get; set; }
+		public DbSet<FormaPago> FormasPago { get; set; }
+		public DbSet<Impuesto> Impuestos { get; set; }
+		public DbSet<Mes> Meses { get; set; }
+		public DbSet<MetodoPago> MetodosPago { get; set; }
+		public DbSet<Moneda> Monedas { get; set; }
+		public DbSet<ObjetoImpuesto> ObjetosImpuesto { get; set; }
+		public DbSet<Periodicidad> Periodicidades { get; set; }
+		public DbSet<RegimenFiscal> RegimenesFiscales { get; set; }
+		public DbSet<TasaOCuota> TasasOCuotas { get; set; }
+		public DbSet<TipoComprobante> TiposComprobante { get; set; }
+		public DbSet<TipoFactor> TiposFactor { get; set; }
+		public DbSet<TipoRelacion> TiposRelacion { get; set; }
+		public DbSet<UnidadMedida> UnidadesMedida { get; set; }
+		public DbSet<UsoCFDI> UsosCFDI { get; set; }
+
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -56,6 +73,9 @@ namespace ERPSEI.Data
 
 			//Empleados
 			buildEmpleados(modelBuilder);
+
+			//SAT
+			buildSAT(modelBuilder);
 		}
 
 		private void buildEmpresas(ModelBuilder b) 
@@ -67,7 +87,7 @@ namespace ERPSEI.Data
             b.Entity<Empresa>().HasMany(e => e.ArchivosEmpresa).WithOne(a => a.Empresa).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Empresa>().HasMany(e => e.ActividadesEconomicasEmpresa).WithOne(a => a.Empresa).OnDelete(DeleteBehavior.NoAction);
 
-			b.Entity<ActividadEconomica>().HasMany(a => a.ActividadesEconomicasEmpresa).WithOne(a => a.ActividadEconomica);
+			b.Entity<ActividadEconomica>().HasMany(a => a.ActividadesEconomicasEmpresa).WithOne(a => a.ActividadEconomica).OnDelete(DeleteBehavior.NoAction);
 
 			b.Entity<ArchivoEmpresa>().HasOne(a => a.TipoArchivo).WithMany(ta => ta.ArchivosEmpresa).OnDelete(DeleteBehavior.NoAction);
 
@@ -228,6 +248,10 @@ namespace ERPSEI.Data
 			b.Entity<Oficina>().HasData(dataOficinas);
 		}
 
-
+		private void buildSAT(ModelBuilder b)
+		{
+			b.Entity<TasaOCuota>().HasOne(t => t.Factor).WithMany(f => f.TasasOCuotas).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<TasaOCuota>().HasOne(t => t.Impuesto).WithMany(i => i.TasasOCuotas).OnDelete(DeleteBehavior.NoAction);
+		}
 	}
 }

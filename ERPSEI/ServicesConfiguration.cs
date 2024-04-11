@@ -6,6 +6,7 @@ using ERPSEI.Data.Entities.SAT;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empleados;
 using ERPSEI.Data.Managers.Empresas;
+using ERPSEI.Data.Managers.SAT;
 using ERPSEI.Email;
 using ERPSEI.Resources;
 using ERPSEI.TokenProviders;
@@ -55,15 +56,31 @@ namespace ERPSEI
 
             _builder.Services.AddScoped<RoleManager, RoleManager>();
 
-            _builder.Services.AddScoped<IBancoEmpresaManager, BancoEmpresaManager>();
+            _builder.Services.AddScoped<IExportacionManager, ExportacionManager>();
+			_builder.Services.AddScoped <IFormaPagoManager, FormaPagoManager>();
+			_builder.Services.AddScoped <IImpuestoManager, ImpuestoManager>();
+			_builder.Services.AddScoped <IMesManager, MesManager>();
+			_builder.Services.AddScoped <IMetodoPagoManager, MetodoPagoManager>();
+            _builder.Services.AddScoped<IMonedaManager, MonedaManager>();
+			_builder.Services.AddScoped <IObjetoImpuestoManager, ObjetoImpuestoManager>();
+			_builder.Services.AddScoped <IPeriodicidadManager, PeriodicidadManager>();
+			_builder.Services.AddScoped <IRegimenFiscalManager, RegimenFiscalManager>();
+			_builder.Services.AddScoped <ITasaOCuotaManager, TasaOCuotaManager>();
+			_builder.Services.AddScoped <ITipoComprobanteManager, TipoComprobanteManager>();
+			_builder.Services.AddScoped <ITipoFactorManager, TipoFactorManager>();
+			_builder.Services.AddScoped <ITipoRelacionManager, TipoRelacionManager>();
+			_builder.Services.AddScoped <IUnidadMedidaManager, UnidadMedidaManager>();
+			_builder.Services.AddScoped <IUsoCFDIManager, UsoCFDIManager>();
+			_builder.Services.AddScoped<IProductoServicioManager, ProductoServicioManager>();
+			_builder.Services.AddScoped<IRWCatalogoManager<ActividadEconomica>, ActividadEconomicaManager>();
+
+			_builder.Services.AddScoped<IBancoEmpresaManager, BancoEmpresaManager>();
 			_builder.Services.AddScoped<IArchivoEmpresaManager, ArchivoEmpresaManager>();
 			_builder.Services.AddScoped<IEmpresaManager, EmpresaManager>();
             _builder.Services.AddScoped<IProductoServicioPerfilManager, ProductoServicioPerfilManager>();
-			_builder.Services.AddScoped<IProductoServicioManager, ProductoServicioManager>();
 			_builder.Services.AddScoped<IRWCatalogoManager<Perfil>, PerfilManager>();
 			_builder.Services.AddScoped<IRWCatalogoManager<Origen>, OrigenManager>();
 			_builder.Services.AddScoped<IRWCatalogoManager<Nivel>, NivelManager>();
-			_builder.Services.AddScoped<IRWCatalogoManager<ActividadEconomica>, ActividadEconomicaManager>();
 			_builder.Services.AddScoped<IActividadEconomicaEmpresaManager, ActividadEconomicaEmpresaManager>();
 
 			_builder.Services.AddScoped<IArchivoEmpleadoManager, ArchivoEmpleadoManager>();
