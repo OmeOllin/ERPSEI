@@ -31,5 +31,7 @@ namespace ERPSEI.Data.Entities.SAT
 
 		public string NombreBancoEmisorCuenta { get; set; } = string.Empty;
 
+		public int Deshabilitado { get; set; } = 0;
+
 	}
 }

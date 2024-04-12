@@ -27,5 +27,7 @@ namespace ERPSEI.Data.Entities.SAT
 
         public bool Retencion {  get; set; }
 
+		public int Deshabilitado { get; set; } = 0;
+
 	}
 }

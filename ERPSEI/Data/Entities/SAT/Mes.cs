@@ -11,5 +11,7 @@ namespace ERPSEI.Data.Entities.SAT
 
         public string Descripcion { get; set; } = string.Empty;
 
+		public int Deshabilitado { get; set; } = 0;
+
 	}
 }

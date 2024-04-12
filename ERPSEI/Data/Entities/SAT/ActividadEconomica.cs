@@ -13,5 +13,7 @@ namespace ERPSEI.Data.Entities.SAT
         public string Nombre { get; set; } = string.Empty;
 
         public ICollection<ActividadEconomicaEmpresa>? ActividadesEconomicasEmpresa { get; set; }
-    }
+
+        public int Deshabilitado { get; set; } = 0;
+	}
 }

@@ -17,5 +17,7 @@ namespace ERPSEI.Data.Entities.SAT
 
 		public string RegimenFiscalReceptor { get; set; } = string.Empty;
 
+		public int Deshabilitado { get; set; } = 0;
+
 	}
 }

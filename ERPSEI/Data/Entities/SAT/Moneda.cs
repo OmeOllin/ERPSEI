@@ -13,7 +13,9 @@ namespace ERPSEI.Data.Entities.SAT
 
 		public int Decimales { get; set; }
 
-		public int PorcentajeVariacion { get; set; }
+		public double PorcentajeVariacion { get; set; }
+
+		public int Deshabilitado { get; set; } = 0;
 
 	}
 }

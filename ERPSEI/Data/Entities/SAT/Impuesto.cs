@@ -19,6 +19,8 @@ namespace ERPSEI.Data.Entities.SAT
 
         public bool Federal { get; set; }
 
+		public int Deshabilitado { get; set; } = 0;
+
 		public ICollection<TasaOCuota>? TasasOCuotas { get; set; }
 
 	}

@@ -1043,6 +1043,9 @@ namespace ERPSEI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Deshabilitado")
+                        .HasColumnType("int");
+
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1064,6 +1067,9 @@ namespace ERPSEI.Data.Migrations
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Deshabilitado")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1094,6 +1100,9 @@ namespace ERPSEI.Data.Migrations
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Deshabilitado")
+                        .HasColumnType("int");
 
                     b.Property<string>("NombreBancoEmisorCuenta")
                         .IsRequired()
@@ -1141,6 +1150,9 @@ namespace ERPSEI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Deshabilitado")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Federal")
                         .HasColumnType("bit");
 
@@ -1171,6 +1183,9 @@ namespace ERPSEI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Deshabilitado")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Meses");
@@ -1188,6 +1203,9 @@ namespace ERPSEI.Data.Migrations
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Deshabilitado")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1210,8 +1228,11 @@ namespace ERPSEI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PorcentajeVariacion")
+                    b.Property<int>("Deshabilitado")
                         .HasColumnType("int");
+
+                    b.Property<double>("PorcentajeVariacion")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -1231,6 +1252,9 @@ namespace ERPSEI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Deshabilitado")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("ObjetosImpuesto");
@@ -1249,6 +1273,9 @@ namespace ERPSEI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Deshabilitado")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Periodicidades");
@@ -1266,6 +1293,9 @@ namespace ERPSEI.Data.Migrations
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Deshabilitado")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IncluirIEPSTraslado")
                         .HasColumnType("bit");
@@ -1301,6 +1331,9 @@ namespace ERPSEI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Deshabilitado")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("RegimenesFiscales");
@@ -1314,6 +1347,9 @@ namespace ERPSEI.Data.Migrations
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Deshabilitado")
+                        .HasColumnType("int");
 
                     b.Property<int>("FactorId")
                         .HasColumnType("int");
@@ -1361,8 +1397,12 @@ namespace ERPSEI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("ValorMaximo")
-                        .HasColumnType("float");
+                    b.Property<int>("Deshabilitado")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ValorMaximo")
+                        .HasPrecision(24, 6)
+                        .HasColumnType("decimal(24,6)");
 
                     b.HasKey("Id");
 
@@ -1377,6 +1417,9 @@ namespace ERPSEI.Data.Migrations
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Deshabilitado")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1396,6 +1439,9 @@ namespace ERPSEI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Deshabilitado")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("TiposRelacion");
@@ -1413,6 +1459,9 @@ namespace ERPSEI.Data.Migrations
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Deshabilitado")
+                        .HasColumnType("int");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -1449,6 +1498,9 @@ namespace ERPSEI.Data.Migrations
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Deshabilitado")
+                        .HasColumnType("int");
 
                     b.Property<string>("RegimenFiscalReceptor")
                         .IsRequired()

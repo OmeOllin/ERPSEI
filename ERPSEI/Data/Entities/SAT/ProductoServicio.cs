@@ -20,5 +20,7 @@ namespace ERPSEI.Data.Entities.SAT
 
         public ICollection<ProductoServicioPerfil>? ProductosServiciosPerfil { get; set; }
 
-    }
+		public int Deshabilitado { get; set; } = 0;
+
+	}
 }

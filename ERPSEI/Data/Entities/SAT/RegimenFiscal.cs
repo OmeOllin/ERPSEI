@@ -15,5 +15,7 @@ namespace ERPSEI.Data.Entities.SAT
 
         public bool AplicaPersonaMoral { get; set; }
 
+		public int Deshabilitado { get; set; } = 0;
+
 	}
 }

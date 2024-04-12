@@ -10,13 +10,28 @@ namespace ERPSEI.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<int>(
+                name: "Deshabilitado",
+                table: "ProductosServicios",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "Deshabilitado",
+                table: "ActividadesEconomicas",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
+
             migrationBuilder.CreateTable(
                 name: "Exportaciones",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
                     Clave = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Deshabilitado = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -39,7 +54,8 @@ namespace ERPSEI.Data.Migrations
                     CuentaBeneficiario = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PatronCuentaBeneficiario = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TipoCadenaPago = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NombreBancoEmisorCuenta = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    NombreBancoEmisorCuenta = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Deshabilitado = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -56,7 +72,8 @@ namespace ERPSEI.Data.Migrations
                     Retencion = table.Column<bool>(type: "bit", nullable: false),
                     Traslado = table.Column<bool>(type: "bit", nullable: false),
                     Local = table.Column<bool>(type: "bit", nullable: false),
-                    Federal = table.Column<bool>(type: "bit", nullable: false)
+                    Federal = table.Column<bool>(type: "bit", nullable: false),
+                    Deshabilitado = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -69,7 +86,8 @@ namespace ERPSEI.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
                     Clave = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Deshabilitado = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -82,7 +100,8 @@ namespace ERPSEI.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
                     Clave = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Deshabilitado = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -97,7 +116,8 @@ namespace ERPSEI.Data.Migrations
                     Clave = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Decimales = table.Column<int>(type: "int", nullable: false),
-                    PorcentajeVariacion = table.Column<int>(type: "int", nullable: false)
+                    PorcentajeVariacion = table.Column<double>(type: "float", nullable: false),
+                    Deshabilitado = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -110,7 +130,8 @@ namespace ERPSEI.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
                     Clave = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Deshabilitado = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -123,7 +144,8 @@ namespace ERPSEI.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
                     Clave = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Deshabilitado = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -138,7 +160,8 @@ namespace ERPSEI.Data.Migrations
                     Clave = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AplicaPersonaFisica = table.Column<bool>(type: "bit", nullable: false),
-                    AplicaPersonaMoral = table.Column<bool>(type: "bit", nullable: false)
+                    AplicaPersonaMoral = table.Column<bool>(type: "bit", nullable: false),
+                    Deshabilitado = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -152,7 +175,8 @@ namespace ERPSEI.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false),
                     Clave = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ValorMaximo = table.Column<double>(type: "float", nullable: false)
+                    ValorMaximo = table.Column<decimal>(type: "decimal(24,6)", precision: 24, scale: 6, nullable: false),
+                    Deshabilitado = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -164,7 +188,8 @@ namespace ERPSEI.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Deshabilitado = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -177,7 +202,8 @@ namespace ERPSEI.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
                     Clave = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Deshabilitado = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -193,7 +219,8 @@ namespace ERPSEI.Data.Migrations
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Nota = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Simbolo = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Simbolo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Deshabilitado = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -209,7 +236,8 @@ namespace ERPSEI.Data.Migrations
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AplicaPersonaFisica = table.Column<bool>(type: "bit", nullable: false),
                     AplicaPersonaMoral = table.Column<bool>(type: "bit", nullable: false),
-                    RegimenFiscalReceptor = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    RegimenFiscalReceptor = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Deshabilitado = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -229,7 +257,8 @@ namespace ERPSEI.Data.Migrations
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FactorId = table.Column<int>(type: "int", nullable: false),
                     Traslado = table.Column<bool>(type: "bit", nullable: false),
-                    Retencion = table.Column<bool>(type: "bit", nullable: false)
+                    Retencion = table.Column<bool>(type: "bit", nullable: false),
+                    Deshabilitado = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -304,6 +333,14 @@ namespace ERPSEI.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "TiposFactor");
+
+            migrationBuilder.DropColumn(
+                name: "Deshabilitado",
+                table: "ProductosServicios");
+
+            migrationBuilder.DropColumn(
+                name: "Deshabilitado",
+                table: "ActividadesEconomicas");
         }
     }
 }

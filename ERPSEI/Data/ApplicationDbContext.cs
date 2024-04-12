@@ -252,6 +252,7 @@ namespace ERPSEI.Data
 		{
 			b.Entity<TasaOCuota>().HasOne(t => t.Factor).WithMany(f => f.TasasOCuotas).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<TasaOCuota>().HasOne(t => t.Impuesto).WithMany(i => i.TasasOCuotas).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<TipoComprobante>().Property(t => t.ValorMaximo).HasPrecision(24, 6);
 		}
 	}
 }

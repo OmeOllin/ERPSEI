@@ -11,7 +11,9 @@ namespace ERPSEI.Data.Entities.SAT
 
         public string Descripcion { get; set; } = string.Empty;
 
-        public double ValorMaximo { get; set; }
+        public decimal ValorMaximo { get; set; }
+
+		public int Deshabilitado { get; set; } = 0;
 
 	}
 }
