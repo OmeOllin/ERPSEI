@@ -26,13 +26,7 @@ namespace ERPSEI
         public const string RolCandidato = "Candidato";
 
         public static string MasterPassword { get; set; } = string.Empty;
-        public static AppUser MasterUser {  get; } = new AppUser() { 
-            Email = "master@soportecliente.com.mx",
-            UserName = "master@soportecliente.com.mx",
-            EmailConfirmed = true,
-            IsPreregisterAuthorized = true,
-            PasswordResetNeeded = false,
-        };
+        public static AppUser MasterUser { get; } = new AppUser();
 
         public static void ConfigureEmail(WebApplicationBuilder _builder)
         {
@@ -42,6 +36,12 @@ namespace ERPSEI
             string password = (string)(emailSection.GetValue(typeof(string), "password") ?? throw new InvalidOperationException("Email 'password' not found."));
             string smtp = (string)(emailSection.GetValue(typeof(string), "smtp") ?? throw new InvalidOperationException("Email 'smtp' not found."));
             int port = (int)(emailSection.GetValue(typeof(int), "port") ?? throw new InvalidOperationException("Email 'port' not found."));
+
+            MasterUser.Email = address;
+            MasterUser.UserName = address;
+            MasterUser.EmailConfirmed = true;
+            MasterUser.IsPreregisterAuthorized = true;
+            MasterUser.PasswordResetNeeded = false;
 
             _builder.Services.AddTransient<IEmailSender, EmailSender>(x =>
                 new EmailSender(address, password, smtp, port)
