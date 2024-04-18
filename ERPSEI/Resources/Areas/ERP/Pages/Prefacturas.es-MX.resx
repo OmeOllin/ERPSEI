@@ -129,8 +129,23 @@
   <data name="CancelButtonTitle" xml:space="preserve">
     <value>Cancelar</value>
   </data>
+  <data name="CloseButtonTitle" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
   <data name="ColActionsHeader" xml:space="preserve">
     <value>Acciones</value>
+  </data>
+  <data name="ColCantidadHeader" xml:space="preserve">
+    <value>Cantidad</value>
+  </data>
+  <data name="ColClaveHeader" xml:space="preserve">
+    <value>Clave</value>
+  </data>
+  <data name="ColDescripcionHeader" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
+  <data name="ColDescuentoHeader" xml:space="preserve">
+    <value>Descuento</value>
   </data>
   <data name="ColFechaHeader" xml:space="preserve">
     <value>Fecha</value>
@@ -147,8 +162,26 @@
   <data name="ColMonedaHeader" xml:space="preserve">
     <value>Moneda</value>
   </data>
+  <data name="ColRetencionHeader" xml:space="preserve">
+    <value>Retención</value>
+  </data>
   <data name="ColSerieHeader" xml:space="preserve">
     <value>Serie</value>
+  </data>
+  <data name="ColSubtotalHeader" xml:space="preserve">
+    <value>Subtotal</value>
+  </data>
+  <data name="ColTotalHeader" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="ColTrasladoHeader" xml:space="preserve">
+    <value>Traslado</value>
+  </data>
+  <data name="ColUnidadHeader" xml:space="preserve">
+    <value>Unidad</value>
+  </data>
+  <data name="ColUnitarioHeader" xml:space="preserve">
+    <value>Unitario</value>
   </data>
   <data name="ColUsoCFDIHeader" xml:space="preserve">
     <value>Uso de CFDI</value>
@@ -170,6 +203,9 @@
   </data>
   <data name="DeleteCFDIDialogTitle" xml:space="preserve">
     <value>Dar de baja empleado</value>
+  </data>
+  <data name="DeleteElementDialogQuestion" xml:space="preserve">
+    <value>¿Está seguro que desea eliminar los elementos seleccionados del listado?</value>
   </data>
   <data name="DomicilioFiscal" xml:space="preserve">
     <value>Domicilio Fiscal</value>
@@ -231,6 +267,9 @@
   <data name="NuevoRegistro" xml:space="preserve">
     <value>Nuevo</value>
   </data>
+  <data name="NumeroOperacionPlaceholder" xml:space="preserve">
+    <value>Número de Operación</value>
+  </data>
   <data name="ObjetoSocial" xml:space="preserve">
     <value>Objeto Social</value>
   </data>
@@ -290,6 +329,9 @@
   </data>
   <data name="SinProductosServiciosNoPuedeFacturar" xml:space="preserve">
     <value>El perfil de la empresa no cuenta con productos o servicios permitidos para facturar. Por favor elija otra empresa.</value>
+  </data>
+  <data name="TipoCambioPlaceholder" xml:space="preserve">
+    <value>Tipo de Cambio</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Prefacturas</value>

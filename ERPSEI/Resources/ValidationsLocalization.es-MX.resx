@@ -126,6 +126,9 @@
   <data name="AdministradorField" xml:space="preserve">
     <value>Administrador</value>
   </data>
+  <data name="Alphabetic" xml:space="preserve">
+    <value>El campo {0} debe tener solo letras.</value>
+  </data>
   <data name="AlphanumNoSpaceNoUnderscore" xml:space="preserve">
     <value>El campo {0} solo permite letras y números.</value>
   </data>
@@ -137,6 +140,9 @@
   </data>
   <data name="AreaField" xml:space="preserve">
     <value>Área</value>
+  </data>
+  <data name="CantidadField" xml:space="preserve">
+    <value>Cantidad</value>
   </data>
   <data name="CompanyName" xml:space="preserve">
     <value>El campo {0} solo permite letras, números, guión bajo, espacios, comas puntos y ampersand.</value>
@@ -165,6 +171,12 @@
   <data name="CURPField" xml:space="preserve">
     <value>CURP</value>
   </data>
+  <data name="DescripcionField" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
+  <data name="DescuentoField" xml:space="preserve">
+    <value>Descuento</value>
+  </data>
   <data name="DireccionField" xml:space="preserve">
     <value>Dirección</value>
   </data>
@@ -184,7 +196,7 @@
     <value>Estado Civil</value>
   </data>
   <data name="ExportacionField" xml:space="preserve">
-    <value>Exportacion</value>
+    <value>Exportación</value>
   </data>
   <data name="FathersLastNameField" xml:space="preserve">
     <value>Primer apellido</value>
@@ -282,6 +294,12 @@
   <data name="NumericNoRestriction" xml:space="preserve">
     <value>El campo {0} solo permite números.</value>
   </data>
+  <data name="NumeroOperacionField" xml:space="preserve">
+    <value>Número de operación</value>
+  </data>
+  <data name="ObjetoImpuestoField" xml:space="preserve">
+    <value>Objeto de impuesto</value>
+  </data>
   <data name="ObjetoSocialField" xml:space="preserve">
     <value>Objeto social</value>
   </data>
@@ -330,6 +348,9 @@
   <data name="Required" xml:space="preserve">
     <value>El campo {0} es requerido</value>
   </data>
+  <data name="RetencionField" xml:space="preserve">
+    <value>Retención</value>
+  </data>
   <data name="RFCField" xml:space="preserve">
     <value>RFC</value>
   </data>
@@ -350,6 +371,21 @@
   </data>
   <data name="SubareaField" xml:space="preserve">
     <value>Subárea</value>
+  </data>
+  <data name="TipoCambioField" xml:space="preserve">
+    <value>Tipo de cambio</value>
+  </data>
+  <data name="TipoComprobanteField" xml:space="preserve">
+    <value>Tipo de comprobante</value>
+  </data>
+  <data name="TrasladoField" xml:space="preserve">
+    <value>Traslado</value>
+  </data>
+  <data name="UnidadField" xml:space="preserve">
+    <value>Unidad de medida</value>
+  </data>
+  <data name="UnitarioField" xml:space="preserve">
+    <value>Precio unitario</value>
   </data>
   <data name="URLWeb" xml:space="preserve">
     <value>URL Web</value>

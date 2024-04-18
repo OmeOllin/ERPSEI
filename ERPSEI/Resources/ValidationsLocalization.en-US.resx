@@ -126,6 +126,9 @@
   <data name="AdministradorField" xml:space="preserve">
     <value>Administrator</value>
   </data>
+  <data name="Alphabetic" xml:space="preserve">
+    <value>The {0} field must have only letters.</value>
+  </data>
   <data name="AlphanumNoSpaceNoUnderscore" xml:space="preserve">
     <value>The {0} field must have only letters and numbers.</value>
   </data>
@@ -137,6 +140,9 @@
   </data>
   <data name="AreaField" xml:space="preserve">
     <value>Area</value>
+  </data>
+  <data name="CantidadField" xml:space="preserve">
+    <value>Quantity</value>
   </data>
   <data name="CompanyName" xml:space="preserve">
     <value>The {0} field only allows letters, numbers, underscores, spaces, commas, periods and ampersand.</value>
@@ -164,6 +170,12 @@
   </data>
   <data name="CURPField" xml:space="preserve">
     <value>CURP</value>
+  </data>
+  <data name="DescripcionField" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="DescuentoField" xml:space="preserve">
+    <value>Discount</value>
   </data>
   <data name="DireccionField" xml:space="preserve">
     <value>Address</value>
@@ -282,6 +294,12 @@
   <data name="NumericNoRestriction" xml:space="preserve">
     <value>The {0} field only allows numbers.</value>
   </data>
+  <data name="NumeroOperacionField" xml:space="preserve">
+    <value>Operation number</value>
+  </data>
+  <data name="ObjetoImpuestoField" xml:space="preserve">
+    <value>Tax object</value>
+  </data>
   <data name="ObjetoSocialField" xml:space="preserve">
     <value>Social object</value>
   </data>
@@ -330,6 +348,9 @@
   <data name="Required" xml:space="preserve">
     <value>The {0} field is required.</value>
   </data>
+  <data name="RetencionField" xml:space="preserve">
+    <value>Retention</value>
+  </data>
   <data name="RFCField" xml:space="preserve">
     <value>RFC</value>
   </data>
@@ -350,6 +371,21 @@
   </data>
   <data name="SubareaField" xml:space="preserve">
     <value>Subarea</value>
+  </data>
+  <data name="TipoCambioField" xml:space="preserve">
+    <value>Exchange rate</value>
+  </data>
+  <data name="TipoComprobanteField" xml:space="preserve">
+    <value>Type of receipt</value>
+  </data>
+  <data name="TrasladoField" xml:space="preserve">
+    <value>Transfer</value>
+  </data>
+  <data name="UnidadField" xml:space="preserve">
+    <value>Unit of measurement</value>
+  </data>
+  <data name="UnitarioField" xml:space="preserve">
+    <value>Unitary price</value>
   </data>
   <data name="URLWeb" xml:space="preserve">
     <value>Web URL</value>

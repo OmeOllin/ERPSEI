@@ -2,6 +2,8 @@
 {
 	public static class RegularExpressions
 	{
+		public const string Alphabetic = @"^[a-zA-Z]+";
+
 		public const string AlphanumSpaceCommaDotParenthesisAmpersand = @"^[áÁéÉíÍóÓúÚñÑ\w,.()& ]+$";
 
 		public const string PersonName = @"^[A-ZÁÉÍÓÚÑ][a-zA-ZáÁéÉíÍóÓúÚñÑ ]+$";
