@@ -189,6 +189,12 @@
   <data name="Conceptos" xml:space="preserve">
     <value>Concepts</value>
   </data>
+  <data name="ConfirmActionQuestion" xml:space="preserve">
+    <value>Unsaved changes will be lost. Are you sure you want to perform this action?</value>
+  </data>
+  <data name="ConfirmActionTitle" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
   <data name="DatosGenerales" xml:space="preserve">
     <value>General Data</value>
   </data>
@@ -206,6 +212,9 @@
   </data>
   <data name="DeleteElementDialogQuestion" xml:space="preserve">
     <value>Are you sure you want to delete the selected items from the list?</value>
+  </data>
+  <data name="Detalles" xml:space="preserve">
+    <value>Details</value>
   </data>
   <data name="DomicilioFiscal" xml:space="preserve">
     <value>Tax Address</value>
