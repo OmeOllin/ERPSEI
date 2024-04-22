@@ -41,6 +41,10 @@ namespace ERPSEI.Data
 		//Catálogos no Administrables Empresas
 		public DbSet<ActividadEconomica> ActividadesEconomicas { get; set; }
 
+		//Tablas de trabajo SAT
+		public DbSet<Prefactura> Prefacturas { get; set; }
+		public DbSet<Concepto> Conceptos { get; set; }
+
 		//Catálogos no Administrables SAT
 		public DbSet<Exportacion> Exportaciones { get; set; }
 		public DbSet<FormaPago> FormasPago { get; set; }
@@ -253,6 +257,15 @@ namespace ERPSEI.Data
 			b.Entity<TasaOCuota>().HasOne(t => t.Factor).WithMany(f => f.TasasOCuotas).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<TasaOCuota>().HasOne(t => t.Impuesto).WithMany(i => i.TasasOCuotas).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<TipoComprobante>().Property(t => t.ValorMaximo).HasPrecision(24, 6);
+
+			b.Entity<Prefactura>().HasMany(p => p.Conceptos).WithOne(c => c.Prefactura).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Prefactura>().Property(c => c.TipoCambio).HasPrecision(18, 6);
+			b.Entity<Concepto>().HasOne(c => c.UnidadMedida).WithOne(u => u.Concepto).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Concepto>().HasOne(c => c.ObjetoImpuesto).WithOne(o => o.Concepto).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Concepto>().Property(c => c.PrecioUnitario).HasPrecision(18, 6);
+			b.Entity<Concepto>().Property(c => c.Descuento).HasPrecision(18, 6);
+			b.Entity<Concepto>().Property(c => c.TasaTraslado).HasPrecision(18, 6);
+			b.Entity<Concepto>().Property(c => c.TasaRetencion).HasPrecision(18, 6);
 		}
 	}
 }

@@ -20,5 +20,7 @@ namespace ERPSEI.Data.Entities.SAT
 
 		public int Deshabilitado { get; set; } = 0;
 
+		public Concepto? Concepto { get; set; }
+
 	}
 }
