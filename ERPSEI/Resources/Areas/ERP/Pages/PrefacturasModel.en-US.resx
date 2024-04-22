@@ -123,6 +123,12 @@
   <data name="ConsultadoUnsuccessfully" xml:space="preserve">
     <value>Error querying information</value>
   </data>
+  <data name="ErrorPrefacturaExistenteA" xml:space="preserve">
+    <value>There is already a prebill registered with the serie and file number</value>
+  </data>
+  <data name="ErrorPrefacturaExistenteB" xml:space="preserve">
+    <value>Please verify</value>
+  </data>
   <data name="PrefacturaSavedSuccessfully" xml:space="preserve">
     <value>Prebill saved successfully!</value>
   </data>
