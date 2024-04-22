@@ -1,10 +1,19 @@
 ﻿@page "{handler?}"
 @using Microsoft.AspNetCore.Localization;
 @using Microsoft.AspNetCore.Mvc.Localization;
+@using ERPSEI.Data.Entities.SAT;
+@using ERPSEI.Data.Managers.SAT;
 @model ERPSEI.Areas.ERP.Pages.PrefacturasModel
 @inject IViewLocalizer Localizer;
+@inject IObjetoImpuestoManager ObjetoImpuestoManager;
+@inject ITipoComprobanteManager TipoComprobanteManager;
+@inject IMonedaManager MonedaManager;
+@inject IFormaPagoManager FormaPagoManager;
+@inject IMetodoPagoManager MetodoPagoManager;
+@inject IUsoCFDIManager UsoCFDIManager;
+@inject IExportacionManager ExportacionManager;
 @{
-    ViewData["Title"] = Localizer["Title"];
+	ViewData["Title"] = Localizer["Title"];
 
 	// Retrieves the requested culture
 	IRequestCultureFeature? rqf = Request.HttpContext.Features.Get<IRequestCultureFeature>();
@@ -13,6 +22,14 @@
 	System.Globalization.CultureInfo? culture = rqf != null ? rqf.RequestCulture.Culture : new System.Globalization.CultureInfo("es-MX");
 
 	string cultureName = culture.Name;
+
+	List<ObjetoImpuesto> objetosImpuesto = await ObjetoImpuestoManager.GetAllAsync();
+	List<TipoComprobante> tiposComprobante = await TipoComprobanteManager.GetAllAsync();
+	List<Moneda> monedas = await MonedaManager.GetAllAsync();
+	List<FormaPago> formasPago = await FormaPagoManager.GetAllAsync();
+	List<MetodoPago> metodosPago = await MetodoPagoManager.GetAllAsync();
+	List<UsoCFDI> usosCFDI = await UsoCFDIManager.GetAllAsync();
+	List<Exportacion> exportaciones = await ExportacionManager.GetAllAsync();
 }
 <h3 class="title mb-3">@ViewData["Title"]</h3>
 
@@ -43,15 +60,7 @@
 						</div>
 						<div class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<select id="selFiltroSerie" asp-for="InputFiltro.Serie" class="form-select" placeholder="@Localizer["SeriePlaceholder"]">
-									<option value="0">Seleccione...</option>
-									@{
-										// foreach (Puesto puesto in puestos)
-										// {
-										// 	<option value='@puesto.Id'>@puesto.Nombre</option>
-										// }
-									}
-								</select>
+								<input id="inpFiltroSerie" asp-for="InputFiltro.Serie" class="form-control" placeholder="@Localizer["SeriePlaceholder"]" />
 								<label for="selFiltroSerie" asp-for="InputFiltro.Serie" class="form-label"></label>
 							</div>
 						</div>
@@ -60,10 +69,10 @@
 								<select id="selFiltroMoneda" asp-for="InputFiltro.MonedaId" class="form-select" placeholder="@Localizer["MonedaPlaceholder"]">
 									<option value="0">Seleccione...</option>
 									@{
-										// foreach (Area area in areas)
-										// {
-										// 	<option value='@area.Id'>@area.Nombre</option>
-										// }
+										@foreach (Moneda moneda in monedas)
+										{
+											<option value='@moneda.Id'>@moneda.Descripcion</option>
+										}
 									}
 								</select>
 								<label for="selFiltroMoneda" asp-for="InputFiltro.MonedaId" class="form-label"></label>
@@ -74,10 +83,10 @@
 								<select id="selFiltroFormaPago" asp-for="InputFiltro.FormaPagoId" class="form-select" placeholder="@Localizer["FormaPagoPlaceholder"]">
 									<option value="0">Seleccione...</option>
 									@{
-										// foreach (Subarea subarea in subareas)
-										// {
-										// 	<option areaid='@subarea.AreaId' value='@subarea.Id'>@subarea.Nombre</option>
-										// }
+										@foreach (FormaPago forma in formasPago)
+										{
+											<option value='@forma.Id'>@forma.Descripcion</option>
+										}
 									}
 								</select>
 								<label for="selFiltroFormaPago" asp-for="InputFiltro.FormaPagoId" class="form-label"></label>
@@ -88,10 +97,10 @@
 								<select id="selFiltroMetodoPago" asp-for="InputFiltro.MetodoPagoId" class="form-select" placeholder="@Localizer["MetodoPagoPlaceholder"]">
 									<option value="0">Seleccione...</option>
 									@{
-										// foreach (Oficina oficina in oficinas)
-										// {
-										// 	<option value='@oficina.Id'>@oficina.Nombre</option>
-										// }
+										@foreach (MetodoPago metodo in metodosPago)
+										{
+											<option value='@metodo.Id'>@metodo.Descripcion</option>
+										}
 									}
 								</select>
 								<label for="selFiltroMetodoPago" asp-for="InputFiltro.MetodoPagoId" class="form-label"></label>
@@ -102,10 +111,10 @@
 								<select id="selFiltroUsoCFDI" asp-for="InputFiltro.UsoCFDIId" class="form-select" placeholder="@Localizer["UsoCFDIPlaceholder"]">
 									<option value="0">Seleccione...</option>
 									@{
-										// foreach (Oficina oficina in oficinas)
-										// {
-										// 	<option value='@oficina.Id'>@oficina.Nombre</option>
-										// }
+										@foreach (UsoCFDI uso in usosCFDI)
+										{
+											<option value='@uso.Id'>@uso.Descripcion</option>
+										}
 									}
 								</select>
 								<label for="selFiltroUsoCFDI" asp-for="InputFiltro.UsoCFDIId" class="form-label"></label>
@@ -126,6 +135,7 @@
 </div>
 <!-- --------------------------- -->
 <!-- --------------------------- -->
+
 <!-- --------------------------- -->
 <!-- Sección tabla de resultados -->
 <div id="toolbar" class="col-xl-12">
@@ -169,7 +179,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 id="dlgCFDITitle" class="modal-title"></h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				<button type="button" class="btn-close" onclick="askConfirmation('@Localizer["ConfirmActionTitle"]', '@Localizer["ConfirmActionQuestion"]', function () { onCerrarClick(); dlgCFDIModal.toggle(); });"></button>
 			</div>
 			<div class="modal-body align-items-center">
 				<form id="theForm" method="post">
@@ -185,306 +195,206 @@
 						</div>
 						<hr />
 						<div id="saveValidationSummary" class="text-danger mb-3" role="alert"></div>
-						<div class="row">
-							<div class="col-12">
-								<h4 class="title mb-3">@Localizer["DatosGenerales"]</h4>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-12 col-lg-4">
-								<div class="form-floating mb-3">
-									<input id="inpFecha" type="datetime-local" asp-for="InputCFDI.Fecha" class="form-control formInput" placeholder="@Localizer["FechaPlaceholder"]" />
-									<label for="inpFecha" asp-for="InputCFDI.Fecha" class="form-label required"></label>
-									<span asp-validation-for="InputCFDI.Fecha" class="text-danger"></span>
+						<ul class="nav nav-pills nav-justified" role="tablist">
+							<li class="nav-item" role="presentation">
+								<button class="nav-link active" id="tabGenerales" data-bs-toggle="tab" data-bs-target="#infoGenerales" type="button" role="tab" aria-controls="infoGenerales" aria-selected="true">@Localizer["DatosGenerales"]</button>
+							</li>
+							<li class="nav-item" role="presentation">
+								<button class="nav-link" id="tabConceptos" data-bs-toggle="tab" data-bs-target="#infoConceptos" type="button" role="tab" aria-controls="infoConceptos" aria-selected="false">@Localizer["Conceptos"]</button>
+							</li>
+						</ul>
+						<div class="tab-content pt-4">
+							<div class="tab-pane fade show active" id="infoGenerales" role="tabpanel" aria-labelledby="tabGenerales" tabindex="0">
+								<div class="row ui-front mb-4">
+									<div class="col-12 col-lg-6">
+										<div class="row">
+											<div class="col-12"><h6>@Localizer["Emisor"]</h6></div>
+											<div class="col-11">
+												<div class="form-floating">
+													<input id="inpEmisor" type="search" asp-for="InputEmpresa.TextoEmisor" class="form-control" placeholder="@Localizer["Emisor"]" idselected='' area="ERP" module="Prefacturas" source="GetEmpresaSuggestion" filtro="idempresa" />
+													<label for="inpEmisor" asp-for="InputEmpresa.TextoEmisor" class="form-label"></label>
+													<span asp-validation-for="InputEmpresa.TextoEmisor" class="text-danger"></span>
+												</div>
+											</div>
+											<div class="col-1 d-flex align-items-center p-0">
+												<button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#dlgInfoEmisor">
+													<i id="btnInfoEmisor" class="bi text-primary" style="font-size: xx-large"></i>
+												</button>
+
+											</div>
+										</div>
+									</div>
+									<div class="col-12 col-lg-6">
+										<div class="row">
+											<div class="col-12 mt-3 mt-lg-0 mt-md-0 mt-sm-0 mt-xl-0"><h6>@Localizer["Receptor"]</h6></div>
+											<div class="col-11">
+												<div class="form-floating">
+													<input id="inpReceptor" type="search" asp-for="InputEmpresa.TextoReceptor" class="form-control" placeholder="@Localizer["Receptor"]" idselected='' area="ERP" module="Prefacturas" source="GetEmpresaSuggestion" filtro="idempresa" />
+													<label for="inpReceptor" asp-for="InputEmpresa.TextoReceptor" class="form-label"></label>
+													<span asp-validation-for="InputEmpresa.TextoReceptor" class="text-danger"></span>
+												</div>
+											</div>
+											<div class="col-1 d-flex align-items-center p-0">
+												<button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#dlgInfoReceptor">
+													<i id="btnInfoReceptor" class="bi text-primary" style="font-size: xx-large"></i>
+												</button>
+											</div>
+										</div>
+									</div>
 								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-3">
-								<div class="form-floating mb-3">
-									<select id="selSerieId" asp-for="InputCFDI.SerieId" class="form-select formSelect" placeholder="@Localizer["SeriePlaceholder"]">
-									</select>
-									<label for="selSerieId" asp-for="InputCFDI.SerieId" class="form-label required"></label>
-									<span asp-validation-for="InputCFDI.SerieId" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-3">
-								<div class="form-floating mb-3">
-									<input id="inpFolio" asp-for="InputCFDI.Folio" type="text" class="form-control" placeholder="@Localizer["FolioPlaceholder"]" />
-									<label for="inpFolio" asp-for="InputCFDI.Folio" class="form-label required"></label>
-									<span asp-validation-for="InputCFDI.Folio" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-12 col-lg-6">
-								<div class="form-floating mb-3">
-									<select id="selUsoCFDI" asp-for="InputCFDI.UsoCFDIId" class="form-select formSelect" placeholder="@Localizer["UsoCFDIPlaceholder"]">
-									</select>
-									<label for="selUsoCFDI" asp-for="InputCFDI.UsoCFDIId" class="form-label required"></label>
-									<span asp-validation-for="InputCFDI.UsoCFDIId" class="text-danger"></span>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
-								<div class="form-floating mb-3">
-									<select id="selFormaPago" asp-for="InputCFDI.FormaPagoId" class="form-select formSelect" placeholder="@Localizer["FormaPagoPlaceholder"]">
-									</select>
-									<label for="selFormaPago" asp-for="InputCFDI.FormaPagoId" class="form-label required"></label>
-									<span asp-validation-for="InputCFDI.FormaPagoId" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
-								<div class="form-floating mb-3">
-									<select id="selMetodoPago" asp-for="InputCFDI.MetodoPagoId" class="form-select formSelect" placeholder="@Localizer["MetodoPagoPlaceholder"]">
-									</select>
-									<label for="selMetodoPago" asp-for="InputCFDI.MetodoPagoId" class="form-label required"></label>
-									<span asp-validation-for="InputCFDI.MetodoPagoId" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
-								<div class="form-floating mb-3">
-									<select id="selMoneda" asp-for="InputCFDI.MonedaId" class="form-select formSelect" placeholder="@Localizer["MonedaPlaceholder"]">
-									</select>
-									<label for="selMoneda" asp-for="InputCFDI.MonedaId" class="form-label required"></label>
-									<span asp-validation-for="InputCFDI.MonedaId" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
-								<div class="form-floating mb-3">
-									<select id="selMoneda" asp-for="InputCFDI.ExportacionId" class="form-select formSelect" placeholder="@Localizer["ExportacionPlaceholder"]">
-									</select>
-									<label for="selMoneda" asp-for="InputCFDI.ExportacionId" class="form-label"></label>
-									<span asp-validation-for="InputCFDI.ExportacionId" class="text-danger"></span>
-								</div>
-							</div>
-						</div>
-						<hr />
-						<div class="row">
-							<div class="col-12 col-lg-6">
 								<div class="row">
-									<div class="col-12">
-										<h4 class="title mb-3">@Localizer["Emisor"]</h4>
+									<div class="col-12 mb-3">
+										<h6>@Localizer["Detalles"]</h6>
 									</div>
 								</div>
-								<div class="row mb-5">
-									<div class="col-12">
-										<form id="emisor" method="post" onsubmit="return false;">
-											<div class="form-floating ui-front">
-												<input id="inpEmisor" type="search" asp-for="InputEmpresa.Texto" class="form-control" placeholder="@Localizer["Emisor"]" idselected='' area="ERP" module="Prefacturas" source="GetEmpresaSuggestion" filtro="idempresa" />
-												<label for="inpEmisor" asp-for="InputEmpresa.Texto" class="form-label"></label>
-											</div>
-										</form>
+								<div class="row">
+									<div class="col-12 col-lg-4">
+										<div class="form-floating mb-4">
+											<input id="inpFecha" type="datetime-local" asp-for="InputCFDI.Fecha" class="form-control formInput" placeholder="@Localizer["FechaPlaceholder"]" required />
+											<label for="inpFecha" asp-for="InputCFDI.Fecha" class="form-label required"></label>
+											<span asp-validation-for="InputCFDI.Fecha" class="text-danger"></span>
+										</div>
 									</div>
-								</div>
-								<div id="divFilledInfoEmisor" hidden>
-									<ul class="nav nav-tabs nav-justified" role="tablist">
-										<li class="nav-item" role="presentation">
-											<button class="nav-link active" id="tabAEmisor" data-bs-toggle="tab" data-bs-target="#infoEmpresaEmisorTab" type="button" role="tab" aria-controls="infoEmpresaEmisorTab" aria-selected="true">@Localizer["InformacionEmpresarial"]</button>
-										</li>
-										<li class="nav-item" role="presentation">
-											<button class="nav-link" id="tabBEmisor" data-bs-toggle="tab" data-bs-target="#actividadEmpresaEmisorTab" type="button" role="tab" aria-controls="actividadEmpresaEmisorTab" aria-selected="false">@Localizer["ActividadEconomica"]</button>
-										</li>
-										<li class="nav-item" role="presentation">
-											<button class="nav-link" id="tabDEmisor" data-bs-toggle="tab" data-bs-target="#conceptosEmpresaEmisorTab" type="button" role="tab" aria-controls="conceptosEmpresaEmisorTab" aria-selected="false">@Localizer["Conceptos"]</button>
-										</li>
-										<li class="nav-item" role="presentation">
-											<button class="nav-link" id="tabCEmisor" data-bs-toggle="tab" data-bs-target="#objetoEmpresaEmisorTab" type="button" role="tab" aria-controls="objetoEmpresaEmisorTab" aria-selected="false">@Localizer["ObjetoSocial"]</button>
-										</li>
-									</ul>
-									<div class="tab-content pt-4">
-										<div class="tab-pane fade show active" id="infoEmpresaEmisorTab" role="tabpanel" aria-labelledby="tabAEmisor" tabindex="0">
-											<div class="row mb-3">
-												<div class="col-4 h6">
-													@Localizer["RFC"]
-												</div>
-												<div class="col-4 h6">
-													@Localizer["Origen"]
-												</div>
-												<div class="col-4 h6">
-													@Localizer["Nivel"]
-												</div>
-												<div class="col-4">
-													<label id="lblRFCEmisor" class="form-label form-control"></label>
-												</div>
-												<div class="col-4">
-													<label id="lblOrigenEmisor" class="form-label form-control"></label>
-												</div>
-												<div class="col-4">
-													<label id="lblNivelEmisor" class="form-label form-control"></label>
-												</div>
-											</div>
-											<div class="row mb-3">
-												<div class="col-12 h6">
-													@Localizer["RazonSocial"]
-												</div>
-												<div class="col-12">
-													<label id="lblRazonSocialEmisor" class="form-label form-control"></label>
-												</div>
-											</div>
-											<div class="row mb-3">
-												<div class="col-12 h6">
-													@Localizer["Perfil"]
-												</div>
-												<div class="col-12">
-													<label id="lblPerfilEmisor" class="form-label form-control"></label>
-												</div>
-											</div>
-											<div class="row mb-3">
-												<div class="col-12 h6">
-													@Localizer["DomicilioFiscal"]
-												</div>
-												<div class="col-12">
-													<label id="lblDomicilioFiscalEmisor" class="form-label form-control form-control"></label>
-												</div>
-											</div>
-										</div>
-										<div class="tab-pane fade" id="actividadEmpresaEmisorTab" role="tabpanel" aria-labelledby="tabBEmisor" tabindex="0">
-											<div class="row mb-3">
-												<div class="col-12">
-													<label id="lblActividadEconomicaEmisor" class="form-label form-control"></label>
-												</div>
-											</div>
-										</div>
-										<div class="tab-pane fade" id="conceptosEmpresaEmisorTab" role="tabpanel" aria-labelledby="tabDEmisor" tabindex="0">
-											<div class="row mb-3">
-												<h6 class="col-12"><i>@Localizer["ProductoServicioPlaceholder"]</i></h6>
-												<div class="col-11">
-													<div class="form-floating ui-front">
-														<input id="inpProductoServicioEmisor" type="search" asp-for="InputConceptos.ProductoServicioId" class="form-control formInput" placeholder="@Localizer["ProductoServicioPlaceholder"]" idselected='' area="ERP" module="Prefacturas" source="GetProductosServiciosSuggestion" />
-														<label for="inpProductoServicioEmisor" asp-for="InputConceptos.ProductoServicioId" class="form-label"></label>
-														<span asp-validation-for="InputConceptos.ProductoServicioId" class="text-danger"></span>
-													</div>
-												</div>
-												<div class="col-1 d-flex align-items-center p-0">
-													<button id="dlgBtnAgregarProductoServicioEmisor" type="button" class="btn btn-primary disabled" onclick="onAgregarProductoServicioClick();">
-														<i class="bi bi-plus-lg"></i>
-													</button>
-												</div>
-												<ul id="listProductosServiciosEmisor" class="list-group mt-3 list-group-flush"></ul>
-											</div>
-										</div>
-										<div class="tab-pane fade" id="objetoEmpresaEmisorTab" role="tabpanel" aria-labelledby="tabCEmisor" tabindex="0">
-											<div class="row mb-3">
-												<div class="col-12">
-													<label id="lblObjetoSocialEmisor" class="form-label form-control"></label>
-												</div>
-											</div>
+									<div class="col-12 col-lg-4">
+										<div class="form-floating mb-4">
+											<select id="selTipoComprobante" asp-for="InputCFDI.TipoComprobanteId" class="form-select formSelect" placeholder="@Localizer["TipoComprobantePlaceholder"]">
+												@foreach (TipoComprobante tipo in tiposComprobante)
+												{
+													<option value='@tipo.Id'>@tipo.Clave - @tipo.Descripcion</option>
+												}
+											</select>
+											<label for="selTipoComprobante" asp-for="InputCFDI.TipoComprobanteId" class="form-label required"></label>
+											<span asp-validation-for="InputCFDI.TipoComprobanteId" class="text-danger"></span>
 										</div>
 									</div>
 								</div>
-								<div id="divEmptyInfoEmisor" class="d-flex align-items-center justify-content-center opacity-25" style="height: 50vh;">
-									<div class="text-center">
-										<img class="empty-image-placeholder" src="@this.HttpContext.Request.Scheme://@this.HttpContext.Request.Host/img/empty_emitter.jpg" />
-										<p class="fs-3">@Localizer["SearchSuggestionA"]</p>
-										<p class="lead">
-											@Localizer["SearchSuggestionB"]
-										</p>
+								<div class="row">
+									<div class="col-xs-6 col-sm-6 col-md-6 col-lg-3">
+										<div class="form-floating mb-4">
+											<input id="inpSerie" asp-for="InputCFDI.Serie" type="text" class="form-control" placeholder="@Localizer["SeriePlaceholder"]" />
+											<label for="inpSerie" asp-for="InputCFDI.Serie" class="form-label required"></label>
+											<span asp-validation-for="InputCFDI.Serie" class="text-danger"></span>
+										</div>
+									</div>
+									<div class="col-xs-6 col-sm-6 col-md-6 col-lg-3">
+										<div class="form-floating mb-4">
+											<input id="inpFolio" asp-for="InputCFDI.Folio" type="text" class="form-control" placeholder="@Localizer["FolioPlaceholder"]" />
+											<label for="inpFolio" asp-for="InputCFDI.Folio" class="form-label required"></label>
+											<span asp-validation-for="InputCFDI.Folio" class="text-danger"></span>
+										</div>
+									</div>
+									<div class="col-12 col-lg-6">
+										<div class="form-floating mb-4">
+											<select id="selUsoCFDI" asp-for="InputCFDI.UsoCFDIId" class="form-select formSelect" placeholder="@Localizer["UsoCFDIPlaceholder"]">
+												@foreach (UsoCFDI uso in usosCFDI)
+												{
+													<option value='@uso.Id'>@uso.Clave - @uso.Descripcion</option>
+												}
+											</select>
+											<label for="selUsoCFDI" asp-for="InputCFDI.UsoCFDIId" class="form-label required"></label>
+											<span asp-validation-for="InputCFDI.UsoCFDIId" class="text-danger"></span>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
+										<div class="form-floating mb-4">
+											<select id="selFormaPago" asp-for="InputCFDI.FormaPagoId" class="form-select formSelect" placeholder="@Localizer["FormaPagoPlaceholder"]">
+												@foreach (FormaPago forma in formasPago)
+												{
+													<option value='@forma.Id'>@forma.Clave - @forma.Descripcion</option>
+												}
+											</select>
+											<label for="selFormaPago" asp-for="InputCFDI.FormaPagoId" class="form-label required"></label>
+											<span asp-validation-for="InputCFDI.FormaPagoId" class="text-danger"></span>
+										</div>
+									</div>
+									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
+										<div class="form-floating mb-4">
+											<select id="selMetodoPago" asp-for="InputCFDI.MetodoPagoId" class="form-select formSelect" placeholder="@Localizer["MetodoPagoPlaceholder"]">
+												@foreach (MetodoPago metodo in metodosPago)
+												{
+													<option value='@metodo.Id'>@metodo.Clave - @metodo.Descripcion</option>
+												}
+											</select>
+											<label for="selMetodoPago" asp-for="InputCFDI.MetodoPagoId" class="form-label required"></label>
+											<span asp-validation-for="InputCFDI.MetodoPagoId" class="text-danger"></span>
+										</div>
+									</div>
+									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
+										<div class="form-floating mb-4">
+											<select id="selMoneda" asp-for="InputCFDI.MonedaId" class="form-select formSelect" placeholder="@Localizer["MonedaPlaceholder"]">
+												@foreach (Moneda moneda in monedas)
+												{
+													<option value='@moneda.Id'>@moneda.Clave - @moneda.Descripcion</option>
+												}
+											</select>
+											<label for="selMoneda" asp-for="InputCFDI.MonedaId" class="form-label required"></label>
+											<span asp-validation-for="InputCFDI.MonedaId" class="text-danger"></span>
+										</div>
+									</div>
+									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
+										<div class="form-floating mb-4">
+											<input id="inpTipoCambio" asp-for="InputCFDI.TipoCambio" type="text" class="form-control" placeholder="@Localizer["TipoCambioPlaceholder"]" />
+											<label for="inpTipoCambio" asp-for="InputCFDI.TipoCambio" class="form-label required"></label>
+											<span asp-validation-for="InputCFDI.TipoCambio" class="text-danger"></span>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
+										<div class="form-floating">
+											<select id="selExportacion" asp-for="InputCFDI.ExportacionId" class="form-select formSelect" placeholder="@Localizer["ExportacionPlaceholder"]">
+												@foreach (Exportacion exportacion in exportaciones)
+												{
+													<option value='@exportacion.Id'>@exportacion.Clave - @exportacion.Descripcion</option>
+												}
+											</select>
+											<label for="selExportacion" asp-for="InputCFDI.ExportacionId" class="form-label"></label>
+											<span asp-validation-for="InputCFDI.ExportacionId" class="text-danger"></span>
+										</div>
+									</div>
+									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
+										<div class="form-floating">
+											<input id="inpNumeroOperacion" asp-for="InputCFDI.NumeroOperacion" type="text" class="form-control" placeholder="@Localizer["NumeroOperacionPlaceholder"]" />
+											<label for="inpNumeroOperacion" asp-for="InputCFDI.NumeroOperacion" class="form-label"></label>
+											<span asp-validation-for="InputCFDI.NumeroOperacion" class="text-danger"></span>
+										</div>
 									</div>
 								</div>
 							</div>
-							<div class="col-12 col-lg-6">
-								<div class="row">
-									<div class="col-12">
-										<h4 class="title mb-3">@Localizer["Receptor"]</h4>
+							<div class="tab-pane fade" id="infoConceptos" role="tabpanel" aria-labelledby="tabConceptos" tabindex="0">
+								<div class="row mb-3">
+									<div id="toolbarProdServ" class="col-xl-12">
+										<button type="button" id="btnAgregarProdServ" class="btn btn-primary formButton" data-bs-toggle="modal" data-bs-target="#dlgProdServ" onclick="initDialogProdServ();">
+											<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
+										</button>
+										<button type="button" id="removeProdServ" class="btn btn-danger formButton" disabled>
+											<i class="bi bi-trash"></i> <span class="d-none d-sm-inline">@Localizer["DeleteButton"]</span>
+										</button>
 									</div>
-								</div>
-								<div class="row mb-5">
-									<div class="col-12">
-										<form id="receptor" method="post" onsubmit="return false;">
-											<div class="form-floating ui-front">
-												<input id="inpReceptor" type="search" asp-for="InputEmpresa.Texto" class="form-control" placeholder="@Localizer["Receptor"]" idselected='' area="ERP" module="Prefacturas" source="GetEmpresaSuggestion" filtro="idempresa" />
-												<label for="inpReceptor" asp-for="InputEmpresa.Texto" class="form-label"></label>
-											</div>
-										</form>
-									</div>
-								</div>
-								<div id="divFilledInfoReceptor" hidden>
-									<ul class="nav nav-tabs nav-justified" role="tablist">
-										<li class="nav-item" role="presentation">
-											<button class="nav-link active" id="tabAReceptor" data-bs-toggle="tab" data-bs-target="#infoEmpresaReceptorTab" type="button" role="tab" aria-controls="infoEmpresaReceptorTab" aria-selected="true">@Localizer["InformacionEmpresarial"]</button>
-										</li>
-										<li class="nav-item" role="presentation">
-											<button class="nav-link" id="tabBReceptor" data-bs-toggle="tab" data-bs-target="#actividadEmpresaReceptorTab" type="button" role="tab" aria-controls="actividadEmpresaReceptorTab" aria-selected="false">@Localizer["ActividadEconomica"]</button>
-										</li>
-										<li class="nav-item" role="presentation">
-											<button class="nav-link" id="tabCReceptor" data-bs-toggle="tab" data-bs-target="#objetoEmpresaReceptorTab" type="button" role="tab" aria-controls="objetoEmpresaReceptorTab" aria-selected="false">@Localizer["ObjetoSocial"]</button>
-										</li>
-									</ul>
-									<div class="tab-content pt-4">
-										<div class="tab-pane fade show active" id="infoEmpresaReceptorTab" role="tabpanel" aria-labelledby="tabAReceptor" tabindex="0">
-											<div class="row mb-3">
-												<div class="col-4 h6">
-													@Localizer["RFC"]
-												</div>
-												<div class="col-4 h6">
-													@Localizer["Origen"]
-												</div>
-												<div class="col-4 h6">
-													@Localizer["Nivel"]
-												</div>
-												<div class="col-4">
-													<label id="lblRFCReceptor" class="form-label form-control"></label>
-												</div>
-												<div class="col-4">
-													<label id="lblOrigenReceptor" class="form-label form-control"></label>
-												</div>
-												<div class="col-4">
-													<label id="lblNivelReceptor" class="form-label form-control"></label>
-												</div>
-											</div>
-											<div class="row mb-3">
-												<div class="col-12 h6">
-													@Localizer["RazonSocial"]
-												</div>
-												<div class="col-12">
-													<label id="lblRazonSocialReceptor" class="form-label form-control"></label>
-												</div>
-											</div>
-											<div class="row mb-3">
-												<div class="col-12 h6">
-													@Localizer["Perfil"]
-												</div>
-												<div class="col-12">
-													<label id="lblPerfilReceptor" class="form-label form-control"></label>
-												</div>
-											</div>
-											<div class="row mb-3">
-												<div class="col-12 h6">
-													@Localizer["DomicilioFiscal"]
-												</div>
-												<div class="col-12">
-													<label id="lblDomicilioFiscalReceptor" class="form-label form-control"></label>
-												</div>
-											</div>
-										</div>
-										<div class="tab-pane fade" id="actividadEmpresaReceptorTab" role="tabpanel" aria-labelledby="tabBReceptor" tabindex="0">
-											<div class="row mb-3">
-												<div class="col-12">
-													<label id="lblActividadEconomicaReceptor" class="form-label form-control"></label>
-												</div>
-											</div>
-										</div>
-										<div class="tab-pane fade" id="objetoEmpresaReceptorTab" role="tabpanel" aria-labelledby="tabCReceptor" tabindex="0">
-											<div class="row mb-3">
-												<div class="col-12">
-													<label id="lblObjetoSocialReceptor" class="form-label form-control"></label>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div id="divEmptyInfoReceptor" class="d-flex align-items-center justify-content-center opacity-25" style="height: 50vh;">
-									<div class="text-center">
-										<img class="empty-image-placeholder" src="@this.HttpContext.Request.Scheme://@this.HttpContext.Request.Host/img/empty_receiver.jpg" />
-										<p class="fs-3">@Localizer["SearchSuggestionA"]</p>
-										<p class="lead">
-											@Localizer["SearchSuggestionB"]
-										</p>
-									</div>
+									<table id="tableProductosServicios" class="table-sm"
+										data-unique-id="id"
+										data-click-to-select="true"
+										data-toolbar="#toolbarProdServ"
+										data-search="true"
+										data-pagination-v-align="top"
+										data-minimum-count-columns="2"
+										data-pagination="true"
+										data-id-field="id"
+										data-page-list="[10, 25, 50, 100, all]"
+										data-show-footer="false"
+										data-side-pagination="client"
+										data-response-handler="responseHandler"
+										data-buttons-class="primary">
+										<thead>
+											<tr align="center" valign="middle" class="bg-primary bg-opacity-10">
+											</tr>
+										</thead>
+									</table>
 								</div>
 							</div>
 						</div>
-						
 					</div>
 				</form>
 			</div>
@@ -494,7 +404,7 @@
 						<button id="dlgCFDIBtnDesactivar" type="button" class="btn btn-danger formButton" onclick="onDeleteCFDIClick();" data-bs-dismiss="modal">
 							<i class="bi bi-ban"></i> @Localizer["DeactivateButton"]
 						</button>
-						<button id="dlgCFDIBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarClick();" data-bs-dismiss="modal">
+						<button id="dlgCFDIBtnCancelar" type="button" class="btn btn-secondary" onclick="askConfirmation('@Localizer["ConfirmActionTitle"]', '@Localizer["ConfirmActionQuestion"]', function () { onCerrarClick(); dlgCFDIModal.toggle(); });">
 							<i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
 						</button>
 						<button id="btnLimpiar" type="button" class="btn btn-secondary" onclick="onLimpiarClick();">
@@ -511,6 +421,376 @@
 </div>
 <!-- --------------------------- -->
 <!-- --------------------------- -->
+
+<!-- ------------------------------------- -->
+<!-- Sección Diálogo Productos / Servicios -->
+<div id="dlgProdServ" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 id="dlgTitle" class="modal-title">@Localizer["ProductoServicioPlaceholder"]</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body align-items-center">
+				<form id="conceptoForm" method="post">
+					<div class="container-fluid ui-front">
+						<div class="row">
+							<div class="col-12 mb-3">
+								<h6>@Localizer["Busqueda"]</h6>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-4">
+									<input id="inpProductoServicio" type="search" asp-for="InputConceptos.ProductoServicioId" class="form-control formInput" placeholder="@Localizer["ProductoServicioPlaceholder"]" idselected='' area="ERP" module="Prefacturas" source="GetProductosServiciosSuggestion" />
+									<label for="inpProductoServicio" asp-for="InputConceptos.ProductoServicioId" class="form-label"></label>
+									<span asp-validation-for="InputConceptos.ProductoServicioId" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<hr />
+						<div class="row">
+							<div class="col-12 mb-3">
+								<h6>@Localizer["Detalles"]</h6>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-6 col-lg-4">
+								<div class="form-floating mb-4">
+									<input id="inpCantidad" type="number" asp-for="InputConceptos.Cantidad" class="form-control formInput" placeholder="@Localizer["ColCantidadHeader"]" onchange="calcularTotal();" />
+									<label for="inpCantidad" asp-for="InputConceptos.Cantidad" class="form-label"></label>
+									<span asp-validation-for="InputConceptos.Cantidad" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-6 col-lg-4">
+								<div class="form-floating mb-4">
+									<input id="inpUnitario" type="number" asp-for="InputConceptos.Unitario" class="form-control formInput" placeholder="@Localizer["ColUnitarioHeader"]" onchange="calcularTotal();" />
+									<label for="inpUnitario" asp-for="InputConceptos.Unitario" class="form-label"></label>
+									<span asp-validation-for="InputConceptos.Unitario" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-6 col-lg-4">
+								<div class="form-floating mb-4">
+									<input id="inpDescuento" type="number" asp-for="InputConceptos.Descuento" class="form-control formInput" placeholder="@Localizer["ColDescuentoHeader"]" onchange="calcularTotal();" />
+									<label for="inpDescuento" asp-for="InputConceptos.Descuento" class="form-label"></label>
+									<span asp-validation-for="InputConceptos.Descuento" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-6 col-lg-4">
+								<div class="form-floating mb-4">
+									<input id="inpUnidad" type="search" asp-for="InputConceptos.UnidadId" class="form-control formInput" placeholder="@Localizer["ColUnidadHeader"]" idselected='' area="ERP" module="Prefacturas" source="GetUnidadesSuggestion" />
+									<label for="inpUnidad" asp-for="InputConceptos.UnidadId" class="form-label"></label>
+									<span asp-validation-for="InputConceptos.UnidadId" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-lg-8">
+								<div class="form-floating mb-4">
+									<input id="inpDescripcion" type="search" asp-for="InputConceptos.Descripcion" class="form-control formInput" placeholder="@Localizer["DescripcionPlaceholder"]" />
+									<label for="inpDescripcion" asp-for="InputConceptos.Descripcion" class="form-label"></label>
+									<span asp-validation-for="InputConceptos.Descripcion" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<hr />
+						<div class="row">
+							<div class="col-12 mb-3">
+								<h6>@Localizer["Impuestos"]</h6>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12 col-lg-6">
+								<div class="form-floating mb-4">
+									<select id="selObjetoImpuesto" asp-for="InputConceptos.ObjetoImpuestoId" class="form-select" placeholder="@Localizer["ObjetoImpuestoPlaceholder"]" onchange="onObjetoImpuestoChanged();">
+										@{
+											@foreach (ObjetoImpuesto objeto in objetosImpuesto)
+											{
+												<option clave='@objeto.Clave' value='@objeto.Id'>@objeto.Clave - @objeto.Descripcion</option>
+											}
+										}
+									</select>
+									<label for="selFiltroMoneda" asp-for="InputConceptos.ObjetoImpuestoId" class="form-label"></label>
+								</div>
+							</div>
+							<div id="divTraslado" class="col-12 col-sm-6 col-md-6 col-lg-3" hidden>
+								<div class="form-floating mb-4">
+									<input id="inpTraslado" type="number" asp-for="InputConceptos.Traslado" class="form-control formInput" placeholder="@Localizer["ColTrasladoHeader"]" onchange="calcularTotal();" />
+									<label for="inpTraslado" asp-for="InputConceptos.Traslado" class="form-label"></label>
+									<span asp-validation-for="InputConceptos.Traslado" class="text-danger"></span>
+								</div>
+							</div>
+							<div id="divRetencion" class="col-12 col-sm-6 col-md-6 col-lg-3" hidden>
+								<div class="form-floating mb-4">
+									<input id="inpRetencion" type="number" asp-for="InputConceptos.Retencion" class="form-control formInput" placeholder="@Localizer["ColRetencionHeader"]" onchange="calcularTotal();" />
+									<label for="inpRetencion" asp-for="InputConceptos.Retencion" class="form-label"></label>
+									<span asp-validation-for="InputConceptos.Retencion" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<hr	/>
+						<div class="row">
+							<div class="col-3 col-md-5 col-lg-7 text-end">
+								<h5>@Localizer["ColTrasladoHeader"]: </h5>
+							</div>
+							<div class="col-9 col-md-7 col-lg-5 text-center">
+								<h5>$ <span id="trasladoProducto">0</span></h5>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-3 col-md-5 col-lg-7 text-end">
+								<h5>@Localizer["ColRetencionHeader"]: </h5>
+							</div>
+							<div class="col-9 col-md-7 col-lg-5 text-center">
+								<h5>$ <span id="retencionProducto">0</span></h5>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-3 col-md-5 col-lg-7 text-end">
+								<h5>@Localizer["Total"]: </h5>
+							</div>
+							<div class="col-9 col-md-7 col-lg-5 text-center">
+								<h5>$ <span id="totalProducto">0</span></h5>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button id="dlgBtnCancelar" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+					<i class="bi bi-x-lg"></i> @Localizer["CloseButtonTitle"]
+				</button>
+				<button id="dlgBtnAgregar" type="button" class="btn btn-primary formButton" onclick="onAgregarProductoServicioClick();">
+					<i class="bi bi-plus-lg"></i> @Localizer["AddButton"]
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- --------------------------- -->
+<!-- --------------------------- -->
+
+<!-- ---------------------- -->
+<!-- Sección Diálogo Emisor -->
+<div id="dlgInfoEmisor" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">@Localizer["Emisor"]</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body align-items-center container-fluid">
+				<div class="row">
+					<div class="col-12" id="divFilledInfoEmisor" hidden>
+						<ul class="nav nav-tabs nav-justified" role="tablist">
+							<li class="nav-item" role="presentation">
+								<button class="nav-link active" id="tabAEmisor" data-bs-toggle="tab" data-bs-target="#infoEmpresaEmisorTab" type="button" role="tab" aria-controls="infoEmpresaEmisorTab" aria-selected="true">@Localizer["InformacionEmpresarial"]</button>
+							</li>
+							<li class="nav-item" role="presentation">
+								<button class="nav-link" id="tabBEmisor" data-bs-toggle="tab" data-bs-target="#actividadEmpresaEmisorTab" type="button" role="tab" aria-controls="actividadEmpresaEmisorTab" aria-selected="false">@Localizer["ActividadEconomica"]</button>
+							</li>
+							<li class="nav-item" role="presentation">
+								<button class="nav-link" id="tabCEmisor" data-bs-toggle="tab" data-bs-target="#objetoEmpresaEmisorTab" type="button" role="tab" aria-controls="objetoEmpresaEmisorTab" aria-selected="false">@Localizer["ObjetoSocial"]</button>
+							</li>
+						</ul>
+						<div class="tab-content pt-4">
+							<div class="tab-pane fade show active" id="infoEmpresaEmisorTab" role="tabpanel" aria-labelledby="tabAEmisor" tabindex="0">
+								<div class="row mb-3">
+									<div class="col-4 h6">
+										@Localizer["RFC"]
+									</div>
+									<div class="col-4 h6">
+										@Localizer["Origen"]
+									</div>
+									<div class="col-4 h6">
+										@Localizer["Nivel"]
+									</div>
+									<div class="col-4">
+										<label id="lblRFCEmisor" class="form-label form-control"></label>
+									</div>
+									<div class="col-4">
+										<label id="lblOrigenEmisor" class="form-label form-control"></label>
+									</div>
+									<div class="col-4">
+										<label id="lblNivelEmisor" class="form-label form-control"></label>
+									</div>
+								</div>
+								<div class="row mb-3">
+									<div class="col-12 h6">
+										@Localizer["RazonSocial"]
+									</div>
+									<div class="col-12">
+										<label id="lblRazonSocialEmisor" class="form-label form-control"></label>
+									</div>
+								</div>
+								<div class="row mb-3">
+									<div class="col-12 h6">
+										@Localizer["Perfil"]
+									</div>
+									<div class="col-12">
+										<label id="lblPerfilEmisor" class="form-label form-control"></label>
+									</div>
+								</div>
+								<div class="row mb-3">
+									<div class="col-12 h6">
+										@Localizer["DomicilioFiscal"]
+									</div>
+									<div class="col-12">
+										<label id="lblDomicilioFiscalEmisor" class="form-label form-control form-control"></label>
+									</div>
+								</div>
+							</div>
+							<div class="tab-pane fade" id="actividadEmpresaEmisorTab" role="tabpanel" aria-labelledby="tabBEmisor" tabindex="0">
+								<div class="row mb-3">
+									<div class="col-12">
+										<label id="lblActividadEconomicaEmisor" class="form-label form-control"></label>
+									</div>
+								</div>
+							</div>
+							<div class="tab-pane fade" id="objetoEmpresaEmisorTab" role="tabpanel" aria-labelledby="tabCEmisor" tabindex="0">
+								<div class="row mb-3">
+									<div class="col-12">
+										<label id="lblObjetoSocialEmisor" class="form-label form-control"></label>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="divEmptyInfoEmisor" class="d-flex align-items-center justify-content-center opacity-25 col-12" style="height: 50vh;">
+						<div class="text-center">
+							<img class="empty-image-placeholder" src="@this.HttpContext.Request.Scheme://@this.HttpContext.Request.Host/img/empty_emitter.jpg" />
+							<p class="fs-3">@Localizer["SearchSuggestionA"]</p>
+							<p class="lead">
+								@Localizer["SearchSuggestionB"]
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer" style="display: inline !important;">
+				<div class="container row">
+					<div class="col-12 text-end">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+							<i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ---------------------- -->
+<!-- ---------------------- -->
+
+<!-- ------------------------ -->
+<!-- Sección Diálogo Receptor -->
+<div id="dlgInfoReceptor" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">@Localizer["Receptor"]</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body align-items-center container-fluid">
+				<div class="row">
+					<div class="col-12" id="divFilledInfoReceptor" hidden>
+						<ul class="nav nav-tabs nav-justified" role="tablist">
+							<li class="nav-item" role="presentation">
+								<button class="nav-link active" id="tabAReceptor" data-bs-toggle="tab" data-bs-target="#infoEmpresaReceptorTab" type="button" role="tab" aria-controls="infoEmpresaReceptorTab" aria-selected="true">@Localizer["InformacionEmpresarial"]</button>
+							</li>
+							<li class="nav-item" role="presentation">
+								<button class="nav-link" id="tabBReceptor" data-bs-toggle="tab" data-bs-target="#actividadEmpresaReceptorTab" type="button" role="tab" aria-controls="actividadEmpresaReceptorTab" aria-selected="false">@Localizer["ActividadEconomica"]</button>
+							</li>
+							<li class="nav-item" role="presentation">
+								<button class="nav-link" id="tabCReceptor" data-bs-toggle="tab" data-bs-target="#objetoEmpresaReceptorTab" type="button" role="tab" aria-controls="objetoEmpresaReceptorTab" aria-selected="false">@Localizer["ObjetoSocial"]</button>
+							</li>
+						</ul>
+						<div class="tab-content pt-4">
+							<div class="tab-pane fade show active" id="infoEmpresaReceptorTab" role="tabpanel" aria-labelledby="tabAReceptor" tabindex="0">
+								<div class="row mb-3">
+									<div class="col-4 h6">
+										@Localizer["RFC"]
+									</div>
+									<div class="col-4 h6">
+										@Localizer["Origen"]
+									</div>
+									<div class="col-4 h6">
+										@Localizer["Nivel"]
+									</div>
+									<div class="col-4">
+										<label id="lblRFCReceptor" class="form-label form-control"></label>
+									</div>
+									<div class="col-4">
+										<label id="lblOrigenReceptor" class="form-label form-control"></label>
+									</div>
+									<div class="col-4">
+										<label id="lblNivelReceptor" class="form-label form-control"></label>
+									</div>
+								</div>
+								<div class="row mb-3">
+									<div class="col-12 h6">
+										@Localizer["RazonSocial"]
+									</div>
+									<div class="col-12">
+										<label id="lblRazonSocialReceptor" class="form-label form-control"></label>
+									</div>
+								</div>
+								<div class="row mb-3">
+									<div class="col-12 h6">
+										@Localizer["Perfil"]
+									</div>
+									<div class="col-12">
+										<label id="lblPerfilReceptor" class="form-label form-control"></label>
+									</div>
+								</div>
+								<div class="row mb-3">
+									<div class="col-12 h6">
+										@Localizer["DomicilioFiscal"]
+									</div>
+									<div class="col-12">
+										<label id="lblDomicilioFiscalReceptor" class="form-label form-control"></label>
+									</div>
+								</div>
+							</div>
+							<div class="tab-pane fade" id="actividadEmpresaReceptorTab" role="tabpanel" aria-labelledby="tabBReceptor" tabindex="0">
+								<div class="row mb-3">
+									<div class="col-12">
+										<label id="lblActividadEconomicaReceptor" class="form-label form-control"></label>
+									</div>
+								</div>
+							</div>
+							<div class="tab-pane fade" id="objetoEmpresaReceptorTab" role="tabpanel" aria-labelledby="tabCReceptor" tabindex="0">
+								<div class="row mb-3">
+									<div class="col-12">
+										<label id="lblObjetoSocialReceptor" class="form-label form-control"></label>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="divEmptyInfoReceptor" class="d-flex align-items-center justify-content-center opacity-25 col-12" style="height: 50vh;">
+						<div class="text-center">
+							<img class="empty-image-placeholder" src="@this.HttpContext.Request.Scheme://@this.HttpContext.Request.Host/img/empty_receiver.jpg" />
+							<p class="fs-3">@Localizer["SearchSuggestionA"]</p>
+							<p class="lead">
+								@Localizer["SearchSuggestionB"]
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer" style="display: inline !important;">
+				<div class="container row">
+					<div class="col-12 text-end">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+							<i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ------------------------ -->
+<!-- ------------------------ -->
 
 @section Scripts
 {	
@@ -559,11 +839,15 @@
 		var btnVerTitle = '@Localizer["SeeButtonTitle"]';
 		var btnEditarTitle = '@Localizer["EditButtonTitle"]';
 		var btnEliminarTitle = '@Localizer["DeleteButton"]';
+
 		var dlgEditarTitle = '@Localizer["EditDialogTitle"]';
 		var dlgVerTitle = '@Localizer["SeeDialogTitle"]';
 		var dlgNuevoTitle = '@Localizer["NewDialogTitle"]';
 		var dlgDeleteTitle = '@Localizer["DeleteCFDIDialogTitle"]';
 		var dlgDeleteQuestion = '@Localizer["DeleteCFDIDialogQuestion"]';
+		var dlgDeleteElementQuestion = '@Localizer["DeleteElementDialogQuestion"]';
+		var dlgConfirmActionTitle = '@Localizer["ConfirmActionTitle"]';
+		var dlgConfirmActionQuestion = '@Localizer["ConfirmActionQuestion"]';
 
 		var colSerieHeader = '@Localizer["ColSerieHeader"]';
 		var colFolioHeader = '@Localizer["ColFolioHeader"]';
@@ -573,6 +857,17 @@
 		var colMetodoPagoHeader = '@Localizer["ColMetodoPagoHeader"]';
 		var colUsoCFDIHeader = '@Localizer["ColUsoCFDIHeader"]';
 		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
+
+		var colCantidadHeader = '@Localizer["ColCantidadHeader"]';
+		var colUnidadHeader = '@Localizer["ColUnidadHeader"]';
+		var colClaveHeader = '@Localizer["ColClaveHeader"]';
+		var colDescripcionHeader = '@Localizer["ColDescripcionHeader"]';
+		var colUnitarioHeader = '@Localizer["ColUnitarioHeader"]';
+		var colSubtotalHeader = '@Localizer["ColSubtotalHeader"]';
+		var colDescuentoHeader = '@Localizer["ColDescuentoHeader"]';
+		var colTrasladoHeader = '@Localizer["ColTrasladoHeader"]';
+		var colRetencionHeader = '@Localizer["ColRetencionHeader"]';
+		var colTotalHeader = '@Localizer["ColTotalHeader"]';
 	</script>
 
 	<partial name="_ValidationScriptsPartial" />

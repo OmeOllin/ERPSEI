@@ -1,10 +1,15 @@
+using ERPSEI.Data;
+using ERPSEI.Data.Entities.Empleados;
+using ERPSEI.Data.Entities;
 using ERPSEI.Data.Entities.Empresas;
+using ERPSEI.Data.Entities.SAT;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Data.Managers.SAT;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
@@ -16,9 +21,13 @@ namespace ERPSEI.Areas.ERP.Pages
     [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
 	public class PrefacturasModel : PageModel
 	{
+		private readonly ApplicationDbContext _db;
 		private readonly IRWCatalogoManager<Perfil> _perfilManager;
+		private readonly IUnidadMedidaManager _unidadMedidaManager;
 		private readonly IProductoServicioManager _productosServiciosManager;
 		private readonly IEmpresaManager _empresaManager;
+		private readonly IPrefacturaManager _prefacturaManager;
+		private readonly IConceptoManager _conceptoManager;
 		private readonly IStringLocalizer<PrefacturasModel> _strLocalizer;
 		private readonly ILogger<PrefacturasModel> _logger;
 
@@ -28,7 +37,7 @@ namespace ERPSEI.Areas.ERP.Pages
 		public class FiltroModel
 		{
 			[Display(Name = "SerieField")]
-			public int? Serie { get; set; }
+			public string? Serie { get; set; }
 
 			[DataType(DataType.DateTime)]
 			[Display(Name = "FechaInicioField")]
@@ -56,11 +65,11 @@ namespace ERPSEI.Areas.ERP.Pages
 
 		public class EmpresaModel()
 		{
-
-			[DataType(DataType.Text)]
 			[DisplayName("SearchCompanyField")]
-			[StringLength(30, ErrorMessage = "FieldLength", MinimumLength = 2)]
-			public string Texto { get; set; } = string.Empty;
+			public string? TextoEmisor { get; set; } = string.Empty;
+
+			[DisplayName("SearchCompanyField")]
+			public string? TextoReceptor { get; set; } = string.Empty;
 		}
 
 		[BindProperty]
@@ -68,18 +77,37 @@ namespace ERPSEI.Areas.ERP.Pages
 
 		public class ConceptoModel
 		{
-			[Display(Name = "Id")]
-			public int Id { get; set; }
-
-			[StringLength(100, ErrorMessage = "FieldLength", MinimumLength = 1)]
-			[RegularExpression(RegularExpressions.AlphanumSpaceCommaDotParenthesisAmpersand, ErrorMessage = "AlphanumSpace")]
 			[Required(ErrorMessage = "Required")]
-			[Display(Name = "NameField")]
-			public string Nombre { get; set; } = string.Empty;
+			[Display(Name = "CantidadField")]
+			public int? Cantidad { get; set; }
+
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "UnidadField")]
+			public int? UnidadId { get; set; }
+
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "DescripcionField")]
+			public string? Descripcion { get; set; } = string.Empty;
+
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "UnitarioField")]
+			public int? Unitario { get; set; }
+
+			[Display(Name = "DescuentoField")]
+			public int? Descuento { get; set; }
+
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "ObjetoImpuestoField")]
+			public int? ObjetoImpuestoId { get; set; }
+
+			[Display(Name = "TrasladoField")]
+			public int? Traslado { get; set; }
+
+			[Display(Name = "RetencionField")]
+			public int? Retencion { get; set; }
 
 			[Display(Name = "SearchProductServiceField")]
 			public int? ProductoServicioId { get; set; }
-			public int?[] ProductosServicios { get; set; } = Array.Empty<int?>();
 		}
 
 		[BindProperty]
@@ -88,43 +116,74 @@ namespace ERPSEI.Areas.ERP.Pages
 		public class CFDIModel
 		{
 			public int Id { get; set; }
-
+			[Required(ErrorMessage = "Required")]
+			[RegularExpression(RegularExpressions.Alphabetic, ErrorMessage = "Alphabetic")]
 			[Display(Name = "SerieField")]
-			public int SerieId { get; set; }
-		
-			[Display(Name = "FolioField")]
-			public string Folio { get; set; } = String.Empty;
+			public string Serie { get; set; } = string.Empty;
 
+			[Required(ErrorMessage = "Required")]
+			[RegularExpression(RegularExpressions.NumericNoRestriction, ErrorMessage = "NumericNoRestriction")]
+			[Display(Name = "FolioField")]
+			public string Folio { get; set; } = string.Empty;
+
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "TipoComprobanteField")]
+			public int TipoComprobanteId { get; set; }
+
+			[Required(ErrorMessage = "Required")]
+			[DataType(DataType.DateTime)]
 			[Display(Name = "FechaField")]
 			public DateTime Fecha { get; set; }
 
+			[Required(ErrorMessage = "Required")]
 			[Display(Name = "MonedaField")]
 			public int MonedaId { get; set; }
 
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "TipoCambioField")]
+			public decimal TipoCambio { get; set; }
+
+			[Required(ErrorMessage = "Required")]
 			[Display(Name = "FormaPagoField")]
 			public int FormaPagoId { get; set; }
 
+			[Required(ErrorMessage = "Required")]
 			[Display(Name = "MetodoPagoField")]
 			public int MetodoPagoId { get; set; }
 
+			[Required(ErrorMessage = "Required")]
 			[Display(Name = "UsoCFDIField")]
 			public int UsoCFDIId { get; set; }
 
 			[Display(Name = "ExportacionField")]
-			public int ExportacionId { get; set; }
+			public int? ExportacionId { get; set; }
+
+			[Display(Name = "NumeroOperacionField")]
+			[RegularExpression(RegularExpressions.NumericFirstDigitNonZero, ErrorMessage = "Numeric")]
+			public int? NumeroOperacion {  get; set; }
+
+			public ConceptoModel?[] Conceptos { get; set; } = Array.Empty<ConceptoModel>();
 		}
 
 		public PrefacturasModel(
+			ApplicationDbContext db,
 			IRWCatalogoManager<Perfil> perfilManager,
+			IUnidadMedidaManager unidadMedidaManager,
 			IProductoServicioManager productosServiciosManager,
 			IEmpresaManager empresaManager,
+			IPrefacturaManager prefacturaManager,
+			IConceptoManager conceptoManager,
             IStringLocalizer<PrefacturasModel> stringLocalizer,
             ILogger<PrefacturasModel> logger
         )
         {
+			_db = db;
 			_perfilManager = perfilManager;
+			_unidadMedidaManager = unidadMedidaManager;
 			_productosServiciosManager = productosServiciosManager;
 			_empresaManager = empresaManager;
+			_prefacturaManager = prefacturaManager;
+			_conceptoManager = conceptoManager;
             _strLocalizer = stringLocalizer;
             _logger = logger;
 
@@ -132,14 +191,134 @@ namespace ERPSEI.Areas.ERP.Pages
             InputEmpresa = new EmpresaModel();
 			InputConceptos = new ConceptoModel();
 			InputCFDI = new CFDIModel();
-        }
+		}
 
-        public void OnGet()
-        {
-        }
+		public void OnGet()
+		{
+		}
 
-        public async Task<JsonResult> OnPostGetEmpresaSuggestion(string texto, string idempresa)
-        {
+		public async Task<JsonResult> OnPostSave() {
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["PrefacturaSavedUnsuccessfully"]);
+
+			if (!ModelState.IsValid)
+			{
+				resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray();
+				return new JsonResult(resp);
+			}
+			try
+			{
+				string validacion = await validarSerieFolio(InputCFDI);
+
+				//Si la longitud del mensaje de respuesta es menor o igual a cero, se considera que no hubo errores anteriores.
+				if ((validacion ?? string.Empty).Length <= 0)
+				{
+					//Procede a crear o actualizar la prefactura.
+					await createOrUpdatePrefactura(InputCFDI);
+
+					resp.TieneError = false;
+					resp.Mensaje = _strLocalizer["PrefacturaSavedSuccessfully"];
+				}
+				else
+				{
+					resp.Mensaje = validacion;
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+			}
+
+			return new JsonResult(resp);
+		}
+		private async Task<string> validarSerieFolio(CFDIModel prefactura)
+		{
+			List<Prefactura> coincidences = new List<Prefactura>();
+			List<Prefactura> prefs = await _prefacturaManager.GetAllAsync();
+
+			//Excluyo al empleado con el Id actual.
+			prefs = prefs.Where(e => e.Id != prefactura.Id).ToList();
+
+			//Valido que no exista prefactura con misma serie y folio.
+			coincidences = prefs.Where(e => e.Deshabilitado == 0 && ($"{e.Serie}{e.Folio}" == $"{prefactura.Serie}{prefactura.Folio}")).ToList();
+			if (coincidences.Count() >= 1) { return $"{_strLocalizer["ErrorPrefacturaExistenteA"]} {prefactura.Serie}{prefactura.Folio}. {_strLocalizer["ErrorPrefacturaExistenteB"]}."; }
+
+			return string.Empty;
+		}
+		private async Task createOrUpdatePrefactura(CFDIModel prefacturaModel)
+		{
+			try
+			{
+				await _db.Database.BeginTransactionAsync();
+
+				int idPrefactura = 0;
+
+				//Se busca prefactura por id
+				Prefactura? prefactura = await _prefacturaManager.GetByIdAsync(prefacturaModel.Id);
+
+				//Si se encontró prefactura, obtiene su Id del registro existente. De lo contrario, se crea uno nuevo.
+				if (prefactura != null) { idPrefactura = prefactura.Id; } else { prefactura = new Prefactura(); }
+
+				//Llena los datos de la prefactura.
+				prefactura.Fecha = prefacturaModel.Fecha;
+				prefactura.Serie = prefacturaModel.Serie;
+				prefactura.Folio = prefacturaModel.Folio;
+				prefactura.TipoCambio = prefacturaModel.TipoCambio;
+				prefactura.ExportacionId = prefacturaModel.ExportacionId;
+				prefactura.FormaPagoId = prefacturaModel.FormaPagoId;
+				prefactura.MetodoPagoId = prefacturaModel.MetodoPagoId;
+				prefactura.UsoCFDIId = prefacturaModel.UsoCFDIId;
+				prefactura.MonedaId = prefacturaModel.MonedaId;
+				prefactura.NumeroOperacion = prefacturaModel.NumeroOperacion;
+				prefactura.TipoCambio = prefacturaModel.TipoCambio;
+				prefactura.TipoComprobanteId = prefacturaModel.TipoComprobanteId;
+
+				if (idPrefactura >= 1)
+				{
+					//Si la prefactura ya existía, la actualiza.
+					await _prefacturaManager.UpdateAsync(prefactura);
+
+					//Elimina los conceptos de la prefactura.
+					await _conceptoManager.DeleteByPrefacturaIdAsync(idPrefactura);
+				}
+				else
+				{
+					//De lo contrario, crea al empleado y obtiene su id.
+					idPrefactura = await _prefacturaManager.CreateAsync(prefactura);
+				}
+
+				//Crea los conceptos de la prefactura
+				foreach (ConceptoModel? c in prefacturaModel.Conceptos)
+				{
+					if (c == null) { continue; }
+
+					//Se usa la info para guardar el concepto.
+					await _conceptoManager.CreateAsync(
+						new Concepto()
+						{
+							ProductoServicioId = c.ProductoServicioId ?? 0,
+							Cantidad = c.Cantidad ?? 0,
+							PrecioUnitario = c.Unitario ?? 0,
+							Descuento = c.Descuento ?? 0,
+							UnidadMedidaId = c.UnidadId ?? 0,
+							Descripcion = c.Descripcion ?? string.Empty,
+							ObjetoImpuestoId = c.ObjetoImpuestoId ?? 0,
+							TasaTraslado = c.Traslado ?? 0,
+							TasaRetencion = c.Retencion ?? 0
+						}
+					);
+				}
+
+				await _db.Database.CommitTransactionAsync();
+			}
+			catch (Exception)
+			{
+				await _db.Database.RollbackTransactionAsync();
+				throw;
+			}
+		}
+
+		public async Task<JsonResult> OnPostGetEmpresaSuggestion(string texto, string idempresa)
+		{
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["ConsultadoUnsuccessfully"]);
 			try
 			{
@@ -293,6 +472,57 @@ namespace ERPSEI.Areas.ERP.Pages
 			}
 
 			jsonResponse = $"[{string.Join(",", jsons)}]";
+
+			return jsonResponse;
+		}
+
+		public async Task<JsonResult> OnPostGetUnidadesSuggestion(string texto)
+		{
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["ConsultadoUnsuccessfully"]);
+			try
+			{
+				resp.Datos = await GetUnidadesSuggestion(texto);
+				resp.TieneError = false;
+				resp.Mensaje = _strLocalizer["ConsultadoSuccessfully"];
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+			}
+
+			return new JsonResult(resp);
+		}
+		private async Task<string> GetUnidadesSuggestion(string texto)
+		{
+			string jsonResponse;
+			List<string> jsonUnidades = new List<string>();
+
+			List<UnidadMedida> unidades = await _unidadMedidaManager.SearchUnidades(texto);
+
+			if (unidades != null)
+			{
+				foreach (UnidadMedida u in unidades)
+				{
+					if(u.Simbolo.Trim().Length >= 1)
+					{
+                        jsonUnidades.Add($"{{" +
+                                            $"\"id\": {u.Id}, " +
+                                            $"\"value\": \"{u.Clave} - ({u.Simbolo}) {u.Nombre}\", " +
+                                            $"\"label\": \"{u.Clave} - ({u.Simbolo}) {u.Nombre}\"" +
+                                        $"}}");
+                    }
+					else
+					{
+						jsonUnidades.Add($"{{" +
+											$"\"id\": {u.Id}, " +
+											$"\"value\": \"{u.Clave} - {u.Nombre}\", " +
+											$"\"label\": \"{u.Clave} - {u.Nombre}\"" +
+										$"}}");
+					}
+				}
+			}
+
+			jsonResponse = $"[{string.Join(",", jsonUnidades)}]";
 
 			return jsonResponse;
 		}

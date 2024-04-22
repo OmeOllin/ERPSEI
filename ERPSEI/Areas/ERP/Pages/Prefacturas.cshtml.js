@@ -1,21 +1,34 @@
 ﻿var table;
 var buttonRemove;
+var tableProdServ;
 var selections = [];
+var dlgProdServ = null;
 var dlgCFDI = null;
 var dlgCFDIModal = null;
 
+var numFormatter = null;
+var dialogMode = null;
 const NUEVO = 0;
 const EDITAR = 1;
 const VER = 2;
 const postOptions = { headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() } }
 
 document.addEventListener('DOMContentLoaded', function () {
+    numFormatter = new Intl.NumberFormat(cultureName);
+
     table = $("#table");
     buttonRemove = $("#remove");
+    tableProdServ = $("#tableProductosServicios");
     dlgCFDI = document.getElementById('dlgCFDI');
     dlgCFDIModal = new bootstrap.Modal(dlgCFDI, null);
     //Función para limpiar el cuadro de diálogo cuando es cerrado
     dlgCFDI.addEventListener('hidden.bs.modal', function (event) {
+        onCerrarClick();
+    });
+
+    dlgProdServ = document.getElementById('dlgProdServ');
+    //Función para limpiar el cuadro de diálogo cuando es cerrado
+    dlgProdServ.addEventListener('hidden.bs.modal', function (event) {
         onCerrarClick();
     });
 
@@ -28,34 +41,69 @@ document.addEventListener('DOMContentLoaded', function () {
         select: function (element, item) { toggleEmisorInfo(item); },
         change: function (element, item) {
             let inpEmisor = document.getElementById('inpEmisor');
-            if ((inpEmisor.value || "").length <= 0) { toggleEmisorInfo(); }
+
+            inpEmisor.classList.remove("is-invalid");
+            inpEmisor.classList.remove("is-valid");
+
+            if ((inpEmisor.value || "").length <= 0) {
+                toggleEmisorInfo();
+                inpEmisor.classList.add("is-invalid");
+            }
+            else {
+                inpEmisor.classList.add("is-valid");
+            }
         }
     });
     autoCompletar("#inpReceptor", {
         select: function (element, item) { toggleReceptorInfo(item); },
         change: function (element, item) {
             let inpReceptor = document.getElementById('inpReceptor');
-            if ((inpReceptor.value || "").length <= 0) { toggleReceptorInfo(); }
-        }
-    });
-    autoCompletar("#inpProductoServicioEmisor", {
-        select: function (element, item) {
-            let btnAdd = document.getElementById("dlgBtnAgregarProductoServicioEmisor");
-            btnAdd.classList.remove("disabled");
-            let prodServSelectorField = document.getElementById("inpProductoServicioEmisor");
-            prodServSelectorField.classList.remove("is-invalid");
-            prodServSelectorField.classList.remove("is-valid");
-        },
-        change: function (element, item) {
-            let prodServSelectorField = document.getElementById("inpProductoServicioEmisor");
-            if (parseInt(prodServSelectorField.getAttribute("idselected") || "0") <= 0) {
-                let btnAdd = document.getElementById("dlgBtnAgregarProductoServicioEmisor");
-                btnAdd.classList.add("disabled");
+
+            inpReceptor.classList.remove("is-invalid");
+            inpReceptor.classList.remove("is-valid");
+
+            if ((inpReceptor.value || "").length <= 0) {
+                toggleReceptorInfo();
+                inpReceptor.classList.add("is-invalid");
             }
-            prodServSelectorField.classList.remove("is-invalid");
-            prodServSelectorField.classList.remove("is-valid");
+            else {
+                inpReceptor.classList.add("is-valid");
+            }
         }
     });
+    autoCompletar("#inpProductoServicio", {
+        select: function (element, item) {
+            let inpDescripcion = document.getElementById("inpDescripcion");
+            inpDescripcion.value = item.value;
+        }
+    });
+    autoCompletar("#inpUnidad", {
+        change: function (element, item) {
+            let inpUnidad = document.getElementById('inpUnidad');
+
+            inpUnidad.classList.remove("is-invalid");
+            inpUnidad.classList.remove("is-valid");
+
+            if ((inpUnidad.value || "").length <= 0) {
+                inpUnidad.classList.add("is-invalid");
+            }
+            else {
+                inpUnidad.classList.add("is-valid");
+            }
+        }
+    });
+
+    jQuery.validator.setDefaults({
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass("is-invalid").removeClass("is-valid");
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            if ($(element).hasClass("is-invalid")) {
+                $(element).addClass("is-valid").removeClass("is-invalid");
+            }
+        }
+    });
+
 });
 
 ////////////////////////////////
@@ -98,28 +146,18 @@ function operateFormatter(value, row, index) {
 window.operateEvents = {
     'click .see': function (e, value, row, index) {
         initCFDIDialog(VER, row);
+        dlgCFDIModal.toggle();
     },
     'click .edit': function (e, value, row, index) {
         initCFDIDialog(EDITAR, row);
+        dlgCFDIModal.toggle();
     }
 }
 //Función para agregar cfdis
 function onAgregarClick() {
-    let oCFDINuevo = {
-        id: nuevoRegistro,
-        serie: "",
-        folio: "",
-        fecha: null,
-        monedaId: 0,
-        formaPagoId: 0,
-        metodoPagoId: 0,
-        usoCFDIId: 0,
-        exportacionId: 0,
-        emisor: {},
-        receptor: {}
-    };
-
+    let oCFDINuevo = createNewCFDI();
     initCFDIDialog(NUEVO, oCFDINuevo);
+    dlgCFDIModal.toggle();
 }
 //Función para inicializar la tabla
 function initTable() {
@@ -259,7 +297,7 @@ function onDeleteCFDIClick(ids = null) {
 //Función para filtrar los datos de la tabla.
 function onBuscarClick() {
     let btnBuscar = document.getElementById("btnBuscar");
-    let selSerie = document.getElementById("selFiltroSerie");
+    let inpSerie = document.getElementById("inpFiltroSerie");
     let inpFechaInicio = document.getElementById("inpFiltroFechaInicio");
     let inpFechaFin = document.getElementById("inpFiltroFechaFin");
     let selMoneda = document.getElementById("selFiltroMoneda");
@@ -268,7 +306,7 @@ function onBuscarClick() {
     let selUsoCFDI = document.getElementById("selFiltroUsoCFDI");
 
     let oParams = {
-        Serie: selSerie.value == 0 ? null : parseInt(selSerie.value),
+        Serie: inpSerie.value,
         FechaInicio: inpFechaInicio.value,
         FechaFin: inpFechaFin.value,
         MonedaId: selMoneda.value == 0 ? null : parseInt(selMoneda.value),
@@ -309,14 +347,69 @@ function onBuscarClick() {
 ////////////////////////////////
 //Funcionalidad Diálogo CFDI
 ////////////////////////////////
+//Función para crear un nuevo objeto CFDI
+function createNewCFDI() {
+    let curDate = new Date();
+    let year = `${curDate.getFullYear()}`.padStart(4, "0");
+    let month = `${curDate.getMonth() + 1}`.padStart(2, "0");
+    let day = `${curDate.getDate()}`.padStart(2, "0");
+    let hour = `${curDate.getHours()}`.padStart(2, "0");
+    let minute = `${curDate.getMinutes()}`.padStart(2, "0");
+    let second = `${curDate.getSeconds()}`.padStart(2, "0");
+
+    let strCurDate = `${year}-${month}-${day} ${hour}:${minute}:${second}`
+
+    let oCFDINuevo = {
+        id: nuevoRegistro,
+        fecha: strCurDate,
+        tipoComprobanteId: 0,
+        serie: "",
+        folio: "",
+        usoCFDIId: 0,
+        formaPagoId: 0,
+        metodoPagoId: 0,
+        monedaId: 0,
+        tipoCambio: "",
+        exportacionId: 0,
+        numeroOperacion: "",
+        emisorId: 0,
+        emisor: "",
+        receptorId: 0,
+        receptor: "",
+        conceptos: []
+    };
+
+    return oCFDINuevo;
+}
+
 //Función para inicializar el cuadro de diálogo
 function initCFDIDialog(action, row) {
     let idField = document.getElementById("inpCFDIId");
+
+    let fechaField = document.getElementById("inpFecha");
+    let tipoComprobanteField = document.getElementById("selTipoComprobante");
+
+    let serieField = document.getElementById("inpSerie");
+    let folioField = document.getElementById("inpFolio");
+    let usoField = document.getElementById("selUsoCFDI");
+
+    let formaField = document.getElementById("selFormaPago");
+    let metodoField = document.getElementById("selMetodoPago");
+    let monedaField = document.getElementById("selMoneda");
+    let tipoCambioField = document.getElementById("inpTipoCambio");
+
+    let exportacionField = document.getElementById("selExportacion");
+    let numeroOperacionField = document.getElementById("inpNumeroOperacion");
+
+    let emisorField = document.getElementById("inpEmisor");
+    let receptorField = document.getElementById("inpReceptor");
 
     let btnDesactivar = document.getElementById("dlgCFDIBtnDesactivar");
     let dlgTitle = document.getElementById("dlgCFDITitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
+
+    dialogMode = action;
 
     idField.setAttribute("disabled", true);
     switch (action) {
@@ -345,49 +438,31 @@ function initCFDIDialog(action, row) {
 
     idField.value = row.id;
 
-    if (action == NUEVO || (row.hasDatosAdicionales || false)) {
-        //establecerDatosAdicionales(row, action);
-        //initializeDisableableButtons(false);
-        dlgCFDIModal.toggle();
-        return;
-    }
+    fechaField.value = row.fecha;
+    tipoComprobanteField.value = row.tipoComprobanteId;
 
-    //doAjax(
-    //    "/ERP/Prefacturas/DatosAdicionales",
-    //    { idEmpleado: row.id },
-    //    function (resp) {
-    //        if (resp.tieneError) {
-    //            if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
-    //                let summary = ``;
-    //                resp.errores.forEach(function (error) {
-    //                    summary += `<li>${error}</li>`;
-    //                });
-    //                summaryContainer.innerHTML += `<ul>${summary}</ul>`;
-    //            }
-    //            showError(btnBuscar.innerHTML, resp.mensaje);
-    //            return;
-    //        }
+    serieField.value = row.serie;
+    folioField.value = row.folio;
+    usoField.value = row.usoCFDIId;
 
-    //        //Se establece el row con los datos adicionales.
-    //        if (typeof resp.datos == "string" && resp.datos.length >= 1) { resp.datos = JSON.parse(resp.datos); };
-    //        row.jefeId = resp.datos.jefeId || 0;
-    //        row.jefe = resp.datos.jefe || "";
-    //        row.contactosEmergencia = resp.datos.contactosEmergencia || [];
-    //        row.archivos = resp.datos.archivos || [];
-    //        row.hasDatosAdicionales = true;
+    formaField.value = row.formaPagoId;
+    metodoField.value = row.metodoPagoId;
+    monedaField.value = row.monedaId;
+    tipoCambioField.value = row.tipoCambio;
 
-    //        //Actualiza el row para no tener que volver a obtener los datos la próxima vez.
-    //        table.bootstrapTable('updateByUniqueId', { id: row.id, row: row });
+    exportacionField.value = row.exportacionId;
+    numeroOperacionField.value = row.numeroOperacion;
 
-    //        establecerDatosAdicionales(row, action);
-    //        initializeDisableableButtons(action == VER);
-    //        dlgEmpleadoModal.toggle();
+    emisorField.setAttribute("idselected", row.emisorId);
+    emisorField.value = row.emisor;
+    receptorField.setAttribute("idselected", row.receptorId);
+    receptorField.value = row.receptor;
 
-    //    }, function (error) {
-    //        showError("Error", error);
-    //    },
-    //    postOptions
-    //);
+    //Se establecen los productos y servicios
+    let data = [];
+    row.conceptos = row.conceptos || [];
+    row.conceptos.forEach(function (c) { data.push(c); });
+    initTableProdServ(data);
 }
 
 //Función para el cierre del cuadro de diálogo
@@ -402,109 +477,77 @@ function onCerrarClick() {
     $('.validation-summary-errors').addClass('validation-summary-valid');
     $('.validation-summary-errors').removeClass('validation-summary-errors');
     //Removes danger text from fields
-    $(".text-danger").children().remove()
+    $(".text-danger").children().remove();
+    //Removes is-valid and is-invalid class
+    $(".is-valid").removeClass("is-valid");
+    $(".is-invalid").removeClass("is-invalid");
 }
 
 //Función para el guardado de información del empleado
 function onGuardarClick() {
+    //Si las empresas emisora y receptora no son válidas, finaliza el proceso.
+    if (!validarEmpresas()) { return; }
+
     //Ejecuta la validación de los campos
     $("#theForm").validate();
-    //Determina los errores
-    let valid = $("#theForm").valid();
-    //Si la forma no es válida, entonces finaliza.
-    if (!valid) { return; }
 
-    //Se ejecuta validación de facturación entre empresas.
-    let emisor = {
-        id: $("#inpEmisor").data("id"),
-        nivel: $("#inpEmisor").data("nivel"),
-        actividadesEconomicas: $("#inpEmisor").data("actividadesEconomicas"),
-        perfil: $("#inpEmisor").data("perfil"),
-        direccion: $("#inpEmisor").data("domicilioFiscal"),
-        productosServicios: $("#inpEmisor").data("productosServicios")
-    };
+    //Determina los errores. Si la forma no es válida, entonces finaliza.
+    if (!$("#theForm").valid()) { return; }
 
-    let receptor = {
-        id: $("#inpReceptor").data("id"),
-        nivel: $("#inpReceptor").data("nivel"),
-        actividadesEconomicas: $("#inpReceptor").data("actividadesEconomicas"),
-        perfil: $("#inpReceptor").data("perfil"),
-        direccion: $("#inpReceptor").data("domicilioFiscal"),
-        productosServicios: $("#inpReceptor").data("productosServicios")
-    };
-    //Si no es válida la facturación, finaliza el proceso.
-    if (!validarFacturacionEntreEmpresas(emisor, receptor)) { return; }
+    //Si los conceptos no son válidos, finaliza el proceso.
+    if (!validarConceptos()) { return; }
 
-    let btnClose = document.getElementById("dlgEmpleadoBtnCancelar");
+    showSuccess(title, puedenFacturar);
 
-    let idField = document.getElementById("inpEmpleadoId");
-    let primerNombreField = document.getElementById("inpEmpleadoPrimerNombre");
-    let nombrePreferidoField = document.getElementById("inpEmpleadoNombrePreferido");
-    let apellidoPaternoField = document.getElementById("inpEmpleadoApellidoPaterno");
-    let apellidoMaternoField = document.getElementById("inpEmpleadoApellidoMaterno");
-    let fechaNacimientoField = document.getElementById("inpEmpleadoFechaNacimiento");
-    let telefonoField = document.getElementById("inpEmpleadoTelefono");
-    let generoField = document.getElementById("selEmpleadoGeneroId");
-    let estadoCivilIdField = document.getElementById("selEmpleadoEstadoCivilId");
-    let direccionField = document.getElementById("txtEmpleadoDireccion");
-    let puestoField = document.getElementById("selEmpleadoPuestoId");
-    let areaField = document.getElementById("selEmpleadoAreaId");
-    let subareaField = document.getElementById("selEmpleadoSubareaId");
-    let oficinaField = document.getElementById("selEmpleadoOficinaId");
-    let jefeField = document.getElementById("inpEmpleadoJefeId");
-    let fechaIngresoField = document.getElementById("inpEmpleadoFechaIngreso");
-    let emailField = document.getElementById("inpEmpleadoEmail");
-    let curpField = document.getElementById("inpEmpleadoCURP");
-    let rfcField = document.getElementById("inpEmpleadoRFC");
-    let nssField = document.getElementById("inpEmpleadoNSS");
-    let nombreContacto1Field = document.getElementById("inpEmpleadoNombreContacto1");
-    let telefonoContacto1Field = document.getElementById("inpEmpleadoTelefonoContacto1");
-    let nombreContacto2Field = document.getElementById("inpEmpleadoNombreContacto2");
-    let telefonoContacto2Field = document.getElementById("inpEmpleadoTelefonoContacto2");
-
-    let dlgTitle = document.getElementById("dlgEmpleadoTitle");
-    let summaryContainer = document.getElementById("saveValidationSummary");
+    let btnClose = document.getElementById("dlgCFDIBtnCancelar"),
+        dlgTitle = document.getElementById("dlgCFDITitle"),
+        summaryContainer = document.getElementById("saveValidationSummary"),
+        idField = document.getElementById("inpCFDIId")
+        emisorField = $("#inpEmisor"),
+        receptorField = $("#inpReceptor"),
+        fechaField = document.getElementById(""),
+        comprobanteField = document.getElementById(""),
+        serieField = document.getElementById(""),
+        folioField = document.getElementById(""),
+        usoField = document.getElementById(""),
+        formaField = document.getElementById(""),
+        metodoField = document.getElementById(""),
+        monedaField = document.getElementById(""),
+        cambioField = document.getElementById(""),
+        exportacionField = document.getElementById(""),
+        operacionField = document.getElementById("");
+        
     summaryContainer.innerHTML = "";
 
-    let files = [];
-    let profilePic = getFile("profilePicSelector");
-    if (profilePic) { files.push(profilePic); }
-    $("#bodyArchivos input").each(function (i, a) {
-        let id = a.getAttribute("id");
-        let file = getFile(id);
-        if (file) { files.push(file); }
-    });
 
     let oParams = {
-        id: idField.value == nuevoRegistro ? 0 : idField.value,
-        nombre: primerNombreField.value.trim(),
-        nombrePreferido: nombrePreferidoField.value.trim(),
-        apellidoPaterno: apellidoPaternoField.value.trim(),
-        apellidoMaterno: apellidoMaternoField.value.trim(),
-        fechaNacimiento: fechaNacimientoField.value,
-        telefono: telefonoField.value.trim(),
-        generoId: generoField.value == 0 ? null : parseInt(generoField.value),
-        estadoCivilId: estadoCivilIdField.value == 0 ? null : parseInt(estadoCivilIdField.value),
-        direccion: direccionField.value.trim(),
-        puestoId: puestoField.value == 0 ? null : parseInt(puestoField.value),
-        areaId: areaField.value == 0 ? null : parseInt(areaField.value),
-        subareaId: subareaField.value == 0 ? null : parseInt(subareaField.value),
-        oficinaId: oficinaField.value == 0 ? null : parseInt(oficinaField.value),
-        jefeId: (jefeField.getAttribute('idselected') || "0") == "0" ? null : parseInt(jefeField.getAttribute("idselected")),
-        fechaIngreso: fechaIngresoField.value,
-        email: emailField.value.trim(),
-        curp: curpField.value.trim(),
-        rfc: rfcField.value.trim(),
-        nss: nssField.value.trim(),
-        nombreContacto1: nombreContacto1Field.value.trim(),
-        telefonoContacto1: telefonoContacto1Field.value.trim(),
-        nombreContacto2: nombreContacto2Field.value.trim(),
-        telefonoContacto2: telefonoContacto2Field.value.trim(),
-        archivos: files
-    };
+        id: idField.value,
+        emisor: {
+            id: emisorField.data("id"),
+            razonSocial: emisorField.data("razonSocial"),
+            rfc: emisorField.data("rfc")
+        },
+        receptor: {
+            id: receptorField.data("id"),
+            razonSocial: receptorField.data("razonSocial"),
+            rfc: receptorField.data("rfc")
+        },
+        fecha: fechaField.value,
+        tipoComprobante: comprobanteField.value,
+        serie: serieField.value,
+        folio: folioField.value,
+        usoCFDI: usoField.value,
+        formaPago: formaField.value,
+        metodoPago: metodoField.value,
+        moneda: monedaField.value,
+        tipoCambio: cambioField.value,
+        exportacion: exportacionField.value,
+        numOperacion: operacionField.value,
+        conceptos: tableProdServ.bootstrapTable("getData")
+    }
 
     doAjax(
-        "/Catalogos/GestionDeTalento/SaveEmpleado",
+        "/ERP/Prefacturas/Save",
         oParams,
         function (resp) {
             if (resp.tieneError) {
@@ -531,10 +574,161 @@ function onGuardarClick() {
     );
 }
 
+//Función para dar formato de moneda a los campos numéricos.
+function currencyFormatter(value, row, index) {
+    return `$ ${numFormatter.format(value)}`;
+}
+
+//Función para dar formato de número a los campos numéricos.
+function numericFormatter(value, row, index) {
+    return numFormatter.format(value);
+}
+
+//Función para dar formato a los iconos de operación de los registros de productos y servicios
+function operateFormatterProdServ(value, row, index) {
+    switch (dialogMode) {
+        case NUEVO:
+        case EDITAR:
+            return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton"></i></a>`;
+            break;
+        default:
+            return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton disabled"></i></a>`;
+            break;
+    }
+}
+
+//Eventos de los iconos de operación
+window.operateProdServEvents = {
+    'click .delete': function (e, value, row, index) {
+        onEliminarProductoServicioClick(row.id);
+    }
+}
+
+//Función para inicializar la tabla de productos y servicios
+function initTableProdServ(data = null) {
+    tableProdServ.bootstrapTable('destroy').bootstrapTable({
+        locale: cultureName,
+        data: data,
+        columns: [
+            {
+                field: "state",
+                checkbox: true,
+                align: "center",
+                valign: "middle"
+            },
+            {
+                title: colCantidadHeader,
+                field: "cantidad",
+                align: "center",
+                valign: "middle",
+                sortable: true,
+                formatter: numericFormatter
+            },
+            {
+                title: colUnidadHeader,
+                field: "unidad",
+                align: "center",
+                valign: "middle",
+                sortable: true,
+                width: "200px"
+            },
+            {
+                title: colClaveHeader,
+                field: "clave",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colDescripcionHeader,
+                field: "descripcion",
+                align: "center",
+                valign: "middle",
+                sortable: true,
+                width: "200px"
+            },
+            {
+                title: colUnitarioHeader,
+                field: "unitario",
+                align: "center",
+                valign: "middle",
+                sortable: true,
+                formatter: currencyFormatter
+            },
+            {
+                title: colSubtotalHeader,
+                field: "subtotal",
+                align: "center",
+                valign: "middle",
+                sortable: true,
+                formatter: currencyFormatter
+            },
+            {
+                title: colDescuentoHeader,
+                field: "descuento",
+                align: "center",
+                valign: "middle",
+                sortable: true,
+                formatter: currencyFormatter
+            },
+            {
+                title: colTrasladoHeader,
+                field: "traslado",
+                align: "center",
+                valign: "middle",
+                sortable: true,
+                formatter: currencyFormatter
+            },
+            {
+                title: colRetencionHeader,
+                field: "retencion",
+                align: "center",
+                valign: "middle",
+                sortable: true,
+                formatter: currencyFormatter
+            },
+            {
+                title: colTotalHeader,
+                field: "total",
+                align: "center",
+                valign: "middle",
+                sortable: true,
+                formatter: currencyFormatter
+            },
+            {
+                title: "",
+                field: "operate",
+                align: "center",
+                width: "100px",
+                clickToSelect: false,
+                events: window.operateProdServEvents,
+                formatter: operateFormatterProdServ
+            }
+        ]
+    });
+    tableProdServ.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+        $("#removeProdServ").prop('disabled', !tableProdServ.bootstrapTable('getSelections').length)
+    });
+    $("#removeProdServ").click(function () {
+        askConfirmation(btnEliminarTitle, dlgDeleteElementQuestion, function () {
+            let elements = tableProdServ.bootstrapTable('getSelections');
+            let data = tableProdServ.bootstrapTable('getData');
+            let newData = [];
+            data.forEach(function (d) {
+                let foundElement = elements.find(f => f.id == d.id);
+                if (!foundElement) { newData.push(d); }
+            });
+            initTableProdServ(newData);
+            $("#removeProdServ").prop('disabled', true);
+        });
+    });
+}
+
 //Función para mostrar u ocultar la información del emisor. Si se establece el parámetro item, se muestra. De lo contrario, se oculta.
 function toggleEmisorInfo(item = null) {
     let divFilledInfoEmisor = document.getElementById("divFilledInfoEmisor");
     let divEmptyInfoEmisor = document.getElementById("divEmptyInfoEmisor");
+    let btnInfoEmisor = document.getElementById("btnInfoEmisor");
 
     let lblRFC = document.getElementById("lblRFCEmisor");
     let lblRazonSocial = document.getElementById("lblRazonSocialEmisor");
@@ -544,12 +738,6 @@ function toggleEmisorInfo(item = null) {
     let lblActividadEconomica = document.getElementById("lblActividadEconomicaEmisor");
     let lblDomicilioFiscal = document.getElementById("lblDomicilioFiscalEmisor");
     let lblObjetoSocial = document.getElementById("lblObjetoSocialEmisor");
-    let listaDOM = document.getElementById("listProductosServiciosEmisor");
-
-    listaDOM.innerHTML = "";
-    listaDOM.classList.remove("form-control");
-    listaDOM.classList.remove("is-invalid");
-    listaDOM.classList.remove("is-valid");
 
     lblNivel.classList.remove("is-invalid");
     lblNivel.classList.remove("is-valid");
@@ -605,6 +793,8 @@ function toggleEmisorInfo(item = null) {
         divFilledInfoEmisor.removeAttribute('hidden');
 
         $("#inpReceptor").data('idempresa', item.id);
+
+        btnInfoEmisor.classList.add('bi-info-circle-fill');
     }
     else {
         lblRFC.innerHTML = emptyInfo;
@@ -628,6 +818,8 @@ function toggleEmisorInfo(item = null) {
         $("#inpEmisor").data("perfil", null);
         $("#inpEmisor").data("direccion", null);
         $("#inpEmisor").data("productosServicios", null);
+
+        btnInfoEmisor.classList.remove('bi-info-circle-fill');
     }
 
 }
@@ -636,6 +828,7 @@ function toggleEmisorInfo(item = null) {
 function toggleReceptorInfo(item = null) {
     let divFilledInfoReceptor = document.getElementById("divFilledInfoReceptor");
     let divEmptyInfoReceptor = document.getElementById("divEmptyInfoReceptor");
+    let btnInfoReceptor = document.getElementById("btnInfoReceptor");
 
     let lblRFC = document.getElementById("lblRFCReceptor");
     let lblRazonSocial = document.getElementById("lblRazonSocialReceptor");
@@ -700,6 +893,8 @@ function toggleReceptorInfo(item = null) {
         divFilledInfoReceptor.removeAttribute('hidden');
 
         $("#inpEmisor").data('idempresa', item.id);
+
+        btnInfoReceptor.classList.add('bi-info-circle-fill');
     }
     else {
         lblRFC.innerHTML = emptyInfo;
@@ -723,45 +918,28 @@ function toggleReceptorInfo(item = null) {
         $("#inpReceptor").data("perfil", null);
         $("#inpReceptor").data("direccion", null);
         $("#inpReceptor").data("productosServicios", null);
+
+        btnInfoReceptor.classList.remove('bi-info-circle-fill');
     }
 
 }
 
 //Función para validar los datos de una empresa al ser seleccionada por el usuario.
 function validarEmpresaSeleccionada(e, isEmisor, isReceptor) {
-
-    //let tabAField = null;
-    //let tabBField = null;
-    let empresaLabel = "";
     let nivelField = null;
     let actividadesField = null;
     let perfilField = null;
-    let prodServField = null;
-    let prodServSelectorField = null;
+
     if (isEmisor) {
-        empresaLabel = emisorLabel.toLowerCase();
-        //tabAField = document.getElementById("tabAEmisor");
-        //tabBField = document.getElementById("tabBEmisor");
         nivelField = document.getElementById("lblNivelEmisor");
         actividadesField = document.getElementById("lblActividadEconomicaEmisor");
         perfilField = document.getElementById("lblPerfilEmisor");
-        prodServField = document.getElementById("listProductosServiciosEmisor");
-        prodServSelectorField = document.getElementById("inpProductoServicioEmisor");
     }
     if (isReceptor) {
-        empresaLabel = receptorLabel.toLowerCase();
-        //tabAField = document.getElementById("tabAReceptor");
-        //tabBField = document.getElementById("tabBReceptor");
         nivelField = document.getElementById("lblNivelReceptor");
         actividadesField = document.getElementById("lblActividadEconomicaReceptor");
         perfilField = document.getElementById("lblPerfilReceptor");
     }
-
-    //tabAField.classList.remove("bg-");
-    //tabAField.classList.remove("is-valid");
-
-    //tabBField.classList.remove("is-invalid");
-    //tabBField.classList.remove("is-valid");
 
     nivelField.classList.remove("is-invalid");
     nivelField.classList.remove("is-valid");
@@ -772,60 +950,9 @@ function validarEmpresaSeleccionada(e, isEmisor, isReceptor) {
     perfilField.classList.remove("is-invalid");
     perfilField.classList.remove("is-valid");
 
-    if (isEmisor) {
-
-        prodServField.classList.remove("form-control");
-        prodServField.classList.remove("is-invalid");
-        prodServField.classList.remove("is-valid");
-
-        prodServSelectorField.classList.remove("is-invalid");
-        prodServSelectorField.classList.remove("is-valid");
-
-        let prodServsAllowed = (e.productosServicios || []);
-        if (prodServsAllowed.length <= 0) {
-            perfilField.classList.add("is-invalid");
-            showAlert(title, sinProductosServiciosNoPuedeFacturar);
-            return false;
-        }
-
-        let idProdServField = prodServField.getAttribute("id");
-        let prodServsAdded = (document.querySelectorAll(`#${idProdServField} li[clave]`) || []);
-        if (prodServsAdded.length <= 0) {
-            prodServSelectorField.classList.add("is-invalid");
-            showAlert(title, almenosUnProductoServicioNecesario);
-            return false;
-        }
-
-        let hasError = false;
-        let message = "";
-        prodServsAdded.forEach(function (ps) {
-            //Si el producto o servicio agregado no está en los permitidos, entonces falla la validación.
-            let clave = ps.getAttribute("clave");
-            let found = prodServsAllowed.find((ps) => ps.clave == clave);
-            if (found == undefined) {
-                hasError = true;
-                message = `${productoServicioConClave} '${clave}' ${noCorresponde} ${empresaLabel} ${noPuedeFacturar}`;
-                return false;
-            }
-        });
-        if (hasError) {
-            prodServField.classList.add("form-control");
-            prodServField.classList.add("is-invalid");
-            showAlert(title, message);
-            return false;
-        }
-        else {
-            if (prodServsAdded.length >= 1) {
-                prodServField.classList.add("form-control");
-                prodServField.classList.add("is-valid");
-            }
-        }
-    }
-
     let puedeFacturar = (e.nivel.puedeFacturar.toLowerCase() === 'true');
     if (!puedeFacturar) {
         nivelField.classList.add("is-invalid");
-        /*tabAField.classList.add("is-invalid");*/
         showAlert(title, nivelNoPuedeFacturar);
         return false;
     }
@@ -837,62 +964,48 @@ function validarEmpresaSeleccionada(e, isEmisor, isReceptor) {
         return false;
     }
     perfilField.classList.add("is-valid");
-    /*tabAField.classList.add("is-valid");*/
 
     if ((e.actividadesEconomicas || []).length <= 0) {
         nivelField.classList.add("is-invalid");
-        /*tabBField.classList.add("is-invalid");*/
         showAlert(title, sinActividadesNoPuedeFacturar);
         return false;
     }
     actividadesField.classList.add("is-valid");
-    /*tabBField.classList.add("is-valid");*/
-
 
     return true;
 }
 
 //Función para validar los datos de una empresa al ser seleccionada por el usuario.
-function validarFacturacionEntreEmpresas(emisor, receptor) {
+function validarFacturacionEntreEmpresas() {
+    let emisor = {
+            id: $("#inpEmisor").data("id"),
+            nivel: $("#inpEmisor").data("nivel"),
+            actividadesEconomicas: $("#inpEmisor").data("actividadesEconomicas"),
+            perfil: $("#inpEmisor").data("perfil"),
+            direccion: $("#inpEmisor").data("domicilioFiscal"),
+            productosServicios: $("#inpEmisor").data("productosServicios")
+        },
+        receptor = {
+            id: $("#inpReceptor").data("id"),
+            nivel: $("#inpReceptor").data("nivel"),
+            actividadesEconomicas: $("#inpReceptor").data("actividadesEconomicas"),
+            perfil: $("#inpReceptor").data("perfil"),
+            direccion: $("#inpReceptor").data("domicilioFiscal"),
+            productosServicios: $("#inpReceptor").data("productosServicios")
+        },
+        nivelEmisorField = document.getElementById("lblNivelEmisor"),
+        direccionEmisorField = document.getElementById("lblDomicilioFiscalEmisor"),
+        nivelReceptorField = document.getElementById("lblNivelReceptor"),
+        direccionReceptorField = document.getElementById("lblDomicilioFiscalReceptor");
 
-    //let tabAEmisorField = document.getElementById("tabAEmisor");
-    //let tabBEmisorField = document.getElementById("tabBEmisor");
-
-    //let tabAReceptorField = document.getElementById("tabAReceptor");
-    //let tabBReceptorField = document.getElementById("tabBReceptor");
-
-    let nivelEmisorField = document.getElementById("lblNivelEmisor");
-    let direccionEmisorField = document.getElementById("lblDomicilioFiscalEmisor");
-
-    let nivelReceptorField = document.getElementById("lblNivelReceptor");
-    let direccionReceptorField = document.getElementById("lblDomicilioFiscalReceptor");
-
-    let hasEmisor = parseInt(emisor.id || "0") >= 1;
-    let hasReceptor = parseInt(receptor.id || "0") >= 1;
-
-    if (hasEmisor) { if (!validarEmpresaSeleccionada(emisor, true, false)) { return; } }
-    if (hasReceptor) { if (!validarEmpresaSeleccionada(receptor, false, true)) { return; } }
-
-    if (!hasEmisor && !hasReceptor) {
-        showMessage(title, faltanEmpresasParaComparar);
-        return false;
-    }
-    else if (!hasEmisor || !hasReceptor) {
-        showMessage(title, faltaEmpresaParaComparar);
-        return false;
-    }
-
-    //tabAEmisorField.classList.remove("is-invalid");
-    //tabBEmisorField.classList.remove("is-valid");
+    if (!validarEmpresaSeleccionada(emisor, true, false)) { return false; }
+    if (!validarEmpresaSeleccionada(receptor, false, true)) { return false; }
 
     nivelEmisorField.classList.remove("is-invalid");
     nivelEmisorField.classList.remove("is-valid");
 
     direccionEmisorField.classList.remove("is-invalid");
     direccionEmisorField.classList.remove("is-valid");
-
-    //tabAReceptorField.classList.remove("is-invalid");
-    //tabBReceptorField.classList.remove("is-valid");
 
     nivelReceptorField.classList.remove("is-invalid");
     nivelReceptorField.classList.remove("is-valid");
@@ -904,16 +1017,12 @@ function validarFacturacionEntreEmpresas(emisor, receptor) {
     if (parseInt(emisor.nivel.ordinal || "0") < parseInt(receptor.nivel.ordinal || "0")) {
         nivelEmisorField.classList.add("is-invalid");
         nivelReceptorField.classList.add("is-invalid");
-        //tabAEmisorField.classList.add("is-invalid");
-        //tabAReceptorField.classList.add("is-invalid");
         showAlert(title, nivelMenorNoPuedeFacturar);
         return false;
     }
     if (emisor.nivel.ordinal === receptor.nivel.ordinal) {
         nivelEmisorField.classList.add("is-invalid");
         nivelReceptorField.classList.add("is-invalid");
-        //tabAEmisorField.classList.add("is-invalid");
-        //tabAReceptorField.classList.add("is-invalid");
         showAlert(title, mismoNivelNoPuedeFacturar);
         return false;
     }
@@ -923,24 +1032,100 @@ function validarFacturacionEntreEmpresas(emisor, receptor) {
     if (emisor.direccion === receptor.direccion) {
         direccionEmisorField.classList.add("is-invalid");
         direccionReceptorField.classList.add("is-invalid");
-        //tabAEmisorField.classList.add("is-invalid");
-        //tabAReceptorField.classList.add("is-invalid");
         showAlert(title, mismaDireccionNoPuedeFacturar);
         return false;
     }
     direccionEmisorField.classList.add("is-valid");
     direccionReceptorField.classList.add("is-valid");
 
-    //tabAEmisorField.classList.add("is-valid");
-    //tabAReceptorField.classList.add("is-valid");
     return true;
+}
+
+//Función para validar las empresas
+function validarEmpresas() {
+    //Se ejecuta validación de facturación entre empresas.
+    let inpEmisor = document.getElementById("inpEmisor"),
+        inpReceptor = document.getElementById("inpReceptor"),
+        hasEmisor = parseInt(inpEmisor.getAttribute("idselected") || "0") >= 1,
+        hasReceptor = parseInt(inpReceptor.getAttribute("idselected") || "0") >= 1;
+
+    inpEmisor.classList.remove("is-invalid");
+    inpEmisor.classList.remove("is-valid");
+
+    inpReceptor.classList.remove("is-invalid");
+    inpReceptor.classList.remove("is-valid");
+
+    if (!hasEmisor && !hasReceptor) {
+        inpEmisor.classList.add("is-invalid");
+        inpReceptor.classList.add("is-invalid");
+        showError(title, faltanEmpresasParaComparar);
+        return false;
+    }
+    else if (!hasEmisor) {
+        inpEmisor.classList.add("is-invalid");
+        showError(title, faltanEmpresasParaComparar);
+        return false;
+    }
+    else if (!hasReceptor) {
+        inpReceptor.classList.add("is-invalid");
+        showError(title, faltanEmpresasParaComparar);
+        return false;
+    }
+
+    return validarFacturacionEntreEmpresas();
+}
+
+//Función para validar los conceptos
+function validarConceptos() {
+    let prodServPermitidos = $("#inpEmisor").data("productosServicios") || [];
+    let empresaLabel = emisorLabel.toLowerCase();
+    let prodServSelectorField = document.getElementById("inpProductoServicio");
+    prodServSelectorField.classList.remove("is-invalid");
+    prodServSelectorField.classList.remove("is-valid");
+
+    if (prodServPermitidos.length <= 0) {
+        showAlert(title, sinProductosServiciosNoPuedeFacturar);
+        return false;
+    }
+
+    let prodServsAdded = tableProdServ.bootstrapTable('getData') || [];
+    if (prodServsAdded.length <= 0) {
+        prodServSelectorField.classList.add("is-invalid");
+        showAlert(title, almenosUnProductoServicioNecesario);
+        return false;
+    }
+
+    let hasError = false;
+    let message = "";
+    prodServsAdded.forEach(function (ps) {
+        //Si el producto o servicio agregado no está en los permitidos, entonces falla la validación.
+        let clave = ps.clave;
+        let found = prodServPermitidos.find((ps) => ps.clave == clave);
+        if (found == undefined) {
+            hasError = true;
+            message = `${productoServicioConClave} '${clave}' ${noCorresponde} ${empresaLabel} ${noPuedeFacturar}`;
+            return false;
+        }
+    });
+    if (hasError) {
+        showAlert(title, message);
+        return false;
+    }
 }
 
 //Función para capturar el clic del botón limpiar. Limpia y oculta la información del emisor y del receptor.
 function onLimpiarClick() {
-    limpiarEmisor();
+    askConfirmation(dlgConfirmActionTitle, dlgConfirmActionQuestion, function () {
+        let oCFDINuevo = createNewCFDI();
 
-    limpiarReceptor();
+        onCerrarClick();
+
+        initCFDIDialog(NUEVO, oCFDINuevo);
+
+        limpiarEmisor();
+
+        limpiarReceptor();
+    });
 }
 
 //Función para limpiar los datos del emisor
@@ -959,13 +1144,28 @@ function limpiarReceptor() {
 
 //Función para agregar un producto o servicio al listado
 function onAgregarProductoServicioClick() {
-    let productoServicioField = null;
-    let btnAdd = null;
-    let idLista = "";
+    //Ejecuta la validación de los campos
+    $("#conceptoForm").validate();
+    //Determina los errores. Si la forma no es válida, entonces finaliza.
+    if (!$("#conceptoForm").valid()) { return; }
 
-    btnAdd = document.getElementById("dlgBtnAgregarProductoServicioEmisor");
-    productoServicioField = $(document.getElementById("inpProductoServicioEmisor"));
-    idLista = "listProductosServiciosEmisor";
+    let productoServicioField = $(document.getElementById("inpProductoServicio")),
+        cantidadField = document.getElementById("inpCantidad"),
+        unitarioField = document.getElementById("inpUnitario"),
+        descuentoField = document.getElementById("inpDescuento"),
+        unidadField = document.getElementById("inpUnidad"),
+        descripcionField = document.getElementById("inpDescripcion"),
+        objetoImpuesto = document.getElementById("selObjetoImpuesto"),
+        trasladoField = document.getElementById("inpTraslado"),
+        retencionField = document.getElementById("inpRetencion");
+
+    let cantidad = parseFloat(cantidadField.value || "0"),
+        unitario = parseFloat(unitarioField.value || "0"),
+        descuento = parseFloat(descuentoField.value || "0"),
+        subtotal = cantidad * unitario,
+        traslado = (subtotal * parseFloat(trasladoField.value || "0")) / 100,
+        retencion = (subtotal * parseFloat(retencionField.value || "0")) / 100,
+        total = subtotal - descuento + traslado - retencion;
 
     //Si el campo producto / servicio no tiene elemento seleccionado, muestra error.
     if (parseInt(productoServicioField.attr("idselected") || "0") <= 0) {
@@ -973,46 +1173,115 @@ function onAgregarProductoServicioClick() {
         return;
     }
 
-    let listItem = document.querySelector(`#${idLista} li[clave='${productoServicioField.data("clave")}']`);
-    //Si el elemento ya existe, muestra error.
-    if (listItem) {
-        showAlert(msgAgregarProductoServicio, productoServicioRepetido);
-        return;
-    }
+    let oProdServ = {
+        id: productoServicioField.attr("idselected"),
+        objetoImpuestoId: objetoImpuesto.value,
+        cantidad: cantidad,
+        unidadId: unidadField.getAttribute("idselected"),
+        unidad: unidadField.value,
+        clave: productoServicioField.data("clave"),
+        descripcion: descripcionField.value,
+        unitario: unitario,
+        subtotal: subtotal,
+        descuento: descuento,
+        traslado: traslado,
+        retencion: retencion,
+        total: total
+    };
 
-    agregarProductoServicio(productoServicioField.attr("idselected"), productoServicioField.data("clave"), productoServicioField.data("value"), idLista);
-    
-    btnAdd.classList.add("disabled");
+    tableProdServ.bootstrapTable('prepend', [oProdServ]);
 
-    productoServicioField.val("");
-    productoServicioField.attr("idselected", 0);
-}
+    initDialogProdServ();
 
-//Función para añadir un elemento al listado de productos y servicios
-function agregarProductoServicio(id, clave, descripcion, idListaDOM) {
-    let listProductosServicios = document.getElementById(idListaDOM);
-
-    listProductosServicios.innerHTML += `<li id="${id}" clave="${clave}" class="list-group-item">
-                                            <div class="row">
-                                                <div class="col-11 border-end">
-                                                  <div class="fw-bold">${clave}</div>
-                                                  ${descripcion}
-                                                </div>
-                                                <div class="col-1 align-items-center d-flex justify-content-center">
-									                <button type="button" class="btn-close formButton" onclick="onEliminarProductoServicioClick('${clave}', '${idListaDOM}');"></button>
-                                                </div>
-                                            </div>
-								          </li>`;
+    onCerrarClick();
 }
 
 //Función para eliminar un producto o servicio del listado
-function onEliminarProductoServicioClick(clave, idListaDOM) {
-    let listaDOM = document.getElementById(idListaDOM);
-    let listItem = document.querySelector(`#${idListaDOM} li[clave='${clave}']`);
-
-    listItem.remove();
-    listaDOM.classList.remove("form-control");
-    listaDOM.classList.remove("is-invalid");
-    listaDOM.classList.remove("is-valid");
+function onEliminarProductoServicioClick(id) {
+    askConfirmation(btnEliminarTitle, dlgDeleteElementQuestion, function () {
+        tableProdServ.bootstrapTable('removeByUniqueId', id);
+    });
 }
 ////////////////////////////////
+
+////////////////////////////////
+//Funcionalidad Diálogo Productos Servicios
+////////////////////////////////
+//Función para inicializar el diálogo
+function initDialogProdServ() {
+    let prodservField = document.getElementById("inpProductoServicio");
+
+    let cantidadField = document.getElementById("inpCantidad");
+    let unitarioField = document.getElementById("inpUnitario");
+    let descuentoField = document.getElementById("inpDescuento");
+    let unidadField = document.getElementById("inpUnidad");
+    let descripcionField = document.getElementById("inpDescripcion");
+
+    let objetoImpuesto = document.getElementById("selObjetoImpuesto");
+    let trasladoField = document.getElementById("inpTraslado");
+    let retencionField = document.getElementById("inpRetencion");
+
+    let totalField = document.getElementById("totalProducto");
+
+    prodservField.value = "";
+    prodservField.setAttribute('idselected', "");
+
+    cantidadField.value = 1;
+    unitarioField.value = "";
+    descuentoField.value = "";
+    unidadField.value = "";
+    unidadField.setAttribute('idselected', "");
+    descripcionField.value = "";
+
+    objetoImpuesto.value = 0;
+    trasladoField.value = "";
+    retencionField.value = "";
+
+    totalField.textContent = 0.00
+}
+
+//Función para calcular el total de un producto o servicio
+function calcularTotal() {
+    let inpCantidad = document.getElementById("inpCantidad"),
+        inpUnitario = document.getElementById("inpUnitario"),
+        inpDescuento = document.getElementById("inpDescuento"),
+        inpTraslado = document.getElementById("inpTraslado"),
+        inpRetencion = document.getElementById("inpRetencion"),
+        spanTraslado = document.getElementById("trasladoProducto"),
+        spanRetencion = document.getElementById("retencionProducto"),
+        spanTotal = document.getElementById("totalProducto");
+
+    let cantidad = parseFloat(inpCantidad.value || "0"),
+        unitario = parseFloat(inpUnitario.value || "0"),
+        descuento = parseFloat(inpDescuento.value || "0"),
+        subtotal = cantidad * unitario,
+        traslado = (subtotal * parseFloat(inpTraslado.value || "0")) / 100,
+        retencion = (subtotal * parseFloat(inpRetencion.value || "0")) / 100,
+        total = subtotal - descuento + traslado - retencion;
+
+    spanTraslado.textContent = numFormatter.format(traslado);
+    spanRetencion.textContent = numFormatter.format(retencion);   
+    spanTotal.textContent = numFormatter.format(total);
+}
+
+//Función para establecer el comportamiento de los impuestos en base al item seleccionado de objeto impuesto
+function onObjetoImpuestoChanged() {
+    let selObjetoImpuesto = document.getElementById("selObjetoImpuesto"),
+        inpTraslado = document.getElementById("divTraslado"),
+        inpRetencion = document.getElementById("divRetencion"),
+        objetoImpuestoSelected = selObjetoImpuesto.options[selObjetoImpuesto.selectedIndex],
+        claveNoImpuestos = "01";
+
+    inpTraslado.removeAttribute("hidden");
+    inpRetencion.removeAttribute("hidden");
+
+    if (objetoImpuestoSelected.getAttribute("clave") == claveNoImpuestos) {
+        inpTraslado.setAttribute("hidden", true);
+        inpRetencion.setAttribute("hidden", true);
+    }
+    else {
+        inpTraslado.value = 0;
+        inpRetencion.value = 0;
+    }
+}
+/////////////////////
