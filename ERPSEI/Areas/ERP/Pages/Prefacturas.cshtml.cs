@@ -433,12 +433,6 @@ namespace ERPSEI.Areas.ERP.Pages
 				prefactura.TipoCambio = prefacturaModel.TipoCambio;
 				prefactura.TipoComprobanteId = prefacturaModel.TipoComprobanteId;
 
-				//Se busca al usuario logeado
-				AppUser? u = _userManager.FindByNameAsync(User.Identity?.Name ?? "").Result;
-
-				//Se establece al usuario que modificó la prefactura.
-				prefactura.UsuarioUltimaModificacionId = u?.Id;
-
 				if (idPrefactura >= 1)
 				{
 					//Si la prefactura ya existía, la actualiza.
@@ -449,8 +443,14 @@ namespace ERPSEI.Areas.ERP.Pages
 				}
 				else
 				{
-					//De lo contrario, crea al empleado y obtiene su id.
-					idPrefactura = await _prefacturaManager.CreateAsync(prefactura);
+                    //Se busca al usuario logeado
+                    AppUser? u = _userManager.FindByNameAsync(User.Identity?.Name ?? "").Result;
+
+                    //Se establece al usuario que creó la prefactura.
+                    prefactura.UsuarioCreadorId = u?.Id;
+
+                    //De lo contrario, crea al empleado y obtiene su id.
+                    idPrefactura = await _prefacturaManager.CreateAsync(prefactura);
 				}
 
 				//Crea los conceptos de la prefactura
