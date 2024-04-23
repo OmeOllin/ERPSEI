@@ -1,5 +1,5 @@
 using ERPSEI;
-using ERPSEI.Data.Entities;
+using ERPSEI.Data.Managers;
 using ERPSEI.Email;
 using Microsoft.AspNetCore.Identity;
 

@@ -14,6 +14,7 @@ using ERPSEI.Email;
 using ERPSEI.Data.Entities;
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Managers.Empleados;
+using ERPSEI.Data.Managers;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
 {

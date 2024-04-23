@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Microsoft.Extensions.Localization;
-using ERPSEI.Data.Entities;
+using ERPSEI.Data.Managers;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
 {
