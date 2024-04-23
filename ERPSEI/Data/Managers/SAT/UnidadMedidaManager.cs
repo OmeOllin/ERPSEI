@@ -30,12 +30,13 @@ namespace ERPSEI.Data.Managers.SAT
 
 		public async Task<List<UnidadMedida>> SearchUnidades(string texto)
 		{
-			string sql = $"SELECT TOP (20) *" +
-						 $"FROM UnidadesMedida " +
-						 $"WHERE Clave LIKE '%{texto}%' OR Nombre LIKE '%{texto}%' OR Simbolo LIKE '%{texto}%' AND Deshabilitado = 0";
-			List<UnidadMedida> emp = await db.Database.SqlQueryRaw<UnidadMedida>(sql).ToListAsync();
+			List<UnidadMedida> unidades = await db.UnidadesMedida
+				.Where(u => u.Deshabilitado == 0)
+				.Where(u => u.Clave.Contains(texto) || u.Nombre.Contains(texto)|| u.Simbolo.Contains(texto))
+				.Take(20)
+				.ToListAsync();
 
-			return emp;
+			return unidades;
 		}
 
 	}
