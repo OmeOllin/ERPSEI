@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using ERPSEI.Data.Entities.Empresas;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERPSEI.Data.Entities.SAT
 {
@@ -6,6 +7,12 @@ namespace ERPSEI.Data.Entities.SAT
 	{
 		[DatabaseGenerated(DatabaseGeneratedOption.None)]
 		public int Id { get; set; }
+
+		public Empresa? Emisor { get; set; }
+		public int EmisorId { get; set; }
+
+		public Empresa? Receptor { get; set; }
+		public int ReceptorId { get; set; }
 
 		public string Serie { get; set; } = string.Empty;
 
@@ -40,6 +47,6 @@ namespace ERPSEI.Data.Entities.SAT
 		public int Deshabilitado { get; set; }
 
 		public AppUser? UsuarioUltimaModificacion { get; set; }
-		public int? UsuarioUltimaModificacionId { get; set; }
+		public string? UsuarioUltimaModificacionId { get; set; }
 	}
 }

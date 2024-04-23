@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using ERPSEI.Data.Entities.SAT;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERPSEI.Data.Entities.Empresas
 {
@@ -53,6 +54,9 @@ namespace ERPSEI.Data.Entities.Empresas
         public ICollection<BancoEmpresa>? BancosEmpresa { get; }
 
         public ICollection<ArchivoEmpresa>? ArchivosEmpresa { get; }
+
+		public ICollection<Prefactura>? PrefacturasEmisor { get; set; }
+		public ICollection<Prefactura>? PrefacturasReceptor { get; set; }
 
 	}
 }

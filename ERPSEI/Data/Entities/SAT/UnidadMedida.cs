@@ -20,7 +20,7 @@ namespace ERPSEI.Data.Entities.SAT
 
 		public int Deshabilitado { get; set; } = 0;
 
-		public Concepto? Concepto { get; set; }
+		public ICollection<Concepto> Conceptos { get; set; } = new List<Concepto>();
 
 	}
 }
