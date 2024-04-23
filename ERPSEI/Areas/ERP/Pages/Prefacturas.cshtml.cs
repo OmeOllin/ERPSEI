@@ -1,6 +1,5 @@
 using ERPSEI.Data;
 using ERPSEI.Data.Entities.Empleados;
-using ERPSEI.Data.Entities;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.SAT;
 using ERPSEI.Data.Managers;
@@ -9,7 +8,6 @@ using ERPSEI.Data.Managers.SAT;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
@@ -18,7 +16,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ERPSEI.Areas.ERP.Pages
 {
-    [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
+	[Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
 	public class PrefacturasModel : PageModel
 	{
 		private readonly ApplicationDbContext _db;
@@ -197,6 +195,22 @@ namespace ERPSEI.Areas.ERP.Pages
 		{
 		}
 
+		public async Task<JsonResult> OnPostDatosAdicionales(int idEmpleado)
+		{
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["PrefacturaConsultadaUnsuccessfully"]);
+			try
+			{
+				resp.Datos = await GetDatosAdicionales(idEmpleado);
+				resp.TieneError = false;
+				resp.Mensaje = _strLocalizer["PrefacturaConsultadaSuccessfully"];
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+			}
+
+			return new JsonResult(resp);
+		}
 		public async Task<JsonResult> OnPostFiltrar()
 		{
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["PrefacturasFiltradasUnsuccessfully"]);
@@ -213,15 +227,32 @@ namespace ERPSEI.Areas.ERP.Pages
 
 			return new JsonResult(resp);
 		}
+		private async Task<string> GetDatosAdicionales(int idPrefactura)
+		{
+			string jsonResponse;
+			Prefactura? p = await _prefacturaManager.GetByIdWithAdicionalesAsync(idPrefactura);
+
+			if (p == null) { throw new Exception($"No se encontró información de la prefactura id {idPrefactura}"); }
+
+			List<string> jsonConceptos;
+
+			jsonConceptos = getListJsonConceptos(p.Conceptos);
+
+			jsonResponse = $"{{" +
+								$"\"conceptos\": [{string.Join(",", jsonConceptos)}], " +
+							$"}}";
+
+			return jsonResponse;
+		}
 		private async Task<string> GetPrefacturasList(FiltroModel? filtro = null)
 		{
-			string nombreArea;
-			string nombreSubarea;
-			string nombrePuesto;
-			string nombreOficina;
-			string nombreGenero;
-			string nombreEstadoCivil;
-			bool usuarioConfirmado = false;
+			string nombreTipo;
+			string nombreMoneda;
+			string nombreForma;
+			string nombreMetodo;
+			string nombreUsoCFDI;
+			string nombreExportacion;
+			
 			string jsonResponse;
 			List<string> jsonPrefacturas = new List<string>();
 			List<Prefactura> prefacturas;
@@ -229,71 +260,54 @@ namespace ERPSEI.Areas.ERP.Pages
 			if (filtro != null)
 			{
 				prefacturas = await _prefacturaManager.GetAllAsync(
-					filtro.FechaIngresoInicio,
-					filtro.FechaIngresoFin,
-					filtro.FechaNacimientoInicio,
-					filtro.FechaNacimientoFin,
-					filtro.PuestoId,
-					filtro.AreaId,
-					filtro.SubareaId,
-					filtro.OficinaId
+					filtro.FechaInicio,
+					filtro.FechaFin,
+					filtro.Serie,
+					filtro.MonedaId,
+					filtro.FormaPagoId,
+					filtro.MetodoPagoId,
+					filtro.UsoCFDIId,
+					false
 				);
 			}
 			else
 			{
-				prefacturas = await _empleadoManager.GetAllAsync();
+				prefacturas = await _prefacturaManager.GetAllAsync();
 			}
 
-			foreach (Empleado e in prefacturas)
+			foreach (Prefactura p in prefacturas)
 			{
-				nombreArea = e.Area != null ? e.Area.Nombre : "";
-				nombreSubarea = e.Subarea != null ? e.Subarea.Nombre : "";
-				nombrePuesto = e.Puesto != null ? e.Puesto.Nombre : "";
-				nombreOficina = e.Oficina != null ? e.Oficina.Nombre : "";
-				nombreGenero = e.Genero != null ? e.Genero.Nombre : "";
-				nombreEstadoCivil = e.EstadoCivil != null ? e.EstadoCivil.Nombre : "";
-				AppUser? usuario = e.UserId != null && e.UserId.Length >= 1 ? await _userManager.FindByIdAsync(e.UserId) : null;
-				usuarioConfirmado = usuario != null && usuario.EmailConfirmed;
+				nombreTipo = p.TipoComprobante != null ? p.TipoComprobante.Descripcion : "";
+				nombreMoneda = p.Moneda != null ? p.Moneda.Descripcion : "";
+				nombreForma = p.FormaPago != null ? p.FormaPago.Descripcion : "";
+				nombreMetodo = p.MetodoPago != null ? p.MetodoPago.Descripcion : "";
+				nombreUsoCFDI = p.UsoCFDI != null ? p.UsoCFDI.Descripcion : "";
+				nombreExportacion = p.Exportacion != null ? p.Exportacion.Descripcion : "";
 
-				DateTime? fechaIngreso = e.FechaIngreso == DateTime.MinValue ? null : e.FechaIngreso;
-				DateTime? fechaNacimiento = e.FechaNacimiento == DateTime.MinValue ? null : e.FechaNacimiento;
+				DateTime? fecha = p.Fecha == DateTime.MinValue ? null : p.Fecha;
 
 				jsonPrefacturas.Add(
 					"{" +
-						$"\"id\": {e.Id}," +
-						$"\"nombre\": \"{e.Nombre}\", " +
-						$"\"nombrePreferido\": \"{e.NombrePreferido}\", " +
-						$"\"apellidoPaterno\": \"{e.ApellidoPaterno}\", " +
-						$"\"apellidoMaterno\": \"{e.ApellidoMaterno}\", " +
-						$"\"nombreCompleto\": \"{e.NombreCompleto}\", " +
-						$"\"fechaIngreso\": \"{fechaIngreso:dd/MM/yyyy}\", " +
-						$"\"fechaIngresoJS\": \"{fechaIngreso:yyyy-MM-dd}\", " +
-						$"\"fechaNacimiento\": \"{fechaNacimiento:dd/MM/yyyy}\", " +
-						$"\"fechaNacimientoJS\": \"{fechaNacimiento:yyyy-MM-dd}\", " +
-						$"\"direccion\": \"{e.Direccion.Trim()}\", " +
-						$"\"telefono\": \"{e.Telefono}\", " +
-						$"\"email\": \"{e.Email}\", " +
-						$"\"generoId\": {e.GeneroId ?? 0}, " +
-						$"\"genero\": \"{nombreGenero}\", " +
-						$"\"subareaId\": {e.SubareaId ?? 0}, " +
-						$"\"subarea\": \"{nombreSubarea}\", " +
-						$"\"oficinaId\": {e.OficinaId ?? 0}, " +
-						$"\"oficina\": \"{nombreOficina}\", " +
-						$"\"puestoId\": {e.PuestoId ?? 0}, " +
-						$"\"puesto\": \"{nombrePuesto}\", " +
-						$"\"areaId\": {e.AreaId ?? 0}, " +
-						$"\"area\": \"{nombreArea}\", " +
-						$"\"estadoCivilId\": {e.EstadoCivilId ?? 0}, " +
-						$"\"estadoCivil\": \"{nombreEstadoCivil}\", " +
-						$"\"jefeId\": {e.JefeId ?? 0}, " +
-						$"\"jefe\": \"\", " +
-						$"\"curp\": \"{e.CURP}\", " +
-						$"\"rfc\": \"{e.RFC}\", " +
-						$"\"nss\": \"{e.NSS}\", " +
-						$"\"usuarioId\": \"{e.UserId}\", " +
-						$"\"usuarioValido\": \"{(usuarioConfirmado ? "1" : "0")}\", " +
-						$"\"contactosEmergencia\": [], " +
-						$"\"archivos\": [] " +
+						$"\"id\": {p.Id}," +
+						$"\"serie\": \"{p.Serie}\", " +
+						$"\"folio\": \"{p.Folio}\", " +
+						$"\"tipoComprobante\": \"{nombreTipo}\", " +
+						$"\"tipoComprobanteId\": {p.TipoComprobanteId}, " +
+						$"\"fecha\": \"{fecha:dd/MM/yyyy}\", " +
+						$"\"fechaJS\": \"{fecha:yyyy-MM-dd}\", " +
+						$"\"moneda\": \"{nombreMoneda}\", " +
+						$"\"monedaId\": {p.TipoComprobanteId}, " +
+						$"\"formaPago\": \"{nombreForma}\", " +
+						$"\"formaPagoId\": {p.TipoComprobanteId}, " +
+						$"\"metodoPago\": \"{nombreMetodo}\", " +
+						$"\"metodoPagoId\": {p.TipoComprobanteId}, " +
+						$"\"usoCFDI\": \"{nombreUsoCFDI}\", " +
+						$"\"usoCFDIId\": {p.TipoComprobanteId}, " +
+						$"\"exportacion\": \"{nombreExportacion}\", " +
+						$"\"exportacionId\": {p.ExportacionId}, " +
+						$"\"numeroOperacion\": \"{p.NumeroOperacion}\", " +
+						$"\"usuarioId\": {p.UsuarioUltimaModificacionId}, " +
+						$"\"conceptos\": [] " +
 					"}"
 				);
 			}
@@ -302,102 +316,39 @@ namespace ERPSEI.Areas.ERP.Pages
 
 			return jsonResponse;
 		}
-		private List<string> getListJsonContactosEmergencia(ICollection<ContactoEmergencia>? contactos)
+		private List<string> getListJsonConceptos(ICollection<Concepto>? conceptos)
 		{
-			List<string> jsonContactosEmergencia = new List<string>();
-			if (contactos != null)
+			string nombreProdServ;
+			string nombreUnidad;
+			string nombreObjetoImpuesto;
+			List<string> jsonConceptos = new List<string>();
+			if (conceptos != null)
 			{
-				List<ContactoEmergencia> contacts = (from c in contactos
-													 orderby c.Id ascending
-													 select c).ToList();
-				foreach (ContactoEmergencia c in contacts)
+				List<Concepto> concepts = (from c in conceptos
+											orderby c.Id ascending
+											select c).ToList();
+				foreach (Concepto c in concepts)
 				{
-					jsonContactosEmergencia.Add($"{{\"nombre\": \"{c.Nombre}\", \"telefono\": \"{c.Telefono}\"}}");
+					nombreProdServ = c.ProductoServicio != null ? c.ProductoServicio.Descripcion : string.Empty;
+					nombreUnidad = c.UnidadMedida != null ? c.UnidadMedida.Descripcion : string.Empty;
+					nombreObjetoImpuesto = c.ObjetoImpuesto != null ? c.ObjetoImpuesto.Descripcion : string.Empty;
+					jsonConceptos.Add($"{{" +
+										$"\"productoServicioId\": {c.ProductoServicioId}, " +
+										$"\"productoServicio\": \"{nombreProdServ}\", " +
+										$"\"cantidad\": {c.Cantidad}, " +
+										$"\"unitario\": {c.PrecioUnitario}, " +
+										$"\"descuento\": {c.Descuento}, " +
+										$"\"unidadId\": {c.UnidadMedidaId}, " +
+										$"\"unidad\": \"{nombreUnidad}\", " +
+										$"\"descripcion\": \"{c.Descripcion}\", " +
+										$"\"objetoImpuestoId\": {c.ObjetoImpuestoId}, " +
+										$"\"objetoImpuesto\": \"{nombreObjetoImpuesto}\", " +
+										$"\"traslado\": {c.TasaTraslado}, " +
+										$"\"retencion\":{c.TasaRetencion}" +	
+									  $"}}");
 				}
 			}
-			return jsonContactosEmergencia;
-		}
-		private List<string> getListJsonArchivos(ICollection<SemiArchivoEmpleado>? archivos)
-		{
-			List<string> jsonArchivos = new List<string>();
-			if (archivos != null)
-			{
-				//Si el usuario ya tiene archivos, se llena el arreglo de datos a partir de ellos.					
-				List<SemiArchivoEmpleado> userFiles = (from userFile in archivos
-													   orderby userFile.TipoArchivoId ascending
-													   select userFile).ToList();
-
-				foreach (SemiArchivoEmpleado a in userFiles)
-				{
-					string htmlContainer = string.Empty;
-					string imgSrc = string.Empty;
-					string id = Guid.NewGuid().ToString();
-					//Si el archivo tiene contenido
-					if (a.FileSize >= 1)
-					{
-						//Asigna la información del archivo al arreglo de datos.
-						string b64 = Convert.ToBase64String(a.Archivo);
-						bool isJPG = a.Extension == "jpg" || a.Extension == "jpeg";
-						bool isPNG = a.Extension == "png";
-						bool isPDF = a.Extension == "pdf";
-
-						if (isPDF)
-						{
-							imgSrc = $"data:application/pdf;base64,{b64}";
-							htmlContainer = $"<canvas id = '{id}' b64 = '{b64}' class = 'canvaspdf'></canvas>";
-						}
-						else if (isJPG || isPNG)
-						{
-							if (isJPG)
-							{
-								imgSrc = $"data:image/jpeg;base64,{b64}";
-							}
-							else if (isPNG)
-							{
-								imgSrc = $"data:image/png;base64,{b64}";
-							}
-							htmlContainer = $"<img id = '{id}' src = '{imgSrc}' style='max-height: 200px;'/>";
-						}
-					}
-
-					jsonArchivos.Add(
-						"{" +
-							$"\"id\": \"{a.Id}\"," +
-							$"\"nombre\": \"{a.Nombre}\"," +
-							$"\"tipoArchivoId\": {a.TipoArchivoId}," +
-							$"\"extension\": \"{a.Extension}\"," +
-							$"\"imgSrc\": \"{imgSrc}\"," +
-							$"\"htmlContainer\": \"{htmlContainer}\"," +
-							$"\"fileSize\": \"{a.FileSize}\"" +
-						"}"
-					);
-				}
-			}
-			else
-			{
-				//Si el usuario no tiene archivos, se llena el arreglo de datos a partir del enum.
-				foreach (FileTypes i in Enum.GetValues(typeof(FileTypes)))
-				{
-					string imgSrc = string.Empty;
-					string htmlContainer = string.Empty;
-					//Si el tipo de archivo es Imagen de perfil, entonces agrega valor default.
-					if ((int)i == 0) { imgSrc = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/img/default_profile_pic.png"; }
-					if ((int)i != 0) { htmlContainer = "<i class='bi bi-file-image opacity-50' style='font-size:105px'></i>"; }
-					jsonArchivos.Add(
-						"{" +
-							$"\"id\": \"{Guid.NewGuid()}\"," +
-							$"\"nombre\": \"\"," +
-							$"\"tipoArchivoId\": {(int)i}," +
-							$"\"extension\": \"\"," +
-							$"\"imgSrc\": \"{imgSrc}\"," +
-							$"\"htmlContainer\": \"{htmlContainer}\"," +
-							$"\"fileSize\": \"0\"" +
-						"}"
-					);
-				}
-			}
-
-			return jsonArchivos;
+			return jsonConceptos;
 		}
 
 		public async Task<JsonResult> OnPostSave() {

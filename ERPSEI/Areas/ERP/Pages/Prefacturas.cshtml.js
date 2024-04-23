@@ -458,6 +458,48 @@ function initCFDIDialog(action, row) {
     receptorField.setAttribute("idselected", row.receptorId);
     receptorField.value = row.receptor;
 
+    if (action == NUEVO || (row.hasDatosAdicionales || false)) {
+        establecerDatosAdicionales(row);
+        dlgCFDIModal.toggle();
+        return;
+    }
+
+    doAjax(
+        "/ERP/Prefacturas/DatosAdicionales",
+        { idPrefactura: row.id },
+        function (resp) {
+            if (resp.tieneError) {
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    let summary = ``;
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                }
+                showError(dlgTitle.innerHTML, resp.mensaje);
+                return;
+            }
+
+            //Se establece el row con los datos adicionales.
+            if (typeof resp.datos == "string" && resp.datos.length >= 1) { resp.datos = JSON.parse(resp.datos); };
+            row.conceptos = resp.datos.conceptos || [];
+            row.hasDatosAdicionales = true;
+
+            //Actualiza el row para no tener que volver a obtener los datos la próxima vez.
+            table.bootstrapTable('updateByUniqueId', { id: row.id, row: row });
+
+            establecerDatosAdicionales(row);
+            dlgCFDIModal.toggle();
+
+        }, function (error) {
+            showError("Error", error);
+        },
+        postOptions
+    );
+}
+
+//Función para establecer los datos adicionales de la prefactura
+function establecerDatosAdicionales(row) {
     //Se establecen los productos y servicios
     let data = [];
     row.conceptos = row.conceptos || [];
