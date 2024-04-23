@@ -55,8 +55,8 @@ namespace ERPSEI.Data.Entities.Empresas
 
         public ICollection<ArchivoEmpresa>? ArchivosEmpresa { get; }
 
-		public ICollection<Prefactura>? PrefacturasEmisor { get; set; }
-		public ICollection<Prefactura>? PrefacturasReceptor { get; set; }
+		public ICollection<Prefactura>? PrefacturasEmitidas { get; set; }
+		public ICollection<Prefactura>? PrefacturasRecibidas { get; set; }
 
 	}
 }
