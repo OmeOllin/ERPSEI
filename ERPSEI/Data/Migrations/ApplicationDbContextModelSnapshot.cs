@@ -1097,15 +1097,13 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ObjetoImpuestoId")
-                        .IsUnique();
+                    b.HasIndex("ObjetoImpuestoId");
 
                     b.HasIndex("PrefacturaId");
 
                     b.HasIndex("ProductoServicioId");
 
-                    b.HasIndex("UnidadMedidaId")
-                        .IsUnique();
+                    b.HasIndex("UnidadMedidaId");
 
                     b.ToTable("Conceptos");
                 });
@@ -1344,6 +1342,9 @@ namespace ERPSEI.Data.Migrations
                     b.Property<int>("Deshabilitado")
                         .HasColumnType("int");
 
+                    b.Property<int>("EmisorId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ExportacionId")
                         .HasColumnType("int");
 
@@ -1366,6 +1367,9 @@ namespace ERPSEI.Data.Migrations
                     b.Property<int?>("NumeroOperacion")
                         .HasColumnType("int");
 
+                    b.Property<int>("ReceptorId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Serie")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1380,7 +1384,28 @@ namespace ERPSEI.Data.Migrations
                     b.Property<int>("UsoCFDIId")
                         .HasColumnType("int");
 
+                    b.Property<string>("UsuarioUltimaModificacionId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("EmisorId");
+
+                    b.HasIndex("ExportacionId");
+
+                    b.HasIndex("FormaPagoId");
+
+                    b.HasIndex("MetodoPagoId");
+
+                    b.HasIndex("MonedaId");
+
+                    b.HasIndex("ReceptorId");
+
+                    b.HasIndex("TipoComprobanteId");
+
+                    b.HasIndex("UsoCFDIId");
+
+                    b.HasIndex("UsuarioUltimaModificacionId");
 
                     b.ToTable("Prefacturas");
                 });
@@ -1931,8 +1956,8 @@ namespace ERPSEI.Data.Migrations
             modelBuilder.Entity("ERPSEI.Data.Entities.SAT.Concepto", b =>
                 {
                     b.HasOne("ERPSEI.Data.Entities.SAT.ObjetoImpuesto", "ObjetoImpuesto")
-                        .WithOne("Concepto")
-                        .HasForeignKey("ERPSEI.Data.Entities.SAT.Concepto", "ObjetoImpuestoId")
+                        .WithMany("Conceptos")
+                        .HasForeignKey("ObjetoImpuestoId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -1948,8 +1973,8 @@ namespace ERPSEI.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("ERPSEI.Data.Entities.SAT.UnidadMedida", "UnidadMedida")
-                        .WithOne("Concepto")
-                        .HasForeignKey("ERPSEI.Data.Entities.SAT.Concepto", "UnidadMedidaId")
+                        .WithMany("Conceptos")
+                        .HasForeignKey("UnidadMedidaId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -1960,6 +1985,79 @@ namespace ERPSEI.Data.Migrations
                     b.Navigation("ProductoServicio");
 
                     b.Navigation("UnidadMedida");
+                });
+
+            modelBuilder.Entity("ERPSEI.Data.Entities.SAT.Prefactura", b =>
+                {
+                    b.HasOne("ERPSEI.Data.Entities.Empresas.Empresa", "Emisor")
+                        .WithMany("PrefacturasEmisor")
+                        .HasForeignKey("EmisorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ERPSEI.Data.Entities.SAT.Exportacion", "Exportacion")
+                        .WithMany("Prefacturas")
+                        .HasForeignKey("ExportacionId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ERPSEI.Data.Entities.SAT.FormaPago", "FormaPago")
+                        .WithMany("Prefacturas")
+                        .HasForeignKey("FormaPagoId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ERPSEI.Data.Entities.SAT.MetodoPago", "MetodoPago")
+                        .WithMany("Prefacturas")
+                        .HasForeignKey("MetodoPagoId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ERPSEI.Data.Entities.SAT.Moneda", "Moneda")
+                        .WithMany("Prefacturas")
+                        .HasForeignKey("MonedaId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ERPSEI.Data.Entities.Empresas.Empresa", "Receptor")
+                        .WithMany("PrefacturasReceptor")
+                        .HasForeignKey("ReceptorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ERPSEI.Data.Entities.SAT.TipoComprobante", "TipoComprobante")
+                        .WithMany("Prefacturas")
+                        .HasForeignKey("TipoComprobanteId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ERPSEI.Data.Entities.SAT.UsoCFDI", "UsoCFDI")
+                        .WithMany("Prefacturas")
+                        .HasForeignKey("UsoCFDIId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ERPSEI.Data.Entities.AppUser", "UsuarioUltimaModificacion")
+                        .WithMany("Prefacturas")
+                        .HasForeignKey("UsuarioUltimaModificacionId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Emisor");
+
+                    b.Navigation("Exportacion");
+
+                    b.Navigation("FormaPago");
+
+                    b.Navigation("MetodoPago");
+
+                    b.Navigation("Moneda");
+
+                    b.Navigation("Receptor");
+
+                    b.Navigation("TipoComprobante");
+
+                    b.Navigation("UsoCFDI");
+
+                    b.Navigation("UsuarioUltimaModificacion");
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.SAT.TasaOCuota", b =>
@@ -2032,6 +2130,11 @@ namespace ERPSEI.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ERPSEI.Data.Entities.AppUser", b =>
+                {
+                    b.Navigation("Prefacturas");
+                });
+
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.Area", b =>
                 {
                     b.Navigation("Empleados");
@@ -2083,6 +2186,10 @@ namespace ERPSEI.Data.Migrations
                     b.Navigation("ArchivosEmpresa");
 
                     b.Navigation("BancosEmpresa");
+
+                    b.Navigation("PrefacturasEmisor");
+
+                    b.Navigation("PrefacturasReceptor");
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.Nivel", b =>
@@ -2112,14 +2219,34 @@ namespace ERPSEI.Data.Migrations
                     b.Navigation("ActividadesEconomicasEmpresa");
                 });
 
+            modelBuilder.Entity("ERPSEI.Data.Entities.SAT.Exportacion", b =>
+                {
+                    b.Navigation("Prefacturas");
+                });
+
+            modelBuilder.Entity("ERPSEI.Data.Entities.SAT.FormaPago", b =>
+                {
+                    b.Navigation("Prefacturas");
+                });
+
             modelBuilder.Entity("ERPSEI.Data.Entities.SAT.Impuesto", b =>
                 {
                     b.Navigation("TasasOCuotas");
                 });
 
+            modelBuilder.Entity("ERPSEI.Data.Entities.SAT.MetodoPago", b =>
+                {
+                    b.Navigation("Prefacturas");
+                });
+
+            modelBuilder.Entity("ERPSEI.Data.Entities.SAT.Moneda", b =>
+                {
+                    b.Navigation("Prefacturas");
+                });
+
             modelBuilder.Entity("ERPSEI.Data.Entities.SAT.ObjetoImpuesto", b =>
                 {
-                    b.Navigation("Concepto");
+                    b.Navigation("Conceptos");
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.SAT.Prefactura", b =>
@@ -2132,6 +2259,11 @@ namespace ERPSEI.Data.Migrations
                     b.Navigation("ProductosServiciosPerfil");
                 });
 
+            modelBuilder.Entity("ERPSEI.Data.Entities.SAT.TipoComprobante", b =>
+                {
+                    b.Navigation("Prefacturas");
+                });
+
             modelBuilder.Entity("ERPSEI.Data.Entities.SAT.TipoFactor", b =>
                 {
                     b.Navigation("TasasOCuotas");
@@ -2139,7 +2271,12 @@ namespace ERPSEI.Data.Migrations
 
             modelBuilder.Entity("ERPSEI.Data.Entities.SAT.UnidadMedida", b =>
                 {
-                    b.Navigation("Concepto");
+                    b.Navigation("Conceptos");
+                });
+
+            modelBuilder.Entity("ERPSEI.Data.Entities.SAT.UsoCFDI", b =>
+                {
+                    b.Navigation("Prefacturas");
                 });
 #pragma warning restore 612, 618
         }

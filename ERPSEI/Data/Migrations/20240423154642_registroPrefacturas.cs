@@ -16,6 +16,8 @@ namespace ERPSEI.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
+                    EmisorId = table.Column<int>(type: "int", nullable: false),
+                    ReceptorId = table.Column<int>(type: "int", nullable: false),
                     Serie = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Folio = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TipoComprobanteId = table.Column<int>(type: "int", nullable: false),
@@ -27,11 +29,57 @@ namespace ERPSEI.Data.Migrations
                     UsoCFDIId = table.Column<int>(type: "int", nullable: false),
                     ExportacionId = table.Column<int>(type: "int", nullable: true),
                     NumeroOperacion = table.Column<int>(type: "int", nullable: true),
-                    Deshabilitado = table.Column<int>(type: "int", nullable: false)
+                    Deshabilitado = table.Column<int>(type: "int", nullable: false),
+                    UsuarioUltimaModificacionId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Prefacturas", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Prefacturas_AspNetUsers_UsuarioUltimaModificacionId",
+                        column: x => x.UsuarioUltimaModificacionId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Prefacturas_Empresas_EmisorId",
+                        column: x => x.EmisorId,
+                        principalTable: "Empresas",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Prefacturas_Empresas_ReceptorId",
+                        column: x => x.ReceptorId,
+                        principalTable: "Empresas",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Prefacturas_Exportaciones_ExportacionId",
+                        column: x => x.ExportacionId,
+                        principalTable: "Exportaciones",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Prefacturas_FormasPago_FormaPagoId",
+                        column: x => x.FormaPagoId,
+                        principalTable: "FormasPago",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Prefacturas_MetodosPago_MetodoPagoId",
+                        column: x => x.MetodoPagoId,
+                        principalTable: "MetodosPago",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Prefacturas_Monedas_MonedaId",
+                        column: x => x.MonedaId,
+                        principalTable: "Monedas",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Prefacturas_TiposComprobante_TipoComprobanteId",
+                        column: x => x.TipoComprobanteId,
+                        principalTable: "TiposComprobante",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Prefacturas_UsosCFDI_UsoCFDIId",
+                        column: x => x.UsoCFDIId,
+                        principalTable: "UsosCFDI",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -79,8 +127,7 @@ namespace ERPSEI.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Conceptos_ObjetoImpuestoId",
                 table: "Conceptos",
-                column: "ObjetoImpuestoId",
-                unique: true);
+                column: "ObjetoImpuestoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Conceptos_PrefacturaId",
@@ -95,8 +142,52 @@ namespace ERPSEI.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Conceptos_UnidadMedidaId",
                 table: "Conceptos",
-                column: "UnidadMedidaId",
-                unique: true);
+                column: "UnidadMedidaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prefacturas_EmisorId",
+                table: "Prefacturas",
+                column: "EmisorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prefacturas_ExportacionId",
+                table: "Prefacturas",
+                column: "ExportacionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prefacturas_FormaPagoId",
+                table: "Prefacturas",
+                column: "FormaPagoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prefacturas_MetodoPagoId",
+                table: "Prefacturas",
+                column: "MetodoPagoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prefacturas_MonedaId",
+                table: "Prefacturas",
+                column: "MonedaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prefacturas_ReceptorId",
+                table: "Prefacturas",
+                column: "ReceptorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prefacturas_TipoComprobanteId",
+                table: "Prefacturas",
+                column: "TipoComprobanteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prefacturas_UsoCFDIId",
+                table: "Prefacturas",
+                column: "UsoCFDIId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prefacturas_UsuarioUltimaModificacionId",
+                table: "Prefacturas",
+                column: "UsuarioUltimaModificacionId");
         }
 
         /// <inheritdoc />

@@ -260,17 +260,19 @@ namespace ERPSEI.Data
 			b.Entity<TipoComprobante>().Property(t => t.ValorMaximo).HasPrecision(24, 6);
 
 			b.Entity<Prefactura>().HasMany(p => p.Conceptos).WithOne(c => c.Prefactura).OnDelete(DeleteBehavior.NoAction);
-			b.Entity<Prefactura>().HasOne(p => p.TipoComprobante).WithOne(t => t.Prefactura).OnDelete(DeleteBehavior.NoAction);
-			b.Entity<Prefactura>().HasOne(p => p.Moneda).WithOne(m => m.Prefactura).OnDelete(DeleteBehavior.NoAction);
-			b.Entity<Prefactura>().HasOne(p => p.FormaPago).WithOne(f => f.Prefactura).OnDelete(DeleteBehavior.NoAction);
-			b.Entity<Prefactura>().HasOne(p => p.MetodoPago).WithOne(m => m.Prefactura).OnDelete(DeleteBehavior.NoAction);
-			b.Entity<Prefactura>().HasOne(p => p.UsoCFDI).WithOne(u => u.Prefactura).OnDelete(DeleteBehavior.NoAction);
-			b.Entity<Prefactura>().HasOne(p => p.Exportacion).WithOne(e => e.Prefactura).OnDelete(DeleteBehavior.NoAction);
-			b.Entity<Prefactura>().HasOne(p => p.UsuarioUltimaModificacion).WithOne(u => u.Prefactura).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Prefactura>().HasOne(p => p.Emisor).WithMany(e => e.PrefacturasEmisor).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Prefactura>().HasOne(p => p.Receptor).WithMany(e => e.PrefacturasReceptor).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Prefactura>().HasOne(p => p.TipoComprobante).WithMany(e => e.Prefacturas).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Prefactura>().HasOne(p => p.Moneda).WithMany(e => e.Prefacturas).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Prefactura>().HasOne(p => p.FormaPago).WithMany(e => e.Prefacturas).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Prefactura>().HasOne(p => p.MetodoPago).WithMany(e => e.Prefacturas).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Prefactura>().HasOne(p => p.UsoCFDI).WithMany(e => e.Prefacturas).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Prefactura>().HasOne(p => p.Exportacion).WithMany(e => e.Prefacturas).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Prefactura>().HasOne(p => p.UsuarioUltimaModificacion).WithMany(e => e.Prefacturas).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Prefactura>().Property(c => c.TipoCambio).HasPrecision(18, 6);
 
-			b.Entity<Concepto>().HasOne(c => c.UnidadMedida).WithOne(u => u.Concepto).OnDelete(DeleteBehavior.NoAction);
-			b.Entity<Concepto>().HasOne(c => c.ObjetoImpuesto).WithOne(o => o.Concepto).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Concepto>().HasOne(c => c.UnidadMedida).WithMany(e => e.Conceptos).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Concepto>().HasOne(c => c.ObjetoImpuesto).WithMany(e => e.Conceptos).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Concepto>().Property(c => c.PrecioUnitario).HasPrecision(18, 6);
 			b.Entity<Concepto>().Property(c => c.Descuento).HasPrecision(18, 6);
 			b.Entity<Concepto>().Property(c => c.TasaTraslado).HasPrecision(18, 6);
