@@ -1,4 +1,5 @@
 using ERPSEI.Data;
+using ERPSEI.Data.Entities;
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.SAT;
@@ -8,6 +9,7 @@ using ERPSEI.Data.Managers.SAT;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
@@ -20,6 +22,7 @@ namespace ERPSEI.Areas.ERP.Pages
 	public class PrefacturasModel : PageModel
 	{
 		private readonly ApplicationDbContext _db;
+		private readonly UserManager<AppUser> _userManager;
 		private readonly IRWCatalogoManager<Perfil> _perfilManager;
 		private readonly IUnidadMedidaManager _unidadMedidaManager;
 		private readonly IProductoServicioManager _productosServiciosManager;
@@ -75,34 +78,29 @@ namespace ERPSEI.Areas.ERP.Pages
 
 		public class ConceptoModel
 		{
-			[Required(ErrorMessage = "Required")]
 			[Display(Name = "CantidadField")]
 			public int? Cantidad { get; set; }
 
-			[Required(ErrorMessage = "Required")]
 			[Display(Name = "UnidadField")]
 			public int? UnidadId { get; set; }
 
-			[Required(ErrorMessage = "Required")]
 			[Display(Name = "DescripcionField")]
 			public string? Descripcion { get; set; } = string.Empty;
 
-			[Required(ErrorMessage = "Required")]
 			[Display(Name = "UnitarioField")]
-			public int? Unitario { get; set; }
+			public decimal? Unitario { get; set; }
 
 			[Display(Name = "DescuentoField")]
-			public int? Descuento { get; set; }
+			public decimal? Descuento { get; set; }
 
-			[Required(ErrorMessage = "Required")]
 			[Display(Name = "ObjetoImpuestoField")]
 			public int? ObjetoImpuestoId { get; set; }
 
 			[Display(Name = "TrasladoField")]
-			public int? Traslado { get; set; }
+			public decimal? Traslado { get; set; }
 
 			[Display(Name = "RetencionField")]
-			public int? Retencion { get; set; }
+			public decimal? Retencion { get; set; }
 
 			[Display(Name = "SearchProductServiceField")]
 			public int? ProductoServicioId { get; set; }
@@ -114,6 +112,11 @@ namespace ERPSEI.Areas.ERP.Pages
 		public class CFDIModel
 		{
 			public int Id { get; set; }
+
+			public int EmisorId { get; set; }
+
+			public int ReceptorId { get; set; }
+
 			[Required(ErrorMessage = "Required")]
 			[RegularExpression(RegularExpressions.Alphabetic, ErrorMessage = "Alphabetic")]
 			[Display(Name = "SerieField")]
@@ -165,6 +168,7 @@ namespace ERPSEI.Areas.ERP.Pages
 
 		public PrefacturasModel(
 			ApplicationDbContext db,
+			UserManager<AppUser> userManager,
 			IRWCatalogoManager<Perfil> perfilManager,
 			IUnidadMedidaManager unidadMedidaManager,
 			IProductoServicioManager productosServiciosManager,
@@ -176,6 +180,7 @@ namespace ERPSEI.Areas.ERP.Pages
         )
         {
 			_db = db;
+			_userManager = userManager;
 			_perfilManager = perfilManager;
 			_unidadMedidaManager = unidadMedidaManager;
 			_productosServiciosManager = productosServiciosManager;
@@ -306,7 +311,7 @@ namespace ERPSEI.Areas.ERP.Pages
 						$"\"exportacion\": \"{nombreExportacion}\", " +
 						$"\"exportacionId\": {p.ExportacionId}, " +
 						$"\"numeroOperacion\": \"{p.NumeroOperacion}\", " +
-						$"\"usuarioId\": {p.UsuarioUltimaModificacionId}, " +
+						$"\"usuarioId\": \"{p.UsuarioUltimaModificacionId}\", " +
 						$"\"conceptos\": [] " +
 					"}"
 				);
@@ -413,6 +418,8 @@ namespace ERPSEI.Areas.ERP.Pages
 				if (prefactura != null) { idPrefactura = prefactura.Id; } else { prefactura = new Prefactura(); }
 
 				//Llena los datos de la prefactura.
+				prefactura.EmisorId = prefacturaModel.EmisorId;
+				prefactura.ReceptorId = prefacturaModel.ReceptorId;
 				prefactura.Fecha = prefacturaModel.Fecha;
 				prefactura.Serie = prefacturaModel.Serie;
 				prefactura.Folio = prefacturaModel.Folio;
@@ -425,6 +432,12 @@ namespace ERPSEI.Areas.ERP.Pages
 				prefactura.NumeroOperacion = prefacturaModel.NumeroOperacion;
 				prefactura.TipoCambio = prefacturaModel.TipoCambio;
 				prefactura.TipoComprobanteId = prefacturaModel.TipoComprobanteId;
+
+				//Se busca al usuario logeado
+				AppUser? u = _userManager.FindByNameAsync(User.Identity?.Name ?? "").Result;
+
+				//Se establece al usuario que modificó la prefactura.
+				prefactura.UsuarioUltimaModificacionId = u?.Id;
 
 				if (idPrefactura >= 1)
 				{

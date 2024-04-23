@@ -539,51 +539,41 @@ function onGuardarClick() {
     //Si los conceptos no son válidos, finaliza el proceso.
     if (!validarConceptos()) { return; }
 
-    showSuccess(title, puedenFacturar);
-
     let btnClose = document.getElementById("dlgCFDIBtnCancelar"),
         dlgTitle = document.getElementById("dlgCFDITitle"),
         summaryContainer = document.getElementById("saveValidationSummary"),
         idField = document.getElementById("inpCFDIId")
         emisorField = $("#inpEmisor"),
         receptorField = $("#inpReceptor"),
-        fechaField = document.getElementById(""),
-        comprobanteField = document.getElementById(""),
-        serieField = document.getElementById(""),
-        folioField = document.getElementById(""),
-        usoField = document.getElementById(""),
-        formaField = document.getElementById(""),
-        metodoField = document.getElementById(""),
-        monedaField = document.getElementById(""),
-        cambioField = document.getElementById(""),
-        exportacionField = document.getElementById(""),
-        operacionField = document.getElementById("");
+        fechaField = document.getElementById("inpFecha"),
+        comprobanteField = document.getElementById("selTipoComprobante"),
+        serieField = document.getElementById("inpSerie"),
+        folioField = document.getElementById("inpFolio"),
+        usoField = document.getElementById("selUsoCFDI"),
+        formaField = document.getElementById("selFormaPago"),
+        metodoField = document.getElementById("selMetodoPago"),
+        monedaField = document.getElementById("selMoneda"),
+        cambioField = document.getElementById("inpTipoCambio"),
+        exportacionField = document.getElementById("selExportacion"),
+        operacionField = document.getElementById("inpNumeroOperacion");
         
     summaryContainer.innerHTML = "";
 
 
     let oParams = {
-        id: idField.value,
-        emisor: {
-            id: emisorField.data("id"),
-            razonSocial: emisorField.data("razonSocial"),
-            rfc: emisorField.data("rfc")
-        },
-        receptor: {
-            id: receptorField.data("id"),
-            razonSocial: receptorField.data("razonSocial"),
-            rfc: receptorField.data("rfc")
-        },
-        fecha: fechaField.value,
-        tipoComprobante: comprobanteField.value,
+        id: idField.value == nuevoRegistro ? 0 : idField.value,
+        emisorId: emisorField.data("id"),
+        receptorId: receptorField.data("id"),
         serie: serieField.value,
         folio: folioField.value,
-        usoCFDI: usoField.value,
-        formaPago: formaField.value,
-        metodoPago: metodoField.value,
-        moneda: monedaField.value,
+        tipoComprobanteId: comprobanteField.value,
+        fecha: fechaField.value,
+        monedaId: monedaField.value,
         tipoCambio: cambioField.value,
-        exportacion: exportacionField.value,
+        formaPagoId: formaField.value,
+        metodoPagoId: metodoField.value,
+        usoCFDIId: usoField.value,
+        exportacionId: exportacionField.value,
         numOperacion: operacionField.value,
         conceptos: tableProdServ.bootstrapTable("getData")
     }
@@ -1153,6 +1143,8 @@ function validarConceptos() {
         showAlert(title, message);
         return false;
     }
+
+    return true;
 }
 
 //Función para capturar el clic del botón limpiar. Limpia y oculta la información del emisor y del receptor.
@@ -1216,7 +1208,7 @@ function onAgregarProductoServicioClick() {
     }
 
     let oProdServ = {
-        id: productoServicioField.attr("idselected"),
+        productoServicioId: productoServicioField.attr("idselected"),
         objetoImpuestoId: objetoImpuesto.value,
         cantidad: cantidad,
         unidadId: unidadField.getAttribute("idselected"),
