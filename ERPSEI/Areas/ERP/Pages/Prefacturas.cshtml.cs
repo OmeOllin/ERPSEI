@@ -410,6 +410,7 @@ namespace ERPSEI.Areas.ERP.Pages
 				await _db.Database.BeginTransactionAsync();
 
 				int idPrefactura = 0;
+				int idEstatusCreada = 1;
 
 				//Se busca prefactura por id
 				Prefactura? prefactura = await _prefacturaManager.GetByIdAsync(prefacturaModel.Id);
@@ -443,13 +444,17 @@ namespace ERPSEI.Areas.ERP.Pages
 				}
 				else
 				{
+                    //De lo contrario...
+
                     //Se busca al usuario logeado
                     AppUser? u = _userManager.FindByNameAsync(User.Identity?.Name ?? "").Result;
 
                     //Se establece al usuario que creó la prefactura.
                     prefactura.UsuarioCreadorId = u?.Id;
+					//Se establece el estatus de la prefactura en Creada
+					prefactura.EstatusId = idEstatusCreada;
 
-                    //De lo contrario, crea al empleado y obtiene su id.
+                    //Crea al empleado y obtiene su id.
                     idPrefactura = await _prefacturaManager.CreateAsync(prefactura);
 				}
 
