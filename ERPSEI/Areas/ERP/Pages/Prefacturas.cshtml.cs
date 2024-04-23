@@ -470,7 +470,8 @@ namespace ERPSEI.Areas.ERP.Pages
 							Descripcion = c.Descripcion ?? string.Empty,
 							ObjetoImpuestoId = c.ObjetoImpuestoId ?? 0,
 							TasaTraslado = c.Traslado ?? 0,
-							TasaRetencion = c.Retencion ?? 0
+							TasaRetencion = c.Retencion ?? 0,
+							PrefacturaId = idPrefactura
 						}
 					);
 				}
