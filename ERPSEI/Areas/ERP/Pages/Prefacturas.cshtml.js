@@ -574,7 +574,7 @@ function onGuardarClick() {
         metodoPagoId: metodoField.value,
         usoCFDIId: usoField.value,
         exportacionId: exportacionField.value,
-        numOperacion: operacionField.value,
+        numeroOperacion: operacionField.value,
         conceptos: tableProdServ.bootstrapTable("getData")
     }
 
