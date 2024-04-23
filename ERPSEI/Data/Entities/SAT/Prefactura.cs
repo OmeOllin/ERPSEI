@@ -12,6 +12,7 @@ namespace ERPSEI.Data.Entities.SAT
 		public string Folio { get; set; } = string.Empty;
 
 		public int TipoComprobanteId { get; set; }
+		public TipoComprobante? TipoComprobante { get; set; }
 
 		public DateTime Fecha { get; set; }
 
@@ -37,5 +38,8 @@ namespace ERPSEI.Data.Entities.SAT
 		public ICollection<Concepto> Conceptos { get; } = new List<Concepto>();
 
 		public int Deshabilitado { get; set; }
+
+		public AppUser? UsuarioUltimaModificacion { get; set; }
+		public int? UsuarioUltimaModificacionId { get; set; }
 	}
 }

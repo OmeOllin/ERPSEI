@@ -1,4 +1,5 @@
 ﻿using ERPSEI.Data.Entities.Empleados;
+using ERPSEI.Data.Entities.SAT;
 using Microsoft.AspNetCore.Identity;
 
 namespace ERPSEI.Data.Entities
@@ -11,6 +12,8 @@ namespace ERPSEI.Data.Entities
 
         public int? EmpleadoId { get; set; }
         public Empleado? Empleado { get; set; }
+
+        public Prefactura? Prefactura { get; set; }
 
     }
 }
