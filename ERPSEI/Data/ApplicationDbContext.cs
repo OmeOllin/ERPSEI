@@ -269,7 +269,9 @@ namespace ERPSEI.Data
 			b.Entity<Prefactura>().HasOne(p => p.UsoCFDI).WithMany(e => e.Prefacturas).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Prefactura>().HasOne(p => p.Exportacion).WithMany(e => e.Prefacturas).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Prefactura>().HasOne(p => p.UsuarioCreador).WithMany(e => e.PrefacturasCreadas).OnDelete(DeleteBehavior.NoAction);
-            b.Entity<Prefactura>().HasOne(p => p.UsuarioAutorizador).WithMany(e => e.PrefacturasAutorizadas).OnDelete(DeleteBehavior.NoAction);
+            b.Entity<Prefactura>().HasOne(p => p.UsuarioAutorizador).WithMany(e => e.PrefacturasFinalizadas).OnDelete(DeleteBehavior.NoAction);
+            b.Entity<Prefactura>().HasOne(p => p.UsuarioFinalizador).WithMany(e => e.PrefacturasFinalizadas).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Prefactura>().HasOne(p => p.Estatus).WithMany(e => e.Prefacturas).OnDelete(DeleteBehavior.NoAction);
             b.Entity<Prefactura>().Property(c => c.TipoCambio).HasPrecision(18, 6);
 
 			b.Entity<Concepto>().HasOne(c => c.UnidadMedida).WithMany(e => e.Conceptos).OnDelete(DeleteBehavior.NoAction);
@@ -278,6 +280,13 @@ namespace ERPSEI.Data
 			b.Entity<Concepto>().Property(c => c.Descuento).HasPrecision(18, 6);
 			b.Entity<Concepto>().Property(c => c.TasaTraslado).HasPrecision(18, 6);
 			b.Entity<Concepto>().Property(c => c.TasaRetencion).HasPrecision(18, 6);
-		}
+
+            b.Entity<EstatusPrefactura>()
+                .HasData(
+                    new EstatusPrefactura() { Id = 1, Descripcion = "Solicitada" },
+                    new EstatusPrefactura() { Id = 2, Descripcion = "Autorizada" },
+                    new EstatusPrefactura() { Id = 3, Descripcion = "Finalizada" }
+                );
+        }
 	}
 }

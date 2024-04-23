@@ -46,10 +46,16 @@ namespace ERPSEI.Data.Entities.SAT
 
 		public int Deshabilitado { get; set; }
 
+		public EstatusPrefactura? Estatus { get; set;}
+		public int? EstatusId { get; set; }
+
 		public AppUser? UsuarioCreador { get; set; }
 		public string? UsuarioCreadorId { get; set; }
 
-		public AppUser? UsuarioAutorizador { get; set; }
-		public string? UsuarioAutorizadorId { get; set; }
+        public AppUser? UsuarioAutorizador { get; set; }
+        public string? UsuarioAutorizadorId { get; set; }
+
+        public AppUser? UsuarioFinalizador { get; set; }
+		public string? UsuarioFinalizadorId { get; set; }
 	}
 }
