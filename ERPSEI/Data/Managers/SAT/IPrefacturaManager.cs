@@ -7,12 +7,15 @@ namespace ERPSEI.Data.Managers.SAT
 		public Task<List<Prefactura>> GetAllAsync(
 			DateTime? fechaInicio = null,
 			DateTime? fechaFin = null,
-			int? serie = null,
+			string? serie = null,
 			int? monedaId = null,
 			int? formaPagoId = null,
 			int? metodoPagoId = null,
-			int? usoCFDIId = null
+			int? usoCFDIId = null,
+			bool deshabilitado = false
 		);
+
+		public Task<Prefactura?> GetByIdWithAdicionalesAsync(int id);
 
 	}
 }

@@ -45,8 +45,8 @@ namespace ERPSEI.Data.Managers.SAT
 				n.UsoCFDIId = p.UsoCFDIId;
 				n.MonedaId = p.MonedaId;
 				n.NumeroOperacion = p.NumeroOperacion;
-				n.TipoCambio = p.TipoCambio;
 				n.TipoComprobanteId = p.TipoComprobanteId;
+				n.UsuarioUltimaModificacionId = p.UsuarioUltimaModificacionId;
 
 				await db.SaveChangesAsync();
 			}
@@ -119,11 +119,22 @@ namespace ERPSEI.Data.Managers.SAT
 				.Where(e => formaPagoId != null ? e.FormaPagoId == formaPagoId : true)
 				.Where(e => metodoPagoId != null ? e.MetodoPagoId == metodoPagoId : true)
 				.Where(e => usoCFDIId != null ? e.UsoCFDIId == usoCFDIId : true)
+				.Include(e => e.TipoComprobante)
 				.Include(e => e.Moneda)
 				.Include(e => e.FormaPago)
 				.Include(e => e.MetodoPago)
 				.Include(e => e.UsoCFDI)
+				.Include(e => e.Exportacion)
 				.ToListAsync();
+		}
+
+		public async Task<Prefactura?> GetByIdWithAdicionalesAsync(int id)
+		{
+			return await db.Prefacturas
+				.Where(e => e.Deshabilitado == 0)
+				.Where(e => e.Id == id)
+				.Include(e => e.Conceptos)
+				.FirstOrDefaultAsync();
 		}
 
 		public async Task<Prefactura?> GetByIdAsync(int id)
