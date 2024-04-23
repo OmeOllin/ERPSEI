@@ -1,4 +1,5 @@
-﻿using ERPSEI.Data.Entities.SAT;
+﻿using ERPSEI.Data.Entities.Empleados;
+using ERPSEI.Data.Entities.SAT;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERPSEI.Data.Managers.SAT
@@ -96,6 +97,33 @@ namespace ERPSEI.Data.Managers.SAT
 		public async Task<List<Prefactura>> GetAllAsync()
 		{
 			return await db.Prefacturas.ToListAsync();
+		}
+
+		public async Task<List<Prefactura>> GetAllAsync(
+			DateTime? fechaInicio = null,
+			DateTime? fechaFin = null,
+			string? serie = null,
+			int? monedaId = null,
+			int? formaPagoId = null,
+			int? metodoPagoId = null,
+			int? usoCFDIId = null,
+			bool deshabilitado = false
+		)
+		{
+			return await db.Prefacturas
+				.Where(e => deshabilitado ? true : e.Deshabilitado == 0)
+				.Where(e => fechaInicio != null ? e.Fecha >= fechaInicio : true)
+				.Where(e => fechaFin!= null ? e.Fecha<= fechaFin : true)
+				.Where(e => serie != null ? e.Serie == serie : true)
+				.Where(e => monedaId != null ? e.MonedaId == monedaId : true)
+				.Where(e => formaPagoId != null ? e.FormaPagoId == formaPagoId : true)
+				.Where(e => metodoPagoId != null ? e.MetodoPagoId == metodoPagoId : true)
+				.Where(e => usoCFDIId != null ? e.UsoCFDIId == usoCFDIId : true)
+				.Include(e => e.Moneda)
+				.Include(e => e.FormaPago)
+				.Include(e => e.MetodoPago)
+				.Include(e => e.UsoCFDI)
+				.ToListAsync();
 		}
 
 		public async Task<Prefactura?> GetByIdAsync(int id)

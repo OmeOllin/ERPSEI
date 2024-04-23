@@ -197,6 +197,209 @@ namespace ERPSEI.Areas.ERP.Pages
 		{
 		}
 
+		public async Task<JsonResult> OnPostFiltrar()
+		{
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["PrefacturasFiltradasUnsuccessfully"]);
+			try
+			{
+				resp.Datos = await GetPrefacturasList(InputFiltro);
+				resp.TieneError = false;
+				resp.Mensaje = _strLocalizer["PrefacturasFiltradasSuccessfully"];
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+			}
+
+			return new JsonResult(resp);
+		}
+		private async Task<string> GetPrefacturasList(FiltroModel? filtro = null)
+		{
+			string nombreArea;
+			string nombreSubarea;
+			string nombrePuesto;
+			string nombreOficina;
+			string nombreGenero;
+			string nombreEstadoCivil;
+			bool usuarioConfirmado = false;
+			string jsonResponse;
+			List<string> jsonPrefacturas = new List<string>();
+			List<Prefactura> prefacturas;
+
+			if (filtro != null)
+			{
+				prefacturas = await _prefacturaManager.GetAllAsync(
+					filtro.FechaIngresoInicio,
+					filtro.FechaIngresoFin,
+					filtro.FechaNacimientoInicio,
+					filtro.FechaNacimientoFin,
+					filtro.PuestoId,
+					filtro.AreaId,
+					filtro.SubareaId,
+					filtro.OficinaId
+				);
+			}
+			else
+			{
+				prefacturas = await _empleadoManager.GetAllAsync();
+			}
+
+			foreach (Empleado e in prefacturas)
+			{
+				nombreArea = e.Area != null ? e.Area.Nombre : "";
+				nombreSubarea = e.Subarea != null ? e.Subarea.Nombre : "";
+				nombrePuesto = e.Puesto != null ? e.Puesto.Nombre : "";
+				nombreOficina = e.Oficina != null ? e.Oficina.Nombre : "";
+				nombreGenero = e.Genero != null ? e.Genero.Nombre : "";
+				nombreEstadoCivil = e.EstadoCivil != null ? e.EstadoCivil.Nombre : "";
+				AppUser? usuario = e.UserId != null && e.UserId.Length >= 1 ? await _userManager.FindByIdAsync(e.UserId) : null;
+				usuarioConfirmado = usuario != null && usuario.EmailConfirmed;
+
+				DateTime? fechaIngreso = e.FechaIngreso == DateTime.MinValue ? null : e.FechaIngreso;
+				DateTime? fechaNacimiento = e.FechaNacimiento == DateTime.MinValue ? null : e.FechaNacimiento;
+
+				jsonPrefacturas.Add(
+					"{" +
+						$"\"id\": {e.Id}," +
+						$"\"nombre\": \"{e.Nombre}\", " +
+						$"\"nombrePreferido\": \"{e.NombrePreferido}\", " +
+						$"\"apellidoPaterno\": \"{e.ApellidoPaterno}\", " +
+						$"\"apellidoMaterno\": \"{e.ApellidoMaterno}\", " +
+						$"\"nombreCompleto\": \"{e.NombreCompleto}\", " +
+						$"\"fechaIngreso\": \"{fechaIngreso:dd/MM/yyyy}\", " +
+						$"\"fechaIngresoJS\": \"{fechaIngreso:yyyy-MM-dd}\", " +
+						$"\"fechaNacimiento\": \"{fechaNacimiento:dd/MM/yyyy}\", " +
+						$"\"fechaNacimientoJS\": \"{fechaNacimiento:yyyy-MM-dd}\", " +
+						$"\"direccion\": \"{e.Direccion.Trim()}\", " +
+						$"\"telefono\": \"{e.Telefono}\", " +
+						$"\"email\": \"{e.Email}\", " +
+						$"\"generoId\": {e.GeneroId ?? 0}, " +
+						$"\"genero\": \"{nombreGenero}\", " +
+						$"\"subareaId\": {e.SubareaId ?? 0}, " +
+						$"\"subarea\": \"{nombreSubarea}\", " +
+						$"\"oficinaId\": {e.OficinaId ?? 0}, " +
+						$"\"oficina\": \"{nombreOficina}\", " +
+						$"\"puestoId\": {e.PuestoId ?? 0}, " +
+						$"\"puesto\": \"{nombrePuesto}\", " +
+						$"\"areaId\": {e.AreaId ?? 0}, " +
+						$"\"area\": \"{nombreArea}\", " +
+						$"\"estadoCivilId\": {e.EstadoCivilId ?? 0}, " +
+						$"\"estadoCivil\": \"{nombreEstadoCivil}\", " +
+						$"\"jefeId\": {e.JefeId ?? 0}, " +
+						$"\"jefe\": \"\", " +
+						$"\"curp\": \"{e.CURP}\", " +
+						$"\"rfc\": \"{e.RFC}\", " +
+						$"\"nss\": \"{e.NSS}\", " +
+						$"\"usuarioId\": \"{e.UserId}\", " +
+						$"\"usuarioValido\": \"{(usuarioConfirmado ? "1" : "0")}\", " +
+						$"\"contactosEmergencia\": [], " +
+						$"\"archivos\": [] " +
+					"}"
+				);
+			}
+
+			jsonResponse = $"[{string.Join(",", jsonPrefacturas)}]";
+
+			return jsonResponse;
+		}
+		private List<string> getListJsonContactosEmergencia(ICollection<ContactoEmergencia>? contactos)
+		{
+			List<string> jsonContactosEmergencia = new List<string>();
+			if (contactos != null)
+			{
+				List<ContactoEmergencia> contacts = (from c in contactos
+													 orderby c.Id ascending
+													 select c).ToList();
+				foreach (ContactoEmergencia c in contacts)
+				{
+					jsonContactosEmergencia.Add($"{{\"nombre\": \"{c.Nombre}\", \"telefono\": \"{c.Telefono}\"}}");
+				}
+			}
+			return jsonContactosEmergencia;
+		}
+		private List<string> getListJsonArchivos(ICollection<SemiArchivoEmpleado>? archivos)
+		{
+			List<string> jsonArchivos = new List<string>();
+			if (archivos != null)
+			{
+				//Si el usuario ya tiene archivos, se llena el arreglo de datos a partir de ellos.					
+				List<SemiArchivoEmpleado> userFiles = (from userFile in archivos
+													   orderby userFile.TipoArchivoId ascending
+													   select userFile).ToList();
+
+				foreach (SemiArchivoEmpleado a in userFiles)
+				{
+					string htmlContainer = string.Empty;
+					string imgSrc = string.Empty;
+					string id = Guid.NewGuid().ToString();
+					//Si el archivo tiene contenido
+					if (a.FileSize >= 1)
+					{
+						//Asigna la información del archivo al arreglo de datos.
+						string b64 = Convert.ToBase64String(a.Archivo);
+						bool isJPG = a.Extension == "jpg" || a.Extension == "jpeg";
+						bool isPNG = a.Extension == "png";
+						bool isPDF = a.Extension == "pdf";
+
+						if (isPDF)
+						{
+							imgSrc = $"data:application/pdf;base64,{b64}";
+							htmlContainer = $"<canvas id = '{id}' b64 = '{b64}' class = 'canvaspdf'></canvas>";
+						}
+						else if (isJPG || isPNG)
+						{
+							if (isJPG)
+							{
+								imgSrc = $"data:image/jpeg;base64,{b64}";
+							}
+							else if (isPNG)
+							{
+								imgSrc = $"data:image/png;base64,{b64}";
+							}
+							htmlContainer = $"<img id = '{id}' src = '{imgSrc}' style='max-height: 200px;'/>";
+						}
+					}
+
+					jsonArchivos.Add(
+						"{" +
+							$"\"id\": \"{a.Id}\"," +
+							$"\"nombre\": \"{a.Nombre}\"," +
+							$"\"tipoArchivoId\": {a.TipoArchivoId}," +
+							$"\"extension\": \"{a.Extension}\"," +
+							$"\"imgSrc\": \"{imgSrc}\"," +
+							$"\"htmlContainer\": \"{htmlContainer}\"," +
+							$"\"fileSize\": \"{a.FileSize}\"" +
+						"}"
+					);
+				}
+			}
+			else
+			{
+				//Si el usuario no tiene archivos, se llena el arreglo de datos a partir del enum.
+				foreach (FileTypes i in Enum.GetValues(typeof(FileTypes)))
+				{
+					string imgSrc = string.Empty;
+					string htmlContainer = string.Empty;
+					//Si el tipo de archivo es Imagen de perfil, entonces agrega valor default.
+					if ((int)i == 0) { imgSrc = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/img/default_profile_pic.png"; }
+					if ((int)i != 0) { htmlContainer = "<i class='bi bi-file-image opacity-50' style='font-size:105px'></i>"; }
+					jsonArchivos.Add(
+						"{" +
+							$"\"id\": \"{Guid.NewGuid()}\"," +
+							$"\"nombre\": \"\"," +
+							$"\"tipoArchivoId\": {(int)i}," +
+							$"\"extension\": \"\"," +
+							$"\"imgSrc\": \"{imgSrc}\"," +
+							$"\"htmlContainer\": \"{htmlContainer}\"," +
+							$"\"fileSize\": \"0\"" +
+						"}"
+					);
+				}
+			}
+
+			return jsonArchivos;
+		}
+
 		public async Task<JsonResult> OnPostSave() {
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["PrefacturaSavedUnsuccessfully"]);
 
