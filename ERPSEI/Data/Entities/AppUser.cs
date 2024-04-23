@@ -13,7 +13,7 @@ namespace ERPSEI.Data.Entities
         public int? EmpleadoId { get; set; }
         public Empleado? Empleado { get; set; }
 
-		public ICollection<Prefactura> Prefacturas { get; set; } = new List<Prefactura>();
-
-	}
+		public ICollection<Prefactura> PrefacturasCreadas { get; set; } = new List<Prefactura>();
+        public ICollection<Prefactura> PrefacturasAutorizadas { get; set; } = new List<Prefactura>();
+    }
 }
