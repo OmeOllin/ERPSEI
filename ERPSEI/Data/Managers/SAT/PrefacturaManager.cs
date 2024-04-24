@@ -46,9 +46,11 @@ namespace ERPSEI.Data.Managers.SAT
 				n.MonedaId = p.MonedaId;
 				n.NumeroOperacion = p.NumeroOperacion;
 				n.TipoComprobanteId = p.TipoComprobanteId;
-				n.UsuarioUltimaModificacionId = p.UsuarioUltimaModificacionId;
+				n.UsuarioCreadorId = p.UsuarioCreadorId;
+                n.UsuarioAutorizadorId = p.UsuarioAutorizadorId;
+                n.UsuarioFinalizadorId = p.UsuarioFinalizadorId;
 
-				await db.SaveChangesAsync();
+                await db.SaveChangesAsync();
 			}
 		}
 
