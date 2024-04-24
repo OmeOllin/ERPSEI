@@ -539,8 +539,7 @@ function onGuardarClick() {
     //Si los conceptos no son válidos, finaliza el proceso.
     if (!validarConceptos()) { return; }
 
-    let btnClose = document.getElementById("dlgCFDIBtnCancelar"),
-        dlgTitle = document.getElementById("dlgCFDITitle"),
+    let dlgTitle = document.getElementById("dlgCFDITitle"),
         summaryContainer = document.getElementById("saveValidationSummary"),
         idField = document.getElementById("inpCFDIId")
         emisorField = $("#inpEmisor"),
@@ -594,7 +593,7 @@ function onGuardarClick() {
                 return;
             }
 
-            btnClose.click();
+            dlgCFDIModal.toggle();
 
             onBuscarClick();
 
