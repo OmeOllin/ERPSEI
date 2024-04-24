@@ -311,8 +311,10 @@ namespace ERPSEI.Areas.ERP.Pages
 						$"\"exportacion\": \"{nombreExportacion}\", " +
 						$"\"exportacionId\": {p.ExportacionId}, " +
 						$"\"numeroOperacion\": \"{p.NumeroOperacion}\", " +
-						$"\"usuarioId\": \"{p.UsuarioUltimaModificacionId}\", " +
-						$"\"conceptos\": [] " +
+						$"\"usuarioCreadorId\": \"{p.UsuarioCreadorId}\", " +
+                        $"\"usuarioAutorizadorId\": \"{p.UsuarioAutorizadorId}\", " +
+                        $"\"usuarioFinalizadorId\": \"{p.UsuarioFinalizadorId}\", " +
+                        $"\"conceptos\": [] " +
 					"}"
 				);
 			}
