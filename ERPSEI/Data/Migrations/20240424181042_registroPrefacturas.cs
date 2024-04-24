@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace ERPSEI.Data.Migrations
 {
     /// <inheritdoc />
@@ -11,6 +13,19 @@ namespace ERPSEI.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "EstatusPrefactura",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Deshabilitado = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EstatusPrefactura", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Prefacturas",
                 columns: table => new
@@ -30,14 +45,27 @@ namespace ERPSEI.Data.Migrations
                     ExportacionId = table.Column<int>(type: "int", nullable: true),
                     NumeroOperacion = table.Column<int>(type: "int", nullable: true),
                     Deshabilitado = table.Column<int>(type: "int", nullable: false),
-                    UsuarioUltimaModificacionId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    EstatusId = table.Column<int>(type: "int", nullable: true),
+                    UsuarioCreadorId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    UsuarioAutorizadorId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    UsuarioFinalizadorId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Prefacturas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Prefacturas_AspNetUsers_UsuarioUltimaModificacionId",
-                        column: x => x.UsuarioUltimaModificacionId,
+                        name: "FK_Prefacturas_AspNetUsers_UsuarioAutorizadorId",
+                        column: x => x.UsuarioAutorizadorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Prefacturas_AspNetUsers_UsuarioCreadorId",
+                        column: x => x.UsuarioCreadorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Prefacturas_AspNetUsers_UsuarioFinalizadorId",
+                        column: x => x.UsuarioFinalizadorId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -49,6 +77,11 @@ namespace ERPSEI.Data.Migrations
                         name: "FK_Prefacturas_Empresas_ReceptorId",
                         column: x => x.ReceptorId,
                         principalTable: "Empresas",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Prefacturas_EstatusPrefactura_EstatusId",
+                        column: x => x.EstatusId,
+                        principalTable: "EstatusPrefactura",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Prefacturas_Exportaciones_ExportacionId",
@@ -124,6 +157,16 @@ namespace ERPSEI.Data.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.InsertData(
+                table: "EstatusPrefactura",
+                columns: new[] { "Id", "Descripcion", "Deshabilitado" },
+                values: new object[,]
+                {
+                    { 1, "Solicitada", 0 },
+                    { 2, "Autorizada", 0 },
+                    { 3, "Finalizada", 0 }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Conceptos_ObjetoImpuestoId",
                 table: "Conceptos",
@@ -148,6 +191,11 @@ namespace ERPSEI.Data.Migrations
                 name: "IX_Prefacturas_EmisorId",
                 table: "Prefacturas",
                 column: "EmisorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prefacturas_EstatusId",
+                table: "Prefacturas",
+                column: "EstatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Prefacturas_ExportacionId",
@@ -185,9 +233,19 @@ namespace ERPSEI.Data.Migrations
                 column: "UsoCFDIId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Prefacturas_UsuarioUltimaModificacionId",
+                name: "IX_Prefacturas_UsuarioAutorizadorId",
                 table: "Prefacturas",
-                column: "UsuarioUltimaModificacionId");
+                column: "UsuarioAutorizadorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prefacturas_UsuarioCreadorId",
+                table: "Prefacturas",
+                column: "UsuarioCreadorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prefacturas_UsuarioFinalizadorId",
+                table: "Prefacturas",
+                column: "UsuarioFinalizadorId");
         }
 
         /// <inheritdoc />
@@ -198,6 +256,9 @@ namespace ERPSEI.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Prefacturas");
+
+            migrationBuilder.DropTable(
+                name: "EstatusPrefactura");
         }
     }
 }

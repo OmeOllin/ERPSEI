@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERPSEI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240423154642_registroPrefacturas")]
+    [Migration("20240424181042_registroPrefacturas")]
     partial class registroPrefacturas
     {
         /// <inheritdoc />
@@ -1111,6 +1111,43 @@ namespace ERPSEI.Data.Migrations
                     b.ToTable("Conceptos");
                 });
 
+            modelBuilder.Entity("ERPSEI.Data.Entities.SAT.EstatusPrefactura", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Deshabilitado")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EstatusPrefactura");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Descripcion = "Solicitada",
+                            Deshabilitado = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Descripcion = "Autorizada",
+                            Deshabilitado = 0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Descripcion = "Finalizada",
+                            Deshabilitado = 0
+                        });
+                });
+
             modelBuilder.Entity("ERPSEI.Data.Entities.SAT.Exportacion", b =>
                 {
                     b.Property<int>("Id")
@@ -1348,6 +1385,9 @@ namespace ERPSEI.Data.Migrations
                     b.Property<int>("EmisorId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("EstatusId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ExportacionId")
                         .HasColumnType("int");
 
@@ -1387,12 +1427,20 @@ namespace ERPSEI.Data.Migrations
                     b.Property<int>("UsoCFDIId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UsuarioUltimaModificacionId")
+                    b.Property<string>("UsuarioAutorizadorId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UsuarioCreadorId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UsuarioFinalizadorId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("EmisorId");
+
+                    b.HasIndex("EstatusId");
 
                     b.HasIndex("ExportacionId");
 
@@ -1408,7 +1456,11 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasIndex("UsoCFDIId");
 
-                    b.HasIndex("UsuarioUltimaModificacionId");
+                    b.HasIndex("UsuarioAutorizadorId");
+
+                    b.HasIndex("UsuarioCreadorId");
+
+                    b.HasIndex("UsuarioFinalizadorId");
 
                     b.ToTable("Prefacturas");
                 });
@@ -1993,10 +2045,15 @@ namespace ERPSEI.Data.Migrations
             modelBuilder.Entity("ERPSEI.Data.Entities.SAT.Prefactura", b =>
                 {
                     b.HasOne("ERPSEI.Data.Entities.Empresas.Empresa", "Emisor")
-                        .WithMany("PrefacturasEmisor")
+                        .WithMany("PrefacturasEmitidas")
                         .HasForeignKey("EmisorId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("ERPSEI.Data.Entities.SAT.EstatusPrefactura", "Estatus")
+                        .WithMany("Prefacturas")
+                        .HasForeignKey("EstatusId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("ERPSEI.Data.Entities.SAT.Exportacion", "Exportacion")
                         .WithMany("Prefacturas")
@@ -2022,7 +2079,7 @@ namespace ERPSEI.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("ERPSEI.Data.Entities.Empresas.Empresa", "Receptor")
-                        .WithMany("PrefacturasReceptor")
+                        .WithMany("PrefacturasRecibidas")
                         .HasForeignKey("ReceptorId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -2039,12 +2096,24 @@ namespace ERPSEI.Data.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("ERPSEI.Data.Entities.AppUser", "UsuarioUltimaModificacion")
-                        .WithMany("Prefacturas")
-                        .HasForeignKey("UsuarioUltimaModificacionId")
+                    b.HasOne("ERPSEI.Data.Entities.AppUser", "UsuarioAutorizador")
+                        .WithMany("PrefacturasAutorizadas")
+                        .HasForeignKey("UsuarioAutorizadorId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ERPSEI.Data.Entities.AppUser", "UsuarioCreador")
+                        .WithMany("PrefacturasCreadas")
+                        .HasForeignKey("UsuarioCreadorId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ERPSEI.Data.Entities.AppUser", "UsuarioFinalizador")
+                        .WithMany("PrefacturasFinalizadas")
+                        .HasForeignKey("UsuarioFinalizadorId")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Emisor");
+
+                    b.Navigation("Estatus");
 
                     b.Navigation("Exportacion");
 
@@ -2060,7 +2129,11 @@ namespace ERPSEI.Data.Migrations
 
                     b.Navigation("UsoCFDI");
 
-                    b.Navigation("UsuarioUltimaModificacion");
+                    b.Navigation("UsuarioAutorizador");
+
+                    b.Navigation("UsuarioCreador");
+
+                    b.Navigation("UsuarioFinalizador");
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.SAT.TasaOCuota", b =>
@@ -2135,7 +2208,11 @@ namespace ERPSEI.Data.Migrations
 
             modelBuilder.Entity("ERPSEI.Data.Entities.AppUser", b =>
                 {
-                    b.Navigation("Prefacturas");
+                    b.Navigation("PrefacturasAutorizadas");
+
+                    b.Navigation("PrefacturasCreadas");
+
+                    b.Navigation("PrefacturasFinalizadas");
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.Area", b =>
@@ -2190,9 +2267,9 @@ namespace ERPSEI.Data.Migrations
 
                     b.Navigation("BancosEmpresa");
 
-                    b.Navigation("PrefacturasEmisor");
+                    b.Navigation("PrefacturasEmitidas");
 
-                    b.Navigation("PrefacturasReceptor");
+                    b.Navigation("PrefacturasRecibidas");
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.Empresas.Nivel", b =>
@@ -2220,6 +2297,11 @@ namespace ERPSEI.Data.Migrations
             modelBuilder.Entity("ERPSEI.Data.Entities.SAT.ActividadEconomica", b =>
                 {
                     b.Navigation("ActividadesEconomicasEmpresa");
+                });
+
+            modelBuilder.Entity("ERPSEI.Data.Entities.SAT.EstatusPrefactura", b =>
+                {
+                    b.Navigation("Prefacturas");
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.SAT.Exportacion", b =>

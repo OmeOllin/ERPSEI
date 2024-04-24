@@ -269,7 +269,7 @@ namespace ERPSEI.Data
 			b.Entity<Prefactura>().HasOne(p => p.UsoCFDI).WithMany(e => e.Prefacturas).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Prefactura>().HasOne(p => p.Exportacion).WithMany(e => e.Prefacturas).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Prefactura>().HasOne(p => p.UsuarioCreador).WithMany(e => e.PrefacturasCreadas).OnDelete(DeleteBehavior.NoAction);
-            b.Entity<Prefactura>().HasOne(p => p.UsuarioAutorizador).WithMany(e => e.PrefacturasFinalizadas).OnDelete(DeleteBehavior.NoAction);
+            b.Entity<Prefactura>().HasOne(p => p.UsuarioAutorizador).WithMany(e => e.PrefacturasAutorizadas).OnDelete(DeleteBehavior.NoAction);
             b.Entity<Prefactura>().HasOne(p => p.UsuarioFinalizador).WithMany(e => e.PrefacturasFinalizadas).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Prefactura>().HasOne(p => p.Estatus).WithMany(e => e.Prefacturas).OnDelete(DeleteBehavior.NoAction);
             b.Entity<Prefactura>().Property(c => c.TipoCambio).HasPrecision(18, 6);
