@@ -1084,11 +1084,19 @@ namespace ERPSEI.Data.Migrations
                     b.Property<int>("ProductoServicioId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("Retencion")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
                     b.Property<decimal>("TasaRetencion")
                         .HasPrecision(18, 6)
                         .HasColumnType("decimal(18,6)");
 
                     b.Property<decimal>("TasaTraslado")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<decimal>("Traslado")
                         .HasPrecision(18, 6)
                         .HasColumnType("decimal(18,6)");
 

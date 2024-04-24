@@ -96,13 +96,19 @@ namespace ERPSEI.Areas.ERP.Pages
 			[Display(Name = "ObjetoImpuestoField")]
 			public int? ObjetoImpuestoId { get; set; }
 
+            [Display(Name = "TrasladoField")]
+            public decimal? TasaTraslado { get; set; }
+
+            [Display(Name = "RetencionField")]
+            public decimal? TasaRetencion { get; set; }
+
 			[Display(Name = "TrasladoField")]
 			public decimal? Traslado { get; set; }
 
 			[Display(Name = "RetencionField")]
 			public decimal? Retencion { get; set; }
 
-			[Display(Name = "SearchProductServiceField")]
+            [Display(Name = "SearchProductServiceField")]
 			public int? ProductoServicioId { get; set; }
 		}
 
@@ -350,8 +356,10 @@ namespace ERPSEI.Areas.ERP.Pages
 										$"\"descripcion\": \"{c.Descripcion}\", " +
 										$"\"objetoImpuestoId\": {c.ObjetoImpuestoId}, " +
 										$"\"objetoImpuesto\": \"{nombreObjetoImpuesto}\", " +
-										$"\"traslado\": {c.TasaTraslado}, " +
-										$"\"retencion\":{c.TasaRetencion}" +	
+                                        $"\"tasaTraslado\": {c.TasaTraslado}, " +
+                                        $"\"tasaRetencion\":{c.TasaRetencion}" +
+                                        $"\"traslado\": {c.Traslado}, " +
+										$"\"retencion\":{c.Retencion}" +	
 									  $"}}");
 				}
 			}
@@ -476,9 +484,11 @@ namespace ERPSEI.Areas.ERP.Pages
 							UnidadMedidaId = c.UnidadId ?? 0,
 							Descripcion = c.Descripcion ?? string.Empty,
 							ObjetoImpuestoId = c.ObjetoImpuestoId ?? 0,
-							TasaTraslado = c.Traslado ?? 0,
-							TasaRetencion = c.Retencion ?? 0,
-							PrefacturaId = idPrefactura
+							TasaTraslado = c.TasaTraslado ?? 0,
+							TasaRetencion = c.TasaRetencion ?? 0,
+                            Traslado = c.Traslado ?? 0,
+                            Retencion = c.Retencion ?? 0,
+                            PrefacturaId = idPrefactura
 						}
 					);
 				}

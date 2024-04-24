@@ -28,6 +28,10 @@ namespace ERPSEI.Data.Entities.SAT
 
 		public decimal TasaRetencion { get; set; }
 
+		public decimal Traslado {  get; set; }
+
+		public decimal Retencion { get; set; }
+
 		public Prefactura? Prefactura { get; set; }
 		public int? PrefacturaId { get; set; }
 	}

@@ -1196,8 +1196,10 @@ function onAgregarProductoServicioClick() {
         unitario = parseFloat(unitarioField.value || "0"),
         descuento = parseFloat(descuentoField.value || "0"),
         subtotal = cantidad * unitario,
-        traslado = (subtotal * parseFloat(trasladoField.value || "0")) / 100,
-        retencion = (subtotal * parseFloat(retencionField.value || "0")) / 100,
+        tasaTraslado = trasladoField.value,
+        tasaRetencion = retencionField.value,
+        traslado = (subtotal * parseFloat(tasaTraslado || "0")) / 100,
+        retencion = (subtotal * parseFloat(tasaRetencion || "0")) / 100,
         total = subtotal - descuento + traslado - retencion;
 
     //Si el campo producto / servicio no tiene elemento seleccionado, muestra error.
@@ -1217,6 +1219,8 @@ function onAgregarProductoServicioClick() {
         unitario: unitario,
         subtotal: subtotal,
         descuento: descuento,
+        tasaTraslado: tasaTraslado,
+        tasaRetencion: tasaRetencion,
         traslado: traslado,
         retencion: retencion,
         total: total

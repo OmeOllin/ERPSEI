@@ -278,8 +278,10 @@ namespace ERPSEI.Data
 			b.Entity<Concepto>().HasOne(c => c.ObjetoImpuesto).WithMany(e => e.Conceptos).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Concepto>().Property(c => c.PrecioUnitario).HasPrecision(18, 6);
 			b.Entity<Concepto>().Property(c => c.Descuento).HasPrecision(18, 6);
-			b.Entity<Concepto>().Property(c => c.TasaTraslado).HasPrecision(18, 6);
-			b.Entity<Concepto>().Property(c => c.TasaRetencion).HasPrecision(18, 6);
+            b.Entity<Concepto>().Property(c => c.TasaTraslado).HasPrecision(18, 6);
+            b.Entity<Concepto>().Property(c => c.TasaRetencion).HasPrecision(18, 6);
+            b.Entity<Concepto>().Property(c => c.Traslado).HasPrecision(18, 6);
+			b.Entity<Concepto>().Property(c => c.Retencion).HasPrecision(18, 6);
 
             b.Entity<EstatusPrefactura>()
                 .HasData(

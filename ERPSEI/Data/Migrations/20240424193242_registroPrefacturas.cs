@@ -129,6 +129,8 @@ namespace ERPSEI.Data.Migrations
                     ObjetoImpuestoId = table.Column<int>(type: "int", nullable: false),
                     TasaTraslado = table.Column<decimal>(type: "decimal(18,6)", precision: 18, scale: 6, nullable: false),
                     TasaRetencion = table.Column<decimal>(type: "decimal(18,6)", precision: 18, scale: 6, nullable: false),
+                    Traslado = table.Column<decimal>(type: "decimal(18,6)", precision: 18, scale: 6, nullable: false),
+                    Retencion = table.Column<decimal>(type: "decimal(18,6)", precision: 18, scale: 6, nullable: false),
                     PrefacturaId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
