@@ -78,38 +78,65 @@ namespace ERPSEI.Areas.ERP.Pages
 
 		public class ConceptoModel
 		{
+			[Required(ErrorMessage = "Required")]
 			[Display(Name = "CantidadField")]
 			public int? Cantidad { get; set; }
 
+			[Required(ErrorMessage = "Required")]
 			[Display(Name = "UnidadField")]
 			public int? UnidadId { get; set; }
 
+			[Required(ErrorMessage = "Required")]
 			[Display(Name = "DescripcionField")]
 			public string? Descripcion { get; set; } = string.Empty;
 
+			[Required(ErrorMessage = "Required")]
 			[Display(Name = "UnitarioField")]
 			public decimal? Unitario { get; set; }
 
 			[Display(Name = "DescuentoField")]
 			public decimal? Descuento { get; set; }
 
+			[Required(ErrorMessage = "Required")]
 			[Display(Name = "ObjetoImpuestoField")]
 			public int? ObjetoImpuestoId { get; set; }
 
-            [Display(Name = "TrasladoField")]
-            public decimal? TasaTraslado { get; set; }
+			public TrasladoModel Traslado { get; set; } = new TrasladoModel();
 
-            [Display(Name = "RetencionField")]
-            public decimal? TasaRetencion { get; set; }
+			public RetencionModel Retencion { get; set; } = new RetencionModel();
 
-			[Display(Name = "TrasladoField")]
-			public decimal? Traslado { get; set; }
-
-			[Display(Name = "RetencionField")]
-			public decimal? Retencion { get; set; }
-
-            [Display(Name = "SearchProductServiceField")]
+			[Display(Name = "SearchProductServiceField")]
 			public int? ProductoServicioId { get; set; }
+		}
+
+		public class TrasladoModel
+		{
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "TrasladoField")]
+			public int? TasaOCuotaId { get; set; }
+
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "TrasladoField")]
+			public decimal? Tasa { get; set; }
+
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "TrasladoField")]
+			public decimal? Valor { get; set; }
+		}
+
+		public class RetencionModel
+		{
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "RetencionField")]
+			public int? TasaOCuotaId { get; set; }
+
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "RetencionField")]
+			public decimal? Tasa { get; set; }
+
+			[Required(ErrorMessage = "Required")]
+			[Display(Name = "RetencionField")]
+			public decimal? Valor { get; set; }
 		}
 
 		[BindProperty]
@@ -208,12 +235,12 @@ namespace ERPSEI.Areas.ERP.Pages
 
 		public async Task<JsonResult> OnPostDatosAdicionales(int idEmpleado)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["PrefacturaConsultadaUnsuccessfully"]);
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["ConsultadoUnsuccessfully"]);
 			try
 			{
 				resp.Datos = await GetDatosAdicionales(idEmpleado);
 				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["PrefacturaConsultadaSuccessfully"];
+				resp.Mensaje = _strLocalizer["ConsultadoSuccessfully"];
 			}
 			catch (Exception ex)
 			{
@@ -224,12 +251,12 @@ namespace ERPSEI.Areas.ERP.Pages
 		}
 		public async Task<JsonResult> OnPostFiltrar()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["PrefacturasFiltradasUnsuccessfully"]);
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["ConsultadoUnsuccessfully"]);
 			try
 			{
 				resp.Datos = await GetPrefacturasList(InputFiltro);
 				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["PrefacturasFiltradasSuccessfully"];
+				resp.Mensaje = _strLocalizer["ConsultadoSuccessfully"];
 			}
 			catch (Exception ex)
 			{
@@ -484,10 +511,10 @@ namespace ERPSEI.Areas.ERP.Pages
 							UnidadMedidaId = c.UnidadId ?? 0,
 							Descripcion = c.Descripcion ?? string.Empty,
 							ObjetoImpuestoId = c.ObjetoImpuestoId ?? 0,
-							TasaTraslado = c.TasaTraslado ?? 0,
-							TasaRetencion = c.TasaRetencion ?? 0,
-                            Traslado = c.Traslado ?? 0,
-                            Retencion = c.Retencion ?? 0,
+							TasaTraslado = c.Traslado?.Tasa ?? 0,
+							TasaRetencion = c.Retencion?.Tasa ?? 0,
+                            Traslado = c.Traslado?.Valor ?? 0,
+                            Retencion = c.Retencion?.Valor ?? 0,
                             PrefacturaId = idPrefactura
 						}
 					);
@@ -547,12 +574,17 @@ namespace ERPSEI.Areas.ERP.Pages
 					e.ObjetoSocial = jsonEscape(e.ObjetoSocial ?? string.Empty);
 					List<string> jsonActividades = getListJsonActividades(emp?.ActividadesEconomicasEmpresa);
 					List<string> jsonProductosServicios = getListJsonProductosServicios(prodServEmpresa);
+					string serie = e.RFC != null ? e.RFC.Substring(0, 3) : string.Empty;
+					List<Prefactura> prefacturas = await _prefacturaManager.GetAllAsync(null, null, serie, null, null, null, null);
+					prefacturas = prefacturas.OrderByDescending(p => p.Id).ToList();
+					string proximoFolio = prefacturas.FirstOrDefault()?.Folio + 1;
 
 					jsonEmpresas.Add($"{{" +
 										$"\"id\": {e.Id}, " +
 										$"\"value\": \"{e.RazonSocial}\", " +
 										$"\"label\": \"{e.RFC} - {e.RazonSocial}\", " +
 										$"\"rfc\": \"{e.RFC}\", " +
+										$"\"proximoFolio\": \"{proximoFolio}\"," +
 										$"\"razonSocial\": \"{e.RazonSocial}\", " +
 										$"\"actividadesEconomicas\": [{string.Join(",", jsonActividades)}], " +
 										$"\"objetoSocial\": \"{e.ObjetoSocial}\", " +

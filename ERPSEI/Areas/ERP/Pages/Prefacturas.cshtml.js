@@ -384,6 +384,8 @@ function createNewCFDI() {
 
 //Función para inicializar el cuadro de diálogo
 function initCFDIDialog(action, row) {
+    let tabGenerales = document.getElementById("tabGenerales");
+
     let idField = document.getElementById("inpCFDIId");
 
     let fechaField = document.getElementById("inpFecha");
@@ -402,7 +404,9 @@ function initCFDIDialog(action, row) {
     let numeroOperacionField = document.getElementById("inpNumeroOperacion");
 
     let emisorField = document.getElementById("inpEmisor");
+    let btnInfoEmisor = document.getElementById("btnInfoEmisor");
     let receptorField = document.getElementById("inpReceptor");
+    let btnInfoReceptor = document.getElementById("btnInfoReceptor");
 
     let btnDesactivar = document.getElementById("dlgCFDIBtnDesactivar");
     let dlgTitle = document.getElementById("dlgCFDITitle");
@@ -449,14 +453,19 @@ function initCFDIDialog(action, row) {
     metodoField.value = row.metodoPagoId;
     monedaField.value = row.monedaId;
     tipoCambioField.value = row.tipoCambio;
+    tipoCambioField.removeAttribute("disabled");
 
     exportacionField.value = row.exportacionId;
     numeroOperacionField.value = row.numeroOperacion;
 
     emisorField.setAttribute("idselected", row.emisorId);
     emisorField.value = row.emisor;
+    btnInfoEmisor.setAttribute("hidden", true);
     receptorField.setAttribute("idselected", row.receptorId);
     receptorField.value = row.receptor;
+    btnInfoReceptor.setAttribute("hidden", true);
+
+    tabGenerales.click();
 
     if (action == NUEVO || (row.hasDatosAdicionales || false)) {
         establecerDatosAdicionales(row);
@@ -770,6 +779,9 @@ function toggleEmisorInfo(item = null) {
     let lblDomicilioFiscal = document.getElementById("lblDomicilioFiscalEmisor");
     let lblObjetoSocial = document.getElementById("lblObjetoSocialEmisor");
 
+    let inpSerie = document.getElementById("inpSerie");
+    let inpFolio = document.getElementById("inpFolio");
+
     lblNivel.classList.remove("is-invalid");
     lblNivel.classList.remove("is-valid");
 
@@ -825,7 +837,12 @@ function toggleEmisorInfo(item = null) {
 
         $("#inpReceptor").data('idempresa', item.id);
 
-        btnInfoEmisor.classList.add('bi-info-circle-fill');
+        btnInfoEmisor.removeAttribute("hidden");
+
+        let serie = item.rfc.substring(0, 3);
+        inpSerie.value = serie;
+
+        inpFolio.value = item.proximoFolio;
     }
     else {
         lblRFC.innerHTML = emptyInfo;
@@ -849,8 +866,13 @@ function toggleEmisorInfo(item = null) {
         $("#inpEmisor").data("perfil", null);
         $("#inpEmisor").data("direccion", null);
         $("#inpEmisor").data("productosServicios", null);
+        $("#inpEmisor").data("proximoFolio", null);
 
-        btnInfoEmisor.classList.remove('bi-info-circle-fill');
+        btnInfoEmisor.setAttribute("hidden", true);
+
+        inpSerie.value = "";
+
+        inpFolio.value = "";
     }
 
 }
@@ -925,7 +947,7 @@ function toggleReceptorInfo(item = null) {
 
         $("#inpEmisor").data('idempresa', item.id);
 
-        btnInfoReceptor.classList.add('bi-info-circle-fill');
+        btnInfoReceptor.removeAttribute("hidden");
     }
     else {
         lblRFC.innerHTML = emptyInfo;
@@ -950,7 +972,7 @@ function toggleReceptorInfo(item = null) {
         $("#inpReceptor").data("direccion", null);
         $("#inpReceptor").data("productosServicios", null);
 
-        btnInfoReceptor.classList.remove('bi-info-circle-fill');
+        btnInfoReceptor.setAttribute("hidden", true);
     }
 
 }
@@ -1198,8 +1220,8 @@ function onAgregarProductoServicioClick() {
         subtotal = cantidad * unitario,
         tasaTraslado = trasladoField.value,
         tasaRetencion = retencionField.value,
-        traslado = (subtotal * parseFloat(tasaTraslado || "0")) / 100,
-        retencion = (subtotal * parseFloat(tasaRetencion || "0")) / 100,
+        traslado = (subtotal * parseFloat(tasaTraslado || "0")),
+        retencion = (subtotal * parseFloat(tasaRetencion || "0")),
         total = subtotal - descuento + traslado - retencion;
 
     //Si el campo producto / servicio no tiene elemento seleccionado, muestra error.
@@ -1209,6 +1231,7 @@ function onAgregarProductoServicioClick() {
     }
 
     let oProdServ = {
+        id: productoServicioField.attr("idselected"),
         productoServicioId: productoServicioField.attr("idselected"),
         objetoImpuestoId: objetoImpuesto.value,
         cantidad: cantidad,
@@ -1239,6 +1262,45 @@ function onEliminarProductoServicioClick(id) {
         tableProdServ.bootstrapTable('removeByUniqueId', id);
     });
 }
+
+//Función para detectar el cambio de valor en el campo Moneda
+function onMonedaChanged() {
+    let selMoneda = document.getElementById("selMoneda"),
+        inpTipoCambio = document.getElementById("inpTipoCambio"),
+        clave = selMoneda.options[selMoneda.selectedIndex].getAttribute("clave"),
+        clavePesoMexicano = "MXN",
+        siblings = [...inpTipoCambio.parentElement.children];
+
+    if (clave == clavePesoMexicano) {
+        inpTipoCambio.value = "1";
+        inpTipoCambio.setAttribute("disabled", true);
+
+        //Removes validation from input
+        let ive = siblings.filter(c => c.classList.contains("input-validation-error"));
+        ive.forEach(function (e) {
+            e.classList.add('input-validation-valid');
+            e.classList.remove('input-validation-error');
+        });
+        //Removes validation message after input
+        let fve = siblings.filter(c => c.classList.contains("field-validation-error"));
+        fve.forEach(function (e) {
+            e.classList.add('field-validation-valid');
+            e.classList.remove('field-validation-error');
+        });
+        //Removes danger text
+        let tdn = siblings.filter(c => c.classList.contains("text-danger"));
+        tdn.forEach(function (e) {
+            e.innerHTML = "";
+        });
+
+        inpTipoCambio.classList.remove("is-invalid");
+    } else {
+        inpTipoCambio.value = "";
+        inpTipoCambio.removeAttribute("disabled");
+    }
+
+    $("#inpTipoCambio").change();
+}
 ////////////////////////////////
 
 ////////////////////////////////
@@ -1248,16 +1310,24 @@ function onEliminarProductoServicioClick(id) {
 function initDialogProdServ() {
     let prodservField = document.getElementById("inpProductoServicio");
 
-    let cantidadField = document.getElementById("inpCantidad");
-    let unitarioField = document.getElementById("inpUnitario");
-    let descuentoField = document.getElementById("inpDescuento");
-    let unidadField = document.getElementById("inpUnidad");
-    let descripcionField = document.getElementById("inpDescripcion");
+    let cantidadField = document.getElementById("inpCantidad"),
+        unitarioField = document.getElementById("inpUnitario"),
+        descuentoField = document.getElementById("inpDescuento"),
+        unidadField = document.getElementById("inpUnidad"),
+        descripcionField = document.getElementById("inpDescripcion");
 
-    let objetoImpuesto = document.getElementById("selObjetoImpuesto");
-    let trasladoField = document.getElementById("inpTraslado");
-    let retencionField = document.getElementById("inpRetencion");
+    let objetoImpuesto = document.getElementById("selObjetoImpuesto"),
+        selTrasladoTipoImpuesto = document.getElementById("selTrasladoTipoImpuesto"),
+        trasladoField = document.getElementById("inpTraslado"),
+        divTraslado = document.getElementById("divTraslado"),
+        inpTrasladoManual = document.getElementById("inpTrasladoManual"),
+        selRetencionTipoImpuesto = document.getElementById("selRetencionTipoImpuesto"),
+        retencionField = document.getElementById("inpRetencion"),
+        divRetencion = document.getElementById("divRetencion"),
+        inpRetencionManual = document.getElementById("inpRetencionManual");
 
+    let totalTrasladoField = document.getElementById("trasladoProducto");
+    let totalRetencionField = document.getElementById("retencionProducto");
     let totalField = document.getElementById("totalProducto");
 
     prodservField.value = "";
@@ -1271,9 +1341,22 @@ function initDialogProdServ() {
     descripcionField.value = "";
 
     objetoImpuesto.value = 0;
+    selTrasladoTipoImpuesto.value = 0;
+    selTrasladoTipoImpuesto.parentElement.removeAttribute("hidden");
     trasladoField.value = "";
-    retencionField.value = "";
+    trasladoField.parentElement.setAttribute("hidden", true);
+    inpTrasladoManual.checked = false;
+    divTraslado.setAttribute("hidden", true);
 
+    selRetencionTipoImpuesto.value = 0;
+    selRetencionTipoImpuesto.parentElement.removeAttribute("hidden");
+    retencionField.value = "";
+    retencionField.parentElement.setAttribute("hidden", true);
+    inpRetencionManual.checked = false;
+    divRetencion.setAttribute("hidden", true);
+
+    totalTrasladoField.textContent = 0.00
+    totalRetencionField.textContent = 0.00
     totalField.textContent = 0.00
 }
 
@@ -1292,8 +1375,8 @@ function calcularTotal() {
         unitario = parseFloat(inpUnitario.value || "0"),
         descuento = parseFloat(inpDescuento.value || "0"),
         subtotal = cantidad * unitario,
-        traslado = (subtotal * parseFloat(inpTraslado.value || "0")) / 100,
-        retencion = (subtotal * parseFloat(inpRetencion.value || "0")) / 100,
+        traslado = (subtotal * parseFloat(inpTraslado.value || "0")),
+        retencion = (subtotal * parseFloat(inpRetencion.value || "0")),
         total = subtotal - descuento + traslado - retencion;
 
     spanTraslado.textContent = numFormatter.format(traslado);
@@ -1304,21 +1387,86 @@ function calcularTotal() {
 //Función para establecer el comportamiento de los impuestos en base al item seleccionado de objeto impuesto
 function onObjetoImpuestoChanged() {
     let selObjetoImpuesto = document.getElementById("selObjetoImpuesto"),
-        inpTraslado = document.getElementById("divTraslado"),
-        inpRetencion = document.getElementById("divRetencion"),
+        inpTraslado = document.getElementById("inpTraslado"),
+        divTraslado = document.getElementById("divTraslado"),
+        inpRetencion = document.getElementById("inpRetencion"),
+        divRetencion = document.getElementById("divRetencion"),
         objetoImpuestoSelected = selObjetoImpuesto.options[selObjetoImpuesto.selectedIndex],
         claveNoImpuestos = "01";
 
-    inpTraslado.removeAttribute("hidden");
-    inpRetencion.removeAttribute("hidden");
+    divTraslado.removeAttribute("hidden");
+    divRetencion.removeAttribute("hidden");
+
+    inpTraslado.value = 0;
+    inpRetencion.value = 0;
 
     if (objetoImpuestoSelected.getAttribute("clave") == claveNoImpuestos) {
-        inpTraslado.setAttribute("hidden", true);
-        inpRetencion.setAttribute("hidden", true);
+        divTraslado.setAttribute("hidden", true);
+        divRetencion.setAttribute("hidden", true);
+    }
+}
+
+//Función para detectar el cambio de valor del traslado automático
+function onTrasladoAutomaticoChanged() {
+    let selTrasladoTipoImpuesto = document.getElementById("selTrasladoTipoImpuesto"),
+        selectedTipo = selTrasladoTipoImpuesto.options[selTrasladoTipoImpuesto.selectedIndex],
+        inpTraslado = document.getElementById("inpTraslado");
+
+    inpTraslado.value = selectedTipo.getAttribute("valorMaximo");
+
+    calcularTotal();
+}
+
+//Función para detectar el cambio de valor del traslado manual
+function onTrasladoManualChanged() {
+    let selTrasladoTipoImpuesto = document.getElementById("selTrasladoTipoImpuesto"),
+        inpEsManual = document.getElementById("inpTrasladoManual"),
+        inpTraslado = document.getElementById("inpTraslado");
+
+    selTrasladoTipoImpuesto.value = 0;
+    inpTraslado.value = 0;
+
+    if (inpEsManual.checked) {
+        selTrasladoTipoImpuesto.parentElement.setAttribute("hidden", true);
+        inpTraslado.parentElement.removeAttribute("hidden");
     }
     else {
-        inpTraslado.value = 0;
-        inpRetencion.value = 0;
+        inpTraslado.parentElement.setAttribute("hidden", true);
+        selTrasladoTipoImpuesto.parentElement.removeAttribute("hidden");
     }
+
+    calcularTotal();
+}
+
+//Función para detectar el cambio de valor del traslado automático
+function onRetencionAutomaticaChanged() {
+    let selRetencionTipoImpuesto = document.getElementById("selRetencionTipoImpuesto"),
+        selectedTipo = selRetencionTipoImpuesto.options[selRetencionTipoImpuesto.selectedIndex],
+        inpRetencion = document.getElementById("inpRetencion");
+
+    inpRetencion.value = selectedTipo.getAttribute("valorMaximo");
+
+    calcularTotal();
+}
+
+//Función para detectar el cambio de valor de la retención manual
+function onRetencionManualChanged() {
+    let selRetencionTipoImpuesto = document.getElementById("selRetencionTipoImpuesto"),
+        inpEsManual = document.getElementById("inpRetencionManual"),
+        inpRetencion = document.getElementById("inpRetencion");
+
+    selRetencionTipoImpuesto.value = 0;
+    inpRetencion.value = 0;
+
+    if (inpEsManual.checked) {
+        selRetencionTipoImpuesto.parentElement.setAttribute("hidden", true);
+        inpRetencion.parentElement.removeAttribute("hidden");
+    }
+    else {
+        inpRetencion.parentElement.setAttribute("hidden", true);
+        selRetencionTipoImpuesto.parentElement.removeAttribute("hidden");
+    }
+
+    calcularTotal();
 }
 /////////////////////
