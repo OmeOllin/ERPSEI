@@ -234,6 +234,9 @@
   <data name="EmptySelectItemText" xml:space="preserve">
     <value>Select...</value>
   </data>
+  <data name="EsManual" xml:space="preserve">
+    <value>Manual</value>
+  </data>
   <data name="FaltaEmpresaParaComparar" xml:space="preserve">
     <value>The first company seems valid. Please, select the other company to validate</value>
   </data>
