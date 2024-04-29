@@ -168,7 +168,7 @@ namespace ERPSEI.Pages
 										"</tr>" +
 										"<tr>" +
 											"<td align='right'><b>Regimen fiscal: </b></td>" +
-											$"<td>{pf.Emisor?.RFC}</td>" +
+											$"<td>({pf.Emisor?.RegimenFiscal?.Clave}){pf.Emisor?.RegimenFiscal?.Descripcion}</td>" +
 											"<td align='right'><b>Serie: </b></td>" +
 											$"<td>{pf.Serie}</td>" +
 										"</tr>" +
@@ -180,13 +180,13 @@ namespace ERPSEI.Pages
 										"</tr>" +
 										"<tr>" +
 											"<td align='right'><b>Expedido en: </b></td>" +
-											$"<td>{pf.Emisor?.RFC}</td>" +
+											$"<td> --- </td>" +
 											"<td align='right'><b>Fecha: </b></td>" +
 											$"<td>{pf.Fecha:yyyy-MM-ddThh:mm:ss}</td>" +
 										"</tr>" +
 										"<tr>" +
 											"<td align='right'><b>Lugar de expedición: </b></td>" +
-											$"<td>{pf.Emisor?.RFC}</td>" +
+											$"<td> --- </td>" +
 											"<td align='right'><b>Forma de pago: </b></td>" +
 											$"<td>({pf.FormaPago?.Clave}){pf.FormaPago?.Descripcion}</td>" +
 										"</tr>" +
@@ -198,7 +198,7 @@ namespace ERPSEI.Pages
 										"</tr>" +
 										"<tr>" +
 											"<td align='right'><b>Régimen fiscal: </b></td>" +
-											$"<td>({pf.Receptor?.RFC}){pf.Receptor?.RFC}</td>" +
+											$"<td>({pf.Receptor?.RegimenFiscal?.Clave}){pf.Receptor?.RegimenFiscal?.Descripcion}</td>" +
 											"<td align='right'><b>Uso de CFDI: </b></td>" +
 											$"<td>({pf.UsoCFDI?.Clave}){pf.UsoCFDI?.Descripcion}</td>" +
 										"</tr>" +
