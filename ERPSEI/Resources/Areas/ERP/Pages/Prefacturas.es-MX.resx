@@ -288,6 +288,9 @@
   <data name="Origen" xml:space="preserve">
     <value>Origen</value>
   </data>
+  <data name="PDFButtonTitle" xml:space="preserve">
+    <value>Ver PDF</value>
+  </data>
   <data name="Perfil" xml:space="preserve">
     <value>Perfil</value>
   </data>

@@ -1,6 +1,5 @@
 using ERPSEI.Data;
 using ERPSEI.Data.Entities;
-using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.SAT;
 using ERPSEI.Data.Managers;
@@ -15,6 +14,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using iText.Html2pdf;
+using System;
+using System.IO;
 
 namespace ERPSEI.Areas.ERP.Pages
 {
@@ -73,7 +75,6 @@ namespace ERPSEI.Areas.ERP.Pages
 			public string? TextoReceptor { get; set; } = string.Empty;
 		}
 
-		[BindProperty]
 		public ConceptoModel InputConceptos { get; set; }
 
 		public class ConceptoModel
@@ -109,6 +110,7 @@ namespace ERPSEI.Areas.ERP.Pages
 			public int? ProductoServicioId { get; set; }
 		}
 
+		public TrasladoModel InputTraslado { get; set; }
 		public class TrasladoModel
 		{
 			[Required(ErrorMessage = "Required")]
@@ -117,22 +119,15 @@ namespace ERPSEI.Areas.ERP.Pages
 
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "TrasladoField")]
-			public decimal? Tasa { get; set; }
-
-			[Required(ErrorMessage = "Required")]
-			[Display(Name = "TrasladoField")]
 			public decimal? Valor { get; set; }
 		}
 
+		public RetencionModel InputRetencion { get; set; }
 		public class RetencionModel
 		{
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "RetencionField")]
 			public int? TasaOCuotaId { get; set; }
-
-			[Required(ErrorMessage = "Required")]
-			[Display(Name = "RetencionField")]
-			public decimal? Tasa { get; set; }
 
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "RetencionField")]
@@ -226,6 +221,8 @@ namespace ERPSEI.Areas.ERP.Pages
 			InputFiltro = new FiltroModel();
             InputEmpresa = new EmpresaModel();
 			InputConceptos = new ConceptoModel();
+			InputTraslado = new TrasladoModel();
+			InputRetencion = new RetencionModel();
 			InputCFDI = new CFDIModel();
 		}
 
@@ -500,21 +497,30 @@ namespace ERPSEI.Areas.ERP.Pages
 				{
 					if (c == null) { continue; }
 
+					int cantidad = c.Cantidad ?? 0;
+
+					decimal precioUnitario = c.Unitario ?? 0,
+						subtotal = cantidad * precioUnitario,
+						tasaTraslado = c.Traslado?.Valor ?? 0,
+						tasaRetencion = c.Retencion?.Valor ?? 0,
+						traslado = subtotal * tasaTraslado,
+						retencion = subtotal * tasaRetencion;
+
 					//Se usa la info para guardar el concepto.
 					await _conceptoManager.CreateAsync(
 						new Concepto()
 						{
 							ProductoServicioId = c.ProductoServicioId ?? 0,
-							Cantidad = c.Cantidad ?? 0,
-							PrecioUnitario = c.Unitario ?? 0,
+							Cantidad = cantidad,
+							PrecioUnitario = precioUnitario,
 							Descuento = c.Descuento ?? 0,
 							UnidadMedidaId = c.UnidadId ?? 0,
 							Descripcion = c.Descripcion ?? string.Empty,
 							ObjetoImpuestoId = c.ObjetoImpuestoId ?? 0,
-							TasaTraslado = c.Traslado?.Tasa ?? 0,
-							TasaRetencion = c.Retencion?.Tasa ?? 0,
-                            Traslado = c.Traslado?.Valor ?? 0,
-                            Retencion = c.Retencion?.Valor ?? 0,
+							TasaTraslado = tasaTraslado,
+							TasaRetencion = tasaRetencion,
+                            Traslado = traslado,
+                            Retencion = retencion,
                             PrefacturaId = idPrefactura
 						}
 					);
@@ -577,7 +583,9 @@ namespace ERPSEI.Areas.ERP.Pages
 					string serie = e.RFC != null ? e.RFC.Substring(0, 3) : string.Empty;
 					List<Prefactura> prefacturas = await _prefacturaManager.GetAllAsync(null, null, serie, null, null, null, null);
 					prefacturas = prefacturas.OrderByDescending(p => p.Id).ToList();
-					string proximoFolio = prefacturas.FirstOrDefault()?.Folio + 1;
+					int proximoFolio = 0; 
+					int.TryParse(prefacturas.FirstOrDefault()?.Folio, out proximoFolio);
+					proximoFolio += 1;
 
 					jsonEmpresas.Add($"{{" +
 										$"\"id\": {e.Id}, " +

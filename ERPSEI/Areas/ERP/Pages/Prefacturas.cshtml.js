@@ -132,8 +132,8 @@ function operateFormatter(value, row, index) {
     
     //Icono Ver
     icons.push(`<li><a class="dropdown-item see" href="#" title="${btnVerTitle}"><i class="bi bi-search"></i> ${btnVerTitle}</a></li>`);
-    //Icono Editar
-    icons.push(`<li><a class="dropdown-item edit" href="#" title="${btnEditarTitle}"><i class="bi bi-pencil-fill"></i> ${btnEditarTitle}</a></li>`);
+    //Icono PDF
+    icons.push(`<li><a class="dropdown-item pdf" href="#" title="${btnPDFTitle}"><i class="bi bi-file-pdf"></i> ${btnPDFTitle}</a></li>`);
 
     return `<div class="dropdown">
               <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -148,9 +148,8 @@ window.operateEvents = {
         initCFDIDialog(VER, row);
         dlgCFDIModal.toggle();
     },
-    'click .edit': function (e, value, row, index) {
-        initCFDIDialog(EDITAR, row);
-        dlgCFDIModal.toggle();
+    'click .pdf': function (e, value, row, index) {
+        showPDF(row.id);
     }
 }
 //Función para agregar cfdis
@@ -347,6 +346,11 @@ function onBuscarClick() {
 ////////////////////////////////
 //Funcionalidad Diálogo CFDI
 ////////////////////////////////
+//Función para mostrar una prefactura como PDF
+function showPDF(idPrefactura) {
+    window.open(`/FileViewer?id=${idPrefactura}&module=prefacturas`, "_blank");
+}
+
 //Función para crear un nuevo objeto CFDI
 function createNewCFDI() {
     let curDate = new Date();
@@ -697,7 +701,7 @@ function initTableProdServ(data = null) {
             },
             {
                 title: colSubtotalHeader,
-                field: "subtotal",
+                field: "subtotalCalculado",
                 align: "center",
                 valign: "middle",
                 sortable: true,
@@ -713,7 +717,7 @@ function initTableProdServ(data = null) {
             },
             {
                 title: colTrasladoHeader,
-                field: "traslado",
+                field: "trasladoCalculado",
                 align: "center",
                 valign: "middle",
                 sortable: true,
@@ -721,7 +725,7 @@ function initTableProdServ(data = null) {
             },
             {
                 title: colRetencionHeader,
-                field: "retencion",
+                field: "retencionCalculada",
                 align: "center",
                 valign: "middle",
                 sortable: true,
@@ -729,7 +733,7 @@ function initTableProdServ(data = null) {
             },
             {
                 title: colTotalHeader,
-                field: "total",
+                field: "totalCalculado",
                 align: "center",
                 valign: "middle",
                 sortable: true,
@@ -1200,9 +1204,9 @@ function limpiarReceptor() {
 //Función para agregar un producto o servicio al listado
 function onAgregarProductoServicioClick() {
     //Ejecuta la validación de los campos
-    $("#conceptoForm").validate();
+    $("#theForm").validate();
     //Determina los errores. Si la forma no es válida, entonces finaliza.
-    if (!$("#conceptoForm").valid()) { return; }
+    if (!$("#theForm").valid()) { return; }
 
     let productoServicioField = $(document.getElementById("inpProductoServicio")),
         cantidadField = document.getElementById("inpCantidad"),
@@ -1211,23 +1215,35 @@ function onAgregarProductoServicioClick() {
         unidadField = document.getElementById("inpUnidad"),
         descripcionField = document.getElementById("inpDescripcion"),
         objetoImpuesto = document.getElementById("selObjetoImpuesto"),
+        trasladoTipoField = document.getElementById("selTrasladoTipoImpuesto"),
         trasladoField = document.getElementById("inpTraslado"),
-        retencionField = document.getElementById("inpRetencion");
+        retencionField = document.getElementById("inpRetencion"),
+        retencionTipoField = document.getElementById("selRetencionTipoImpuesto");
 
     let cantidad = parseFloat(cantidadField.value || "0"),
         unitario = parseFloat(unitarioField.value || "0"),
         descuento = parseFloat(descuentoField.value || "0"),
+        valorTraslado = trasladoField.value,
+        valorRetencion = retencionField.value,
         subtotal = cantidad * unitario,
-        tasaTraslado = trasladoField.value,
-        tasaRetencion = retencionField.value,
-        traslado = (subtotal * parseFloat(tasaTraslado || "0")),
-        retencion = (subtotal * parseFloat(tasaRetencion || "0")),
+        traslado = subtotal * valorTraslado,
+        retencion = subtotal * valorRetencion,
         total = subtotal - descuento + traslado - retencion;
 
     //Si el campo producto / servicio no tiene elemento seleccionado, muestra error.
     if (parseInt(productoServicioField.attr("idselected") || "0") <= 0) {
         showAlert(msgAgregarProductoServicio, sinProductoServicio);
         return;
+    }
+
+    let oTraslado = {
+        tasaOCuotaId: trasladoTipoField.value||0,
+        valor: valorTraslado
+    }
+
+    let oRetencion = {
+        tasaOCuotaId: retencionTipoField.value||0,
+        valor: valorRetencion,
     }
 
     let oProdServ = {
@@ -1240,13 +1256,13 @@ function onAgregarProductoServicioClick() {
         clave: productoServicioField.data("clave"),
         descripcion: descripcionField.value,
         unitario: unitario,
-        subtotal: subtotal,
         descuento: descuento,
-        tasaTraslado: tasaTraslado,
-        tasaRetencion: tasaRetencion,
-        traslado: traslado,
-        retencion: retencion,
-        total: total
+        traslado: oTraslado,
+        retencion: oRetencion,
+        subtotalCalculado: subtotal,
+        trasladoCalculado: traslado,
+        retencionCalculada: retencion,
+        totalCalculado: total
     };
 
     tableProdServ.bootstrapTable('prepend', [oProdServ]);

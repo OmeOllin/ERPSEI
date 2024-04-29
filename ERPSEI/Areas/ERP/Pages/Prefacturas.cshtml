@@ -177,18 +177,17 @@
 </table>
 <!-- --------------------------- -->
 <!-- --------------------------- -->
-
-<!-- --------------------------- -->
-<!-- Sección Diálogo CFDI ------ -->
-<div id="dlgCFDI" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-xl">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 id="dlgCFDITitle" class="modal-title"></h5>
-				<button type="button" class="btn-close" onclick="askConfirmation('@Localizer["ConfirmActionTitle"]', '@Localizer["ConfirmActionQuestion"]', function () { onCerrarClick(); dlgCFDIModal.toggle(); });"></button>
-			</div>
-			<div class="modal-body align-items-center">
-				<form id="theForm" method="post">
+<form id="theForm" method="post">
+	<!-- --------------------------- -->
+	<!-- Sección Diálogo CFDI ------ -->
+	<div id="dlgCFDI" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 id="dlgCFDITitle" class="modal-title"></h5>
+					<button type="button" class="btn-close" onclick="askConfirmation('@Localizer["ConfirmActionTitle"]', '@Localizer["ConfirmActionQuestion"]', function () { onCerrarClick(); dlgCFDIModal.toggle(); });"></button>
+				</div>
+				<div class="modal-body align-items-center">
 					<div class="container-fluid">
 						<div class="row">
 							<div class="col-3 col-lg-2">
@@ -402,43 +401,41 @@
 							</div>
 						</div>
 					</div>
-				</form>
-			</div>
-			<div class="modal-footer" style="display: inline !important;">
-				<div class="container row">
-					<div class="col-12 text-end">
-						<button id="dlgCFDIBtnDesactivar" type="button" class="btn btn-danger formButton" onclick="onDeleteCFDIClick();" data-bs-dismiss="modal">
-							<i class="bi bi-ban"></i> @Localizer["DeactivateButton"]
-						</button>
-						<button id="dlgCFDIBtnCancelar" type="button" class="btn btn-secondary" onclick="askConfirmation('@Localizer["ConfirmActionTitle"]', '@Localizer["ConfirmActionQuestion"]', function () { onCerrarClick(); dlgCFDIModal.toggle(); });">
-							<i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
-						</button>
-						<button id="btnLimpiar" type="button" class="btn btn-secondary" onclick="onLimpiarClick();">
-							<i class="bi bi-eraser-fill"></i> @Localizer["Limpiar"]
-						</button>
-						<button id="dlgCFDIBtnGuardar" type="button" class="btn btn-primary formButton" onclick="onGuardarClick();">
-							<i class="bi bi-floppy"></i> @Localizer["SaveButtonTitle"]
-						</button>
+				</div>
+				<div class="modal-footer" style="display: inline !important;">
+					<div class="container row">
+						<div class="col-12 text-end">
+							<button id="dlgCFDIBtnDesactivar" type="button" class="btn btn-danger formButton" onclick="onDeleteCFDIClick();" data-bs-dismiss="modal">
+								<i class="bi bi-ban"></i> @Localizer["DeactivateButton"]
+							</button>
+							<button id="dlgCFDIBtnCancelar" type="button" class="btn btn-secondary" onclick="askConfirmation('@Localizer["ConfirmActionTitle"]', '@Localizer["ConfirmActionQuestion"]', function () { onCerrarClick(); dlgCFDIModal.toggle(); });">
+								<i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
+							</button>
+							<button id="btnLimpiar" type="button" class="btn btn-secondary" onclick="onLimpiarClick();">
+								<i class="bi bi-eraser-fill"></i> @Localizer["Limpiar"]
+							</button>
+							<button id="dlgCFDIBtnGuardar" type="button" class="btn btn-primary formButton" onclick="onGuardarClick();">
+								<i class="bi bi-floppy"></i> @Localizer["SaveButtonTitle"]
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
-<!-- --------------------------- -->
-<!-- --------------------------- -->
+	<!-- --------------------------- -->
+	<!-- --------------------------- -->
 
-<!-- ------------------------------------- -->
-<!-- Sección Diálogo Productos / Servicios -->
-<div id="dlgProdServ" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 id="dlgTitle" class="modal-title">@Localizer["ProductoServicioPlaceholder"]</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-			</div>
-			<div class="modal-body align-items-center">
-				<form id="conceptoForm" method="post">
+	<!-- ------------------------------------- -->
+	<!-- Sección Diálogo Productos / Servicios -->
+	<div id="dlgProdServ" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 id="dlgTitle" class="modal-title">@Localizer["ProductoServicioPlaceholder"]</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body align-items-center">
 					<div class="container-fluid ui-front">
 						<div class="row">
 							<div class="col-12 mb-3">
@@ -520,7 +517,7 @@
 							<div id="divTraslado" class="col-12 col-sm-6 col-md-6 col-lg-3" hidden>
 								<ul class="list-group">
 									<li class="list-group-item form-floating mb-4 p-0 border-0">
-										<select id="selTrasladoTipoImpuesto" asp-for="InputConceptos.Traslado.TasaOCuotaId" class="form-select" placeholder="@Localizer["ColTrasladoHeader"]" onchange="onTrasladoAutomaticoChanged();">
+										<select id="selTrasladoTipoImpuesto" asp-for="InputTraslado.TasaOCuotaId" class="form-select" placeholder="@Localizer["ColTrasladoHeader"]" onchange="onTrasladoAutomaticoChanged();">
 											@{
 												@foreach (TasaOCuota tasaOCuota in tocTraslados)
 												{
@@ -528,27 +525,23 @@
 												}
 											}
 										</select>
-										<label for="selTrasladoTipoImpuesto" asp-for="InputConceptos.Traslado.TasaOCuotaId" class="form-label"></label>
+										<label for="selTrasladoTipoImpuesto" asp-for="InputTraslado.TasaOCuotaId" class="form-label"></label>
 									</li>
 									<li class="list-group-item form-floating mb-4 p-0 border-0" hidden>
-										<input id="inpTraslado" type="number" asp-for="InputConceptos.Traslado.Tasa" class="form-control formInput" placeholder="@Localizer["ColTrasladoHeader"]" onchange="calcularTotal();" />
-										<label for="inpTraslado" asp-for="InputConceptos.Traslado.Tasa" class="form-label"></label>
-										<span asp-validation-for="InputConceptos.Traslado.Tasa" class="text-danger"></span>
+										<input id="inpTraslado" type="number" asp-for="InputTraslado.Valor" class="form-control formInput" placeholder="@Localizer["ColTrasladoHeader"]" onchange="calcularTotal();" />
+										<label for="inpTraslado" asp-for="InputTraslado.Valor" class="form-label"></label>
+										<span asp-validation-for="InputTraslado.Valor" class="text-danger"></span>
 									</li>
 									<li class="form-check mb-4">
 										<input class="form-check-input" type="checkbox" value="" id="inpTrasladoManual" onchange="onTrasladoManualChanged();">
 										<label class="form-check-label" for="inpTrasladoManual">@Localizer["EsManual"]</label>
 									</li>
-									@* <li class="form-check mb-4">
-										<input class="form-check-input" type="checkbox" value="" id="inpEs16" name="opcionTraslado" onchange="onEs16Changed();">
-										<label class="form-check-label" for="inpEs16">@Localizer["Es16"]</label>
-									</li> *@
 								</ul>
 							</div>
 							<div id="divRetencion" class="col-12 col-sm-6 col-md-6 col-lg-3" hidden>
 								<ul class="list-group">
 									<li class="list-group-item form-floating mb-4 p-0 border-0">
-										<select id="selRetencionTipoImpuesto" asp-for="InputConceptos.Retencion.TasaOCuotaId" class="form-select" placeholder="@Localizer["ColRetencionHeader"]" onchange="onRetencionAutomaticaChanged();">
+										<select id="selRetencionTipoImpuesto" asp-for="InputRetencion.TasaOCuotaId" class="form-select" placeholder="@Localizer["ColRetencionHeader"]" onchange="onRetencionAutomaticaChanged();">
 											@{
 												@foreach (TasaOCuota tasaOCuota in tocRetenciones)
 												{
@@ -556,12 +549,12 @@
 												}
 											}
 										</select>
-										<label for="selRetencionTipoImpuesto" asp-for="InputConceptos.Retencion.TasaOCuotaId" class="form-label"></label>
+										<label for="selRetencionTipoImpuesto" asp-for="InputRetencion.TasaOCuotaId" class="form-label"></label>
 									</li>
 									<li class="list-group-item form-floating mb-4 p-0 border-0" hidden>
-										<input id="inpRetencion" type="number" asp-for="InputConceptos.Retencion.Tasa" class="form-control formInput" placeholder="@Localizer["ColRetencionHeader"]" onchange="calcularTotal();" />
-										<label for="inpRetencion" asp-for="InputConceptos.Retencion.Tasa" class="form-label"></label>
-										<span asp-validation-for="InputConceptos.Retencion.Tasa" class="text-danger"></span>
+										<input id="inpRetencion" type="number" asp-for="InputRetencion.Valor" class="form-control formInput" placeholder="@Localizer["ColRetencionHeader"]" onchange="calcularTotal();" />
+										<label for="inpRetencion" asp-for="InputRetencion.Valor" class="form-label"></label>
+										<span asp-validation-for="InputRetencion.Valor" class="text-danger"></span>
 									</li>
 									<li class="form-check mb-4">
 										<input class="form-check-input" type="checkbox" value="" id="inpRetencionManual" onchange="onRetencionManualChanged();">
@@ -596,21 +589,21 @@
 							</div>
 						</div>
 					</div>
-				</form>
-			</div>
-			<div class="modal-footer">
-				<button id="dlgBtnCancelar" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-					<i class="bi bi-x-lg"></i> @Localizer["CloseButtonTitle"]
-				</button>
-				<button id="dlgBtnAgregar" type="button" class="btn btn-primary formButton" onclick="onAgregarProductoServicioClick();">
-					<i class="bi bi-plus-lg"></i> @Localizer["AddButton"]
-				</button>
+				</div>
+				<div class="modal-footer">
+					<button id="dlgBtnCancelar" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i> @Localizer["CloseButtonTitle"]
+					</button>
+					<button id="dlgBtnAgregar" type="button" class="btn btn-primary formButton" onclick="onAgregarProductoServicioClick();">
+						<i class="bi bi-plus-lg"></i> @Localizer["AddButton"]
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
-<!-- --------------------------- -->
-<!-- --------------------------- -->
+	<!-- --------------------------- -->
+	<!-- --------------------------- -->
+</form>
 
 <!-- ---------------------- -->
 <!-- Sección Diálogo Emisor -->
@@ -882,6 +875,7 @@
 		var nuevoRegistro = '@Localizer["NuevoRegistro"]';
 		var btnVerTitle = '@Localizer["SeeButtonTitle"]';
 		var btnEditarTitle = '@Localizer["EditButtonTitle"]';
+		var btnPDFTitle = '@Localizer["PDFButtonTitle"]';
 		var btnEliminarTitle = '@Localizer["DeleteButton"]';
 
 		var dlgEditarTitle = '@Localizer["EditDialogTitle"]';
