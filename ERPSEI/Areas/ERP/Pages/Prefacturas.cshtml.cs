@@ -230,12 +230,12 @@ namespace ERPSEI.Areas.ERP.Pages
 		{
 		}
 
-		public async Task<JsonResult> OnPostDatosAdicionales(int idEmpleado)
+		public async Task<JsonResult> OnPostDatosAdicionales(int idPrefactura)
 		{
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["ConsultadoUnsuccessfully"]);
 			try
 			{
-				resp.Datos = await GetDatosAdicionales(idEmpleado);
+				resp.Datos = await GetDatosAdicionales(idPrefactura);
 				resp.TieneError = false;
 				resp.Mensaje = _strLocalizer["ConsultadoSuccessfully"];
 			}
@@ -274,7 +274,7 @@ namespace ERPSEI.Areas.ERP.Pages
 			jsonConceptos = getListJsonConceptos(p.Conceptos);
 
 			jsonResponse = $"{{" +
-								$"\"conceptos\": [{string.Join(",", jsonConceptos)}], " +
+								$"\"conceptos\": [{string.Join(",", jsonConceptos)}] " +
 							$"}}";
 
 			return jsonResponse;
@@ -381,7 +381,7 @@ namespace ERPSEI.Areas.ERP.Pages
 										$"\"objetoImpuestoId\": {c.ObjetoImpuestoId}, " +
 										$"\"objetoImpuesto\": \"{nombreObjetoImpuesto}\", " +
                                         $"\"tasaTraslado\": {c.TasaTraslado}, " +
-                                        $"\"tasaRetencion\":{c.TasaRetencion}" +
+                                        $"\"tasaRetencion\":{c.TasaRetencion}, " +
                                         $"\"traslado\": {c.Traslado}, " +
 										$"\"retencion\":{c.Retencion}" +	
 									  $"}}");
