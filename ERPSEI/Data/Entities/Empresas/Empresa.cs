@@ -55,6 +55,9 @@ namespace ERPSEI.Data.Entities.Empresas
 
         public ICollection<ArchivoEmpresa>? ArchivosEmpresa { get; }
 
+		public RegimenFiscal? RegimenFiscal { get; set; }
+		public int? RegimenFiscalId { get; set; }
+
 		public ICollection<Prefactura>? PrefacturasEmitidas { get; set; }
 		public ICollection<Prefactura>? PrefacturasRecibidas { get; set; }
 
