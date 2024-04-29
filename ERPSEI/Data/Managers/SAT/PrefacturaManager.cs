@@ -143,8 +143,8 @@ namespace ERPSEI.Data.Managers.SAT
         {
             return await db.Prefacturas
 				.Where(e => e.Id == id)
-				.Include(e => e.Emisor)
-				.Include(e => e.Receptor)
+				.Include(e => e.Emisor).ThenInclude(e => e.RegimenFiscal)
+				.Include(e => e.Receptor).ThenInclude(r => r.RegimenFiscal)
 				.Include(e => e.TipoComprobante)
 				.Include(e => e.FormaPago)
 				.Include(e => e.MetodoPago)
