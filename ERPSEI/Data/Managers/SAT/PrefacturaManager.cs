@@ -141,7 +141,17 @@ namespace ERPSEI.Data.Managers.SAT
 
 		public async Task<Prefactura?> GetByIdAsync(int id)
         {
-            return await db.Prefacturas.Where(e => e.Id == id).FirstOrDefaultAsync();
+            return await db.Prefacturas
+				.Where(e => e.Id == id)
+				.Include(e => e.Emisor)
+				.Include(e => e.Receptor)
+				.Include(e => e.TipoComprobante)
+				.Include(e => e.FormaPago)
+				.Include(e => e.MetodoPago)
+				.Include(e => e.UsoCFDI)
+				.Include(e => e.Conceptos).ThenInclude(c => c.UnidadMedida)
+				.Include(e => e.Conceptos).ThenInclude(c => c.ProductoServicio)
+				.FirstOrDefaultAsync();
         }
 
 		public async Task<Prefactura?> GetByNameAsync(string name)
