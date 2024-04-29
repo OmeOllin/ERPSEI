@@ -26,8 +26,8 @@
 	string cultureName = culture.Name;
 
 	List<TasaOCuota> tasasOCuotas = await TasaOCuotaManager.GetAllAsync();
-	List<TasaOCuota> tocTraslados = tasasOCuotas.Where(t => t.Traslado).ToList();
-	List <TasaOCuota> tocRetenciones = tasasOCuotas.Where(t => t.Retencion).ToList();
+	List<TasaOCuota> tocTraslados = tasasOCuotas.Where(t => t.Traslado && t.Deshabilitado == 0).ToList();
+	List <TasaOCuota> tocRetenciones = tasasOCuotas.Where(t => t.Retencion && t.Deshabilitado == 0).ToList();
 	List<Impuesto> impuestos = await ImpuestoManager.GetAllAsync();
 	List<ObjetoImpuesto> objetosImpuesto = await ObjetoImpuestoManager.GetAllAsync();
 	List<TipoComprobante> tiposComprobante = await TipoComprobanteManager.GetAllAsync();
