@@ -14,9 +14,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using iText.Html2pdf;
-using System;
-using System.IO;
 
 namespace ERPSEI.Areas.ERP.Pages
 {
@@ -360,9 +357,14 @@ namespace ERPSEI.Areas.ERP.Pages
 		}
 		private List<string> getListJsonConceptos(ICollection<Concepto>? conceptos)
 		{
-			string nombreProdServ;
-			string nombreUnidad;
-			string nombreObjetoImpuesto;
+			decimal subtotal = 0,
+				traslado = 0,
+				retencion = 0,
+				total = 0;
+			string claveProdServ,
+				nombreProdServ,
+				nombreUnidad,
+				nombreObjetoImpuesto;
 			List<string> jsonConceptos = new List<string>();
 			if (conceptos != null)
 			{
@@ -371,24 +373,35 @@ namespace ERPSEI.Areas.ERP.Pages
 											select c).ToList();
 				foreach (Concepto c in concepts)
 				{
+					claveProdServ = c.ProductoServicio != null ? c.ProductoServicio.Clave : string.Empty;
 					nombreProdServ = c.ProductoServicio != null ? c.ProductoServicio.Descripcion : string.Empty;
-					nombreUnidad = c.UnidadMedida != null ? c.UnidadMedida.Descripcion : string.Empty;
+					nombreUnidad = c.UnidadMedida != null ? $"{c.UnidadMedida.Clave} - {c.UnidadMedida.Nombre}" : string.Empty;
 					nombreObjetoImpuesto = c.ObjetoImpuesto != null ? c.ObjetoImpuesto.Descripcion : string.Empty;
+
+					subtotal = c.Cantidad * c.PrecioUnitario;
+					traslado = subtotal * c.TasaTraslado;
+					retencion = subtotal * c.Retencion;
+					total = subtotal - c.Descuento + traslado - retencion;
+
 					jsonConceptos.Add($"{{" +
+										$"\"id\": {c.ProductoServicioId}, " +
 										$"\"productoServicioId\": {c.ProductoServicioId}, " +
 										$"\"productoServicio\": \"{nombreProdServ}\", " +
-										$"\"cantidad\": {c.Cantidad}, " +
-										$"\"unitario\": {c.PrecioUnitario}, " +
-										$"\"descuento\": {c.Descuento}, " +
-										$"\"unidadId\": {c.UnidadMedidaId}, " +
-										$"\"unidad\": \"{nombreUnidad}\", " +
-										$"\"descripcion\": \"{c.Descripcion}\", " +
 										$"\"objetoImpuestoId\": {c.ObjetoImpuestoId}, " +
 										$"\"objetoImpuesto\": \"{nombreObjetoImpuesto}\", " +
-                                        $"\"tasaTraslado\": {c.TasaTraslado}, " +
-                                        $"\"tasaRetencion\":{c.TasaRetencion}, " +
-                                        $"\"traslado\": {c.Traslado}, " +
-										$"\"retencion\":{c.Retencion}" +	
+										$"\"cantidad\": {c.Cantidad}, " +
+										$"\"unidadId\": {c.UnidadMedidaId}, " +
+										$"\"unidad\": \"{nombreUnidad}\", " +
+										$"\"clave\": \"{claveProdServ}\", " +
+										$"\"descripcion\": \"{c.Descripcion}\", " +
+										$"\"unitario\": {c.PrecioUnitario}, " +
+										$"\"descuento\": {c.Descuento}, " +
+                                        $"\"traslado\": {{\"valor\": {c.Traslado} }}, " +
+										$"\"retencion\": {{\"valor\": {c.Retencion} }}, " +
+										$"\"subtotalCalculado\": {subtotal}, " +
+										$"\"trasladoCalculado\": {traslado}, " +
+										$"\"retencionCalculada\": {retencion}, " +
+										$"\"totalCalculado\": {total} " +
 									  $"}}");
 				}
 			}

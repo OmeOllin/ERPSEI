@@ -137,7 +137,8 @@ namespace ERPSEI.Data.Managers.SAT
 			return await db.Prefacturas
 				.Where(e => e.Deshabilitado == 0)
 				.Where(e => e.Id == id)
-				.Include(e => e.Conceptos)
+				.Include(e => e.Conceptos).ThenInclude(c => c.UnidadMedida)
+				.Include(e => e.Conceptos).ThenInclude(c => c.ProductoServicio)
 				.FirstOrDefaultAsync();
 		}
 
@@ -148,9 +149,12 @@ namespace ERPSEI.Data.Managers.SAT
 				.Include(e => e.Emisor).ThenInclude(e => e.RegimenFiscal)
 				.Include(e => e.Receptor).ThenInclude(r => r.RegimenFiscal)
 				.Include(e => e.TipoComprobante)
+				.Include(e => e.Moneda)
 				.Include(e => e.FormaPago)
 				.Include(e => e.MetodoPago)
 				.Include(e => e.UsoCFDI)
+				.Include(e => e.Exportacion)
+				.Include(e => e.Conceptos).ThenInclude(c => c.ObjetoImpuesto)
 				.Include(e => e.Conceptos).ThenInclude(c => c.UnidadMedida)
 				.Include(e => e.Conceptos).ThenInclude(c => c.ProductoServicio)
 				.FirstOrDefaultAsync();
