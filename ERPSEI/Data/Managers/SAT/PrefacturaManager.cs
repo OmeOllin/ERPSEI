@@ -121,6 +121,8 @@ namespace ERPSEI.Data.Managers.SAT
 				.Where(e => formaPagoId != null ? e.FormaPagoId == formaPagoId : true)
 				.Where(e => metodoPagoId != null ? e.MetodoPagoId == metodoPagoId : true)
 				.Where(e => usoCFDIId != null ? e.UsoCFDIId == usoCFDIId : true)
+				.Include(e => e.Emisor).ThenInclude(e => e.RegimenFiscal)
+				.Include(e => e.Receptor).ThenInclude(r => r.RegimenFiscal)
 				.Include(e => e.TipoComprobante)
 				.Include(e => e.Moneda)
 				.Include(e => e.FormaPago)

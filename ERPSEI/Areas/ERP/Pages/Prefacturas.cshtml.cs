@@ -326,10 +326,15 @@ namespace ERPSEI.Areas.ERP.Pages
 						$"\"id\": {p.Id}," +
 						$"\"serie\": \"{p.Serie}\", " +
 						$"\"folio\": \"{p.Folio}\", " +
+						$"\"emisor\": \"{p.Emisor?.RazonSocial}\", " +
+						$"\"emisorId\": {p.Emisor?.Id}, " +
+						$"\"receptor\": \"{p.Receptor?.RazonSocial}\", " +
+						$"\"receptorId\": {p.Receptor?.Id}, " +
 						$"\"tipoComprobante\": \"{nombreTipo}\", " +
 						$"\"tipoComprobanteId\": {p.TipoComprobanteId}, " +
-						$"\"fecha\": \"{fecha:dd/MM/yyyy}\", " +
-						$"\"fechaJS\": \"{fecha:yyyy-MM-dd}\", " +
+						$"\"fecha\": \"{fecha:dd/MM/yyyy HH:mm:ss}\", " +
+						$"\"fechaJS\": \"{fecha:yyyy-MM-dd HH:mm:ss}\", " +
+						$"\"tipoCambio\": {p.TipoCambio}, " +
 						$"\"moneda\": \"{nombreMoneda}\", " +
 						$"\"monedaId\": {p.TipoComprobanteId}, " +
 						$"\"formaPago\": \"{nombreForma}\", " +

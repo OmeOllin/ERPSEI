@@ -216,7 +216,7 @@
 											<div class="col-12"><h6>@Localizer["Emisor"]</h6></div>
 											<div class="col-11">
 												<div class="form-floating">
-													<input id="inpEmisor" type="search" asp-for="InputEmpresa.TextoEmisor" class="form-control" placeholder="@Localizer["Emisor"]" idselected='' area="ERP" module="Prefacturas" source="GetEmpresaSuggestion" filtro="idempresa" />
+													<input id="inpEmisor" type="search" asp-for="InputEmpresa.TextoEmisor" class="form-control formInput" placeholder="@Localizer["Emisor"]" idselected='' area="ERP" module="Prefacturas" source="GetEmpresaSuggestion" filtro="idempresa" />
 													<label for="inpEmisor" asp-for="InputEmpresa.TextoEmisor" class="form-label"></label>
 													<span asp-validation-for="InputEmpresa.TextoEmisor" class="text-danger"></span>
 												</div>
@@ -234,7 +234,7 @@
 											<div class="col-12 mt-3 mt-lg-0 mt-md-0 mt-sm-0 mt-xl-0"><h6>@Localizer["Receptor"]</h6></div>
 											<div class="col-11">
 												<div class="form-floating">
-													<input id="inpReceptor" type="search" asp-for="InputEmpresa.TextoReceptor" class="form-control" placeholder="@Localizer["Receptor"]" idselected='' area="ERP" module="Prefacturas" source="GetEmpresaSuggestion" filtro="idempresa" />
+													<input id="inpReceptor" type="search" asp-for="InputEmpresa.TextoReceptor" class="form-control formInput" placeholder="@Localizer["Receptor"]" idselected='' area="ERP" module="Prefacturas" source="GetEmpresaSuggestion" filtro="idempresa" />
 													<label for="inpReceptor" asp-for="InputEmpresa.TextoReceptor" class="form-label"></label>
 													<span asp-validation-for="InputEmpresa.TextoReceptor" class="text-danger"></span>
 												</div>
@@ -276,14 +276,14 @@
 								<div class="row">
 									<div class="col-xs-6 col-sm-6 col-md-6 col-lg-3">
 										<div class="form-floating mb-4">
-											<input id="inpSerie" asp-for="InputCFDI.Serie" type="text" class="form-control" placeholder="@Localizer["SeriePlaceholder"]" />
+											<input id="inpSerie" asp-for="InputCFDI.Serie" type="text" class="form-control formInput" placeholder="@Localizer["SeriePlaceholder"]" />
 											<label for="inpSerie" asp-for="InputCFDI.Serie" class="form-label required"></label>
 											<span asp-validation-for="InputCFDI.Serie" class="text-danger"></span>
 										</div>
 									</div>
 									<div class="col-xs-6 col-sm-6 col-md-6 col-lg-3">
 										<div class="form-floating mb-4">
-											<input id="inpFolio" asp-for="InputCFDI.Folio" type="text" class="form-control" placeholder="@Localizer["FolioPlaceholder"]" />
+											<input id="inpFolio" asp-for="InputCFDI.Folio" type="text" class="form-control formInput" placeholder="@Localizer["FolioPlaceholder"]" />
 											<label for="inpFolio" asp-for="InputCFDI.Folio" class="form-label required"></label>
 											<span asp-validation-for="InputCFDI.Folio" class="text-danger"></span>
 										</div>
@@ -340,7 +340,7 @@
 									</div>
 									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
 										<div class="form-floating mb-4">
-											<input id="inpTipoCambio" asp-for="InputCFDI.TipoCambio" type="text" class="form-control" placeholder="@Localizer["TipoCambioPlaceholder"]" />
+											<input id="inpTipoCambio" asp-for="InputCFDI.TipoCambio" type="text" class="form-control formInput" placeholder="@Localizer["TipoCambioPlaceholder"]" />
 											<label for="inpTipoCambio" asp-for="InputCFDI.TipoCambio" class="form-label required"></label>
 											<span asp-validation-for="InputCFDI.TipoCambio" class="text-danger"></span>
 										</div>
@@ -361,7 +361,7 @@
 									</div>
 									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
 										<div class="form-floating">
-											<input id="inpNumeroOperacion" asp-for="InputCFDI.NumeroOperacion" type="text" class="form-control" placeholder="@Localizer["NumeroOperacionPlaceholder"]" />
+											<input id="inpNumeroOperacion" asp-for="InputCFDI.NumeroOperacion" type="text" class="form-control formInput" placeholder="@Localizer["NumeroOperacionPlaceholder"]" />
 											<label for="inpNumeroOperacion" asp-for="InputCFDI.NumeroOperacion" class="form-label"></label>
 											<span asp-validation-for="InputCFDI.NumeroOperacion" class="text-danger"></span>
 										</div>

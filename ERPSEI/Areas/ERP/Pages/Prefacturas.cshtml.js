@@ -446,7 +446,7 @@ function initCFDIDialog(action, row) {
 
     idField.value = row.id;
 
-    fechaField.value = row.fecha;
+    fechaField.value = row.fechaJS;
     tipoComprobanteField.value = row.tipoComprobanteId;
 
     serieField.value = row.serie;
@@ -457,7 +457,7 @@ function initCFDIDialog(action, row) {
     metodoField.value = row.metodoPagoId;
     monedaField.value = row.monedaId;
     tipoCambioField.value = row.tipoCambio;
-    tipoCambioField.removeAttribute("disabled");
+    if (action != VER) { tipoCambioField.removeAttribute("disabled"); }
 
     exportacionField.value = row.exportacionId;
     numeroOperacionField.value = row.numeroOperacion;
