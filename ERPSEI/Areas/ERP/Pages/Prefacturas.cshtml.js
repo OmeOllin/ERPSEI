@@ -392,29 +392,32 @@ function initCFDIDialog(action, row) {
 
     let idField = document.getElementById("inpCFDIId");
 
-    let fechaField = document.getElementById("inpFecha");
-    let tipoComprobanteField = document.getElementById("selTipoComprobante");
+    let fechaField = document.getElementById("inpFecha"),
+        tipoComprobanteField = document.getElementById("selTipoComprobante");
 
-    let serieField = document.getElementById("inpSerie");
-    let folioField = document.getElementById("inpFolio");
-    let usoField = document.getElementById("selUsoCFDI");
+    let serieField = document.getElementById("inpSerie"),
+        folioField = document.getElementById("inpFolio"),
+        usoField = document.getElementById("selUsoCFDI");
 
-    let formaField = document.getElementById("selFormaPago");
-    let metodoField = document.getElementById("selMetodoPago");
-    let monedaField = document.getElementById("selMoneda");
-    let tipoCambioField = document.getElementById("inpTipoCambio");
+    let formaField = document.getElementById("selFormaPago"),
+        metodoField = document.getElementById("selMetodoPago"),
+        monedaField = document.getElementById("selMoneda"),
+        tipoCambioField = document.getElementById("inpTipoCambio");
 
-    let exportacionField = document.getElementById("selExportacion");
-    let numeroOperacionField = document.getElementById("inpNumeroOperacion");
+    let exportacionField = document.getElementById("selExportacion"),
+        numeroOperacionField = document.getElementById("inpNumeroOperacion");
 
-    let emisorField = document.getElementById("inpEmisor");
-    let btnInfoEmisor = document.getElementById("btnInfoEmisor");
-    let receptorField = document.getElementById("inpReceptor");
-    let btnInfoReceptor = document.getElementById("btnInfoReceptor");
+    let emisorField = document.getElementById("inpEmisor"),
+        btnInfoEmisor = document.getElementById("btnInfoEmisor"),
+        receptorField = document.getElementById("inpReceptor"),
+        btnInfoReceptor = document.getElementById("btnInfoReceptor");
 
-    let btnDesactivar = document.getElementById("dlgCFDIBtnDesactivar");
-    let dlgTitle = document.getElementById("dlgCFDITitle");
-    let summaryContainer = document.getElementById("saveValidationSummary");
+    let btnLimpiar = document.getElementById("btnLimpiar"),
+        btnGuardar = document.getElementById("dlgCFDIBtnGuardar");
+
+    let dlgTitle = document.getElementById("dlgCFDITitle"),
+        summaryContainer = document.getElementById("saveValidationSummary");
+
     summaryContainer.innerHTML = "";
 
     dialogMode = action;
@@ -424,13 +427,14 @@ function initCFDIDialog(action, row) {
         case NUEVO:
         case EDITAR:
             if (action == NUEVO) {
-                btnDesactivar.hidden = true;
                 dlgTitle.innerHTML = dlgNuevoTitle;
             }
             else {
-                btnDesactivar.hidden = false;
                 dlgTitle.innerHTML = dlgEditarTitle;
             }
+
+            btnLimpiar.hidden = false;
+            btnGuardar.hidden = false;
 
             document.querySelectorAll(".formButton").forEach(function (btn) { btn.classList.remove("disabled"); });
             document.querySelectorAll(".formInput, .formSelect").forEach(function (e) { e.removeAttribute("disabled"); });
@@ -438,6 +442,9 @@ function initCFDIDialog(action, row) {
             break;
         default:
             dlgTitle.innerHTML = dlgVerTitle;
+
+            btnLimpiar.hidden = true;
+            btnGuardar.hidden = true;
 
             document.querySelectorAll(".formButton").forEach(function (btn) { btn.classList.add("disabled"); });
             document.querySelectorAll(".formInput, .formSelect").forEach(function (e) { e.setAttribute("disabled", true); });
@@ -520,7 +527,7 @@ function establecerDatosAdicionales(row) {
     initTableProdServ(data);
 }
 
-//Función para el cierre del cuadro de diálogo
+//Función para limpiar los campos del cuadro de diálogo al cerrar.
 function onCerrarClick() {
     //Removes validation from input-fields
     $('.input-validation-error').addClass('input-validation-valid');
@@ -536,6 +543,20 @@ function onCerrarClick() {
     //Removes is-valid and is-invalid class
     $(".is-valid").removeClass("is-valid");
     $(".is-invalid").removeClass("is-invalid");
+}
+
+//Función para el cierre del cuadro de diálogo
+function onCerrarDialogoClick() {
+    if (dialogMode == VER) {
+        onCerrarClick();
+        dlgCFDIModal.toggle();
+    }
+    else {
+        askConfirmation(dlgConfirmActionTitle, dlgConfirmActionQuestion, function () {
+            onCerrarClick();
+            dlgCFDIModal.toggle();
+        });
+    }
 }
 
 //Función para el guardado de información del empleado

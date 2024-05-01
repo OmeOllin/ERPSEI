@@ -185,7 +185,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 id="dlgCFDITitle" class="modal-title"></h5>
-					<button type="button" class="btn-close" onclick="askConfirmation('@Localizer["ConfirmActionTitle"]', '@Localizer["ConfirmActionQuestion"]', function () { onCerrarClick(); dlgCFDIModal.toggle(); });"></button>
+					<button type="button" class="btn-close" onclick="onCerrarDialogoClick();"></button>
 				</div>
 				<div class="modal-body align-items-center">
 					<div class="container-fluid">
@@ -405,10 +405,7 @@
 				<div class="modal-footer" style="display: inline !important;">
 					<div class="container row">
 						<div class="col-12 text-end">
-							<button id="dlgCFDIBtnDesactivar" type="button" class="btn btn-danger formButton" onclick="onDeleteCFDIClick();" data-bs-dismiss="modal">
-								<i class="bi bi-ban"></i> @Localizer["DeactivateButton"]
-							</button>
-							<button id="dlgCFDIBtnCancelar" type="button" class="btn btn-secondary" onclick="askConfirmation('@Localizer["ConfirmActionTitle"]', '@Localizer["ConfirmActionQuestion"]', function () { onCerrarClick(); dlgCFDIModal.toggle(); });">
+							<button id="dlgCFDIBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarDialogoClick();">
 								<i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
 							</button>
 							<button id="btnLimpiar" type="button" class="btn btn-secondary" onclick="onLimpiarClick();">
