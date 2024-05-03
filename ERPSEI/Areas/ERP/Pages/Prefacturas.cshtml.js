@@ -366,6 +366,7 @@ function createNewCFDI() {
     let oCFDINuevo = {
         id: nuevoRegistro,
         fecha: strCurDate,
+        fechaJS: strCurDate,
         tipoComprobanteId: 0,
         serie: "",
         folio: "",
