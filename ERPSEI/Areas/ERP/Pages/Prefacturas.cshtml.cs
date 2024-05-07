@@ -333,13 +333,13 @@ namespace ERPSEI.Areas.ERP.Pages
 						$"\"fechaJS\": \"{fecha:yyyy-MM-dd HH:mm:ss}\", " +
 						$"\"tipoCambio\": {p.TipoCambio}, " +
 						$"\"moneda\": \"{nombreMoneda}\", " +
-						$"\"monedaId\": {p.TipoComprobanteId}, " +
+						$"\"monedaId\": {p.MonedaId}, " +
 						$"\"formaPago\": \"{nombreForma}\", " +
-						$"\"formaPagoId\": {p.TipoComprobanteId}, " +
+						$"\"formaPagoId\": {p.FormaPagoId}, " +
 						$"\"metodoPago\": \"{nombreMetodo}\", " +
-						$"\"metodoPagoId\": {p.TipoComprobanteId}, " +
+						$"\"metodoPagoId\": {p.MetodoPagoId}, " +
 						$"\"usoCFDI\": \"{nombreUsoCFDI}\", " +
-						$"\"usoCFDIId\": {p.TipoComprobanteId}, " +
+						$"\"usoCFDIId\": {p.UsoCFDIId}, " +
 						$"\"exportacion\": \"{nombreExportacion}\", " +
 						$"\"exportacionId\": {p.ExportacionId}, " +
 						$"\"numeroOperacion\": \"{p.NumeroOperacion}\", " +
