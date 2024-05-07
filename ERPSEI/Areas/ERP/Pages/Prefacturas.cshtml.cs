@@ -378,10 +378,10 @@ namespace ERPSEI.Areas.ERP.Pages
 					nombreUnidad = c.UnidadMedida != null ? $"{c.UnidadMedida.Clave} - {c.UnidadMedida.Nombre}" : string.Empty;
 					nombreObjetoImpuesto = c.ObjetoImpuesto != null ? c.ObjetoImpuesto.Descripcion : string.Empty;
 
-					subtotal = c.Cantidad * c.PrecioUnitario;
+					subtotal = (c.Cantidad * c.PrecioUnitario) - c.Descuento;
 					traslado = subtotal * c.TasaTraslado;
 					retencion = subtotal * c.Retencion;
-					total = subtotal - c.Descuento + traslado - retencion;
+					total = subtotal + traslado - retencion;
 
 					jsonConceptos.Add($"{{" +
 										$"\"id\": {c.ProductoServicioId}, " +

@@ -1247,10 +1247,10 @@ function onAgregarProductoServicioClick() {
         descuento = parseFloat(descuentoField.value || "0"),
         valorTraslado = trasladoField.value,
         valorRetencion = retencionField.value,
-        subtotal = cantidad * unitario,
+        subtotal = (cantidad * unitario) - descuento,
         traslado = subtotal * valorTraslado,
         retencion = subtotal * valorRetencion,
-        total = subtotal - descuento + traslado - retencion;
+        total = subtotal + traslado - retencion;
 
     //Si el campo producto / servicio no tiene elemento seleccionado, muestra error.
     if (parseInt(productoServicioField.attr("idselected") || "0") <= 0) {
@@ -1412,10 +1412,10 @@ function calcularTotal() {
     let cantidad = parseFloat(inpCantidad.value || "0"),
         unitario = parseFloat(inpUnitario.value || "0"),
         descuento = parseFloat(inpDescuento.value || "0"),
-        subtotal = cantidad * unitario,
+        subtotal = (cantidad * unitario) - descuento,
         traslado = (subtotal * parseFloat(inpTraslado.value || "0")),
         retencion = (subtotal * parseFloat(inpRetencion.value || "0")),
-        total = subtotal - descuento + traslado - retencion;
+        total = subtotal + traslado - retencion;
 
     spanTraslado.textContent = numFormatter.format(traslado);
     spanRetencion.textContent = numFormatter.format(retencion);   
