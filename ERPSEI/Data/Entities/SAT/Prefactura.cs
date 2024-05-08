@@ -1,9 +1,10 @@
 ﻿using ERPSEI.Data.Entities.Empresas;
+using ERPSEI.Data.Entities.Usuarios;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERPSEI.Data.Entities.SAT
 {
-	public class Prefactura
+    public class Prefactura
 	{
 		[DatabaseGenerated(DatabaseGeneratedOption.None)]
 		public int Id { get; set; }

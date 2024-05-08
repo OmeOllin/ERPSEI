@@ -3,7 +3,8 @@
 #nullable disable
 
 using ERPSEI.Data.Entities;
-using ERPSEI.Data.Managers;
+using ERPSEI.Data.Entities.Usuarios;
+using ERPSEI.Data.Managers.Usuarios;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

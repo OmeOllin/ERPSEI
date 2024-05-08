@@ -11,7 +11,7 @@ using Microsoft.Extensions.Localization;
 using ERPSEI.Email;
 using ERPSEI.Data;
 using ERPSEI.Data.Managers.Empleados;
-using ERPSEI.Data.Managers;
+using ERPSEI.Data.Managers.Usuarios;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
 {

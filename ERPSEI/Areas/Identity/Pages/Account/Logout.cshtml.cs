@@ -3,6 +3,7 @@
 #nullable disable
 
 using ERPSEI.Data.Entities;
+using ERPSEI.Data.Entities.Usuarios;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

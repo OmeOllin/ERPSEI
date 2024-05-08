@@ -1,5 +1,5 @@
-﻿using ERPSEI.Data.Entities;
-using ERPSEI.Data.Entities.Empleados;
+﻿using ERPSEI.Data.Entities.Empleados;
+using ERPSEI.Data.Entities.Usuarios;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERPSEI.Data.Managers.Empleados

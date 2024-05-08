@@ -1,7 +1,7 @@
-﻿using ERPSEI.Data.Entities;
-using ERPSEI.Data.Entities.Empleados;
+﻿using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.SAT;
+using ERPSEI.Data.Entities.Usuarios;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

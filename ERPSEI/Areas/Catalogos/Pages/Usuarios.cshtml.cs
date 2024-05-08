@@ -1,8 +1,8 @@
 using ERPSEI.Data;
-using ERPSEI.Data.Entities;
 using ERPSEI.Data.Entities.Empleados;
-using ERPSEI.Data.Managers;
+using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers.Empleados;
+using ERPSEI.Data.Managers.Usuarios;
 using ERPSEI.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

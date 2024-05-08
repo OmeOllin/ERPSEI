@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
-using ERPSEI.Data.Managers;
+using ERPSEI.Data.Managers.Usuarios;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
 {

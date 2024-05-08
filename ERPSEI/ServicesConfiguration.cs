@@ -1,12 +1,13 @@
 ﻿using ERPSEI.Data;
-using ERPSEI.Data.Entities;
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.SAT;
+using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empleados;
 using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Data.Managers.SAT;
+using ERPSEI.Data.Managers.Usuarios;
 using ERPSEI.Email;
 using ERPSEI.Resources;
 using ERPSEI.TokenProviders;

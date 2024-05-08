@@ -1,9 +1,9 @@
-﻿using ERPSEI.Data.Entities;
+﻿using ERPSEI.Data.Entities.Usuarios;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System.Text;
 
-namespace ERPSEI.Data.Managers
+namespace ERPSEI.Data.Managers.Usuarios
 {
     public class AppUserManager : UserManager<AppUser>
     {

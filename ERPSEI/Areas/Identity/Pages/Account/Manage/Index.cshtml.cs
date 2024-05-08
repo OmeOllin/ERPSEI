@@ -1,10 +1,10 @@
 ﻿#nullable disable
 
 using ERPSEI.Data;
-using ERPSEI.Data.Entities;
 using ERPSEI.Data.Entities.Empleados;
-using ERPSEI.Data.Managers;
+using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers.Empleados;
+using ERPSEI.Data.Managers.Usuarios;
 using ERPSEI.Email;
 using ERPSEI.Resources;
 using Microsoft.AspNetCore.Identity;

@@ -1,7 +1,7 @@
 using ERPSEI.Data;
-using ERPSEI.Data.Entities;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.SAT;
+using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Data.Managers.SAT;
@@ -17,7 +17,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ERPSEI.Areas.ERP.Pages
 {
-	[Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
+    [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
 	public class PrefacturasModel : PageModel
 	{
 		private readonly ApplicationDbContext _db;
