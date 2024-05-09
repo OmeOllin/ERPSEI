@@ -16,5 +16,7 @@ namespace ERPSEI.Data.Entities.Usuarios
         public ICollection<Prefactura> PrefacturasCreadas { get; set; } = new List<Prefactura>();
         public ICollection<Prefactura> PrefacturasAutorizadas { get; set; } = new List<Prefactura>();
         public ICollection<Prefactura> PrefacturasFinalizadas { get; set; } = new List<Prefactura>();
+
+        public ICollection<AccesoModulo> Accesos { get; set; } = new List<AccesoModulo>();
     }
 }
