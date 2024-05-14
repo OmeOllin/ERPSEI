@@ -351,11 +351,13 @@ function onBuscarClick() {
     let selOrigen = document.getElementById("selFiltroOrigen");
     let selNivel = document.getElementById("selFiltroNivel");
     let inpActividadEconomica = document.getElementById("inpFiltroActividadEconomica");
+    let inpRFC = document.getElementById("inpFiltroRFC");
 
     let oParams = {
         origenId: selOrigen.value == 0 ? null : parseInt(selOrigen.value),
         nivelId: selNivel.value == 0 ? null : parseInt(selNivel.value),
-        actividadEconomicaId: (inpActividadEconomica.getAttribute('idselected') || "0") == "0" ? null : parseInt(inpActividadEconomica.getAttribute("idselected"))
+        actividadEconomicaId: (inpActividadEconomica.getAttribute('idselected') || "0") == "0" ? null : parseInt(inpActividadEconomica.getAttribute("idselected")),
+        rfc: inpRFC.value.trim().length <= 0 ? null : inpRFC.value
     };
 
     //Resetea el valor de los filtros.

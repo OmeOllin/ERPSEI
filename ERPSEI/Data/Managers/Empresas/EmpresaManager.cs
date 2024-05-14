@@ -108,13 +108,15 @@ namespace ERPSEI.Data.Managers.Empresas
         public async Task<List<Empresa>> GetAllAsync(
             int? origenId = null,
             int? nivelId = null,
-            int? actividadEconomicaId = null
+            int? actividadEconomicaId = null,
+            string? rfc = null
         )
         {
             return await db.Empresas
                 .Where(e => e.Deshabilitado == 0)
                 .Where(e => origenId != null ? e.OrigenId == origenId : true)
                 .Where(e => nivelId != null ? e.NivelId == nivelId : true)
+                .Where(e => rfc != null ? e.RFC == rfc : true)
                 .Include(e => e.Origen)
                 .Include(e => e.Nivel)
                 .Include(e => e.Perfil)

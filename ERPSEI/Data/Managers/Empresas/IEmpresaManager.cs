@@ -8,7 +8,8 @@ namespace ERPSEI.Data.Managers.Empresas
         public Task<List<Empresa>> GetAllAsync(
             int? origen = null,
             int? nivel = null,
-            int? actividadEconomica = null
+            int? actividadEconomica = null,
+            string? rfc = null
         );
 
         public Task DisableByIdAsync(int id );

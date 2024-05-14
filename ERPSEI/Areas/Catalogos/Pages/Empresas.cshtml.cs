@@ -46,6 +46,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
             [Display(Name = "ActividadEconomicaField")]
             public int? ActividadEconomicaId { get; set; }
+
+			[Display(Name = "RFCField")]
+			public string? RFC {  get; set; }
         }
 
 		[BindProperty]
@@ -246,7 +249,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				empresas = await _empresaManager.GetAllAsync(
 					filtro.OrigenId,
 					filtro.NivelId,
-					filtro.ActividadEconomicaId
+					filtro.ActividadEconomicaId,
+					filtro.RFC
 				);
             }
 			else
