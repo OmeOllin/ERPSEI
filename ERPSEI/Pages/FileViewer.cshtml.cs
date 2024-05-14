@@ -117,7 +117,7 @@ namespace ERPSEI.Pages
 			Prefactura? pf = await _prefacturaManager.GetByIdAsync(idPf);
 			if (pf == null) { return null; }
 
-			string filepath = "wwwroot/templates/out.pdf";
+			string filepath = $"wwwroot/templates/{Guid.NewGuid()}.pdf";
 			HtmlConverter.ConvertToPdf(prefacturaToHTML(pf), new FileStream(filepath, FileMode.Create));
 
 			ftr.src = await fileToB64(filepath);
