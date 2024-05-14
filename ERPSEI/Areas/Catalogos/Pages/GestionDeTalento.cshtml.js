@@ -766,8 +766,8 @@ function onDocumentSelectorChanged(input) {
         }
         let docType = input.files[0].type;
         let docParts = input.files[0].name.split(".");
-        let fName = docParts.length >= 1 ? docParts[0] || "" : "";
-        let fExt = docParts.length >= 2 ? docParts[1] || "" : "";
+        let fName = docParts.length >= 1 ? docParts.slice(0, -1).join(".") || "" : "";
+        let fExt = docParts.length >= 2 ? docParts[docParts.length - 1] || "" : "";
         /*let fileSize = (input.files[0].size / 1000000).toFixed(2);*/
         let isImg = docType == "image/png" || docType == "image/jpg" || docType == "image/jpeg";
         let isPDF = docType == "application/pdf";
@@ -963,8 +963,8 @@ function getFile(inputId) {
     if (file) {
         //Si se estableció archivo en pantalla, crea el json con el archivo.
         let fileParts = (file.name || "").split(".");
-        oFile.nombre = fileParts.length >= 1 ? fileParts[0] : "";
-        oFile.extension = fileParts.length >= 2 ? fileParts[1] : "";
+        oFile.nombre = fileParts.length >= 1 ? fileParts.slice(0, -1).join(".") : "";
+        oFile.extension = fileParts.length >= 2 ? fileParts[fileParts.length - 1] : "";
     }
 
     if (actualizar) { return oFile; }

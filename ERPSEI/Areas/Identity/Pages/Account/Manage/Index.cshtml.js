@@ -55,8 +55,8 @@ function onDocumentSelectorChanged(input) {
         }
         let docType = input.files[0].type;
         let docParts = input.files[0].name.split(".");
-        let fName = docParts.length >= 1 ? docParts[0] || "" : "";
-        let fExt = docParts.length >= 2 ? docParts[1] || "" : "";
+        let fName = docParts.length >= 1 ? docParts.slice(0, -1).join(".") || "" : "";
+        let fExt = docParts.length >= 2 ? docParts[docParts.length - 1] || "" : "";
         let isImg = docType == "image/png" || docType == "image/jpg" || docType == "image/jpeg";
         let isPDF = docType == "application/pdf";
         let containerName = input.getAttribute("containerName");
