@@ -8,9 +8,6 @@ using iText.Html2pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using NuGet.Packaging.Signing;
-using System.Transactions;
-using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace ERPSEI.Pages
 {
@@ -22,6 +19,8 @@ namespace ERPSEI.Pages
         private readonly IArchivoEmpresaManager _archivoEmpresaManager;
 
         public string htmlContainer { get; set; } = string.Empty;
+		public string base64 { get; set; } = string.Empty;
+		public string extension { get; set; } = string.Empty;
 
         private class FileToRender
         {
@@ -73,12 +72,15 @@ namespace ERPSEI.Pages
 
 				if (ftr.extension == "pdf")
 				{
-					htmlContainer = $"<iframe src=\"data:application/pdf;base64,{ftr.src}\" style=\"position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;\"></iframe>";
+					htmlContainer = $"<iframe id=\"fileContainer\" style=\"position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;\"></iframe>";
 				}
 				else
 				{
-					htmlContainer = $"<img src=\"data:image/{ftr.extension};base64,{ftr.src}\" style=\"height:100%\" />";
+					htmlContainer = $"<img id=\"fileContainer\" style=\"height:100%\" />";
 				}
+
+				base64 = ftr.src;
+				extension = ftr.extension;
 
 				return Page();
 			}

@@ -4,4 +4,52 @@
     Layout = null;
 }
 
-@Html.Raw(Model.htmlContainer);
+@Html.Raw(Model.htmlContainer)
+
+<script type="text/javascript">
+
+    var src = '@Html.Raw(Model.base64)';
+    var extension = '@Html.Raw(Model.extension)';
+
+    //Función para inicializar el módulo.
+    document.addEventListener("DOMContentLoaded", function (event) {
+        let fc = document.getElementById("fileContainer");
+
+        //Antes de mostrar naturalmente el base64 que viene, es necesario pasarlo por la función createObjectURL para que los navegadores basados en chrome puedan cargarlo correctamente.
+
+        //Primero se convierte el string base64 a blob
+        let ct = "";
+        if (extension == "pdf") {
+            ct = "application/pdf";
+        } else {
+            ct = `image/${extension}`;
+        }
+
+        let blob = b64toBlob(src, ct);
+        //Después se usa la función createObjectURL
+        src = window.URL.createObjectURL(blob)
+
+        //Por último, se asigna el resultado al source del visor.
+        fc.setAttribute("src", `${src}`);
+    });
+
+    const b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
+        const byteCharacters = atob(b64Data);
+        const byteArrays = [];
+
+        for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+            const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+            const byteNumbers = new Array(slice.length);
+            for (let i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+
+            const byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
+        }
+
+        const blob = new Blob(byteArrays, { type: contentType });
+        return blob;
+    }
+</script>
