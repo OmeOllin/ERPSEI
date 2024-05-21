@@ -17,3 +17,47 @@
 		
 	</script>
 }
+
+<!-- Sección de filtros -------- -->
+<div class="accordion shadow mb-5" id="accordionFiltros">
+	<div class="accordion-item">
+		<h2 class="accordion-header" id="headingOne">
+			<button class="accordion-button p-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+				<h6>@Localizer["FilterTitle"]</h6>
+			</button>
+		</h2>
+		<div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionFiltros">
+			<div class="accordion-body">
+				<form id="filtros" method="post">
+					<div class="row">
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<input id="inpFiltroNombreEmpleado" type="text" asp-for="InputFiltro.NombreEmpleado" class="form-control" placeholder="@Localizer["EmployeeNameField"]" />
+								<label for="inpFiltroNombreEmpleado" asp-for="InputFiltro.NombreEmpleado" class="form-label"></label>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<input id="inpFiltroFechaIngresoInicio" type="date" asp-for="InputFiltro.FechaIngresoInicio" class="form-control" placeholder="@Localizer["FechaInicioField"]" />
+								<label for="inpFiltroFechaIngresoInicio" asp-for="InputFiltro.FechaIngresoInicio" class="form-label"></label>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<input id="inpFiltroFechaIngresoFin" type="date" asp-for="InputFiltro.FechaIngresoFin" class="form-control" placeholder="@Localizer["FechaFinField"]" />
+								<label for="inpFiltroFechaIngresoFin" asp-for="InputFiltro.FechaIngresoFin" class="form-label"></label>
+							</div>
+						</div>
+					</div>
+				</form>
+				<div class="row text-end">
+					<div class="col-12">
+						<button id="btnBuscar" class="btn btn-primary" onclick="onBuscarClick();">
+							<i class="bi bi-search"></i> @Localizer["SearchButton"]
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

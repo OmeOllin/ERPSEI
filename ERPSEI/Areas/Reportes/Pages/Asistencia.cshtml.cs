@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
+using System.ComponentModel.DataAnnotations;
 
 namespace ERPSEI.Areas.Reportes.Pages
 {
@@ -16,8 +17,19 @@ namespace ERPSEI.Areas.Reportes.Pages
 
         public class FiltroModel
         {
-            
-        }
+			[DataType(DataType.Text)]
+			[Display(Name = "EmployeeNameField")]
+			public string? NombreEmpleado { get; set; }
+
+			[DataType(DataType.DateTime)]
+			[Display(Name = "FechaInicioField")]
+			public DateTime? FechaIngresoInicio { get; set; }
+
+			[DataType(DataType.DateTime)]
+			[Display(Name = "FechaFinField")]
+			public DateTime? FechaIngresoFin { get; set; }
+
+		}
 
         public AsistenciaModel(
             IStringLocalizer<AsistenciaModel> stringLocalizer,
