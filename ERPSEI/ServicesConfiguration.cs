@@ -57,6 +57,7 @@ namespace ERPSEI
             _builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             _builder.Services.AddScoped<AppRoleManager, AppRoleManager>();
+            _builder.Services.AddScoped<IModuloManager, ModuloManager>();
 
             _builder.Services.AddScoped<IConceptoManager, ConceptoManager>();
             _builder.Services.AddScoped<IPrefacturaManager, PrefacturaManager>();
