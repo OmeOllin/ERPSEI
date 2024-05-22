@@ -11,7 +11,6 @@ using ERPSEI.Data.Managers.Usuarios;
 using ERPSEI.Email;
 using ERPSEI.Resources;
 using ERPSEI.TokenProviders;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
@@ -19,12 +18,14 @@ using System.Reflection;
 
 namespace ERPSEI
 {
-    public static class ServicesConfiguration
+	public static class ServicesConfiguration
     {
         public const string RolMaster = "Master";
         public const string RolAdministrador = "Administrador";
         public const string RolUsuario = "Usuario";
         public const string RolCandidato = "Candidato";
+
+        public static List<AppRole> Roles = new List<AppRole>();
 
         public static string MasterPassword { get; set; } = string.Empty;
         public static AppUser MasterUser { get; } = new AppUser();
@@ -55,7 +56,7 @@ namespace ERPSEI
             _builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
             _builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            _builder.Services.AddScoped<RoleManager, RoleManager>();
+            _builder.Services.AddScoped<AppRoleManager, AppRoleManager>();
 
             _builder.Services.AddScoped<IConceptoManager, ConceptoManager>();
             _builder.Services.AddScoped<IPrefacturaManager, PrefacturaManager>();
@@ -103,7 +104,8 @@ namespace ERPSEI
         public static void ConfigureIdentity(WebApplicationBuilder _builder)
         {
             _builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
-            .AddRoles<IdentityRole>()
+            .AddRoles<AppRole>()
+            .AddRoleManager<AppRoleManager>()
             .AddUserManager<AppUserManager>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddTokenProvider<UserAuthorizationTokenProvider<AppUser>>("UserAuthorization");
