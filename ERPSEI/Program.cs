@@ -1,7 +1,7 @@
 using ERPSEI;
+using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers.Usuarios;
 using ERPSEI.Email;
-using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,11 +23,16 @@ WebApplication app = builder.Build();
 using(IServiceScope scope = app.Services.CreateScope())
 {
     //Se inicializan los roles
-    RoleManager<IdentityRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    if (!await roleManager.RoleExistsAsync(ServicesConfiguration.RolMaster)) { await roleManager.CreateAsync(new IdentityRole(ServicesConfiguration.RolMaster)); }
-    if (!await roleManager.RoleExistsAsync(ServicesConfiguration.RolAdministrador)) { await roleManager.CreateAsync(new IdentityRole(ServicesConfiguration.RolAdministrador)); }
-    if (!await roleManager.RoleExistsAsync(ServicesConfiguration.RolUsuario)) { await roleManager.CreateAsync(new IdentityRole(ServicesConfiguration.RolUsuario)); }
-    if (!await roleManager.RoleExistsAsync(ServicesConfiguration.RolCandidato)) { await roleManager.CreateAsync(new IdentityRole(ServicesConfiguration.RolCandidato)); }
+    AppRoleManager roleManager = scope.ServiceProvider.GetRequiredService<AppRoleManager>();
+
+    //Este rol debe existir siempre para poder tener acceso completo al sistema.
+    if (!await roleManager.RoleExistsAsync(ServicesConfiguration.RolMaster)) { await roleManager.CreateAsync(new AppRole() { Name = ServicesConfiguration.RolMaster }); }
+	//Este rol debe existir siempre para poder ascender a los candidatos a usuarios con los privilegios más básicos.
+	if (!await roleManager.RoleExistsAsync(ServicesConfiguration.RolUsuario)) { await roleManager.CreateAsync(new AppRole() { Name = ServicesConfiguration.RolUsuario }); }
+	//Este rol debe existir siempre para poder admitir registro de empleados candidatos.
+	if (!await roleManager.RoleExistsAsync(ServicesConfiguration.RolCandidato)) { await roleManager.CreateAsync(new AppRole() { Name = ServicesConfiguration.RolCandidato }); }
+
+	ServicesConfiguration.Roles = roleManager.Roles.ToList();
 
     //Se inicializa el usuario master
     AppUserManager userManager = scope.ServiceProvider.GetRequiredService<AppUserManager>();
