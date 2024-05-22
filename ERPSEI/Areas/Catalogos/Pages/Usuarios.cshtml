@@ -4,10 +4,12 @@
 @using Microsoft.AspNetCore.Mvc.Localization;
 @using ERPSEI.Areas.Catalogos.Pages;
 @using ERPSEI.Data.Entities.Empleados;
+@using ERPSEI.Data.Entities.Usuarios;
 @using ERPSEI.Data.Managers.Empleados;
+@using ERPSEI.Data.Managers.Usuarios;
 @model UsuariosModel
 @inject IViewLocalizer Localizer;
-@inject RoleManager RolesManager;
+@inject AppRoleManager RolesManager;
 @{
 	ViewData["Title"] = Localizer["Title"];
 
@@ -19,7 +21,7 @@
 
 	string cultureName = culture.Name;
 
-	List<IdentityRole> roles = await RolesManager.GetAllAsync();
+	List<AppRole> roles = await RolesManager.GetAllAsync();
 }
 <h3 class="title mb-3">@ViewData["Title"]</h3>
 
@@ -88,7 +90,7 @@
 									<select id="selEmpleadoRol" asp-for="InputUsuario.RolId" class="form-select formSelect" placeholder="@Localizer["RolPlaceholder"]">
 
 									@{
-										foreach (IdentityRole rol in roles)
+											foreach (AppRole rol in roles)
 										{
 											if (rol.Name == ERPSEI.ServicesConfiguration.RolMaster || rol.Name == ERPSEI.ServicesConfiguration.RolCandidato) { continue; }
 

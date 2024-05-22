@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERPSEI.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<AppUser>
+    public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, string>
     {
 		//Tablas de trabajo Empleados
         public DbSet<ArchivoEmpleado> ArchivosEmpleado { get; set; }

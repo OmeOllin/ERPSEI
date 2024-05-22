@@ -10,8 +10,8 @@
 
         public int PuedeEliminar { get; set; }
 
-        public int UsuarioId { get; set; }
-        public AppUser? Usuario { get; set; }
+        public int RolId { get; set; }
+        public AppRole? Rol { get; set; }
 
         public int ModuloId { get; set; }
         public Modulo? Modulo { get; set; }

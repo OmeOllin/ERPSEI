@@ -4,10 +4,12 @@
 @using Microsoft.AspNetCore.Mvc.Localization;
 @using ERPSEI.Areas.Catalogos.Pages;
 @using ERPSEI.Data.Entities.Empleados;
+@using ERPSEI.Data.Entities.Usuarios;
 @using ERPSEI.Data.Managers.Empleados;
+@using ERPSEI.Data.Managers.Usuarios;
 @model RolesModel
 @inject IViewLocalizer Localizer;
-@inject RoleManager RolesManager;
+@inject AppRoleManager RolesManager;
 @{
 	ViewData["Title"] = Localizer["Title"];
 
@@ -19,7 +21,7 @@
 
 	string cultureName = culture.Name;
 
-	List<IdentityRole> roles = await RolesManager.GetAllAsync();
+	List<AppRole> roles = await RolesManager.GetAllAsync();
 
 	List<string> modulos = new List<string>()
 	{
