@@ -10,6 +10,7 @@
 @model RolesModel
 @inject IViewLocalizer Localizer;
 @inject AppRoleManager RolesManager;
+@inject ModuloManager ModulosManager;
 @{
 	ViewData["Title"] = Localizer["Title"];
 
@@ -23,25 +24,7 @@
 
 	List<AppRole> roles = await RolesManager.GetAllAsync();
 
-	List<string> modulos = new List<string>()
-	{
-		"Gestión de Talento",
-		"Usuarios",
-		"Puestos",
-		"Áreas",
-		"Subareas",
-		"Oficinas",
-		"Empresas",
-		"Orígenes",
-		"Niveles",
-		"Perfiles",
-		"Vacaciones",
-		"Incapacidades",
-		"Permisos",
-		"Prefacturas",
-		"Organigrama",
-		"Asistencia"
-	};
+	List<Modulo> modulos = await ModulosManager.GetAllAsync();
 }
 <h3 class="title mb-3">@ViewData["Title"]</h3>
 
@@ -128,12 +111,12 @@
 											</div>
 										</div>
 									</li>
-									@foreach(string modulo in modulos)
+									@foreach(Modulo m in modulos)
 									{
 										<li class="list-group-item">
 											<div class="row">
 												<div class="col-5 border-end text-center align-content-center">
-													<h6 class="m-0">@modulo</h6>
+													<h6 class="m-0">@m.Nombre</h6>
 												</div>
 												<div class="col-1 text-center align-content-center">
 													<input class="form-check-input" type="checkbox" value="" id="inpPuedeTodo">
@@ -147,7 +130,7 @@
 												<div class="col-1 text-center align-content-center">
 													<input class="form-check-input" type="checkbox" value="" id="inpPuedeEliminar">
 												</div>
-												@if(modulo == "Prefacturas")
+												@if(m.Nombre == "Prefacturas")
 												{
 													<div class="col-1 text-center align-content-center">
 														<input class="form-check-input" type="checkbox" value="" id="inpPuedeAutorizar">
