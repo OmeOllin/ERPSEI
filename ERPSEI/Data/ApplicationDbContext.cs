@@ -62,6 +62,9 @@ namespace ERPSEI.Data
 		public DbSet<UnidadMedida> UnidadesMedida { get; set; }
 		public DbSet<UsoCFDI> UsosCFDI { get; set; }
 
+		//Catálogos no administrables Usuarios
+		public DbSet<Modulo> Modulos { get; set; }
+
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -80,6 +83,9 @@ namespace ERPSEI.Data
 
 			//SAT
 			buildSAT(modelBuilder);
+
+			//Accesos
+			buildAccesos(modelBuilder);
 		}
 
 		private void buildEmpresas(ModelBuilder b) 
@@ -291,5 +297,31 @@ namespace ERPSEI.Data
                     new EstatusPrefactura() { Id = 3, Descripcion = "Finalizada" }
                 );
         }
+
+		private void buildAccesos(ModelBuilder b)
+		{
+			b.Entity<AppRole>().HasMany(r => r.Accesos).WithOne(am => am.Rol).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Modulo>().HasMany(m => m.Accesos).WithOne(am => am.Modulo).OnDelete(DeleteBehavior.NoAction);
+
+			b.Entity<Modulo>()
+				.HasData(
+					new Modulo() { Id = 1, Nombre = "Gestión de Talento", Deshabilitado = 0 },
+					new Modulo() { Id = 2, Nombre = "Usuarios", Deshabilitado = 0 },
+					new Modulo() { Id = 3, Nombre = "Puestos", Deshabilitado = 0 },
+					new Modulo() { Id = 4, Nombre = "Áreas", Deshabilitado = 0 },
+					new Modulo() { Id = 5, Nombre = "Subareas", Deshabilitado = 0 },
+					new Modulo() { Id = 6, Nombre = "Oficinas", Deshabilitado = 0 },
+					new Modulo() { Id = 7, Nombre = "Empresas", Deshabilitado = 0 },
+					new Modulo() { Id = 8, Nombre = "Orígenes", Deshabilitado = 0 },
+					new Modulo() { Id = 9, Nombre = "Niveles", Deshabilitado = 0 },
+					new Modulo() { Id = 10, Nombre = "Perfiles", Deshabilitado = 0 },
+					new Modulo() { Id = 11, Nombre = "Vacaciones", Deshabilitado = 0 },
+					new Modulo() { Id = 12, Nombre = "Incapacidades", Deshabilitado = 0 },
+					new Modulo() { Id = 13, Nombre = "Permisos", Deshabilitado = 0 },
+					new Modulo() { Id = 14, Nombre = "Prefacturas", Deshabilitado = 0 },
+					new Modulo() { Id = 15, Nombre = "Organigrama", Deshabilitado = 0 },
+					new Modulo() { Id = 16, Nombre = "Asistencia", Deshabilitado = 0 }
+				);
+		}
 	}
 }
