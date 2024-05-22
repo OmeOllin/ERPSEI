@@ -20,7 +20,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 	{
 		private readonly AppUserManager _usuarioManager;
 		private readonly IEmpleadoManager _empleadoManager;
-		private readonly RoleManager _roleManager;
+		private readonly AppRoleManager _roleManager;
 		private readonly IStringLocalizer<UsuariosModel> _strLocalizer;
 		private readonly ILogger<UsuariosModel> _logger;
 		private readonly ApplicationDbContext _db;
@@ -43,7 +43,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		public RolesModel(
 			AppUserManager usuarioManager,
 			IEmpleadoManager empleadoManager,
-			RoleManager roleManager,
+			AppRoleManager roleManager,
 			IStringLocalizer<UsuariosModel> stringLocalizer,
 			ILogger<UsuariosModel> logger,
 			ApplicationDbContext db
@@ -68,7 +68,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			{
 				if(await _usuarioManager.IsInRoleAsync(u, ServicesConfiguration.RolMaster)) { continue; }
 
-				IdentityRole? rol = null;
+				AppRole? rol = null;
 				if (await _usuarioManager.IsInRoleAsync(u, ServicesConfiguration.RolAdministrador)) { rol = await _roleManager.FindByNameAsync(ServicesConfiguration.RolAdministrador); }
 				else if (await _usuarioManager.IsInRoleAsync(u, ServicesConfiguration.RolUsuario)) { rol = await _roleManager.FindByNameAsync(ServicesConfiguration.RolUsuario); }
 				string nombreRol = rol != null ? rol.Name??_strLocalizer["EmptyRoleName"] : _strLocalizer["EmptyRoleName"];
@@ -142,7 +142,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		{
 			//Se busca usuario por id
 			AppUser? usuario = await _usuarioManager.FindByIdAsync(e.Id);
-			IdentityRole? rol = await _roleManager.FindByIdAsync(e.RolId);
+			AppRole? rol = await _roleManager.FindByIdAsync(e.RolId);
 
 			//Si se encontró usuario, obtiene su Id del registro existente.
 			if (usuario != null && rol != null) {
