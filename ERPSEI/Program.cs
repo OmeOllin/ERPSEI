@@ -32,7 +32,7 @@ using(IServiceScope scope = app.Services.CreateScope())
 	//Este rol debe existir siempre para poder admitir registro de empleados candidatos.
 	if (!await roleManager.RoleExistsAsync(ServicesConfiguration.RolCandidato)) { await roleManager.CreateAsync(new AppRole() { Name = ServicesConfiguration.RolCandidato }); }
 
-	ServicesConfiguration.Roles = roleManager.Roles.ToList();
+	ServicesConfiguration.Roles = await roleManager.GetAllAsync();
 
     //Se inicializa el usuario master
     AppUserManager userManager = scope.ServiceProvider.GetRequiredService<AppUserManager>();
