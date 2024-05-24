@@ -117,13 +117,43 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AbsencesColumn" xml:space="preserve">
+    <value>Faltas</value>
+  </data>
+  <data name="AddButton" xml:space="preserve">
+    <value>Agregar</value>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>Fecha</value>
+  </data>
+  <data name="DelayColumn" xml:space="preserve">
+    <value>Retardo</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="EntryTimeColumn" xml:space="preserve">
+    <value>Hora Entrada</value>
+  </data>
+  <data name="ExitTimeColumn" xml:space="preserve">
+    <value>Hora Salida</value>
+  </data>
   <data name="FilterTitle" xml:space="preserve">
     <value>Filtros de búsqueda</value>
+  </data>
+  <data name="IdColumn" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="NameColumn" xml:space="preserve">
+    <value>Nombre</value>
   </data>
   <data name="SearchButton" xml:space="preserve">
     <value>Buscar</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Reporte de Asistencia</value>
+  </data>
+  <data name="TotalColumn" xml:space="preserve">
+    <value>Total</value>
   </data>
 </root>

@@ -6,17 +6,17 @@
 @inject IViewLocalizer Localizer;
 @{
 	ViewData["Title"] = Localizer["Title"];
-}
-<h3 class="title mb-3">@ViewData["Title"]</h3>
 
-@section Scripts
-{
-	<link rel="stylesheet" href="~/css/Asistencia.css" />
-    <script src="~/../Areas/Reportes/Pages/Asistencia.cshtml.js"></script>
-	<script type="text/javascript">
-		
-	</script>
+	// Retrieves the requested culture
+	IRequestCultureFeature? rqf = Request.HttpContext.Features.Get<IRequestCultureFeature>();
+
+	// Culture contains the information of the requested culture
+	System.Globalization.CultureInfo? culture = rqf != null ? rqf.RequestCulture.Culture : new System.Globalization.CultureInfo("es-MX");
+
+	string cultureName = culture.Name;
 }
+
+<h3 class="title mb-3">@ViewData["Title"]</h3>
 
 <!-- Sección de filtros -------- -->
 <div class="accordion shadow mb-5" id="accordionFiltros">
@@ -61,3 +61,171 @@
 		</div>
 	</div>
 </div>
+
+<!-- --------------------------- -->
+<!-- Sección tabla de resultados -->
+<!--<div id="toolbar" class="col-xl-12">
+	<button id="btnAgregar" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dlgPuesto" onclick="onAgregarClick();">
+		<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
+	</button>
+	<button id="remove" class="btn btn-danger" disabled>
+		<i class="bi bi-trash"></i> <span class="d-none d-sm-inline">@Localizer["DeleteButton"]</span>
+	</button>
+</div>-->
+<table id="table" class="table-sm"
+	   data-unique-id="id"
+	   data-toolbar="#toolbar"
+	   data-search="true"
+	   data-show-refresh="true"
+	   data-show-toggle="true"
+	   data-show-fullscreen="true"
+	   data-show-columns="true"
+	   data-show-columns-toggle-all="true"
+	   data-show-export="true"
+	   data-click-to-select="true"
+	   data-minimum-count-columns="2"
+	   data-show-pagination-switch="true"
+	   data-pagination="true"
+	   data-id-field="id"
+	   data-page-list="[10, 25, 50, 100, all]"
+	   data-show-footer="false"
+	   data-side-pagination="client"
+	   data-response-handler="responseHandler"
+	   data-buttons-class="primary"
+	   data-url="/Reportes/Asistencia/ObtenerAsistencia">
+	<thead>
+		<tr>
+			<th data-field="id" data-sortable="true">@Localizer["IdColumn"]</th>
+			<th data-field="nombre" data-sortable="true">@Localizer["EmployeeNameField"]</th>
+			<th data-field="fecha" data-sortable="true">@Localizer["FechaInicioField"]</th>
+			<th data-field="horaEntrada" data-sortable="true">@Localizer["HoraEntradaField"]</th>
+			<th data-field="horaSalida" data-sortable="true">@Localizer["HoraSalidaField"]</th>
+			<th data-field="retardo" data-sortable="true">@Localizer["RetardoField"]</th>
+			<th data-field="total" data-sortable="true">@Localizer["TotalField"]</th>
+			<th data-field="faltas" data-sortable="true">@Localizer["FaltasField"]</th>
+		</tr>
+	</thead>
+</table>
+
+<!-- --------------------------- -->
+<!-- --------------------------- -->
+<!-- --------------------------- -->
+<!-- Sección Nuevo/Editar/Ver Registro --- -->
+<form id="theForm" method="post">
+	<div id="dlgPuesto" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 id="dlgPuestoTitle" class="modal-title"></h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body align-items-center">
+					<div class="container-fluid">
+						<div id="saveValidationSummary" class="text-danger mb-3" role="alert"></div>
+						<div class="row">
+							<div class="col-3">
+								<div class="form-floating mb-3">
+									<input id="inpPuestoId" asp-for="ListaAsistencia.Id" type="text" class="form-control" />
+									<label asp-for="ListaAsistencia.Id" class="form-label"></label>
+									<span asp-validation-for="ListaAsistencia.Id" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<input id="inpPuestoNombre" asp-for="ListaAsistencia.Nombre" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<label asp-for="ListaAsistencia.Nombre" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.Nombre" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<input id="inpPuestoNombre" asp-for="ListaAsistencia.Fecha" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<label asp-for="ListaAsistencia.Fecha" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.Fecha" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<input id="inpPuestoNombre" asp-for="ListaAsistencia.HoraEntrada" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<label asp-for="ListaAsistencia.HoraEntrada" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.HoraEntrada" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<input id="inpPuestoNombre" asp-for="ListaAsistencia.HoraSalida" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<label asp-for="ListaAsistencia.HoraSalida" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.HoraSalida" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<input id="inpPuestoNombre" asp-for="ListaAsistencia.Retardo" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<label asp-for="ListaAsistencia.Retardo" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.Retardo" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<input id="inpPuestoNombre" asp-for="ListaAsistencia.Total" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<label asp-for="ListaAsistencia.Total" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.Total" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<input id="inpPuestoNombre" asp-for="ListaAsistencia.Faltas" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<label asp-for="ListaAsistencia.Faltas" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.Faltas" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+@section Scripts {
+	<link rel="stylesheet" href="~/lib/bootstrap-table/bootstrap-table.min.css">
+
+	<script src="~/lib/bootstrap-table/extensions/export/tableExport.min.js"></script>
+	<script src="~/lib/bootstrap-table/bootstrap-table.min.js"></script>
+	<script src="~/lib/bootstrap-table/locale/bootstrap-table-es-MX.min.js"></script>
+	<script src="~/lib/bootstrap-table/locale/bootstrap-table-en-US.min.js"></script>
+	<script src="~/lib/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
+
+	<script src="~/../Areas/Reportes/Pages/Asistencia.cshtml.js"></script>
+
+	<script type="text/javascript">
+		var cultureName = "@cultureName";
+		var btnImportarText = '@Localizer["ImportButtonText"]';
+		var btnImportarTitle = '@Localizer["ImportButtonTitle"]';
+		var btnVerTitle = '@Localizer["SeeButtonTitle"]';
+		var btnEditarTitle = '@Localizer["EditButtonTitle"]';
+		var dlgEditarTitle = '@Localizer["EditDialogTitle"]';
+		var dlgVerTitle = '@Localizer["SeeDialogTitle"]';
+		var dlgNuevoTitle = '@Localizer["NewDialogTitle"]';
+		var dlgDeleteTitle = '@Localizer["DeletePositionDialogTitle"]';
+		var dlgDeleteQuestion = '@Localizer["DeletePositionDialogQuestion"]';
+		var colNombreHeader = '@Localizer["ColNameHeader"]';
+		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
+	</script>
+
+	<partial name="_ValidationScriptsPartial" />
+}
+
