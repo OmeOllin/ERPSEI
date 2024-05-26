@@ -1,3 +1,4 @@
+using ERPSEI.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -12,6 +13,7 @@ namespace ERPSEI.Areas.Reportes.Pages
 	[Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
 	public class AsistenciaModel : PageModel
 	{
+		private readonly ApplicationDbContext _db;
 		private readonly IStringLocalizer<AsistenciaModel> _strLocalizer;
 		private readonly ILogger<AsistenciaModel> _logger;
 

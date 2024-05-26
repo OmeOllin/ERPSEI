@@ -64,14 +64,14 @@
 
 <!-- --------------------------- -->
 <!-- Sección tabla de resultados -->
-<!--<div id="toolbar" class="col-xl-12">
+<div id="toolbar" class="col-xl-12">
 	<button id="btnAgregar" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dlgPuesto" onclick="onAgregarClick();">
 		<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
 	</button>
 	<button id="remove" class="btn btn-danger" disabled>
 		<i class="bi bi-trash"></i> <span class="d-none d-sm-inline">@Localizer["DeleteButton"]</span>
 	</button>
-</div>-->
+</div>
 <table id="table" class="table-sm"
 	   data-unique-id="id"
 	   data-toolbar="#toolbar"
@@ -111,6 +111,7 @@
 <!-- --------------------------- -->
 <!-- --------------------------- -->
 <!-- Sección Nuevo/Editar/Ver Registro --- -->
+<!--Verificar el theForm-->
 <form id="theForm" method="post">
 	<div id="dlgPuesto" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered">
@@ -125,7 +126,8 @@
 						<div class="row">
 							<div class="col-3">
 								<div class="form-floating mb-3">
-									<input id="inpPuestoId" asp-for="ListaAsistencia.Id" type="text" class="form-control" />
+									<!--Se reemplazó inpPuestoNombre en id-->
+									<input id="inpAsistenciaId" asp-for="ListaAsistencia.Id" type="text" class="form-control" />
 									<label asp-for="ListaAsistencia.Id" class="form-label"></label>
 									<span asp-validation-for="ListaAsistencia.Id" class="text-danger"></span>
 								</div>
@@ -134,7 +136,7 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpPuestoNombre" asp-for="ListaAsistencia.Nombre" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<input id="inpAsistenciaNombre" asp-for="ListaAsistencia.Nombre" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
 									<label asp-for="ListaAsistencia.Nombre" class="form-label required"></label>
 									<span asp-validation-for="ListaAsistencia.Nombre" class="text-danger"></span>
 								</div>
@@ -143,7 +145,7 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpPuestoNombre" asp-for="ListaAsistencia.Fecha" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<input id="inpAsistenciaFecha" asp-for="ListaAsistencia.Fecha" type="text" class="form-control" placeholder="@Localizer["FechaPlaceholder"]" />
 									<label asp-for="ListaAsistencia.Fecha" class="form-label required"></label>
 									<span asp-validation-for="ListaAsistencia.Fecha" class="text-danger"></span>
 								</div>
@@ -152,7 +154,7 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpPuestoNombre" asp-for="ListaAsistencia.HoraEntrada" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<input id="inpAsistenciaHoraEntrada" asp-for="ListaAsistencia.HoraEntrada" type="text" class="form-control" placeholder="@Localizer["HoraEntradaPlaceholder"]" />
 									<label asp-for="ListaAsistencia.HoraEntrada" class="form-label required"></label>
 									<span asp-validation-for="ListaAsistencia.HoraEntrada" class="text-danger"></span>
 								</div>
@@ -161,7 +163,7 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpPuestoNombre" asp-for="ListaAsistencia.HoraSalida" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<input id="inpAsistenciaHoraSalida" asp-for="ListaAsistencia.HoraSalida" type="text" class="form-control" placeholder="@Localizer["HoraSalidaPlaceholder"]" />
 									<label asp-for="ListaAsistencia.HoraSalida" class="form-label required"></label>
 									<span asp-validation-for="ListaAsistencia.HoraSalida" class="text-danger"></span>
 								</div>
@@ -170,7 +172,7 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpPuestoNombre" asp-for="ListaAsistencia.Retardo" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<input id="inpAsistenciaRetardo" asp-for="ListaAsistencia.Retardo" type="text" class="form-control" placeholder="@Localizer["RetardoPlaceholder"]" />
 									<label asp-for="ListaAsistencia.Retardo" class="form-label required"></label>
 									<span asp-validation-for="ListaAsistencia.Retardo" class="text-danger"></span>
 								</div>
@@ -179,7 +181,7 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpPuestoNombre" asp-for="ListaAsistencia.Total" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<input id="inpAsistenciaTotal" asp-for="ListaAsistencia.Total" type="text" class="form-control" placeholder="@Localizer["TotalPlaceholder"]" />
 									<label asp-for="ListaAsistencia.Total" class="form-label required"></label>
 									<span asp-validation-for="ListaAsistencia.Total" class="text-danger"></span>
 								</div>
@@ -188,13 +190,21 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpPuestoNombre" asp-for="ListaAsistencia.Faltas" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<input id="inpAsistenciaFaltas" asp-for="ListaAsistencia.Faltas" type="text" class="form-control" placeholder="@Localizer["FaltasPlaceholder"]" />
 									<label asp-for="ListaAsistencia.Faltas" class="form-label required"></label>
 									<span asp-validation-for="ListaAsistencia.Faltas" class="text-danger"></span>
 								</div>
 							</div>
 						</div>
 					</div>
+				</div>
+				<div class="modal-footer">
+					<button id="dlgAsistenciaBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarClick();" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i> @Localizer["CancelButton"]
+					</button>
+					<button id="dlgAsistenciaBtnGuardar" type="button" class="btn btn-primary" onclick="onGuardarClick();">
+						<i class="bi bi-floppy"></i> @Localizer["SaveButton"]
+					</button>
 				</div>
 			</div>
 		</div>
@@ -215,6 +225,7 @@
 		var cultureName = "@cultureName";
 		var btnImportarText = '@Localizer["ImportButtonText"]';
 		var btnImportarTitle = '@Localizer["ImportButtonTitle"]';
+		var btnBuscarTitle = '@Localizer["SearchButton"]';
 		var btnVerTitle = '@Localizer["SeeButtonTitle"]';
 		var btnEditarTitle = '@Localizer["EditButtonTitle"]';
 		var dlgEditarTitle = '@Localizer["EditDialogTitle"]';
@@ -223,6 +234,12 @@
 		var dlgDeleteTitle = '@Localizer["DeletePositionDialogTitle"]';
 		var dlgDeleteQuestion = '@Localizer["DeletePositionDialogQuestion"]';
 		var colNombreHeader = '@Localizer["ColNameHeader"]';
+		var colFechaHeader = '@Localizer["ColDateHeader"]';
+		var colEntryTimeHeader = '@Localizer["ColEntryTimeHeader"]';
+		var colDepartureTimeHeader = '@Localizer["ColDepartureTimeHeader"]';
+		var colTimeDelayHeader = '@Localizer["ColTimeDelayHeader"]';
+		var colTotalHeader = '@Localizer["ColTotalHeader"]';
+		var colAbsencesHeader = '@Localizer["ColAbsencesHeader"]';
 		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
 	</script>
 

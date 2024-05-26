@@ -12,7 +12,7 @@ const postOptions = { headers: { "RequestVerificationToken": $('input[name="__Re
 document.addEventListener("DOMContentLoaded", function (event) {
     table = $("#table");
     buttonRemove = $("#remove");
-    dlg = document.getElementById('dlgPuesto');
+    dlg = document.getElementById('dlgAsistencia');
     dlgModal = new bootstrap.Modal(dlg, null);
     //Función para limpiar el cuadro de diálogo cuando es cerrado
     dlg.addEventListener('hidden.bs.modal', function (event) {
@@ -63,7 +63,7 @@ window.operateEvents = {
     }
 }
 function onAgregarClick() {
-    initPuestoDialog(NUEVO, { id: "Nuevo", nombre: "" });
+    initPuestoDialog(NUEVO, { id: "Nuevo", nombre: "", fecha: "", hora_entrada: "", hora_salida: "", retardo: 0, total: 0, faltas: 0  });
 }
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
@@ -87,54 +87,62 @@ function initTable() {
                 width: "80px"
             },
             {
-                title: "Nombre",
+                title: colNombreHeader,
                 field: "nombre",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: "Fecha",
+                title: colFechaHeader,
                 field: "fecha",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: "Hora Entrada",
+                title: colEntryTimeHeader,
                 field: "hora_entrada",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: "Hora Salida",
+                title: colDepartureTimeHeader,
                 field: "hora_salida",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: "Retardo",
+                title: colTimeDelayHeader,
                 field: "retardo",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: "Total",
+                title: colTotalHeader,
                 field: "total",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: "Faltas",
+                title: colAbsencesHeader,
                 field: "faltas",
                 align: "center",
                 valign: "middle",
                 sortable: true
-            },
+            }, {
+                title: colAccionesHeader,
+                field: "operate",
+                align: 'center',
+                width: "100px",
+                clickToSelect: false,
+                events: window.operateEvents,
+                formatter: operateFormatter
+            }
         ]
     })
     table.on('check.bs.table uncheck.bs.table ' +
@@ -154,7 +162,7 @@ function initTable() {
             let oParams = { ids: selections };
 
             doAjax(
-                "/Catalogos/Puestos/DeletePuestos",
+                "/Catalogos/Puestos/DeleteAsistencia",
                 oParams,
                 function (resp) {
                     if (resp.tieneError) {
@@ -251,4 +259,20 @@ function initAsistenciaDialog(action, row) {
 
     dlgModal.toggle();
 }
+
+function onCerrarClick() {
+    //Removes validation from input-fields
+    $('.input-validation-error').addClass('input-validation-valid');
+    $('.input-validation-error').removeClass('input-validation-error');
+    //Removes validation message after input-fields
+    $('.field-validation-error').addClass('field-validation-valid');
+    $('.field-validation-error').removeClass('field-validation-error');
+    //Removes validation summary 
+    $('.validation-summary-errors').addClass('validation-summary-valid');
+    $('.validation-summary-errors').removeClass('validation-summary-errors');
+    //Removes danger text from fields
+    $(".text-danger").children().remove()
+}
+
+function onGuardarClick() { }
 
