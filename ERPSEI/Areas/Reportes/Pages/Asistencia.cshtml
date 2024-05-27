@@ -1,7 +1,7 @@
 ﻿@page "{handler?}"
+@using ERPSEI.Areas.Catalogos.Pages;
 @using Microsoft.AspNetCore.Localization;
 @using Microsoft.AspNetCore.Mvc.Localization;
-@using ERPSEI.Areas.Reportes.Pages;
 @model AsistenciaModel
 @inject IViewLocalizer Localizer;
 @{
@@ -65,7 +65,7 @@
 <!-- --------------------------- -->
 <!-- Sección tabla de resultados -->
 <div id="toolbar" class="col-xl-12">
-	<button id="btnAgregar" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dlgPuesto" onclick="onAgregarClick();">
+	<button id="btnAgregar" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dlgAsistencia" onclick="onAgregarClick();">
 		<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
 	</button>
 	<button id="remove" class="btn btn-danger" disabled>
@@ -92,32 +92,20 @@
 	   data-side-pagination="client"
 	   data-response-handler="responseHandler"
 	   data-buttons-class="primary"
-	   data-url="/Reportes/Asistencia/ObtenerAsistencia">
+	   data-url="/Catalogos/Asistencias/AsistenciasList"> <!--Revisar esta liga, ya que no muestra registros-->
 	<thead>
-		<tr>
-			<th data-field="id" data-sortable="true">@Localizer["IdColumn"]</th>
-			<th data-field="nombre" data-sortable="true">@Localizer["EmployeeNameField"]</th>
-			<th data-field="fecha" data-sortable="true">@Localizer["FechaInicioField"]</th>
-			<th data-field="horaEntrada" data-sortable="true">@Localizer["HoraEntradaField"]</th>
-			<th data-field="horaSalida" data-sortable="true">@Localizer["HoraSalidaField"]</th>
-			<th data-field="retardo" data-sortable="true">@Localizer["RetardoField"]</th>
-			<th data-field="total" data-sortable="true">@Localizer["TotalField"]</th>
-			<th data-field="faltas" data-sortable="true">@Localizer["FaltasField"]</th>
+		<tr align="center" valign="middle" class="bg-primary bg-opacity-10">
 		</tr>
 	</thead>
 </table>
 
-<!-- --------------------------- -->
-<!-- --------------------------- -->
-<!-- --------------------------- -->
 <!-- Sección Nuevo/Editar/Ver Registro --- -->
-<!--Verificar el theForm-->
 <form id="theForm" method="post">
-	<div id="dlgPuesto" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+	<div id="dlgAsistencia" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 id="dlgPuestoTitle" class="modal-title"></h5>
+					<h5 id="dlgAsistenciaTitle" class="modal-title"></h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 				</div>
 				<div class="modal-body align-items-center">
@@ -126,7 +114,6 @@
 						<div class="row">
 							<div class="col-3">
 								<div class="form-floating mb-3">
-									<!--Se reemplazó inpPuestoNombre en id-->
 									<input id="inpAsistenciaId" asp-for="ListaAsistencia.Id" type="text" class="form-control" />
 									<label asp-for="ListaAsistencia.Id" class="form-label"></label>
 									<span asp-validation-for="ListaAsistencia.Id" class="text-danger"></span>
@@ -210,10 +197,14 @@
 		</div>
 	</div>
 </form>
+
+<!-- --------------------------- -->
+<!-- --------------------------- -->
 @section Scripts {
 	<link rel="stylesheet" href="~/lib/bootstrap-table/bootstrap-table.min.css">
 
 	<script src="~/lib/bootstrap-table/extensions/export/tableExport.min.js"></script>
+
 	<script src="~/lib/bootstrap-table/bootstrap-table.min.js"></script>
 	<script src="~/lib/bootstrap-table/locale/bootstrap-table-es-MX.min.js"></script>
 	<script src="~/lib/bootstrap-table/locale/bootstrap-table-en-US.min.js"></script>
@@ -225,7 +216,6 @@
 		var cultureName = "@cultureName";
 		var btnImportarText = '@Localizer["ImportButtonText"]';
 		var btnImportarTitle = '@Localizer["ImportButtonTitle"]';
-		var btnBuscarTitle = '@Localizer["SearchButton"]';
 		var btnVerTitle = '@Localizer["SeeButtonTitle"]';
 		var btnEditarTitle = '@Localizer["EditButtonTitle"]';
 		var dlgEditarTitle = '@Localizer["EditDialogTitle"]';
@@ -234,15 +224,8 @@
 		var dlgDeleteTitle = '@Localizer["DeletePositionDialogTitle"]';
 		var dlgDeleteQuestion = '@Localizer["DeletePositionDialogQuestion"]';
 		var colNombreHeader = '@Localizer["ColNameHeader"]';
-		var colFechaHeader = '@Localizer["ColDateHeader"]';
-		var colEntryTimeHeader = '@Localizer["ColEntryTimeHeader"]';
-		var colDepartureTimeHeader = '@Localizer["ColDepartureTimeHeader"]';
-		var colTimeDelayHeader = '@Localizer["ColTimeDelayHeader"]';
-		var colTotalHeader = '@Localizer["ColTotalHeader"]';
-		var colAbsencesHeader = '@Localizer["ColAbsencesHeader"]';
 		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
 	</script>
 
 	<partial name="_ValidationScriptsPartial" />
 }
-

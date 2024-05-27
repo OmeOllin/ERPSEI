@@ -52,10 +52,10 @@ function operateFormatter(value, row, index) {
 }
 window.operateEvents = {
     'click .see': function (e, value, row, index) {
-        initPuestoDialog(VER, row);
+        initAsistenciaDialog(VER, row);
     },
     'click .edit': function (e, value, row, index) {
-        initPuestoDialog(EDITAR, row);
+        initAsistenciaDialog(EDITAR, row);
         //table.bootstrapTable('remove', {
         //    field: 'id',
         //    values: [row.id]
@@ -63,7 +63,7 @@ window.operateEvents = {
     }
 }
 function onAgregarClick() {
-    initPuestoDialog(NUEVO, { id: "Nuevo", nombre: "", fecha: "", hora_entrada: "", hora_salida: "", retardo: 0, total: 0, faltas: 0  });
+    initAsistenciaDialog(NUEVO, { id: "Nuevo", nombre: "" });
 }
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
@@ -87,55 +87,56 @@ function initTable() {
                 width: "80px"
             },
             {
-                title: colNombreHeader,
+                title: "Nombre",
                 field: "nombre",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: colFechaHeader,
+                title: "Fecha",
                 field: "fecha",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: colEntryTimeHeader,
-                field: "hora_entrada",
+                title: "Hora Entrada",
+                field: "horaEntrada",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: colDepartureTimeHeader,
-                field: "hora_salida",
+                title: "Hora Salida",
+                field: "horaSalida",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: colTimeDelayHeader,
+                title: "Retardo",
                 field: "retardo",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: colTotalHeader,
+                title: "Total",
                 field: "total",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: colAbsencesHeader,
+                title: "Faltas",
                 field: "faltas",
                 align: "center",
                 valign: "middle",
                 sortable: true
-            }, {
-                title: colAccionesHeader,
+            },
+            {
+                title: "Acciones",
                 field: "operate",
                 align: 'center',
                 width: "100px",
@@ -162,7 +163,7 @@ function initTable() {
             let oParams = { ids: selections };
 
             doAjax(
-                "/Catalogos/Puestos/DeleteAsistencia",
+                "/Catalogos/Asistencias/DeleteAsistencias",
                 oParams,
                 function (resp) {
                     if (resp.tieneError) {
@@ -194,14 +195,8 @@ function initTable() {
 
 //Funcionalidad Diálogo
 function initAsistenciaDialog(action, row) {
-    let idField = document.getElementById("inpAsistenciaId");
-    let nombreField = document.getElementById("inpAsistenciaNombre");
-    let fechaField = document.getElementById("inpAsistenciaFecha");
-    let horaEntradaField = document.getElementById("inpAsistenciaHoraEntrada");
-    let horaSalidaField = document.getElementById("inpAsistenciaHoraSalida");
-    let retardoField = document.getElementById("inpAsistenciaRetardo");
-    let totalField = document.getElementById("inpAsistenciaTotal");
-    let faltasField = document.getElementById("inpAsistenciaFaltas");
+    let idField = document.getElementById("inpPuestoId");
+    let nombreField = document.getElementById("inpPuestoNombre");
     let btnGuardar = document.getElementById("dlgAsistenciaBtnGuardar");
     let dlgTitle = document.getElementById("dlgAsistenciaTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
@@ -214,52 +209,27 @@ function initAsistenciaDialog(action, row) {
             dlgTitle.innerHTML = dlgNuevoTitle;
 
             nombreField.removeAttribute("disabled");
-            fechaField.removeAttribute("disabled");
-            horaEntradaField.removeAttribute("disabled");
-            horaSalidaField.removeAttribute("disabled");
-            retardoField.removeAttribute("disabled");
-            totalField.removeAttribute("disabled");
-            faltasField.removeAttribute("disabled");
             btnGuardar.removeAttribute("disabled");
             break;
         case EDITAR:
             dlgTitle.innerHTML = dlgEditarTitle;
 
             nombreField.removeAttribute("disabled");
-            fechaField.removeAttribute("disabled");
-            horaEntradaField.removeAttribute("disabled");
-            horaSalidaField.removeAttribute("disabled");
-            retardoField.removeAttribute("disabled");
-            totalField.removeAttribute("disabled");
-            faltasField.removeAttribute("disabled");
             btnGuardar.removeAttribute("disabled");
             break;
         default:
             dlgTitle.innerHTML = dlgVerTitle;
 
             nombreField.setAttribute("disabled", true);
-            fechaField.setAttribute("disabled", true);
-            horaEntradaField.setAttribute("disabled", true);
-            horaSalidaField.setAttribute("disabled", true);
-            retardoField.setAttribute("disabled", true);
-            totalField.setAttribute("disabled", true);
-            faltasField.setAttribute("disabled", true);
             btnGuardar.setAttribute("disabled", true);
             break;
     }
 
     idField.value = row.id;
     nombreField.value = row.nombre;
-    fechaField.value = row.fecha;
-    horaEntradaField.value = row.hora_entrada;
-    horaSalidaField.value = row.hora_salida;
-    retardoField.value = row.retardo;
-    totalField.value = row.total;
-    faltasField.value = row.faltas;
 
     dlgModal.toggle();
 }
-
 function onCerrarClick() {
     //Removes validation from input-fields
     $('.input-validation-error').addClass('input-validation-valid');
@@ -273,6 +243,52 @@ function onCerrarClick() {
     //Removes danger text from fields
     $(".text-danger").children().remove()
 }
+function onGuardarClick() {
+    //Ejecuta la validación
+    $("#theForm").validate();
+    //Determina los errores
+    let valid = $("#theForm").valid();
+    //Si la forma no es válida, entonces finaliza.
+    if (!valid) { return; }
 
-function onGuardarClick() { }
+    let btnClose = document.getElementById("dlgAsistenciaBtnCancelar");
+    let idField = document.getElementById("inpPuestoId");
+    let nombreField = document.getElementById("inpPuestoNombre");
+    let dlgTitle = document.getElementById("dlgAsistenciaTitle");
+    let summaryContainer = document.getElementById("saveValidationSummary");
+    summaryContainer.innerHTML = "";
 
+    let oParams = {
+        id: idField.value == "Nuevo" ? 0 : idField.value,
+        nombre: nombreField.value
+    };
+
+    doAjax(
+        "/Catalogos/Asistencias/SaveAsistencia",
+        oParams,
+        function (resp) {
+            if (resp.tieneError) {
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    let summary = ``;
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                }
+                showError(dlgTitle.innerHTML, resp.mensaje);
+                return;
+            }
+
+            btnClose.click();
+
+            let e = document.querySelector("[name='refresh']");
+            e.click();
+
+            showSuccess(dlgTitle.innerHTML, resp.mensaje);
+        }, function (error) {
+            showError("Error", error);
+        },
+        postOptions
+    );
+}
+/////////////////////
