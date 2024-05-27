@@ -63,7 +63,7 @@ window.operateEvents = {
     }
 }
 function onAgregarClick() {
-    initAsistenciaDialog(NUEVO, { id: "Nuevo", nombre: "" });
+    initAsistenciaDialog(NUEVO, { id: "Nuevo", nombre: "", fecha: null, hora_entrada: null, hora_salida: null, retardo: null, total: null, faltas: null });
 }
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
@@ -73,76 +73,53 @@ function initTable() {
         exportTypes: ['excel'],
         columns: [
             {
-                field: "state",
-                checkbox: true,
-                align: "center",
-                valign: "middle"
-            },
-            {
-                title: "Id",
-                field: "id",
-                align: "center",
-                valign: "middle",
-                sortable: true,
-                width: "80px"
-            },
-            {
-                title: "Nombre",
+                title: colNombreHeader,
                 field: "nombre",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: "Fecha",
+                title: colFechaHeader,
                 field: "fecha",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: "Hora Entrada",
+                title: colHoraEntradaHeader,
                 field: "horaEntrada",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: "Hora Salida",
+                title: colHoraSalidaHeader,
                 field: "horaSalida",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: "Retardo",
+                title: colRetardoHeader,
                 field: "retardo",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: "Total",
+                title: colTotalHeader,
                 field: "total",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: "Faltas",
+                title: colFaltasHeader,
                 field: "faltas",
                 align: "center",
                 valign: "middle",
                 sortable: true
-            },
-            {
-                title: "Acciones",
-                field: "operate",
-                align: 'center',
-                width: "100px",
-                clickToSelect: false,
-                events: window.operateEvents,
-                formatter: operateFormatter
             }
         ]
     })
@@ -195,8 +172,14 @@ function initTable() {
 
 //Funcionalidad Diálogo
 function initAsistenciaDialog(action, row) {
-    let idField = document.getElementById("inpPuestoId");
-    let nombreField = document.getElementById("inpPuestoNombre");
+    let idField = document.getElementById("inpAsistenciaId");
+    let nombreField = document.getElementById("inpAsistenciaNombre");
+    let fechaField = document.getElementById("inpAsistenciaFecha");
+    let horaEntradaField = document.getElementById("inpAsistenciaHoraEntrada");
+    let horaSalidaField = document.getElementById("inpAsistenciaHoraSalida");
+    let retardoField = document.getElementById("inpAsistenciaRetardo");
+    let totalField = document.getElementById("inpAsistenciaTotal");
+    let faltasField = document.getElementById("inpAsistenciaFaltas");
     let btnGuardar = document.getElementById("dlgAsistenciaBtnGuardar");
     let dlgTitle = document.getElementById("dlgAsistenciaTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
@@ -207,26 +190,47 @@ function initAsistenciaDialog(action, row) {
     switch (action) {
         case NUEVO:
             dlgTitle.innerHTML = dlgNuevoTitle;
-
             nombreField.removeAttribute("disabled");
+            fechaField.removeAttribute("disabled");
+            horaEntradaField.removeAttribute("disabled");
+            horaSalidaField.removeAttribute("disabled");
+            retardoField.removeAttribute("disabled");
+            totalField.removeAttribute("disabled");
+            faltasField.removeAttribute("disabled");
             btnGuardar.removeAttribute("disabled");
             break;
         case EDITAR:
             dlgTitle.innerHTML = dlgEditarTitle;
-
             nombreField.removeAttribute("disabled");
+            fechaField.removeAttribute("disabled");
+            horaEntradaField.removeAttribute("disabled");
+            horaSalidaField.removeAttribute("disabled");
+            retardoField.removeAttribute("disabled");
+            totalField.removeAttribute("disabled");
+            faltasField.removeAttribute("disabled");
             btnGuardar.removeAttribute("disabled");
             break;
         default:
             dlgTitle.innerHTML = dlgVerTitle;
-
             nombreField.setAttribute("disabled", true);
+            fechaField.setAttribute("disabled", true);
+            horaEntradaField.setAttribute("disabled", true);
+            horaSalidaField.setAttribute("disabled", true);
+            retardoField.setAttribute("disabled", true);
+            totalField.setAttribute("disabled", true);
+            faltasField.setAttribute("disabled", true);
             btnGuardar.setAttribute("disabled", true);
             break;
     }
 
     idField.value = row.id;
     nombreField.value = row.nombre;
+    fechaField.value = row.fecha;
+    horaEntradaField.value = row.hora_entrada;
+    horaSalidaField.value = row.hora_salida;
+    retardoField.value = row.retardo;
+    totalField.value = row.total;
+    faltasField.value = row.faltas;
 
     dlgModal.toggle();
 }
@@ -244,23 +248,35 @@ function onCerrarClick() {
     $(".text-danger").children().remove()
 }
 function onGuardarClick() {
-    //Ejecuta la validación
+    // Ejecuta la validación
     $("#theForm").validate();
-    //Determina los errores
+    // Determina los errores
     let valid = $("#theForm").valid();
-    //Si la forma no es válida, entonces finaliza.
+    // Si la forma no es válida, entonces finaliza.
     if (!valid) { return; }
 
-    let btnClose = document.getElementById("dlgAsistenciaBtnCancelar");
-    let idField = document.getElementById("inpPuestoId");
-    let nombreField = document.getElementById("inpPuestoNombre");
-    let dlgTitle = document.getElementById("dlgAsistenciaTitle");
+    let btnClose = document.getElementById("dlgSubareaBtnCancelar");
+    let idField = document.getElementById("inpAsistenciaId");
+    let nombreField = document.getElementById("inpAsistenciaNombre");
+    let fechaField = document.getElementById("inpAsistenciaFecha");
+    let horaEntradaField = document.getElementById("inpAsistenciaHoraEntrada");
+    let horaSalidaField = document.getElementById("inpAsistenciaHoraSalida");
+    let retardoField = document.getElementById("inpAsistenciaRetardo");
+    let totalField = document.getElementById("inpAsistenciaTotal");
+    let faltasField = document.getElementById("inpAsistenciaFaltas");
+    let dlgTitle = document.getElementById("dlgSubareaTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 
     let oParams = {
         id: idField.value == "Nuevo" ? 0 : idField.value,
-        nombre: nombreField.value
+        nombre: nombreField.value,
+        fecha: fechaField.value,
+        horaEntrada: horaEntradaField.value,
+        horaSalida: horaSalidaField.value,
+        retardo: retardoField.value,
+        total: totalField.value,
+        faltas: faltasField.value
     };
 
     doAjax(
@@ -291,4 +307,3 @@ function onGuardarClick() {
         postOptions
     );
 }
-/////////////////////

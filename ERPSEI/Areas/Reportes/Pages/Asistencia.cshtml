@@ -100,6 +100,7 @@
 </table>
 
 <!-- Sección Nuevo/Editar/Ver Registro --- -->
+<!--Verificar el theForm-->
 <form id="theForm" method="post">
 	<div id="dlgAsistencia" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered">
@@ -197,7 +198,6 @@
 		</div>
 	</div>
 </form>
-
 <!-- --------------------------- -->
 <!-- --------------------------- -->
 @section Scripts {
@@ -224,7 +224,12 @@
 		var dlgDeleteTitle = '@Localizer["DeletePositionDialogTitle"]';
 		var dlgDeleteQuestion = '@Localizer["DeletePositionDialogQuestion"]';
 		var colNombreHeader = '@Localizer["ColNameHeader"]';
-		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
+		var colFechaHeader = '@Localizer["ColDateHeader"]';
+		var colHoraEntradaHeader = '@Localizer["ColEntryTimeHeader"]';
+		var colHoraSalidaHeader = '@Localizer["ColDepartureTimeHeader"]';
+		var colRetardoHeader = '@Localizer["ColTimeDelayHeader"]';
+		var colTotalHeader = '@Localizer["ColTotalHeader"]';
+		var colFaltasHeader = '@Localizer["ColAbsencesHeader"]';
 	</script>
 
 	<partial name="_ValidationScriptsPartial" />

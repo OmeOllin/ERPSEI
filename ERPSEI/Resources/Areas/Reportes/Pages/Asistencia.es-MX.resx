@@ -165,14 +165,35 @@
   <data name="ExitTimeColumn" xml:space="preserve">
     <value>Hora Salida</value>
   </data>
+  <data name="FaltasPlaceholder" xml:space="preserve">
+    <value>Faltas</value>
+  </data>
+  <data name="FechaPlaceholder" xml:space="preserve">
+    <value>Fecha</value>
+  </data>
   <data name="FilterTitle" xml:space="preserve">
     <value>Filtros de búsqueda</value>
+  </data>
+  <data name="HoraEntradaPlaceholder" xml:space="preserve">
+    <value>Hora Entrada</value>
+  </data>
+  <data name="HoraSalidaPlaceholder" xml:space="preserve">
+    <value>Hola Salida</value>
   </data>
   <data name="IdColumn" xml:space="preserve">
     <value>ID</value>
   </data>
   <data name="NameColumn" xml:space="preserve">
     <value>Nombre</value>
+  </data>
+  <data name="NewDialogTitle" xml:space="preserve">
+    <value>Nuevo Registro</value>
+  </data>
+  <data name="NombrePlaceholder" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="RetardoPlaceholder" xml:space="preserve">
+    <value>Retardo</value>
   </data>
   <data name="SearchButton" xml:space="preserve">
     <value>Buscar</value>
@@ -181,6 +202,9 @@
     <value>Reporte de Asistencia</value>
   </data>
   <data name="TotalColumn" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="TotalPlaceholder" xml:space="preserve">
     <value>Total</value>
   </data>
 </root>
