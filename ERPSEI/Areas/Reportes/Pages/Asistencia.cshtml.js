@@ -264,7 +264,6 @@ function onGuardarClick() {
     let retardoField = document.getElementById("inpAsistenciaRetardo");
     let totalField = document.getElementById("inpAsistenciaTotal");
     let faltasField = document.getElementById("inpAsistenciaFaltas");
-    let dlgTitle = document.getElementById("dlgSubareaTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 

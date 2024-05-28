@@ -48,8 +48,9 @@ namespace ERPSEI.Data.Entities.Empleados
 
         public int? PuestoId { get; set; }
 		public Puesto? Puesto { get; set; }
+		//public Asistencia? Asistencia { get; set; }
 
-        public int? AreaId { get; set; }
+		public int? AreaId { get; set; }
 		public Area? Area { get; set; }
 
         public int? EstadoCivilId {  get; set; }

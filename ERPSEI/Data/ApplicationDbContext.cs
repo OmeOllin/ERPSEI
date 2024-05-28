@@ -62,6 +62,9 @@ namespace ERPSEI.Data
 		public DbSet<UnidadMedida> UnidadesMedida { get; set; }
 		public DbSet<UsoCFDI> UsosCFDI { get; set; }
 
+		//Reporte asistencias
+		public DbSet<Asistencias> Asistencias { get; set; }
+
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

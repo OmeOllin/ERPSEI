@@ -13,6 +13,7 @@
 		public Task DeleteMultipleByIdAsync(string[] ids);
 
 		public Task<List<T>> GetAllAsync();
+		//public Task<List<T>> GetAllAsistenciaAsync();
 
 		public Task<T?> GetByIdAsync(int id);
 

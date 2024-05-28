@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERPSEI.Data.Entities.Empleados
 {
-	public class Asistencia
+	public class Asistencias
 	{
 		[DatabaseGenerated(DatabaseGeneratedOption.None)]
-		public int Id { get; set; }
-		public string Nombre { get; set; } = string.Empty;
+		public int? Id { get; set; }
+		public string? Nombre { get; set; } = string.Empty;
 		public DateOnly? Fecha { get; set; }
 		public TimeOnly? HoraEntrada { get; set; }
 		public TimeOnly? HoraSalida { get; set; }
