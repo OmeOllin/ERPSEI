@@ -11,6 +11,7 @@ using ERPSEI.Data.Managers.Usuarios;
 using ERPSEI.Email;
 using ERPSEI.Resources;
 using ERPSEI.TokenProviders;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
@@ -111,6 +112,61 @@ namespace ERPSEI
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddTokenProvider<UserAuthorizationTokenProvider<AppUser>>("UserAuthorization");
         }
+
+        public static async void ConfigureAuthorization(IServiceScope _scope, WebApplicationBuilder _builder) {
+			//Se crea instancia del administrador de módulos
+			IModuloManager moduloManager = _scope.ServiceProvider.GetRequiredService<IModuloManager>();
+
+			//Se crea instancia del administrador de roles
+			RoleManager<AppRole> roleManager = _scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
+
+			//Se inicializan los roles principales del sistema
+			if (!await roleManager.RoleExistsAsync(RolMaster)) { await roleManager.CreateAsync(new AppRole(RolMaster)); }
+			if (!await roleManager.RoleExistsAsync(RolAdministrador)) { await roleManager.CreateAsync(new AppRole(RolAdministrador)); }
+			if (!await roleManager.RoleExistsAsync(RolUsuario)) { await roleManager.CreateAsync(new AppRole(RolUsuario)); }
+			if (!await roleManager.RoleExistsAsync(RolCandidato)) { await roleManager.CreateAsync(new AppRole(RolCandidato)); }
+
+			//Se crea instancia del administrador de usuarios
+			AppUserManager userManager = _scope.ServiceProvider.GetRequiredService<AppUserManager>();
+
+            //Si no existe un usuario con el email de master, entonces lo crea
+			if (await userManager.FindByEmailAsync(MasterUser.Email ?? "") == null)
+			{
+				//Genera password para usuario master
+				MasterPassword = userManager.GenerateRandomPassword(10);
+				//Crea al usuario master.
+				var result = await userManager.CreateAsync(MasterUser, MasterPassword);
+
+				if (result.Succeeded)
+				{
+					//Asigna el rol de Master al usuario master.
+					await userManager.AddToRoleAsync(MasterUser, RolMaster);
+
+					//Envía password por correo para notificarlo.
+					IEmailSender emailSender = _scope.ServiceProvider.GetRequiredService<IEmailSender>();
+					emailSender.SendEmailAsync(MasterUser.Email ?? "", "Login Password", $"Use this password to login: {MasterPassword}");
+				}
+			}
+
+			//Se agregan políticas de autorización de acceso a módulos
+			_builder.Services.AddAuthorization(async options =>
+                {
+                    List<Modulo> modulos = await moduloManager.GetAllAsync();
+
+					foreach (Modulo modulo in modulos)
+                    {
+                        options.AddPolicy(modulo.Nombre, policy => 
+                            {
+                                foreach(AccesoModulo acceso in modulo.Accesos)
+                                {
+                                    policy.RequireAssertion(context => acceso.Rol?.Name == RolMaster);
+                                }
+							}
+                        );
+                    }
+                }
+			);
+		}
 
         public static void ConfigurePagesAndLocalization(WebApplicationBuilder _builder)
         {
