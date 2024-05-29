@@ -24,7 +24,7 @@ namespace ERPSEI.Data.Managers.Usuarios
 
 		public async Task<Modulo?> GetByNameAsync(string name)
 		{
-			return await db.Modulos.Include(m => m.Accesos).Where(c => c.Nombre == name.ToLower()).FirstOrDefaultAsync();
+			return await db.Modulos.Include(m => m.Accesos).Where(c => c.NombreNormalizado.ToLower() == name.ToLower()).FirstOrDefaultAsync();
 		}
 
 	}
