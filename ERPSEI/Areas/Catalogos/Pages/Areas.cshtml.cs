@@ -12,7 +12,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-    [Authorize(Policy = "AreasPolicy")]
+    [Authorize(Policy = "AccessPolicy")]
     public class AreasModel : PageModel
     {
         private readonly ApplicationDbContext _db;
