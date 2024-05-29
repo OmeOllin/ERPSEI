@@ -14,13 +14,16 @@ ServicesConfiguration.ConfigureIdentity(builder);
 //Pages and localization configuration
 ServicesConfiguration.ConfigurePagesAndLocalization(builder);
 
+//Authorization configuration
+ServicesConfiguration.ConfigureAuthorization(builder);
+
 //Build and run application
 WebApplication app = builder.Build();
 
-//Authorization configuration
 using(IServiceScope scope = app.Services.CreateScope())
 {
-    ServicesConfiguration.ConfigureAuthorization(scope, builder);
+    //Authorization initialization
+    ServicesConfiguration.InitializeAuthorization(scope);
 }
 
 app.UseSession();
