@@ -14,17 +14,17 @@ namespace ERPSEI.Data.Managers.Usuarios
 
 		public async Task<List<Modulo>> GetAllAsync()
 		{
-			return await db.Modulos.ToListAsync();
+			return await db.Modulos.Include(m => m.Accesos).ToListAsync();
 		}
 
 		public async Task<Modulo?> GetByIdAsync(int id)
         {
-            return await db.Modulos.Where(e => e.Id == id).FirstOrDefaultAsync();
+            return await db.Modulos.Include(m => m.Accesos).Where(e => e.Id == id).FirstOrDefaultAsync();
         }
 
 		public async Task<Modulo?> GetByNameAsync(string name)
 		{
-			return await db.Modulos.Where(c => c.Nombre == name.ToLower()).FirstOrDefaultAsync();
+			return await db.Modulos.Include(m => m.Accesos).Where(c => c.Nombre == name.ToLower()).FirstOrDefaultAsync();
 		}
 
 	}
