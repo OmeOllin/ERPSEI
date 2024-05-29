@@ -6,6 +6,8 @@
 
         public string Nombre { get; set; } = string.Empty;
 
+        public string NombreNormalizado { get; set; } = string.Empty;
+
         public int Deshabilitado { get; set; }
 
         public ICollection<AccesoModulo> Accesos { get; set; } = new List<AccesoModulo>();
