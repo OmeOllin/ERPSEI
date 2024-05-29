@@ -63,6 +63,7 @@ namespace ERPSEI.Data
 		public DbSet<UsoCFDI> UsosCFDI { get; set; }
 
 		//Catálogos no administrables Usuarios
+		public DbSet<AccesoModulo> AccesosModulos { get; set; }
 		public DbSet<Modulo> Modulos { get; set; }
 
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
