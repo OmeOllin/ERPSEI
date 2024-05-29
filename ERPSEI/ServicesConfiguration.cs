@@ -117,7 +117,7 @@ namespace ERPSEI
 
         public static void ConfigureAuthorization(WebApplicationBuilder _builder) {
 			_builder.Services.AddAuthorization(options =>
-	            options.AddPolicy("AreasPolicy", policy => policy.Requirements.Add(new AccessRequirement("Areas")))
+	            options.AddPolicy("AccessPolicy", policy => policy.Requirements.Add(new AccessRequirement()))
             );
 
 			_builder.Services.AddScoped<IAuthorizationHandler, AccessHandler>();
