@@ -58,7 +58,7 @@ namespace ERPSEI
 
             _builder.Services.AddScoped<RoleManager, RoleManager>();
 
-			//_builder.Services.AddScoped<IRCatalogoManager<Asistencias>>();
+			_builder.Services.AddScoped<IAsistenciaManager, AsistenciaManager>();
 
 			_builder.Services.AddScoped<IConceptoManager, ConceptoManager>();
             _builder.Services.AddScoped<IPrefacturaManager, PrefacturaManager>();
