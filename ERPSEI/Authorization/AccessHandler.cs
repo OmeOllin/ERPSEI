@@ -15,7 +15,7 @@ namespace ERPSEI.Authorization
 
 		protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, AccessRequirement requirement)
 		{
-			DefaultHttpContext? httpContext = (DefaultHttpContext)context.Resource ?? null;
+			DefaultHttpContext? httpContext = (DefaultHttpContext?)context.Resource ?? null;
 			string moduleName = httpContext?.GetEndpoint()?.DisplayName ?? string.Empty;
 			string[] moduleNameParts = moduleName.Split("/", StringSplitOptions.RemoveEmptyEntries);
 			if (moduleNameParts.Length >= 1){ moduleName = moduleNameParts[0]; }
