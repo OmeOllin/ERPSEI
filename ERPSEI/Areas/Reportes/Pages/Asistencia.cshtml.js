@@ -34,37 +34,6 @@ function responseHandler(res) {
     })
     return res
 }
-//Función para dar formato a los iconos de operación de los registros
-function operateFormatter(value, row, index) {
-    let icons = [];
-
-    //Icono Ver
-    icons.push(`<li><a class="dropdown-item see" href="#" title="${btnVerTitle}"><i class="bi bi-search"></i> ${btnVerTitle}</a></li>`);
-    //Icono Editar
-    icons.push(`<li><a class="dropdown-item edit" href="#" title="${btnEditarTitle}"><i class="bi bi-pencil-fill"></i> ${btnEditarTitle}</a></li>`);
-
-    return `<div class="dropdown">
-              <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-three-dots-vertical success"></i>
-              </button>
-              <ul class="dropdown-menu">${icons.join("")}</ul>
-            </div>`;
-}
-window.operateEvents = {
-    'click .see': function (e, value, row, index) {
-        initAsistenciaDialog(VER, row);
-    },
-    'click .edit': function (e, value, row, index) {
-        initAsistenciaDialog(EDITAR, row);
-        //table.bootstrapTable('remove', {
-        //    field: 'id',
-        //    values: [row.id]
-        //})
-    }
-}
-function onAgregarClick() {
-    initAsistenciaDialog(NUEVO, { id: "Nuevo", nombre: "", fecha: null, hora_entrada: null, hora_salida: null, retardo: null, total: null, faltas: null });
-}
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
         height: 550,
@@ -169,84 +138,6 @@ function initTable() {
     })
 }
 /////////////////////
-
-//Funcionalidad Diálogo
-function initAsistenciaDialog(action, row) {
-    let idField = document.getElementById("inpAsistenciaId");
-    let nombreField = document.getElementById("inpAsistenciaNombre");
-    let fechaField = document.getElementById("inpAsistenciaFecha");
-    let horaEntradaField = document.getElementById("inpAsistenciaHoraEntrada");
-    let horaSalidaField = document.getElementById("inpAsistenciaHoraSalida");
-    let retardoField = document.getElementById("inpAsistenciaRetardo");
-    let totalField = document.getElementById("inpAsistenciaTotal");
-    let faltasField = document.getElementById("inpAsistenciaFaltas");
-    let btnGuardar = document.getElementById("dlgAsistenciaBtnGuardar");
-    let dlgTitle = document.getElementById("dlgAsistenciaTitle");
-    let summaryContainer = document.getElementById("saveValidationSummary");
-    summaryContainer.innerHTML = "";
-
-    idField.setAttribute("disabled", true);
-
-    switch (action) {
-        case NUEVO:
-            dlgTitle.innerHTML = dlgNuevoTitle;
-            nombreField.removeAttribute("disabled");
-            fechaField.removeAttribute("disabled");
-            horaEntradaField.removeAttribute("disabled");
-            horaSalidaField.removeAttribute("disabled");
-            retardoField.removeAttribute("disabled");
-            totalField.removeAttribute("disabled");
-            faltasField.removeAttribute("disabled");
-            btnGuardar.removeAttribute("disabled");
-            break;
-        case EDITAR:
-            dlgTitle.innerHTML = dlgEditarTitle;
-            nombreField.removeAttribute("disabled");
-            fechaField.removeAttribute("disabled");
-            horaEntradaField.removeAttribute("disabled");
-            horaSalidaField.removeAttribute("disabled");
-            retardoField.removeAttribute("disabled");
-            totalField.removeAttribute("disabled");
-            faltasField.removeAttribute("disabled");
-            btnGuardar.removeAttribute("disabled");
-            break;
-        default:
-            dlgTitle.innerHTML = dlgVerTitle;
-            nombreField.setAttribute("disabled", true);
-            fechaField.setAttribute("disabled", true);
-            horaEntradaField.setAttribute("disabled", true);
-            horaSalidaField.setAttribute("disabled", true);
-            retardoField.setAttribute("disabled", true);
-            totalField.setAttribute("disabled", true);
-            faltasField.setAttribute("disabled", true);
-            btnGuardar.setAttribute("disabled", true);
-            break;
-    }
-
-    idField.value = row.id;
-    nombreField.value = row.nombre;
-    fechaField.value = row.fecha;
-    horaEntradaField.value = row.hora_entrada;
-    horaSalidaField.value = row.hora_salida;
-    retardoField.value = row.retardo;
-    totalField.value = row.total;
-    faltasField.value = row.faltas;
-
-    dlgModal.toggle();
-}
-function onCerrarClick() {
-    //Removes validation from input-fields
-    $('.input-validation-error').addClass('input-validation-valid');
-    $('.input-validation-error').removeClass('input-validation-error');
-    //Removes validation message after input-fields
-    $('.field-validation-error').addClass('field-validation-valid');
-    $('.field-validation-error').removeClass('field-validation-error');
-    //Removes validation summary 
-    $('.validation-summary-errors').addClass('validation-summary-valid');
-    $('.validation-summary-errors').removeClass('validation-summary-errors');
-    //Removes danger text from fields
-    $(".text-danger").children().remove()
-}
 function onGuardarClick() {
     // Ejecuta la validación
     $("#theForm").validate();
