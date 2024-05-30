@@ -2,7 +2,7 @@
 
 namespace ERPSEI.Data.Managers.Empleados
 {
-	public interface IAsistenciaManager: IRWCatalogoManager<Asistencia>
+	public interface IAsistenciaManager: IRCatalogoManager<Asistencia>
 	{
 		public Task<Asistencia?> GetByIdAsync(int id);
 	}

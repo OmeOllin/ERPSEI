@@ -1,9 +1,10 @@
 ﻿using ERPSEI.Data.Entities.Empleados;
+using ERPSEI.Data.Managers.Empleados;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERPSEI.Data.Managers.Reportes
 {
-	public class AsistenciasManager : IRCatalogoManager<Asistencias>
+	public class AsistenciasManager : IAsistenciaManager
 	{
 		ApplicationDbContext db { get; set; }
 
@@ -12,17 +13,17 @@ namespace ERPSEI.Data.Managers.Reportes
 			db = _db;
 		}
 
-		public async Task<List<Asistencias>> GetAllAsync()
+		public async Task<List<Asistencia>> GetAllAsync()
 		{
 			return await db.Asistencias.ToListAsync();
 		}
 
-		public async Task<Asistencias?> GetByIdAsync(int id)
+		public async Task<Asistencia?> GetByIdAsync(int id)
 		{
 			return await db.Asistencias.Where(a => a.Id == id).FirstOrDefaultAsync();
 		}
 
-		public async Task<Asistencias?> GetByNameAsync(string name)
+		public async Task<Asistencia?> GetByNameAsync(string name)
 		{
 			return await db.Asistencias.Where(a => a.Nombre.ToLower() == name.ToLower()).FirstOrDefaultAsync();
 		}
