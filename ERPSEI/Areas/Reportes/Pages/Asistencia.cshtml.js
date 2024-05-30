@@ -254,8 +254,7 @@ function onGuardarClick() {
     let valid = $("#theForm").valid();
     // Si la forma no es válida, entonces finaliza.
     if (!valid) { return; }
-
-    let btnClose = document.getElementById("dlgSubareaBtnCancelar");
+    
     let idField = document.getElementById("inpAsistenciaId");
     let nombreField = document.getElementById("inpAsistenciaNombre");
     let fechaField = document.getElementById("inpAsistenciaFecha");
