@@ -10,6 +10,8 @@
 
         public int PuedeEliminar { get; set; }
 
+        public int PuedeAutorizar { get; set; }
+
         public string? RolId { get; set; }
         public AppRole? Rol { get; set; }
 
