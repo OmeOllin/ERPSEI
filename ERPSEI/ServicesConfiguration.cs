@@ -133,8 +133,55 @@ namespace ERPSEI
 			if (!roleManager.RoleExistsAsync(RolUsuario).Result) { roleManager.CreateAsync(new AppRole(RolUsuario)); }
 			if (!roleManager.RoleExistsAsync(RolCandidato).Result) { roleManager.CreateAsync(new AppRole(RolCandidato)); }
 
-			//Se crea instancia del administrador de usuarios
-			AppUserManager userManager = _scope.ServiceProvider.GetRequiredService<AppUserManager>();
+			//Se crea instancia del administrador de accesos a los módulos
+			IAccesoModuloManager accesoModuloManager = _scope.ServiceProvider.GetRequiredService<IAccesoModuloManager>();
+            List<AccesoModulo> accesos;
+            foreach (AppRole r in roleManager.Roles)
+            {
+                //Se obtienen los accesos del rol.
+				accesos = accesoModuloManager.GetByRolIdAsync(r.Id).Result;
+                
+			    //Si el rol no tiene ningún acceso establecido, se crean sus accesos default.
+                if(accesos.Count == 0)
+                {
+					IModuloManager moduloManager = _scope.ServiceProvider.GetRequiredService<IModuloManager>();
+                    foreach (Modulo m in moduloManager.GetAllAsync().Result)
+                    {
+				        switch (r.Name)
+                        {
+                            case RolMaster:
+                                //Master tiene acceso completo a todos los módulos
+							    accesoModuloManager.CreateAsync(new AccesoModulo() { RolId = r.Id, ModuloId = m.Id, PuedeConsultar = 1, PuedeEditar = 1, PuedeEliminar = 1 });
+                                break;
+					        case RolAdministrador:
+								//Administrador solo puede consultar y editar en todos los módulos
+								accesoModuloManager.CreateAsync(new AccesoModulo() { RolId = r.Id, ModuloId = m.Id, PuedeConsultar = 1, PuedeEditar = 1, PuedeEliminar = 0 });
+								break;
+					        case RolUsuario:
+                                //Usuario solo puede consultar en ciertos módulos
+                                switch (m.NombreNormalizado)
+                                {
+                                    case "vacaciones":
+                                    case "incapacidades":
+                                    case "permisos":
+                                    case "organigrama":
+										accesoModuloManager.CreateAsync(new AccesoModulo() { RolId = r.Id, ModuloId = m.Id, PuedeConsultar = 1, PuedeEditar = 0, PuedeEliminar = 0 });
+										break;
+                                    default:
+                                        //Cualquier otro módulo está bloqueado para el rol de usuario.
+                                        break;
+                                }
+								break;
+					        default:
+								//Candidato y cualquier otro rol no considerado de inicio, no tienen acceso a ningún módulo, por lo que no se definen accesos.
+								break;
+                        }
+					}
+				}
+            }
+
+            //Se crea instancia del administrador de usuarios
+            AppUserManager userManager = _scope.ServiceProvider.GetRequiredService<AppUserManager>();
 
             //Si no existe un usuario con el email de master, entonces lo crea
 			if (userManager.FindByEmailAsync(MasterUser.Email ?? "").Result == null)
