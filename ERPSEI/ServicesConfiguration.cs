@@ -13,7 +13,6 @@ using ERPSEI.Email;
 using ERPSEI.Resources;
 using ERPSEI.TokenProviders;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
@@ -122,86 +121,6 @@ namespace ERPSEI
             );
 
 			_builder.Services.AddScoped<IAuthorizationHandler, AccessHandler>();
-		}
-
-        public static void InitializeAuthorization(IServiceScope _scope) {
-			//Se crea instancia del administrador de roles
-			RoleManager<AppRole> roleManager = _scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
-
-			//Se inicializan los roles principales del sistema
-			if (!roleManager.RoleExistsAsync(RolMaster).Result) { roleManager.CreateAsync(new AppRole(RolMaster)); }
-			if (!roleManager.RoleExistsAsync(RolAdministrador).Result) { roleManager.CreateAsync(new AppRole(RolAdministrador)); }
-			if (!roleManager.RoleExistsAsync(RolUsuario).Result) { roleManager.CreateAsync(new AppRole(RolUsuario)); }
-			if (!roleManager.RoleExistsAsync(RolCandidato).Result) { roleManager.CreateAsync(new AppRole(RolCandidato)); }
-
-			//Se crea instancia del administrador de accesos a los módulos
-			IAccesoModuloManager accesoModuloManager = _scope.ServiceProvider.GetRequiredService<IAccesoModuloManager>();
-            List<AccesoModulo> accesos;
-            foreach (AppRole r in roleManager.Roles)
-            {
-                //Se obtienen los accesos del rol.
-				accesos = accesoModuloManager.GetByRolIdAsync(r.Id).Result;
-                
-			    //Si el rol no tiene ningún acceso establecido, se crean sus accesos default.
-                if(accesos.Count == 0)
-                {
-					IModuloManager moduloManager = _scope.ServiceProvider.GetRequiredService<IModuloManager>();
-                    foreach (Modulo m in moduloManager.GetAllAsync().Result)
-                    {
-				        switch (r.Name)
-                        {
-                            case RolMaster:
-                                //Master tiene acceso completo a todos los módulos
-							    accesoModuloManager.CreateAsync(new AccesoModulo() { RolId = r.Id, ModuloId = m.Id, PuedeConsultar = 1, PuedeEditar = 1, PuedeEliminar = 1, PuedeAutorizar = 1 });
-                                break;
-					        case RolAdministrador:
-								//Administrador solo puede consultar y editar en todos los módulos
-								accesoModuloManager.CreateAsync(new AccesoModulo() { RolId = r.Id, ModuloId = m.Id, PuedeConsultar = 1, PuedeEditar = 1, PuedeEliminar = 0, PuedeAutorizar = 0 });
-								break;
-					        case RolUsuario:
-                                //Usuario solo puede consultar en ciertos módulos
-                                switch (m.NombreNormalizado)
-                                {
-                                    case "vacaciones":
-                                    case "incapacidades":
-                                    case "permisos":
-                                    case "organigrama":
-										accesoModuloManager.CreateAsync(new AccesoModulo() { RolId = r.Id, ModuloId = m.Id, PuedeConsultar = 1, PuedeEditar = 0, PuedeEliminar = 0, PuedeAutorizar = 0 });
-										break;
-                                    default:
-                                        //Cualquier otro módulo está bloqueado para el rol de usuario.
-                                        break;
-                                }
-								break;
-					        default:
-								//Candidato y cualquier otro rol no considerado de inicio, no tienen acceso a ningún módulo, por lo que no se definen accesos.
-								break;
-                        }
-					}
-				}
-            }
-
-            //Se crea instancia del administrador de usuarios
-            AppUserManager userManager = _scope.ServiceProvider.GetRequiredService<AppUserManager>();
-
-            //Si no existe un usuario con el email de master, entonces lo crea
-			if (userManager.FindByEmailAsync(MasterUser.Email ?? "").Result == null)
-			{
-				//Genera password para usuario master
-				MasterPassword = userManager.GenerateRandomPassword(10);
-				//Crea al usuario master.
-				var result = userManager.CreateAsync(MasterUser, MasterPassword).Result;
-
-				if (result.Succeeded)
-				{
-					//Asigna el rol de Master al usuario master.
-					userManager.AddToRoleAsync(MasterUser, RolMaster);
-
-					//Envía password por correo para notificarlo.
-					IEmailSender emailSender = _scope.ServiceProvider.GetRequiredService<IEmailSender>();
-					emailSender.SendEmailAsync(MasterUser.Email ?? "", "Login Password", $"Use this password to login: {MasterPassword}");
-				}
-			}
 		}
 
         public static void ConfigurePagesAndLocalization(WebApplicationBuilder _builder)
