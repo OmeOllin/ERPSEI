@@ -12,8 +12,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-    [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
-    public class OficinasModel : PageModel
+	[Authorize(Policy = "AccessPolicy")]
+	public class OficinasModel : PageModel
     {
         private readonly ApplicationDbContext _db;
         private readonly IEmpleadoManager _empleadoManager;

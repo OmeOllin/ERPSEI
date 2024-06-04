@@ -22,8 +22,8 @@ using System.Text;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-    [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
-    public class GestionDeTalentoModel : PageModel
+	[Authorize(Policy = "AccessPolicy")]
+	public class GestionDeTalentoModel : PageModel
 	{
 		private readonly IUserStore<AppUser> _userStore;
 		private readonly IUserEmailStore<AppUser> _emailStore;

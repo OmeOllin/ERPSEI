@@ -5,7 +5,7 @@ using Microsoft.Extensions.Localization;
 
 namespace ERPSEI.Areas.Reportes.Pages
 {
-	[Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
+	[Authorize(Policy = "AccessPolicy")]
 	public class AsistenciaModel : PageModel
     {
         private readonly IStringLocalizer<AsistenciaModel> _strLocalizer;

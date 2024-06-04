@@ -13,8 +13,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-    [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
-    public class PerfilesModel : PageModel
+	[Authorize(Policy = "AccessPolicy")]
+	public class PerfilesModel : PageModel
     {
 		private readonly IProductoServicioManager _productosServiciosManager;
 		private readonly IProductoServicioPerfilManager _productosServiciosPerfilManager;

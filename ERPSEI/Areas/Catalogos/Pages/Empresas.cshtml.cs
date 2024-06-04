@@ -18,8 +18,8 @@ using System.Text;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-    [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
-    public class EmpresasModel : PageModel
+	[Authorize(Policy = "AccessPolicy")]
+	public class EmpresasModel : PageModel
 	{
 		private readonly IEmpresaManager _empresaManager;
 		private readonly IBancoEmpresaManager _bancoEmpresaManager;
