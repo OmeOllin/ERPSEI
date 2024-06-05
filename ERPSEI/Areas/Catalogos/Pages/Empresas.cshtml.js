@@ -838,7 +838,7 @@ function onGuardarClick() {
         id: idField.value == nuevoRegistro ? 0 : idField.value,
         razonSocial: razonSocialField.value.trim(),
         origenId: origenField.value == 0 ? null : parseInt(origenField.value),
-        nivelId: nivelField.value == 0 ? null : parseInt(origenField.value),
+        nivelId: nivelField.value == 0 ? null : parseInt(nivelField.value),
         fechaConstitucion: fechaConstitucionField.value,
         fechaInicioOperacion: fechaInicioOperacionField.value,
         fechaInicioFacturacion: fechaInicioFacturacionField.value,
