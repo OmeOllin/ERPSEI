@@ -12,7 +12,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-    [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
+    [Authorize(Policy = "AccessPolicy")]
 	public class SubareasModel : PageModel
     {
 		private readonly ApplicationDbContext _db;

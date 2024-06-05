@@ -15,7 +15,7 @@ using System.Data;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-    [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
+    [Authorize(Policy = "AccessPolicy")]
     public class UsuariosModel : PageModel
 	{
 		private readonly AppUserManager _usuarioManager;

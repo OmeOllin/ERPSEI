@@ -13,7 +13,6 @@ using ERPSEI.Email;
 using ERPSEI.Resources;
 using ERPSEI.TokenProviders;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
@@ -59,26 +58,27 @@ namespace ERPSEI
             _builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
             _builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            _builder.Services.AddScoped<AppRoleManager, AppRoleManager>();
+			_builder.Services.AddScoped<IAccesoModuloManager, AccesoModuloManager>();
+			_builder.Services.AddScoped<AppRoleManager, AppRoleManager>();
             _builder.Services.AddScoped<IModuloManager, ModuloManager>();
 
             _builder.Services.AddScoped<IConceptoManager, ConceptoManager>();
             _builder.Services.AddScoped<IPrefacturaManager, PrefacturaManager>();
             _builder.Services.AddScoped<IExportacionManager, ExportacionManager>();
-			_builder.Services.AddScoped <IFormaPagoManager, FormaPagoManager>();
-			_builder.Services.AddScoped <IImpuestoManager, ImpuestoManager>();
-			_builder.Services.AddScoped <IMesManager, MesManager>();
-			_builder.Services.AddScoped <IMetodoPagoManager, MetodoPagoManager>();
+			_builder.Services.AddScoped<IFormaPagoManager, FormaPagoManager>();
+			_builder.Services.AddScoped<IImpuestoManager, ImpuestoManager>();
+			_builder.Services.AddScoped<IMesManager, MesManager>();
+			_builder.Services.AddScoped<IMetodoPagoManager, MetodoPagoManager>();
             _builder.Services.AddScoped<IMonedaManager, MonedaManager>();
-			_builder.Services.AddScoped <IObjetoImpuestoManager, ObjetoImpuestoManager>();
-			_builder.Services.AddScoped <IPeriodicidadManager, PeriodicidadManager>();
-			_builder.Services.AddScoped <IRegimenFiscalManager, RegimenFiscalManager>();
-			_builder.Services.AddScoped <ITasaOCuotaManager, TasaOCuotaManager>();
-			_builder.Services.AddScoped <ITipoComprobanteManager, TipoComprobanteManager>();
-			_builder.Services.AddScoped <ITipoFactorManager, TipoFactorManager>();
-			_builder.Services.AddScoped <ITipoRelacionManager, TipoRelacionManager>();
-			_builder.Services.AddScoped <IUnidadMedidaManager, UnidadMedidaManager>();
-			_builder.Services.AddScoped <IUsoCFDIManager, UsoCFDIManager>();
+			_builder.Services.AddScoped<IObjetoImpuestoManager, ObjetoImpuestoManager>();
+			_builder.Services.AddScoped<IPeriodicidadManager, PeriodicidadManager>();
+			_builder.Services.AddScoped<IRegimenFiscalManager, RegimenFiscalManager>();
+			_builder.Services.AddScoped<ITasaOCuotaManager, TasaOCuotaManager>();
+			_builder.Services.AddScoped<ITipoComprobanteManager, TipoComprobanteManager>();
+			_builder.Services.AddScoped<ITipoFactorManager, TipoFactorManager>();
+			_builder.Services.AddScoped<ITipoRelacionManager, TipoRelacionManager>();
+			_builder.Services.AddScoped<IUnidadMedidaManager, UnidadMedidaManager>();
+			_builder.Services.AddScoped<IUsoCFDIManager, UsoCFDIManager>();
 			_builder.Services.AddScoped<IProductoServicioManager, ProductoServicioManager>();
 			_builder.Services.AddScoped<IRWCatalogoManager<ActividadEconomica>, ActividadEconomicaManager>();
 
@@ -121,39 +121,6 @@ namespace ERPSEI
             );
 
 			_builder.Services.AddScoped<IAuthorizationHandler, AccessHandler>();
-		}
-
-        public static void InitializeAuthorization(IServiceScope _scope) {
-			//Se crea instancia del administrador de roles
-			RoleManager<AppRole> roleManager = _scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
-
-			//Se inicializan los roles principales del sistema
-			if (!roleManager.RoleExistsAsync(RolMaster).Result) { roleManager.CreateAsync(new AppRole(RolMaster)); }
-			if (!roleManager.RoleExistsAsync(RolAdministrador).Result) { roleManager.CreateAsync(new AppRole(RolAdministrador)); }
-			if (!roleManager.RoleExistsAsync(RolUsuario).Result) { roleManager.CreateAsync(new AppRole(RolUsuario)); }
-			if (!roleManager.RoleExistsAsync(RolCandidato).Result) { roleManager.CreateAsync(new AppRole(RolCandidato)); }
-
-			//Se crea instancia del administrador de usuarios
-			AppUserManager userManager = _scope.ServiceProvider.GetRequiredService<AppUserManager>();
-
-            //Si no existe un usuario con el email de master, entonces lo crea
-			if (userManager.FindByEmailAsync(MasterUser.Email ?? "").Result == null)
-			{
-				//Genera password para usuario master
-				MasterPassword = userManager.GenerateRandomPassword(10);
-				//Crea al usuario master.
-				var result = userManager.CreateAsync(MasterUser, MasterPassword).Result;
-
-				if (result.Succeeded)
-				{
-					//Asigna el rol de Master al usuario master.
-					userManager.AddToRoleAsync(MasterUser, RolMaster);
-
-					//Envía password por correo para notificarlo.
-					IEmailSender emailSender = _scope.ServiceProvider.GetRequiredService<IEmailSender>();
-					emailSender.SendEmailAsync(MasterUser.Email ?? "", "Login Password", $"Use this password to login: {MasterPassword}");
-				}
-			}
 		}
 
         public static void ConfigurePagesAndLocalization(WebApplicationBuilder _builder)

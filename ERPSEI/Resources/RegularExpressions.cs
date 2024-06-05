@@ -4,7 +4,7 @@
 	{
 		public const string Alphabetic = @"^[a-zA-Z]+";
 
-		public const string AlphanumSpaceCommaDotParenthesisAmpersand = @"^[áÁéÉíÍóÓúÚñÑ\w,.()& ]+$";
+		public const string AlphanumSpaceCommaDotParenthesisAmpersandMiddleDash = @"^[áÁéÉíÍóÓúÚñÑ\w,.()&\- ]+$";
 
 		public const string PersonName = @"^[A-ZÁÉÍÓÚÑ][a-zA-ZáÁéÉíÍóÓúÚñÑ ]+$";
 

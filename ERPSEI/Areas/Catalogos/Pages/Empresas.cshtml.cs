@@ -18,8 +18,8 @@ using System.Text;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-    [Authorize(Roles = $"{ServicesConfiguration.RolMaster}, {ServicesConfiguration.RolAdministrador}")]
-    public class EmpresasModel : PageModel
+	[Authorize(Policy = "AccessPolicy")]
+	public class EmpresasModel : PageModel
 	{
 		private readonly IEmpresaManager _empresaManager;
 		private readonly IBancoEmpresaManager _bancoEmpresaManager;
@@ -60,7 +60,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			[DataType(DataType.Text)]
 			[StringLength(100, ErrorMessage = "FieldLength", MinimumLength = 2)]
-			[RegularExpression(RegularExpressions.AlphanumSpaceCommaDotParenthesisAmpersand, ErrorMessage = "CompanyName")]
+			[RegularExpression(RegularExpressions.AlphanumSpaceCommaDotParenthesisAmpersandMiddleDash, ErrorMessage = "CompanyName")]
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "RazonSocialField")]
 			public string RazonSocial { get; set; } = string.Empty;
@@ -572,11 +572,21 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 				//Se busca empresa por id
 				Empresa? empresa = await _empresaManager.GetByIdAsync(e.Id);
-				//Si no se encontró empresa por id, se busca el empresa por su RFC. 
-				if (empresa == null) { empresa = await _empresaManager.GetByRFCAsync(e.RFC ?? string.Empty); }
 
-				//Si se encontró empresa, obtiene su Id del registro existente. De lo contrario, se crea uno nuevo.
-				if (empresa != null && empresa.RazonSocial == e.RazonSocial) { idEmpresa = empresa.Id; } else { empresa = new Empresa(); }
+				//Si se encontró empresa, obtiene su Id del registro existente. 
+				if (empresa != null) { 
+					idEmpresa = empresa.Id; 
+				}
+				else
+				{
+					//De lo contrario, busca la empresa por RFC.
+					empresa = await _empresaManager.GetByRFCAsync(e.RFC ?? string.Empty);
+
+					//Si se encontró empresa, obtiene su Id del registro existente. De lo contrario, crea una nueva empresa.
+					if (empresa != null) { idEmpresa = empresa.Id; } else { empresa = new Empresa(); }
+				}
+
+				
 
 				//Llena los datos de la empresa.
 				empresa.RazonSocial = e.RazonSocial;
