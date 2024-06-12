@@ -166,15 +166,24 @@ function initDetallesDialog(action, row) {
     summaryContainer.innerHTML = "";
 
     switch (action) {
+        case NUEVO:
         case EDITAR:
-            dlgTitle.innerHTML = dlgEditarTitle;        
+            if (action == NUEVO) {
+                dlgTitle.innerHTML = dlgNuevoTitle;
+            }
+            else {
+                dlgTitle.innerHTML = dlgEditarTitle;
+            }     
 
-            inpRolNombre.removeAttribute("disabled");
+            document.querySelectorAll(".formButton").forEach(function (btn) { btn.classList.remove("disabled"); });
+            document.querySelectorAll(".formInput, .formSelect").forEach(function (e) { e.removeAttribute("disabled"); });
+
             break;
         default:
             dlgTitle.innerHTML = dlgVerTitle;
 
-            inpRolNombre.setAttribute("disabled", true);
+            document.querySelectorAll(".formButton").forEach(function (btn) { btn.classList.add("disabled"); });
+            document.querySelectorAll(".formInput, .formSelect").forEach(function (e) { e.setAttribute("disabled", true); });
             break;
     }
 
@@ -191,7 +200,7 @@ function initDetallesDialog(action, row) {
         inpPuedeConsultar.checked = (m.puedeConsultar || "False") == "True";
         inpPuedeEditar.checked = (m.puedeEditar || "False") == "True";
         inpPuedeEliminar.checked = (m.puedeEliminar || "False") == "True";
-        inpPuedeAutorizar.checked = (m.puedeAutorizar || "False") == "True";
+        if (inpPuedeAutorizar) { inpPuedeAutorizar.checked = (m.puedeAutorizar || "False") == "True"; }
     });
 
 
