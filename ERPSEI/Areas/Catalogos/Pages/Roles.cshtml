@@ -89,7 +89,7 @@
 							</div>
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input disabled id="inpRolNombre" asp-for="InputRol.NombreRol" type="text" class="form-control" placeholder="@Localizer["NombreRolPlaceholder"]" />
+									<input disabled id="inpRolNombre" asp-for="InputRol.NombreRol" type="text" class="form-control formInput" placeholder="@Localizer["NombreRolPlaceholder"]" />
 									<label for="inpRolNombre" asp-for="InputRol.NombreRol" class="form-label"></label>
 								</div>
 							</div>
@@ -102,49 +102,54 @@
 											</div>
 											<div class="col-1 text-center align-content-center">
 												<i class="bi bi-asterisk d-block p-0 btn"></i>
-												<input class="form-check-input" type="checkbox" value="" id="inpPuedeTodoTodos">
+												<input class="form-check-input formInput" type="checkbox" value="" id="inpPuedeTodoTodos">
 											</div>
 											<div class="col-1 text-center align-content-center">
 												<i class="bi bi-search d-block p-0 btn"></i>
-												<input class="form-check-input" type="checkbox" value="" id="inpPuedeConsultarTodos">
+												<input class="form-check-input formInput" type="checkbox" value="" id="inpPuedeConsultarTodos">
 											</div>
 											<div class="col-1 text-center align-content-center">
 												<i class="bi bi-pencil d-block p-0 btn"></i>
-												<input class="form-check-input" type="checkbox" value="" id="inpPuedeEditarTodos">
+												<input class="form-check-input formInput" type="checkbox" value="" id="inpPuedeEditarTodos">
 											</div>
 											<div class="col-1 text-center align-content-center">
 												<i class="bi bi-x-lg d-block p-0 btn"></i>
-												<input class="form-check-input" type="checkbox" value="" id="inpPuedeEliminarTodos">
+												<input class="form-check-input formInput" type="checkbox" value="" id="inpPuedeEliminarTodos">
 											</div>
 											<div class="col-1 text-center align-content-center">
 												<i class="bi bi-check-circle d-block p-0 btn"></i>
-												<input class="form-check-input" type="checkbox" value="" id="inpPuedeAutorizarTodos">
+												<input class="form-check-input formInput" type="checkbox" value="" id="inpPuedeAutorizarTodos">
 											</div>
 										</div>
 									</li>
 									@foreach(Modulo m in modulos)
 									{
+										string idA = $"inpPuedeTodo{m.NombreNormalizado}";
+										string idB = $"inpPuedeConsultar{m.NombreNormalizado}";
+										string idC = $"inpPuedeEditar{m.NombreNormalizado}";
+										string idD = $"inpPuedeEliminar{m.NombreNormalizado}";
+										string idE = $"inpPuedeAutorizar{m.NombreNormalizado}";
 										<li class="list-group-item">
 											<div class="row">
 												<div class="col-5 border-end text-center align-content-center">
 													<h6 class="m-0">@m.Nombre</h6>
 												</div>
 												<div class="col-1 text-center align-content-center">
-													<input class="form-check-input" type="checkbox" value="" id="inpPuedeTodo@m.NombreNormalizado">
+													<input class="form-check-input formInput" type="checkbox" value="" id="@idA">
 												</div>
 												<div class="col-1 text-center align-content-center">
-													<input class="form-check-input" type="checkbox" value="" id="inpPuedeConsultar@m.NombreNormalizado">
+													<input class="form-check-input formInput" type="checkbox" value="" id="@idB">
 												</div>
 												<div class="col-1 text-center align-content-center">
-													<input class="form-check-input" type="checkbox" value="" id="inpPuedeEditar@m.NombreNormalizado">
+													<input class="form-check-input formInput" type="checkbox" value="" id="@idC">
 												</div>
 												<div class="col-1 text-center align-content-center">
-													<input class="form-check-input" type="checkbox" value="" id="inpPuedeEliminar@m.NombreNormalizado">
+													<input class="form-check-input formInput" type="checkbox" value="" id="@idD">
 												</div>
 												@if(m.Nombre == "Prefacturas")
 												{
 													<div class="col-1 text-center align-content-center">
-														<input class="form-check-input" type="checkbox" value="" id="inpPuedeAutorizar@m.NombreNormalizado">
+														<input class="form-check-input" type="checkbox" value="" id="@idE">
 													</div>
 												}
 											</div>
@@ -189,6 +194,7 @@
 		var btnBuscarTitle = '@Localizer["SearchButton"]';
 		var btnVerTitle = '@Localizer["SeeButtonTitle"]';
 		var btnEditarTitle = '@Localizer["EditButtonTitle"]';
+		var dlgNuevoTitle = '@Localizer["NewDialogTitle"]';
 		var dlgEditarTitle = '@Localizer["EditDialogTitle"]';
 		var dlgVerTitle = '@Localizer["SeeDialogTitle"]';
 		var colNombreHeader = '@Localizer["ColNameHeader"]';
