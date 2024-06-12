@@ -19,7 +19,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
     public class RolesModel : PageModel
 	{
 		private readonly AppUserManager _usuarioManager;
-		private readonly IEmpleadoManager _empleadoManager;
 		private readonly AppRoleManager _roleManager;
 		private readonly IStringLocalizer<UsuariosModel> _strLocalizer;
 		private readonly ILogger<UsuariosModel> _logger;
@@ -36,13 +35,12 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Display(Name = "RolField")]
 			public string RolId { get; set; } = string.Empty;
 
-			[Display(Name = "NombreRolField")]
+			[Display(Name = "FullNameField")]
 			public string NombreRol { get; set; } = string.Empty;
 		}
 
 		public RolesModel(
 			AppUserManager usuarioManager,
-			IEmpleadoManager empleadoManager,
 			AppRoleManager roleManager,
 			IStringLocalizer<UsuariosModel> stringLocalizer,
 			ILogger<UsuariosModel> logger,
@@ -50,7 +48,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		)
 		{
 			_usuarioManager = usuarioManager;
-			_empleadoManager = empleadoManager;
 			_roleManager = roleManager;
 			_strLocalizer = stringLocalizer;
 			_logger = logger;
@@ -59,37 +56,35 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			InputRol = new RolModel();
 		}
 
-		private async Task<string> getLista()
+		private Task<string> getLista()
 		{
 			string jsonResponse;
 			List<string> jsonResultados = new List<string>();
 
-			foreach (AppUser u in _usuarioManager.Users)
+			foreach (AppRole r in _roleManager.Roles)
 			{
-				if(await _usuarioManager.IsInRoleAsync(u, ServicesConfiguration.RolMaster)) { continue; }
-
-				AppRole? rol = null;
-				if (await _usuarioManager.IsInRoleAsync(u, ServicesConfiguration.RolAdministrador)) { rol = await _roleManager.FindByNameAsync(ServicesConfiguration.RolAdministrador); }
-				else if (await _usuarioManager.IsInRoleAsync(u, ServicesConfiguration.RolUsuario)) { rol = await _roleManager.FindByNameAsync(ServicesConfiguration.RolUsuario); }
-				string nombreRol = rol != null ? rol.Name??_strLocalizer["EmptyRoleName"] : _strLocalizer["EmptyRoleName"];
-				string idRol = rol != null ? rol.Id ?? string.Empty : string.Empty;
-
-				Empleado? emp = await _empleadoManager.GetByIdAsync(u.EmpleadoId??0);
-				string nombreEmpleado = emp != null ? emp.NombreCompleto : _strLocalizer["EmptyEmployeeName"];
-				jsonResultados.Add(
-					"{" +
-						$"\"id\": \"{u.Id}\"," +
-						$"\"rolId\": \"{idRol}\"," +
-						$"\"rol\": \"{nombreRol}\"," +
-						$"\"nombreUsuario\": \"{u.UserName}\"," +
-						$"\"nombreEmpleado\": \"{nombreEmpleado}\"" +
-					"}"
-				);
+				switch (r.Name)
+				{
+					case ServicesConfiguration.RolMaster:
+					case ServicesConfiguration.RolUsuario:
+					case ServicesConfiguration.RolCandidato:
+						//Los roles default no serán mostrados.
+						break;
+					default:
+						//El resto de roles se mostrará
+						jsonResultados.Add(
+							"{" +
+								$"\"id\": \"{r.Id}\"," +
+								$"\"rol\": \"{r.Name}\"" +
+							"}"
+						);
+						break;
+				}
 			}
 
 			jsonResponse = $"[{string.Join(",", jsonResultados)}]";
 
-			return jsonResponse;
+			return Task.FromResult(jsonResponse);
 		}
 
 		public async Task<JsonResult> OnPostFiltrar()
