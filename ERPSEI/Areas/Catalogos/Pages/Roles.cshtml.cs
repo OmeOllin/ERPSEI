@@ -18,6 +18,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
     [Authorize(Policy = "AccessPolicy")]
     public class RolesModel : PageModel
 	{
+		private readonly IModuloManager _moduloManager;
 		private readonly AppUserManager _usuarioManager;
 		private readonly AppRoleManager _roleManager;
 		private readonly IStringLocalizer<UsuariosModel> _strLocalizer;
@@ -40,6 +41,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 
 		public RolesModel(
+			IModuloManager moduloManager,
 			AppUserManager usuarioManager,
 			AppRoleManager roleManager,
 			IStringLocalizer<UsuariosModel> stringLocalizer,
@@ -47,6 +49,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			ApplicationDbContext db
 		)
 		{
+			_moduloManager = moduloManager;
 			_usuarioManager = usuarioManager;
 			_roleManager = roleManager;
 			_strLocalizer = stringLocalizer;
@@ -56,9 +59,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			InputRol = new RolModel();
 		}
 
-		private Task<string> getLista()
+		private async Task<string> getLista()
 		{
 			string jsonResponse;
+			List<string> jsonModulos = new List<string>();
 			List<string> jsonResultados = new List<string>();
 
 			foreach (AppRole r in _roleManager.Roles)
@@ -71,11 +75,28 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						//Los roles default no serán mostrados.
 						break;
 					default:
+						foreach (Modulo m in await _moduloManager.GetAllAsync())
+						{
+							jsonModulos.Add(
+								"{" +
+									$"\"nombre\": \"{m.NombreNormalizado}\"," +
+									$"\"puedeTodo\": \"{false}\"," +
+									$"\"puedeConsultar\": \"{false}\"," +
+									$"\"puedeEditar\": \"{false}\"," +
+									$"\"puedeEliminar\": \"{false}\"," +
+									$"\"puedeAutorizar\": \"{false}\"" +
+								"}"
+							);
+						}
+
 						//El resto de roles se mostrará
 						jsonResultados.Add(
 							"{" +
 								$"\"id\": \"{r.Id}\"," +
-								$"\"rol\": \"{r.Name}\"" +
+								$"\"rol\": \"{r.Name}\"," +
+								$"\"modulos\": [" +
+									string.Join(",", jsonModulos) +
+								$"]" +
 							"}"
 						);
 						break;
@@ -84,7 +105,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			jsonResponse = $"[{string.Join(",", jsonResultados)}]";
 
-			return Task.FromResult(jsonResponse);
+			return jsonResponse;
 		}
 
 		public async Task<JsonResult> OnPostFiltrar()
