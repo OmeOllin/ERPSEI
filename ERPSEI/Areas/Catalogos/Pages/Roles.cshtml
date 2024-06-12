@@ -25,30 +25,41 @@
 	List<AppRole> roles = await RolesManager.GetAllAsync();
 
 	List<Modulo> modulos = await ModulosManager.GetAllAsync();
+
+	string moduleList = string.Join(',', (from Modulo m in modulos select m.NombreNormalizado));
 }
 <h3 class="title mb-3">@ViewData["Title"]</h3>
 
 <!-- --------------------------- -->
 <!-- Sección tabla de resultados -->
+<div id="toolbar" class="col-xl-12">
+	<button id="btnAgregar" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dlgDetalle" onclick="onAgregarClick();">
+		<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
+	</button>
+	<button id="remove" class="btn btn-danger" disabled>
+		<i class="bi bi-trash"></i> <span class="d-none d-sm-inline">@Localizer["DeleteButton"]</span>
+	</button>
+</div>
 <table id="table" class="table-sm"
-		data-unique-id="id"
-		data-search="true"
-		data-show-toggle="true"
-		data-show-fullscreen="true"
-		data-show-columns="true"
-		data-show-columns-toggle-all="true"
-		data-detail-view="false"
-		data-show-export="false"
-		data-click-to-select="true"
-		data-minimum-count-columns="2"
-		data-show-pagination-switch="true"
-		data-pagination="true"
-		data-id-field="id"
-		data-page-list="[10, 25, 50, 100, all]"
-		data-show-footer="false"
-		data-side-pagination="client"
-		data-response-handler="responseHandler"
-		data-buttons-class="primary">
+	data-unique-id="id"
+	data-toolbar="#toolbar"
+	data-search="true"
+	data-show-toggle="true"
+	data-show-fullscreen="true"
+	data-show-columns="true"
+	data-show-columns-toggle-all="true"
+	data-detail-view="false"
+	data-show-export="false"
+	data-click-to-select="true"
+	data-minimum-count-columns="2"
+	data-show-pagination-switch="true"
+	data-pagination="true"
+	data-id-field="id"
+	data-page-list="[10, 25, 50, 100, all]"
+	data-show-footer="false"
+	data-side-pagination="client"
+	data-response-handler="responseHandler"
+	data-buttons-class="primary">
 	<thead>
 		<tr align="center" valign="middle" class="bg-primary bg-opacity-10">
 		</tr>
@@ -87,27 +98,27 @@
 									<li class="list-group-item bg-light">
 										<div class="row">
 											<div class="col-5 border-end text-center align-content-center">
-												<h6 class="m-0">ModulosTitle</h6>
+												<h6 class="m-0">@Localizer["ModulosTitle"]</h6>
 											</div>
 											<div class="col-1 text-center align-content-center">
 												<i class="bi bi-asterisk d-block p-0 btn"></i>
-												<input class="form-check-input" type="checkbox" value="" id="inpPuedeTodo">
+												<input class="form-check-input" type="checkbox" value="" id="inpPuedeTodoTodos">
 											</div>
 											<div class="col-1 text-center align-content-center">
 												<i class="bi bi-search d-block p-0 btn"></i>
-												<input class="form-check-input" type="checkbox" value="" id="inpPuedeTodo">
+												<input class="form-check-input" type="checkbox" value="" id="inpPuedeConsultarTodos">
 											</div>
 											<div class="col-1 text-center align-content-center">
 												<i class="bi bi-pencil d-block p-0 btn"></i>
-												<input class="form-check-input" type="checkbox" value="" id="inpPuedeTodo">
+												<input class="form-check-input" type="checkbox" value="" id="inpPuedeEditarTodos">
 											</div>
 											<div class="col-1 text-center align-content-center">
 												<i class="bi bi-x-lg d-block p-0 btn"></i>
-												<input class="form-check-input" type="checkbox" value="" id="inpPuedeTodo">
+												<input class="form-check-input" type="checkbox" value="" id="inpPuedeEliminarTodos">
 											</div>
 											<div class="col-1 text-center align-content-center">
 												<i class="bi bi-check-circle d-block p-0 btn"></i>
-												<input class="form-check-input" type="checkbox" value="" id="inpPuedeTodo">
+												<input class="form-check-input" type="checkbox" value="" id="inpPuedeAutorizarTodos">
 											</div>
 										</div>
 									</li>
@@ -119,21 +130,21 @@
 													<h6 class="m-0">@m.Nombre</h6>
 												</div>
 												<div class="col-1 text-center align-content-center">
-													<input class="form-check-input" type="checkbox" value="" id="inpPuedeTodo">
+													<input class="form-check-input" type="checkbox" value="" id="inpPuedeTodo@m.NombreNormalizado">
 												</div>
 												<div class="col-1 text-center align-content-center">
-													<input class="form-check-input" type="checkbox" value="" id="inpPuedeConsultar">
+													<input class="form-check-input" type="checkbox" value="" id="inpPuedeConsultar@m.NombreNormalizado">
 												</div>
 												<div class="col-1 text-center align-content-center">
-													<input class="form-check-input" type="checkbox" value="" id="inpPuedeEditar">
+													<input class="form-check-input" type="checkbox" value="" id="inpPuedeEditar@m.NombreNormalizado">
 												</div>
 												<div class="col-1 text-center align-content-center">
-													<input class="form-check-input" type="checkbox" value="" id="inpPuedeEliminar">
+													<input class="form-check-input" type="checkbox" value="" id="inpPuedeEliminar@m.NombreNormalizado">
 												</div>
 												@if(m.Nombre == "Prefacturas")
 												{
 													<div class="col-1 text-center align-content-center">
-														<input class="form-check-input" type="checkbox" value="" id="inpPuedeAutorizar">
+														<input class="form-check-input" type="checkbox" value="" id="inpPuedeAutorizar@m.NombreNormalizado">
 													</div>
 												}
 											</div>
@@ -180,9 +191,12 @@
 		var btnEditarTitle = '@Localizer["EditButtonTitle"]';
 		var dlgEditarTitle = '@Localizer["EditDialogTitle"]';
 		var dlgVerTitle = '@Localizer["SeeDialogTitle"]';
-		var colNombreRolHeader = '@Localizer["ColNameRolHeader"]';
+		var colNombreHeader = '@Localizer["ColNameHeader"]';
 		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
 		var emptySelectItemText = '@Localizer["Seleccione"]';
+
+		var moduleList = '@moduleList'.split(',');
+
 	</script>
 
 	<partial name="_ValidationScriptsPartial" />
