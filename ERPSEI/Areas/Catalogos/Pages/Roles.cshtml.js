@@ -2,6 +2,7 @@
 var selections = [];
 var dlgDetalleModal = null;
 
+const NUEVO = 0;
 const EDITAR = 1;
 const VER = 2;
 const postOptions = { headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() } }
@@ -59,6 +60,24 @@ window.operateEvents = {
         initDetallesDialog(EDITAR, row);
     }
 }
+//Función para agregar cfdis
+function onAgregarClick() {
+    let aModulos = [];
+    moduleList.forEach(function (m) {
+        aModulos.push({
+            nombre: m,
+            puedeTodo: false,
+            puedeConsultar: false,
+            puedeEditar: false,
+            puedeEliminar: false,
+            puedeAutorizar: false
+        });
+    });
+
+    let oRol = { id: "Nuevo", rol: "", modulos: aModulos }
+    initDetallesDialog(NUEVO, oRol);
+    dlgDetalleModal.toggle();
+}
 
 //Función para inicializar la tabla
 function initTable() {
@@ -73,7 +92,7 @@ function initTable() {
                 valign: "middle"
             },
             {
-                title: colNombreRolHeader,
+                title: colNombreHeader,
                 field: "rol",
                 align: "center",
                 valign: "middle",
@@ -93,9 +112,9 @@ function initTable() {
     table.on('check.bs.table uncheck.bs.table ' +
         'check-all.bs.table uncheck-all.bs.table',
         function () {
-                // save your data, here just save the current page
-                selections = getIdSelections()
-                // push or splice the selections if you want to save all data selections
+            // save your data, here just save the current page
+            selections = getIdSelections()
+            // push or splice the selections if you want to save all data selections
         }
     );
     table.on('all.bs.table', function (e, name, args) {
@@ -112,7 +131,7 @@ function onBuscarClick() {
     let oParams = {};
 
     doAjax(
-        "/Catalogos/Usuarios/Filtrar",
+        "/Catalogos/Roles/Filtrar",
         oParams,
         function (resp) {
             if (resp.tieneError) {
@@ -141,13 +160,10 @@ function onBuscarClick() {
 ////////////////////////////////
 //Función para inicializar el cuadro de diálogo de los detalles del registro
 function initDetallesDialog(action, row) {
-    //let inpUsuarioId = document.getElementById("inpUsuarioId");
     let inpRolNombre = document.getElementById("inpRolNombre");
-    //let inpNombreEmpleado = document.getElementById("inpEmpleadoNombre");
-    //let selRolEmpleado = document.getElementById("selEmpleadoRol");
     let dlgTitle = document.getElementById("dlgDetalleTitle");
-    //let summaryContainer = document.getElementById("saveValidationSummary");
-    //summaryContainer.innerHTML = "";
+    let summaryContainer = document.getElementById("saveValidationSummary");
+    summaryContainer.innerHTML = "";
 
     switch (action) {
         case EDITAR:
@@ -162,10 +178,23 @@ function initDetallesDialog(action, row) {
             break;
     }
 
-    //inpUsuarioId.value = row.id;
     inpRolNombre.value = row.rol;
-    //inpNombreEmpleado.value = row.nombreEmpleado;
-    //selRolEmpleado.value = row.rolId;
+
+    row.modulos.forEach(function (m) {
+        let inpPuedeTodo = document.getElementById(`inpPuedeTodo${m.nombre}`);
+        let inpPuedeConsultar = document.getElementById(`inpPuedeConsultar${m.nombre}`);
+        let inpPuedeEditar = document.getElementById(`inpPuedeEditar${m.nombre}`);
+        let inpPuedeEliminar = document.getElementById(`inpPuedeEliminar${m.nombre}`);
+        let inpPuedeAutorizar = document.getElementById(`inpPuedeAutorizar${m.nombre}`);
+
+        inpPuedeTodo.checked = (m.puedeTodo || "False") == "True";
+        inpPuedeConsultar.checked = (m.puedeConsultar || "False") == "True";
+        inpPuedeEditar.checked = (m.puedeEditar || "False") == "True";
+        inpPuedeEliminar.checked = (m.puedeEliminar || "False") == "True";
+        inpPuedeAutorizar.checked = (m.puedeAutorizar || "False") == "True";
+    });
+
+
 
     dlgDetalleModal.toggle();
 }
