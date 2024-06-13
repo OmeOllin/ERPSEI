@@ -85,7 +85,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 							jsonModulos.Add(
 								"{" +
 									$"\"nombre\": \"{m.NombreNormalizado}\"," +
-									$"\"puedeTodo\": \"{acceso?.PuedeConsultar == 1 && acceso?.PuedeEditar == 1 && acceso?.PuedeEliminar == 1 && acceso?.PuedeAutorizar == 1}\"," +
+									$"\"puedeTodo\": \"{acceso?.PuedeTodo == 1}\"," +
 									$"\"puedeConsultar\": \"{acceso?.PuedeConsultar == 1}\"," +
 									$"\"puedeEditar\": \"{acceso?.PuedeEditar == 1}\"," +
 									$"\"puedeEliminar\": \"{acceso?.PuedeEliminar == 1}\"," +
