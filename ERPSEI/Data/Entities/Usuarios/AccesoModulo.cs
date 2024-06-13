@@ -4,6 +4,8 @@
     {
         public int Id { get; set; }
 
+        public int PuedeTodo { get; set; }
+
         public int PuedeConsultar { get; set; }
 
         public int PuedeEditar { get; set; }
