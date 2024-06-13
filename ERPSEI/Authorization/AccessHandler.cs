@@ -30,7 +30,7 @@ namespace ERPSEI.Authorization
 				{
 					if (context.User.IsInRole(acceso.Rol?.Name ?? ""))
 					{
-						succeeded = acceso.PuedeConsultar == 1;
+						succeeded = acceso.PuedeTodo == 1 || acceso.PuedeConsultar == 1;
 						break;
 					}
 				}
