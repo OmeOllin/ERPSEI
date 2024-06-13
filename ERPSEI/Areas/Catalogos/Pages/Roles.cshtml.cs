@@ -18,6 +18,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
     [Authorize(Policy = "AccessPolicy")]
     public class RolesModel : PageModel
 	{
+		private readonly IAccesoModuloManager _accesoModuloManager;
 		private readonly IModuloManager _moduloManager;
 		private readonly AppUserManager _usuarioManager;
 		private readonly AppRoleManager _roleManager;
@@ -41,6 +42,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 
 		public RolesModel(
+			IAccesoModuloManager accesoModuloManager,
 			IModuloManager moduloManager,
 			AppUserManager usuarioManager,
 			AppRoleManager roleManager,
@@ -48,7 +50,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			ILogger<UsuariosModel> logger,
 			ApplicationDbContext db
 		)
-		{
+		{ 
+			_accesoModuloManager = accesoModuloManager;
 			_moduloManager = moduloManager;
 			_usuarioManager = usuarioManager;
 			_roleManager = roleManager;
@@ -77,14 +80,16 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					default:
 						foreach (Modulo m in await _moduloManager.GetAllAsync())
 						{
+							List<AccesoModulo> accesosRol = await _accesoModuloManager.GetByRolIdAsync(r.Id);
+							AccesoModulo? acceso = accesosRol.Where(a => a.Modulo?.NombreNormalizado == m.NombreNormalizado).FirstOrDefault();
 							jsonModulos.Add(
 								"{" +
 									$"\"nombre\": \"{m.NombreNormalizado}\"," +
-									$"\"puedeTodo\": \"{false}\"," +
-									$"\"puedeConsultar\": \"{false}\"," +
-									$"\"puedeEditar\": \"{false}\"," +
-									$"\"puedeEliminar\": \"{false}\"," +
-									$"\"puedeAutorizar\": \"{false}\"" +
+									$"\"puedeTodo\": \"{acceso?.PuedeConsultar == 1 && acceso?.PuedeEditar == 1 && acceso?.PuedeEliminar == 1 && acceso?.PuedeAutorizar == 1}\"," +
+									$"\"puedeConsultar\": \"{acceso?.PuedeConsultar == 1}\"," +
+									$"\"puedeEditar\": \"{acceso?.PuedeEditar == 1}\"," +
+									$"\"puedeEliminar\": \"{acceso?.PuedeEliminar == 1}\"," +
+									$"\"puedeAutorizar\": \"{acceso?.PuedeAutorizar == 1}\"" +
 								"}"
 							);
 						}
