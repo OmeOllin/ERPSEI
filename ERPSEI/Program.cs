@@ -55,11 +55,11 @@ using(IServiceScope scope = app.Services.CreateScope())
 				{
 					case ServicesConfiguration.RolMaster:
 						//Master tiene acceso completo a todos los módulos
-						await accesoModuloManager.CreateAsync(new AccesoModulo() { RolId = r.Id, ModuloId = m.Id, PuedeConsultar = 1, PuedeEditar = 1, PuedeEliminar = 1, PuedeAutorizar = 1 });
+						await accesoModuloManager.CreateAsync(new AccesoModulo() { RolId = r.Id, ModuloId = m.Id, PuedeTodo = 1, PuedeConsultar = 1, PuedeEditar = 1, PuedeEliminar = 1, PuedeAutorizar = 1 });
 						break;
 					case ServicesConfiguration.RolAdministrador:
 						//Administrador solo puede consultar y editar en todos los módulos
-						await accesoModuloManager.CreateAsync(new AccesoModulo() { RolId = r.Id, ModuloId = m.Id, PuedeConsultar = 1, PuedeEditar = 1, PuedeEliminar = 0, PuedeAutorizar = 0 });
+						await accesoModuloManager.CreateAsync(new AccesoModulo() { RolId = r.Id, ModuloId = m.Id, PuedeTodo = 0, PuedeConsultar = 1, PuedeEditar = 1, PuedeEliminar = 0, PuedeAutorizar = 0 });
 						break;
 					case ServicesConfiguration.RolUsuario:
 						//Usuario solo puede consultar en ciertos módulos
@@ -69,7 +69,7 @@ using(IServiceScope scope = app.Services.CreateScope())
 							case "incapacidades":
 							case "permisos":
 							case "organigrama":
-								await accesoModuloManager.CreateAsync(new AccesoModulo() { RolId = r.Id, ModuloId = m.Id, PuedeConsultar = 1, PuedeEditar = 0, PuedeEliminar = 0, PuedeAutorizar = 0 });
+								await accesoModuloManager.CreateAsync(new AccesoModulo() { RolId = r.Id, ModuloId = m.Id, PuedeTodo = 0, PuedeConsultar = 1, PuedeEditar = 0, PuedeEliminar = 0, PuedeAutorizar = 0 });
 								break;
 							default:
 								//Cualquier otro módulo está bloqueado para el rol de usuario.
