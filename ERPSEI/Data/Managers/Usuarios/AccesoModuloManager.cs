@@ -30,7 +30,7 @@ namespace ERPSEI.Data.Managers.Usuarios
 
 		public async Task<List<AccesoModulo>> GetByRolIdAsync(string idRol)
 		{
-			return await db.AccesosModulos.Where(a => a.RolId == idRol).ToListAsync();
+			return await db.AccesosModulos.Include(a => a.Modulo).Where(a => a.RolId == idRol).ToListAsync();
 		}
 
 		public async Task<int> CreateAsync(AccesoModulo a)
