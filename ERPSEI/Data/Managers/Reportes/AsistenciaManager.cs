@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERPSEI.Data.Managers.Reportes
 {
-	public class AsistenciasManager : IAsistenciaManager
+	public class AsistenciaManager : IAsistenciaManager
 	{
 		ApplicationDbContext db { get; set; }
 
-		public AsistenciasManager(ApplicationDbContext _db)
+		public AsistenciaManager(ApplicationDbContext _db)
 		{
 			db = _db;
 		}
@@ -18,7 +18,7 @@ namespace ERPSEI.Data.Managers.Reportes
 			return await db.Asistencias.ToListAsync();
 		}
 
-		public async Task<Asistencia?> GetByIdAsync(int id)
+		public async Task<Asistencia?> GetByIdAsync(string id)
 		{
 			return await db.Asistencias.Where(a => a.Id == id).FirstOrDefaultAsync();
 		}
@@ -28,5 +28,9 @@ namespace ERPSEI.Data.Managers.Reportes
 			return await db.Asistencias.Where(a => a.NombreEmpleado.ToLower() == name.ToLower()).FirstOrDefaultAsync();
 		}
 
+		public async Task<Asistencia?> GetByIdAsync(int id)
+		{
+			return await GetByIdAsync(id.ToString());
+		}
 	}
 }
