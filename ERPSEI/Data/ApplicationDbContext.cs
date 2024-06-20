@@ -62,6 +62,9 @@ namespace ERPSEI.Data
 		public DbSet<UnidadMedida> UnidadesMedida { get; set; }
 		public DbSet<UsoCFDI> UsosCFDI { get; set; }
 
+		//Reporte asistencias
+		public DbSet<Asistencia> Asistencias { get; set; }
+
 		//Catálogos no administrables Usuarios
 		public DbSet<AccesoModulo> AccesosModulos { get; set; }
 		public DbSet<Modulo> Modulos { get; set; }
@@ -129,7 +132,7 @@ namespace ERPSEI.Data
 			b.Entity<Empleado>().HasOne(e => e.Oficina).WithMany(o => o.Empleados).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Empleado>().HasMany(e => e.ContactosEmergencia).WithOne(ce => ce.Empleado).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Empleado>().HasMany(e => e.ArchivosEmpleado).WithOne(ae => ae.Empleado).OnDelete(DeleteBehavior.NoAction);
-
+			b.Entity<Empleado>().HasMany(e => e.Asistencias).WithOne(a => a.Empleado).OnDelete(DeleteBehavior.NoAction);
 
 			b.Entity<TipoArchivo>()
 				.HasData(

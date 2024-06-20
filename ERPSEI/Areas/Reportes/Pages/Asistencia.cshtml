@@ -1,19 +1,228 @@
 ﻿@page "{handler?}"
+@using ERPSEI.Areas.Catalogos.Pages;
 @using Microsoft.AspNetCore.Localization;
 @using Microsoft.AspNetCore.Mvc.Localization;
-@using ERPSEI.Areas.Reportes.Pages;
 @model AsistenciaModel
 @inject IViewLocalizer Localizer;
 @{
 	ViewData["Title"] = Localizer["Title"];
+
+	// Retrieves the requested culture
+	IRequestCultureFeature? rqf = Request.HttpContext.Features.Get<IRequestCultureFeature>();
+
+	// Culture contains the information of the requested culture
+	System.Globalization.CultureInfo? culture = rqf != null ? rqf.RequestCulture.Culture : new System.Globalization.CultureInfo("es-MX");
+
+	string cultureName = culture.Name;
 }
+
 <h3 class="title mb-3">@ViewData["Title"]</h3>
 
-@section Scripts
-{
-	<link rel="stylesheet" href="~/css/Asistencia.css" />
-    <script src="~/../Areas/Reportes/Pages/Asistencia.cshtml.js"></script>
+<!-- Sección de filtros -------- -->
+<div class="accordion shadow mb-5" id="accordionFiltros">
+	<div class="accordion-item">
+		<h2 class="accordion-header" id="headingOne">
+			<button class="accordion-button p-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+				<h6>@Localizer["FilterTitle"]</h6>
+			</button>
+		</h2>
+		<div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionFiltros">
+			<div class="accordion-body">
+				<form id="filtros" method="post">
+					<div class="row">
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<input id="inpFiltroNombreEmpleado" type="text" asp-for="InputFiltro.NombreEmpleado" class="form-control" placeholder="@Localizer["EmployeeNameField"]" />
+								<label for="inpFiltroNombreEmpleado" asp-for="InputFiltro.NombreEmpleado" class="form-label"></label>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<input id="inpFiltroFechaIngresoInicio" type="date" asp-for="InputFiltro.FechaIngresoInicio" class="form-control" placeholder="@Localizer["FechaInicioField"]" />
+								<label for="inpFiltroFechaIngresoInicio" asp-for="InputFiltro.FechaIngresoInicio" class="form-label"></label>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<input id="inpFiltroFechaIngresoFin" type="date" asp-for="InputFiltro.FechaIngresoFin" class="form-control" placeholder="@Localizer["FechaFinField"]" />
+								<label for="inpFiltroFechaIngresoFin" asp-for="InputFiltro.FechaIngresoFin" class="form-label"></label>
+							</div>
+						</div>
+					</div>
+				</form>
+				<div class="row text-end">
+					<div class="col-12">
+						<button id="btnBuscar" class="btn btn-primary" onclick="onBuscarClick();">
+							<i class="bi bi-search"></i> @Localizer["SearchButton"]
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- --------------------------- -->
+
+<table id="table" class="table-sm"
+	   data-unique-id="id"
+	   data-toolbar="#toolbar"
+	   data-search="true"
+	   data-show-refresh="true"
+	   data-show-toggle="true"
+	   data-show-fullscreen="true"
+	   data-show-columns="true"
+	   data-show-columns-toggle-all="true"
+	   data-show-export="true"
+	   data-click-to-select="true"
+	   data-minimum-count-columns="2"
+	   data-show-pagination-switch="true"
+	   data-pagination="true"
+	   data-id-field="id"
+	   data-page-list="[10, 25, 50, 100, all]"
+	   data-show-footer="false"
+	   data-side-pagination="client"
+	   data-response-handler="responseHandler"
+	   data-buttons-class="primary"
+	   data-url="/Catalogos/Asistencias/AsistenciasList"> <!--Revisar esta liga, ya que no muestra registros-->
+	<thead>
+		<tr align="center" valign="middle" class="bg-primary bg-opacity-10">
+		</tr>
+	</thead>
+</table>
+
+<!-- Sección Nuevo/Editar/Ver Registro --- -->
+<!--Verificar el theForm-->
+<form id="theForm" method="post">
+	<div id="dlgAsistencia" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 id="dlgAsistenciaTitle" class="modal-title"></h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body align-items-center">
+					<div class="container-fluid">
+						<div id="saveValidationSummary" class="text-danger mb-3" role="alert"></div>
+						<div class="row">
+							<div class="col-3">
+								<div class="form-floating mb-3">
+									<input id="inpAsistenciaId" asp-for="ListaAsistencia.Id" type="text" class="form-control" />
+									<label asp-for="ListaAsistencia.Id" class="form-label"></label>
+									<span asp-validation-for="ListaAsistencia.Id" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<input id="inpAsistenciaNombre" asp-for="ListaAsistencia.Nombre" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<label asp-for="ListaAsistencia.Nombre" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.Nombre" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<input id="inpAsistenciaFecha" asp-for="ListaAsistencia.Fecha" type="text" class="form-control" placeholder="@Localizer["FechaPlaceholder"]" />
+									<label asp-for="ListaAsistencia.Fecha" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.Fecha" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<input id="inpAsistenciaHoraEntrada" asp-for="ListaAsistencia.HoraEntrada" type="text" class="form-control" placeholder="@Localizer["HoraEntradaPlaceholder"]" />
+									<label asp-for="ListaAsistencia.HoraEntrada" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.HoraEntrada" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<input id="inpAsistenciaHoraSalida" asp-for="ListaAsistencia.HoraSalida" type="text" class="form-control" placeholder="@Localizer["HoraSalidaPlaceholder"]" />
+									<label asp-for="ListaAsistencia.HoraSalida" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.HoraSalida" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<input id="inpAsistenciaRetardo" asp-for="ListaAsistencia.Retardo" type="text" class="form-control" placeholder="@Localizer["RetardoPlaceholder"]" />
+									<label asp-for="ListaAsistencia.Retardo" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.Retardo" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<input id="inpAsistenciaTotal" asp-for="ListaAsistencia.Total" type="text" class="form-control" placeholder="@Localizer["TotalPlaceholder"]" />
+									<label asp-for="ListaAsistencia.Total" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.Total" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<input id="inpAsistenciaFaltas" asp-for="ListaAsistencia.Faltas" type="text" class="form-control" placeholder="@Localizer["FaltasPlaceholder"]" />
+									<label asp-for="ListaAsistencia.Faltas" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.Faltas" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button id="dlgAsistenciaBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarClick();" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i> @Localizer["CancelButton"]
+					</button>
+					<button id="dlgAsistenciaBtnGuardar" type="button" class="btn btn-primary" onclick="onGuardarClick();">
+						<i class="bi bi-floppy"></i> @Localizer["SaveButton"]
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+<!-- --------------------------- -->
+<!-- --------------------------- -->
+@section Scripts {
+	<link rel="stylesheet" href="~/lib/bootstrap-table/bootstrap-table.min.css">
+
+	<script src="~/lib/bootstrap-table/extensions/export/tableExport.min.js"></script>
+
+	<script src="~/lib/bootstrap-table/bootstrap-table.min.js"></script>
+	<script src="~/lib/bootstrap-table/locale/bootstrap-table-es-MX.min.js"></script>
+	<script src="~/lib/bootstrap-table/locale/bootstrap-table-en-US.min.js"></script>
+	<script src="~/lib/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
+
+	<script src="~/../Areas/Reportes/Pages/Asistencia.cshtml.js"></script>
+
 	<script type="text/javascript">
-		
+		var cultureName = "@cultureName";
+		var btnImportarText = '@Localizer["ImportButtonText"]';
+		var btnImportarTitle = '@Localizer["ImportButtonTitle"]';
+		var btnVerTitle = '@Localizer["SeeButtonTitle"]';
+		var btnEditarTitle = '@Localizer["EditButtonTitle"]';
+		var dlgEditarTitle = '@Localizer["EditDialogTitle"]';
+		var dlgVerTitle = '@Localizer["SeeDialogTitle"]';
+		var dlgNuevoTitle = '@Localizer["NewDialogTitle"]';
+		var dlgDeleteTitle = '@Localizer["DeletePositionDialogTitle"]';
+		var dlgDeleteQuestion = '@Localizer["DeletePositionDialogQuestion"]';
+		var colNombreHeader = '@Localizer["ColNameHeader"]';
+		var colFechaHeader = '@Localizer["ColDateHeader"]';
+		var colHoraEntradaHeader = '@Localizer["ColEntryTimeHeader"]';
+		var colHoraSalidaHeader = '@Localizer["ColDepartureTimeHeader"]';
+		var colRetardoHeader = '@Localizer["ColTimeDelayHeader"]';
+		var colTotalHeader = '@Localizer["ColTotalHeader"]';
+		var colFaltasHeader = '@Localizer["ColAbsencesHeader"]';
 	</script>
+
+	<partial name="_ValidationScriptsPartial" />
 }

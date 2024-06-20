@@ -1,181 +1,198 @@
-﻿var oc = null;
+﻿var table;
+var buttonRemove;
+var selections = [];
+var dlg = null;
+var dlgModal = null;
+
+const NUEVO = 0;
+const EDITAR = 1;
+const VER = 2;
 const postOptions = { headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() } }
 
-function onCargarOrganigrama() {
-    let btnOrganigrama = document.getElementById("btnOrganigrama");
-    let selPuesto = document.getElementById("selFiltroPuesto");
-    let selArea = document.getElementById("selFiltroArea");
-    let selSubarea = document.getElementById("selFiltroSubarea");
-    let divCharts = document.getElementById("divCharts");
-    let btnExportar = document.getElementById("btnExportar");
+document.addEventListener("DOMContentLoaded", function (event) {
+    table = $("#table");
+    buttonRemove = $("#remove");
+    dlg = document.getElementById('dlgAsistencia');
+    dlgModal = new bootstrap.Modal(dlg, null);
+    //Función para limpiar el cuadro de diálogo cuando es cerrado
+    dlg.addEventListener('hidden.bs.modal', function (event) {
+        onCerrarClick();
+    });
+
+    initTable();
+});
+
+//Funcionalidad Tabla
+function getIdSelections() {
+    return $.map(table.bootstrapTable('getSelections'), function (row) {
+        return row.id
+    })
+}
+function responseHandler(res) {
+    $.each(res, function (i, row) {
+        row.state = $.inArray(row.id, selections) !== -1
+    })
+    return res
+}
+function initTable() {
+    table.bootstrapTable('destroy').bootstrapTable({
+        height: 550,
+        locale: cultureName,
+        exportDataType: 'all',
+        exportTypes: ['excel'],
+        columns: [
+            {
+                title: colNombreHeader,
+                field: "nombre",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colFechaHeader,
+                field: "fecha",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colHoraEntradaHeader,
+                field: "horaEntrada",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colHoraSalidaHeader,
+                field: "horaSalida",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colRetardoHeader,
+                field: "retardo",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colTotalHeader,
+                field: "total",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colFaltasHeader,
+                field: "faltas",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            }
+        ]
+    })
+    table.on('check.bs.table uncheck.bs.table ' +
+        'check-all.bs.table uncheck-all.bs.table',
+        function () {
+            buttonRemove.prop('disabled', !table.bootstrapTable('getSelections').length)
+
+            // save your data, here just save the current page
+            selections = getIdSelections()
+            // push or splice the selections if you want to save all data selections
+        })
+    table.on('all.bs.table', function (e, name, args) {
+        console.log(name, args)
+    })
+    buttonRemove.click(function () {
+        askConfirmation(dlgDeleteTitle, dlgDeleteQuestion, function () {
+            let oParams = { ids: selections };
+
+            doAjax(
+                "/Catalogos/Asistencias/DeleteAsistencias",
+                oParams,
+                function (resp) {
+                    if (resp.tieneError) {
+                        showError(dlgDeleteTitle, resp.mensaje);
+                        return;
+                    }
+
+                    table.bootstrapTable('remove', {
+                        field: 'id',
+                        values: selections
+                    })
+                    selections = [];
+                    buttonRemove.prop('disabled', true);
+
+                    let e = document.querySelector("[name='refresh']");
+                    e.click();
+
+                    showSuccess(dlgDeleteTitle, resp.mensaje);
+                }, function (error) {
+                    showError(dlgDeleteTitle, error);
+                },
+                postOptions
+            );
+
+        });
+    })
+}
+/////////////////////
+function onGuardarClick() {
+    // Ejecuta la validación
+    $("#theForm").validate();
+    // Determina los errores
+    let valid = $("#theForm").valid();
+    // Si la forma no es válida, entonces finaliza.
+    if (!valid) { return; }
+    
+    let idField = document.getElementById("inpAsistenciaId");
+    let nombreField = document.getElementById("inpAsistenciaNombre");
+    let fechaField = document.getElementById("inpAsistenciaFecha");
+    let horaEntradaField = document.getElementById("inpAsistenciaHoraEntrada");
+    let horaSalidaField = document.getElementById("inpAsistenciaHoraSalida");
+    let retardoField = document.getElementById("inpAsistenciaRetardo");
+    let totalField = document.getElementById("inpAsistenciaTotal");
+    let faltasField = document.getElementById("inpAsistenciaFaltas");
+    let summaryContainer = document.getElementById("saveValidationSummary");
+    summaryContainer.innerHTML = "";
 
     let oParams = {
-        PuestoId: selPuesto.value == 0 ? null : parseInt(selPuesto.value),
-        AreaId: selArea.value == 0 ? null : parseInt(selArea.value),
-        SubareaId: selSubarea.value == 0 ? null : parseInt(selSubarea.value),
+        id: idField.value == "Nuevo" ? 0 : idField.value,
+        nombre: nombreField.value,
+        fecha: fechaField.value,
+        horaEntrada: horaEntradaField.value,
+        horaSalida: horaSalidaField.value,
+        retardo: retardoField.value,
+        total: totalField.value,
+        faltas: faltasField.value
     };
 
-    let errors = validarParametros(oParams)||"";
-
-    if (errors.length >= 1) {
-        showError(btnOrganigrama.innerHTML, errors);
-        return;
-    }
-
-    divCharts.innerHTML = `<div class="col-12 opacity-25" style="height:150px;">
-		                        <div>
-			                        <img class="indeximage" src="${emptyOrgchartURL}" />
-			                        <div class="col-12 h2">
-				                        <span>${orgchartInstruction}</span>
-			                        </div>
-		                        </div>
-	                        </div>`;
-    oc = null;
-    btnExportar.classList.add("disabled");
     doAjax(
-        "/ERP/Organigrama/FiltrarEmpleados",
+        "/Catalogos/Asistencias/SaveAsistencia",
         oParams,
         function (resp) {
             if (resp.tieneError) {
-                showError(btnOrganigrama.innerHTML, resp.mensaje);
-                return;
-            }
-
-            if (typeof resp.datos == "string" && resp.datos.length >= 1) { resp.datos = JSON.parse(resp.datos); }
-
-            if (resp.datos.length <= 0) {
-                showAlert(btnOrganigrama.innerHTML, msgSinResultados);
-                return;
-            }
-
-            divCharts.innerHTML = `<div id="chart${resp.datos[0].id}" class="col-12 orgchart"></div>`;
-            oc = $(`#chart${resp.datos[0].id}`).orgchart({
-                'data': resp.datos[0],
-                'nodeContent': 'title',
-                'pan': true,
-                'zoom': true,
-                'createNode': function ($node, data) {
-                    let formattedPhone = data.telefono;
-                    if (data.telefono.length >= 10) {
-                        formattedPhone = `${data.telefono.slice(0, 2)} ${data.telefono.slice(2, 6)} ${data.telefono.slice(6, 10)}`;
-                    }
-                    let divNombre = data.nombreCompleto.length >= 1 ? `<div><i class="bi bi-person-fill"></i> <b>${data.nombreCompleto}</b></div>` : ``;
-                    let divEmail = data.email.length >= 1 ? `<div><i class="bi bi-envelope-at-fill"></i> ${data.email}</div>` : ``;
-                    let divTelefono = data.telefono.length >= 1 ? `<div><i class="bi bi-telephone-fill"></i> ${formattedPhone}</div>` : ``;
-                    let divOficina = data.oficina.length >= 1 ? `<div><i class="bi bi-building-fill"></i> ${data.oficina}</div>` : ``;
-                    data.profilePic = data.profilePic || "/img/default_profile_pic.png";
-                    $node.find('.content').append(`
-                                                        <div class="second-menu">
-                                                            <img class="avatar" src="${data.profilePic}">
-                                                            ${divNombre}
-                                                            <hr />
-                                                            ${divEmail}
-                                                            ${divTelefono}
-                                                            ${divOficina}
-                                                        </div>
-                                                        `);
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    let summary = ``;
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
                 }
-            });
-
-            btnExportar.classList.remove("disabled");
-            
-            oc.$chartContainer.on('touchmove', function (event) {
-                event.preventDefault();
-            });
-
-            var $container = oc.$chartContainer;
-            var $chart = oc.$chart;
-
-            //Si el ancho del chart es mayor al ancho del contenedor, entonces escala el diagrama para mostrarlo completo.
-            if ($container.width() < $chart.outerWidth(true)) {
-                var scale = $container.width() / $chart.outerWidth(true);
-                var x = ($container.width() - $chart.outerWidth(true)) / 2 * (1 / scale);
-                var y = ($container.height() - $chart.outerHeight(true)) / 2 * (1 + scale);
-                oc.setChartScale($chart, scale);
-                var val = $chart.css('transform');
-                $chart.css('transform', val + ' translate(' + x + 'px,' + y + 'px)');
-            }
-            else {
-                oc.$chart.css('transform', 'none');
+                showError(dlgTitle.innerHTML, resp.mensaje);
+                return;
             }
 
+            btnClose.click();
+
+            let e = document.querySelector("[name='refresh']");
+            e.click();
+
+            showSuccess(dlgTitle.innerHTML, resp.mensaje);
         }, function (error) {
             showError("Error", error);
         },
         postOptions
     );
 }
-function validarParametros(oParams) {
-    //Si no se seleccionó ningún área, marca el error.
-    //if (oParams.AreaId == null) { return msgAreaIdRequerida; }
-
-    //Obtiene las opciones que correspondan al área seleccionada.
-    subareaOptions = document.querySelectorAll(`#selFiltroSubarea option[areaid='${oParams.AreaId}']`);
-
-    return "";
-}
-
-function onExportarOrganigrama() {
-    if (oc === null) { return; }
-
-    let selAreaVal = parseInt(document.getElementById("selFiltroArea").value||"0");
-    let selSubareaVal = parseInt(document.getElementById("selFiltroSubarea").value||"0");
-
-    let area = document.querySelector(`#selFiltroArea option[value='${selAreaVal}']`).text;
-    let subarea = document.querySelector(`#selFiltroSubarea option[value='${selSubareaVal}']`).text;
-
-    //Por default, el nombre del archivo exportado.
-    let exportName = "Orgchart";
-
-    //Si hay área seleccionada, se usa para el nombre del archivo exportado.
-    if (selAreaVal >= 1) { exportName = area; }
-
-    //Si también hay seleccionada una subarea, añade la descripción al nombre del archivo exportado;
-    if (selSubareaVal >= 1) { exportName += ` ${subarea}`; }
-
-    oc.export(exportName, "png");
-}
-
-function onAreaChanged() {
-    let areaField = document.getElementById("selFiltroArea");
-    let subareaField = document.getElementById("selFiltroSubarea");
-
-    //Establece la selección por default.
-    subareaField.value = 0;
-
-    //Oculta todas las opciones, excepto la opción "Seleccione..."
-    let subareaOptions = document.querySelectorAll(`#selFiltroSubarea option`);
-    subareaOptions.forEach(function (o) { if (o.value >= 1) { o.style.display = 'none'; } });
-
-    //Deshabilita el campo de selección
-    subareaField.setAttribute('disabled', true);
-
-    //Muestra solo las opciones que correspondan al área seleccionada.
-    subareaOptions = document.querySelectorAll(`#selFiltroSubarea option[areaid='${areaField.value}']`);
-    //Si hay subareas...
-    if (subareaOptions.length >= 1) {
-        //Muestra las subareas
-        subareaOptions.forEach(function (o) { o.style.display = 'block'; });
-
-        //Habilita el campo de selección
-        subareaField.removeAttribute('disabled');
-    }
-}
-
-$(document).on("click", ".node", function (e) {
-    $(document).find(".second-menu:visible").toggle();
-    $(this).find('.second-menu').toggle();
-    e.stopPropagation();
-});
-$(document).on("click", function (e) {
-    $(document).find(".second-menu:visible").toggle();
-});
-
-$(window).resize(function () {
-    var width = $(window).width();
-    if (width > 1200) {
-        if(oc != null) oc.init({ 'verticalLevel': undefined });
-    } else {
-        if (oc != null) oc.init({ 'verticalLevel': 2 });
-    }
-});

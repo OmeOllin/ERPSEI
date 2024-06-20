@@ -7,6 +7,7 @@ using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empleados;
 using ERPSEI.Data.Managers.Empresas;
+using ERPSEI.Data.Managers.Reportes;
 using ERPSEI.Data.Managers.SAT;
 using ERPSEI.Data.Managers.Usuarios;
 using ERPSEI.Email;
@@ -62,7 +63,9 @@ namespace ERPSEI
 			_builder.Services.AddScoped<AppRoleManager, AppRoleManager>();
             _builder.Services.AddScoped<IModuloManager, ModuloManager>();
 
-            _builder.Services.AddScoped<IConceptoManager, ConceptoManager>();
+			_builder.Services.AddScoped<IAsistenciaManager, AsistenciaManager>();
+
+			_builder.Services.AddScoped<IConceptoManager, ConceptoManager>();
             _builder.Services.AddScoped<IPrefacturaManager, PrefacturaManager>();
             _builder.Services.AddScoped<IExportacionManager, ExportacionManager>();
 			_builder.Services.AddScoped<IFormaPagoManager, FormaPagoManager>();
@@ -103,9 +106,10 @@ namespace ERPSEI
 			_builder.Services.AddScoped<IRCatalogoManager<Genero>, GeneroManager>();
 			_builder.Services.AddScoped<IRCatalogoManager<EstadoCivil>, EstadoCivilManager>();
 
+			//_builder.Services.AddScoped<IRWCatalogoManager<Asistencias>, AsistenciasManager>();
 		}
 
-        public static void ConfigureIdentity(WebApplicationBuilder _builder)
+		public static void ConfigureIdentity(WebApplicationBuilder _builder)
         {
             _builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddRoles<AppRole>()
