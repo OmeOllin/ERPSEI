@@ -1,11 +1,8 @@
 using ERPSEI.Data;
-using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.Usuarios;
-using ERPSEI.Data.Managers.Empleados;
 using ERPSEI.Data.Managers.Usuarios;
 using ERPSEI.Requests;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
@@ -15,7 +12,7 @@ using System.Data;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-    [Authorize(Policy = "AccessPolicy")]
+	[Authorize(Policy = "AccessPolicy")]
     public class RolesModel : PageModel
 	{
 		private readonly IAccesoModuloManager _accesoModuloManager;
@@ -37,6 +34,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Display(Name = "RolField")]
 			public string RolId { get; set; } = string.Empty;
 
+			[Required(ErrorMessage = "Required")]
 			[Display(Name = "FullNameField")]
 			public string NombreRol { get; set; } = string.Empty;
 		}
