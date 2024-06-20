@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERPSEI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240620155645_cambiosAsistencias")]
+    [Migration("20240620204954_cambiosAsistencias")]
     partial class cambiosAsistencias
     {
         /// <inheritdoc />
@@ -150,32 +150,40 @@ namespace ERPSEI.Data.Migrations
 
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.Asistencia", b =>
                 {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("EmpleadoId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Faltas")
-                        .HasColumnType("int");
-
-                    b.Property<DateOnly?>("Fecha")
+                    b.Property<DateOnly>("Fecha")
                         .HasColumnType("date");
 
-                    b.Property<TimeOnly?>("HoraEntrada")
+                    b.Property<DateTime>("FechaHora")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan>("Hora")
                         .HasColumnType("time");
 
-                    b.Property<TimeOnly?>("HoraSalida")
-                        .HasColumnType("time");
-
-                    b.Property<string>("Nombre")
+                    b.Property<string>("NoTarjeta")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Retardo")
-                        .HasColumnType("int");
+                    b.Property<string>("NombreDispositivo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Total")
-                        .HasColumnType("int");
+                    b.Property<string>("NombreEmpleado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SerialDispositivo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

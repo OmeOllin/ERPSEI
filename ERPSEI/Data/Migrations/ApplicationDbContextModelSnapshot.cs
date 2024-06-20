@@ -147,34 +147,39 @@ namespace ERPSEI.Data.Migrations
 
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.Asistencia", b =>
                 {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Direccion")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("EmpleadoId")
                         .HasColumnType("int");
 
-                    b.Property<DateOnly?>("Fecha")
+                    b.Property<DateOnly>("Fecha")
                         .HasColumnType("date");
 
-                    b.Property<DateTime?>("FechaHora")
+                    b.Property<DateTime>("FechaHora")
                         .HasColumnType("datetime2");
 
-                    b.Property<TimeSpan?>("Hora")
+                    b.Property<TimeSpan>("Hora")
                         .HasColumnType("time");
 
-                    b.Property<int?>("NoTarjeta")
-                        .HasColumnType("int");
+                    b.Property<string>("NoTarjeta")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NombreDispositivo")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NombreEmpleado")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SerialDispositivo")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

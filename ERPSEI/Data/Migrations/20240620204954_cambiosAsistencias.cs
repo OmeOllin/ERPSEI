@@ -15,14 +15,15 @@ namespace ERPSEI.Data.Migrations
                 name: "Asistencias",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Fecha = table.Column<DateOnly>(type: "date", nullable: true),
-                    HoraEntrada = table.Column<TimeOnly>(type: "time", nullable: true),
-                    HoraSalida = table.Column<TimeOnly>(type: "time", nullable: true),
-                    Retardo = table.Column<int>(type: "int", nullable: true),
-                    Total = table.Column<int>(type: "int", nullable: true),
-                    Faltas = table.Column<int>(type: "int", nullable: true),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FechaHora = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Fecha = table.Column<DateOnly>(type: "date", nullable: false),
+                    Hora = table.Column<TimeSpan>(type: "time", nullable: false),
+                    Direccion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NombreDispositivo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SerialDispositivo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NombreEmpleado = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NoTarjeta = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EmpleadoId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
