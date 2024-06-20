@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ERPSEI.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class cambiosAsistencias : Migration
+    public partial class cambiosAsistencia : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,23 +23,8 @@ namespace ERPSEI.Data.Migrations
                     NombreDispositivo = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SerialDispositivo = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NombreEmpleado = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NoTarjeta = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EmpleadoId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Asistencias", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Asistencias_Empleados_EmpleadoId",
-                        column: x => x.EmpleadoId,
-                        principalTable: "Empleados",
-                        principalColumn: "Id");
+                    NoTarjeta = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Asistencias_EmpleadoId",
-                table: "Asistencias",
-                column: "EmpleadoId");
         }
 
         /// <inheritdoc />

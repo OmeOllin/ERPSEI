@@ -14,9 +14,5 @@ namespace ERPSEI.Data.Entities.Empleados
 		public string SerialDispositivo { get; set; } = string.Empty;
 		public string NombreEmpleado { get; set; } = string.Empty;
 		public string NoTarjeta { get; set; } = string.Empty;
-
-		//Relaciones de la entidad
-		public int? EmpleadoId { get; set; }
-		public Empleado? Empleado { get; set; }
 	}
 }

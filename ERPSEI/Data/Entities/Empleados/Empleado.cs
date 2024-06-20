@@ -60,8 +60,6 @@ namespace ERPSEI.Data.Entities.Empleados
 		public ICollection<ContactoEmergencia>? ContactosEmergencia { get; }
 
 		public ICollection<ArchivoEmpleado>? ArchivosEmpleado { get; }
-		
-		public ICollection<Asistencia>? Asistencias { get; set; }
 
 		//Referencia a esta misma tabla para el jefe del empleado
 		public int? JefeId { get; set; }

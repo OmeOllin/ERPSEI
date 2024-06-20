@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERPSEI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240620204954_cambiosAsistencias")]
-    partial class cambiosAsistencias
+    [Migration("20240620224241_cambiosAsistencia")]
+    partial class cambiosAsistencia
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -157,9 +157,6 @@ namespace ERPSEI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("EmpleadoId")
-                        .HasColumnType("int");
-
                     b.Property<DateOnly>("Fecha")
                         .HasColumnType("date");
 
@@ -186,8 +183,6 @@ namespace ERPSEI.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EmpleadoId");
 
                     b.ToTable("Asistencias");
                 });
@@ -2089,16 +2084,6 @@ namespace ERPSEI.Data.Migrations
                     b.Navigation("TipoArchivo");
                 });
 
-            modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.Asistencia", b =>
-                {
-                    b.HasOne("ERPSEI.Data.Entities.Empleados.Empleado", "Empleado")
-                        .WithMany("Asistencias")
-                        .HasForeignKey("EmpleadoId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Empleado");
-                });
-
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.ContactoEmergencia", b =>
                 {
                     b.HasOne("ERPSEI.Data.Entities.Empleados.Empleado", "Empleado")
@@ -2490,8 +2475,6 @@ namespace ERPSEI.Data.Migrations
             modelBuilder.Entity("ERPSEI.Data.Entities.Empleados.Empleado", b =>
                 {
                     b.Navigation("ArchivosEmpleado");
-
-                    b.Navigation("Asistencias");
 
                     b.Navigation("ContactosEmergencia");
                 });
