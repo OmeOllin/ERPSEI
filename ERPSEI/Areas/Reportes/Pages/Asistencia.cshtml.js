@@ -43,49 +43,49 @@ function initTable() {
         columns: [
             {
                 title: colNombreHeader,
-                field: "nombre",
+                field: "Nombre",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colFechaHoraHeader,
+                field: "Fecha",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
                 title: colFechaHeader,
-                field: "fecha",
+                field: "Hora",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: colHoraEntradaHeader,
-                field: "horaEntrada",
+                title: colHoraHeader,
+                field: "Hora",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: colHoraSalidaHeader,
-                field: "horaSalida",
+                title: colDireccionHeader,
+                field: "Direccion",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: colRetardoHeader,
-                field: "retardo",
+                title: colNombreDispositivoHeader,
+                field: "NombreDispositivo",
                 align: "center",
                 valign: "middle",
                 sortable: true
             },
             {
-                title: colTotalHeader,
-                field: "total",
-                align: "center",
-                valign: "middle",
-                sortable: true
-            },
-            {
-                title: colFaltasHeader,
-                field: "faltas",
+                title: colSerialDispositivoHeader,
+                field: "SerialDispositivo",
                 align: "center",
                 valign: "middle",
                 sortable: true
@@ -145,27 +145,29 @@ function onGuardarClick() {
     let valid = $("#theForm").valid();
     // Si la forma no es válida, entonces finaliza.
     if (!valid) { return; }
-    
+
     let idField = document.getElementById("inpAsistenciaId");
     let nombreField = document.getElementById("inpAsistenciaNombre");
+    let fechaHoraField = document.getElementById("inpAsistenciaFechaHora");
     let fechaField = document.getElementById("inpAsistenciaFecha");
-    let horaEntradaField = document.getElementById("inpAsistenciaHoraEntrada");
-    let horaSalidaField = document.getElementById("inpAsistenciaHoraSalida");
-    let retardoField = document.getElementById("inpAsistenciaRetardo");
-    let totalField = document.getElementById("inpAsistenciaTotal");
-    let faltasField = document.getElementById("inpAsistenciaFaltas");
+    let horaField = document.getElementById("inpAsistenciaHora");
+    let direccionField = document.getElementById("inpAsistenciaDireccion");
+    let nombreDispositivoField = document.getElementById("inpAsistenciaNombreDispositivo");
+    let serialDispositivoField = document.getElementById("inpAsistenciaSerialDispositivo");
+    let noTarjetaField = document.getElementById("inpAsistenciaNoTarjeta");
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 
     let oParams = {
         id: idField.value == "Nuevo" ? 0 : idField.value,
         nombre: nombreField.value,
+        fechaHora: fechaHoraField.value, 
         fecha: fechaField.value,
-        horaEntrada: horaEntradaField.value,
-        horaSalida: horaSalidaField.value,
-        retardo: retardoField.value,
-        total: totalField.value,
-        faltas: faltasField.value
+        hora: horaField.value,
+        direccion: direccionField.value,
+        nombreDispositivo: nombreDispositivoField.value,
+        serialDispositivo: serialDispositivoField.value,
+        noTarjeta: noTarjetaField.value
     };
 
     doAjax(

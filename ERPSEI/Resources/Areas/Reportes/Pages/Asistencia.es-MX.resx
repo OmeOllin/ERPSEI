@@ -129,8 +129,17 @@
   <data name="ColDateHeader" xml:space="preserve">
     <value>Fecha</value>
   </data>
+  <data name="ColDateTimeHeader" xml:space="preserve">
+    <value>Fecha Hora</value>
+  </data>
   <data name="ColDepartureTimeHeader" xml:space="preserve">
     <value>Hora Salida</value>
+  </data>
+  <data name="ColDeviceNameHeader" xml:space="preserve">
+    <value>Nombre Dispositivo</value>
+  </data>
+  <data name="ColDirectionHeader" xml:space="preserve">
+    <value>Dirección</value>
   </data>
   <data name="ColEntryTimeHeader" xml:space="preserve">
     <value>Hora Entrada</value>
@@ -138,8 +147,14 @@
   <data name="ColNameHeader" xml:space="preserve">
     <value>Nombre</value>
   </data>
+  <data name="ColSerialNameHeader" xml:space="preserve">
+    <value>Serial Dispositivo</value>
+  </data>
   <data name="ColTimeDelayHeader" xml:space="preserve">
     <value>Retardo</value>
+  </data>
+  <data name="ColTimeHeader" xml:space="preserve">
+    <value>Hora</value>
   </data>
   <data name="ColTotalHeader" xml:space="preserve">
     <value>Total</value>

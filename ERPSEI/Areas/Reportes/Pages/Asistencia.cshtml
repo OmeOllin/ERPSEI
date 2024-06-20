@@ -116,9 +116,18 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpAsistenciaNombre" asp-for="ListaAsistencia.Nombre" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
-									<label asp-for="ListaAsistencia.Nombre" class="form-label required"></label>
-									<span asp-validation-for="ListaAsistencia.Nombre" class="text-danger"></span>
+									<input id="inpAsistenciaNombre" asp-for="ListaAsistencia.NombreEmpleado" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<label asp-for="ListaAsistencia.NombreEmpleado" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.NombreEmpleado" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<input id="inpAsistenciaFechaHora" asp-for="ListaAsistencia.FechaHora" type="text" class="form-control" placeholder="@Localizer["FechaHoraPlaceholder"]" />
+									<label asp-for="ListaAsistencia.FechaHora" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.FechaHora" class="text-danger"></span>
 								</div>
 							</div>
 						</div>
@@ -134,45 +143,45 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpAsistenciaHoraEntrada" asp-for="ListaAsistencia.HoraEntrada" type="text" class="form-control" placeholder="@Localizer["HoraEntradaPlaceholder"]" />
-									<label asp-for="ListaAsistencia.HoraEntrada" class="form-label required"></label>
-									<span asp-validation-for="ListaAsistencia.HoraEntrada" class="text-danger"></span>
+									<input id="inpAsistenciaHora" asp-for="ListaAsistencia.Hora" type="text" class="form-control" placeholder="@Localizer["HoraPlaceholder"]" />
+									<label asp-for="ListaAsistencia.Hora" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.Hora" class="text-danger"></span>
 								</div>
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpAsistenciaHoraSalida" asp-for="ListaAsistencia.HoraSalida" type="text" class="form-control" placeholder="@Localizer["HoraSalidaPlaceholder"]" />
-									<label asp-for="ListaAsistencia.HoraSalida" class="form-label required"></label>
-									<span asp-validation-for="ListaAsistencia.HoraSalida" class="text-danger"></span>
+									<input id="inpAsistenciaDireccion" asp-for="ListaAsistencia.Direccion" type="text" class="form-control" placeholder="@Localizer["DireccionPlaceholder"]" />
+									<label asp-for="ListaAsistencia.Direccion" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.Direccion" class="text-danger"></span>
 								</div>
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpAsistenciaRetardo" asp-for="ListaAsistencia.Retardo" type="text" class="form-control" placeholder="@Localizer["RetardoPlaceholder"]" />
-									<label asp-for="ListaAsistencia.Retardo" class="form-label required"></label>
-									<span asp-validation-for="ListaAsistencia.Retardo" class="text-danger"></span>
+									<input id="inpAsistenciaNombreDispositivo" asp-for="ListaAsistencia.NombreDispositivo" type="text" class="form-control" placeholder="@Localizer["NombreDispositivoPlaceholder"]" />
+									<label asp-for="ListaAsistencia.NombreDispositivo" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.NombreDispositivo" class="text-danger"></span>
 								</div>
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpAsistenciaTotal" asp-for="ListaAsistencia.Total" type="text" class="form-control" placeholder="@Localizer["TotalPlaceholder"]" />
-									<label asp-for="ListaAsistencia.Total" class="form-label required"></label>
-									<span asp-validation-for="ListaAsistencia.Total" class="text-danger"></span>
+									<input id="inpAsistenciaSerialDispositivo" asp-for="ListaAsistencia.SerialDispositivo" type="text" class="form-control" placeholder="@Localizer["SerialDispositivoPlaceholder"]" />
+									<label asp-for="ListaAsistencia.SerialDispositivo" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.SerialDispositivo" class="text-danger"></span>
 								</div>
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpAsistenciaFaltas" asp-for="ListaAsistencia.Faltas" type="text" class="form-control" placeholder="@Localizer["FaltasPlaceholder"]" />
-									<label asp-for="ListaAsistencia.Faltas" class="form-label required"></label>
-									<span asp-validation-for="ListaAsistencia.Faltas" class="text-danger"></span>
+									<input id="inpAsistenciaNoTarjeta" asp-for="ListaAsistencia.NoTarjeta" type="text" class="form-control" placeholder="@Localizer["NoTarjetaPlaceholder"]" />
+									<label asp-for="ListaAsistencia.NoTarjeta" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.NoTarjeta" class="text-danger"></span>
 								</div>
 							</div>
 						</div>
@@ -216,12 +225,12 @@
 		var dlgDeleteTitle = '@Localizer["DeletePositionDialogTitle"]';
 		var dlgDeleteQuestion = '@Localizer["DeletePositionDialogQuestion"]';
 		var colNombreHeader = '@Localizer["ColNameHeader"]';
+		var colFechaHoraHeader = '@Localizer["ColDateTimeHeader"]';
 		var colFechaHeader = '@Localizer["ColDateHeader"]';
-		var colHoraEntradaHeader = '@Localizer["ColEntryTimeHeader"]';
-		var colHoraSalidaHeader = '@Localizer["ColDepartureTimeHeader"]';
-		var colRetardoHeader = '@Localizer["ColTimeDelayHeader"]';
-		var colTotalHeader = '@Localizer["ColTotalHeader"]';
-		var colFaltasHeader = '@Localizer["ColAbsencesHeader"]';
+		var colHoraHeader = '@Localizer["ColTimeHeader"]';
+		var colDireccionHeader = '@Localizer["ColDirectionHeader"]';
+		var colNombreDispositivoHeader = '@Localizer["ColDeviceNameHeader"]';
+		var colSerialDispositivoHeader = '@Localizer["ColSerialNameHeader"]';
 	</script>
 
 	<partial name="_ValidationScriptsPartial" />

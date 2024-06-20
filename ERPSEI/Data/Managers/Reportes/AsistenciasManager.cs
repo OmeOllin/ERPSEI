@@ -25,7 +25,7 @@ namespace ERPSEI.Data.Managers.Reportes
 
 		public async Task<Asistencia?> GetByNameAsync(string name)
 		{
-			return await db.Asistencias.Where(a => a.Nombre.ToLower() == name.ToLower()).FirstOrDefaultAsync();
+			return await db.Asistencias.Where(a => a.NombreEmpleado.ToLower() == name.ToLower()).FirstOrDefaultAsync();
 		}
 
 	}

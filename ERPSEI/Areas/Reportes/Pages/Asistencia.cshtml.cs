@@ -46,13 +46,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		{
 			[Display(Name = "Id")]
 			public int Id { get; set; }
-			public string? Nombre { get; set; }
-			public DateOnly? Fecha { get; set; } 
-			public TimeOnly? HoraEntrada { get; set; }
-			public TimeOnly? HoraSalida { get; set; }
-			public int? Retardo { get; set; }
-			public int? Total { get; set; }
-			public int? Faltas { get; set; }
+			public DateTime? FechaHora { get; set; }
+			public DateOnly? Fecha { get; set; }
+			public TimeSpan? Hora { get; set; }
+			public string? Direccion { get; set; }
+			public string? NombreDispositivo { get; set; }
+			public string? SerialDispositivo { get; set; }
+			public string? NombreEmpleado { get; set; }
+			public int? NoTarjeta { get; set; }
 		}
 		public AsistenciaModel(
 			ApplicationDbContext db,
@@ -81,7 +82,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			foreach (Data.Entities.Empleados.Asistencia asis in asistencias)
 			{
 				// Construir el JSON para cada asistencia
-				string asistenciaJson = $"{{\"id\": {asis.Id}, \"nombre\": \"{asis.Nombre}\", \"fecha\": \"{asis.Fecha}\", \"horaEntrada\": \"{asis.HoraEntrada}\", \"horaSalida\": \"{asis.HoraSalida}\", \"retardo\": {asis.Retardo}, \"total\": {asis.Total}, \"faltas\": {asis.Faltas}}}";
+				string asistenciaJson = $"{{\"id\": {asis.Id}, \"nombre\": \"{asis.NombreEmpleado}\", \"FechaHora\": \"{asis.FechaHora}\", \"Fecha\": \"{asis.Fecha}\", \"Hora\": \"{asis.Hora}\", \"Dirección\": {asis.Direccion}, \"NombreDispositivo\": {asis.NombreDispositivo}, \"SerialDispositivo\": {asis.SerialDispositivo}, \"NoTarjeta\": {asis.NoTarjeta}}}";
 				jsonAsistencias.Add(asistenciaJson);
 			}
 

@@ -24,7 +24,7 @@ namespace ERPSEI.Data.Managers.Empleados
 			Entities.Empleados.Asistencia? sa = db.Find<Entities.Empleados.Asistencia>(asist.Id);
 			if (sa != null)
 			{
-				sa.Nombre = asist.Nombre;
+				sa.NombreEmpleado = asist.NombreEmpleado;
 				await db.SaveChangesAsync();
 			}
 		}
@@ -91,7 +91,7 @@ namespace ERPSEI.Data.Managers.Empleados
 
 		public async Task<Entities.Empleados.Asistencia?> GetByNameAsync(string name)
 		{
-			return await db.Asistencias.Where(a => a.Nombre.ToLower() == name.ToLower()).FirstOrDefaultAsync();
+			return await db.Asistencias.Where(a => a.NombreEmpleado.ToLower() == name.ToLower()).FirstOrDefaultAsync();
 		}
 	}
 }
