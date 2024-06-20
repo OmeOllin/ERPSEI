@@ -244,7 +244,7 @@ function onGuardarClick() {
     };
 
     doAjax(
-        "/Catalogos/Usuarios/Save",
+        "/Catalogos/Roles/Save",
         oParams,
         function (resp) {
             if (resp.tieneError) {
