@@ -20,6 +20,8 @@ namespace ERPSEI.Data.Entities.Empleados
 		//Relaciones de la entidad
 		public int? EmpleadoId { get; set; }
 		public Empleado? Empleado { get; set; }
+		public int? OficinaId { get; set; }
+		public Oficina? Oficina { get; set; }
 
 		//[NotMapped]
 		//public List<Empleado>? Empleados { get; set; }
