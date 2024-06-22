@@ -116,15 +116,6 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpAsistenciaNombre" asp-for="ListaAsistencia.NombreEmpleado" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
-									<label asp-for="ListaAsistencia.NombreEmpleado" class="form-label required"></label>
-									<span asp-validation-for="ListaAsistencia.NombreEmpleado" class="text-danger"></span>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-12">
-								<div class="form-floating mb-3">
 									<input id="inpAsistenciaFechaHora" asp-for="ListaAsistencia.FechaHora" type="text" class="form-control" placeholder="@Localizer["FechaHoraPlaceholder"]" />
 									<label asp-for="ListaAsistencia.FechaHora" class="form-label required"></label>
 									<span asp-validation-for="ListaAsistencia.FechaHora" class="text-danger"></span>
@@ -179,6 +170,15 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
+									<input id="inpAsistenciaNombre" asp-for="ListaAsistencia.NombreEmpleado" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<label asp-for="ListaAsistencia.NombreEmpleado" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.NombreEmpleado" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
 									<input id="inpAsistenciaNoTarjeta" asp-for="ListaAsistencia.NoTarjeta" type="text" class="form-control" placeholder="@Localizer["NoTarjetaPlaceholder"]" />
 									<label asp-for="ListaAsistencia.NoTarjeta" class="form-label required"></label>
 									<span asp-validation-for="ListaAsistencia.NoTarjeta" class="text-danger"></span>
@@ -224,13 +224,15 @@
 		var dlgNuevoTitle = '@Localizer["NewDialogTitle"]';
 		var dlgDeleteTitle = '@Localizer["DeletePositionDialogTitle"]';
 		var dlgDeleteQuestion = '@Localizer["DeletePositionDialogQuestion"]';
-		var colNombreHeader = '@Localizer["ColNameHeader"]';
+		var colIdHeader = '@Localizer["ColIdHeader"]';
 		var colFechaHoraHeader = '@Localizer["ColDateTimeHeader"]';
 		var colFechaHeader = '@Localizer["ColDateHeader"]';
 		var colHoraHeader = '@Localizer["ColTimeHeader"]';
 		var colDireccionHeader = '@Localizer["ColDirectionHeader"]';
 		var colNombreDispositivoHeader = '@Localizer["ColDeviceNameHeader"]';
 		var colSerialDispositivoHeader = '@Localizer["ColSerialNameHeader"]';
+		var colNombreEmpleadoHeader = '@Localizer["ColNameHeader"]';
+		var colNoTarjetaHeader = '@Localizer["ColCardNoHeader"]';
 	</script>
 
 	<partial name="_ValidationScriptsPartial" />
