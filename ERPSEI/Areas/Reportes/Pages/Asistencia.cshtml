@@ -84,7 +84,7 @@
 	   data-side-pagination="client"
 	   data-response-handler="responseHandler"
 	   data-buttons-class="primary"
-	   data-url="/Catalogos/Asistencias/AsistenciasList"> <!--Revisar esta liga, ya que no muestra registros-->
+	   data-url="/Reportes/Asistencia/AsistenciasList"> <!--Revisar esta liga, ya que no muestra registros-->
 	<thead>
 		<tr align="center" valign="middle" class="bg-primary bg-opacity-10">
 		</tr>
@@ -110,6 +110,16 @@
 									<input id="inpAsistenciaId" asp-for="ListaAsistencia.Id" type="text" class="form-control" />
 									<label asp-for="ListaAsistencia.Id" class="form-label"></label>
 									<span asp-validation-for="ListaAsistencia.Id" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-12">
+								<div class="form-floating mb-3">
+									<input id="inpAsistenciaNombre" asp-for="ListaAsistencia.NombreEmpleado" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<label asp-for="ListaAsistencia.NombreEmpleado" class="form-label required"></label>
+									<span asp-validation-for="ListaAsistencia.NombreEmpleado" class="text-danger"></span>
 								</div>
 							</div>
 						</div>
@@ -167,24 +177,6 @@
 								</div>
 							</div>
 						</div>
-						<div class="row">
-							<div class="col-12">
-								<div class="form-floating mb-3">
-									<input id="inpAsistenciaNombre" asp-for="ListaAsistencia.NombreEmpleado" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
-									<label asp-for="ListaAsistencia.NombreEmpleado" class="form-label required"></label>
-									<span asp-validation-for="ListaAsistencia.NombreEmpleado" class="text-danger"></span>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-12">
-								<div class="form-floating mb-3">
-									<input id="inpAsistenciaNoTarjeta" asp-for="ListaAsistencia.NoTarjeta" type="text" class="form-control" placeholder="@Localizer["NoTarjetaPlaceholder"]" />
-									<label asp-for="ListaAsistencia.NoTarjeta" class="form-label required"></label>
-									<span asp-validation-for="ListaAsistencia.NoTarjeta" class="text-danger"></span>
-								</div>
-							</div>
-						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -225,14 +217,13 @@
 		var dlgDeleteTitle = '@Localizer["DeletePositionDialogTitle"]';
 		var dlgDeleteQuestion = '@Localizer["DeletePositionDialogQuestion"]';
 		var colIdHeader = '@Localizer["ColIdHeader"]';
+		var colNombreEmpleadoHeader = '@Localizer["ColNameHeader"]';
 		var colFechaHoraHeader = '@Localizer["ColDateTimeHeader"]';
 		var colFechaHeader = '@Localizer["ColDateHeader"]';
 		var colHoraHeader = '@Localizer["ColTimeHeader"]';
 		var colDireccionHeader = '@Localizer["ColDirectionHeader"]';
 		var colNombreDispositivoHeader = '@Localizer["ColDeviceNameHeader"]';
 		var colSerialDispositivoHeader = '@Localizer["ColSerialNameHeader"]';
-		var colNombreEmpleadoHeader = '@Localizer["ColNameHeader"]';
-		var colNoTarjetaHeader = '@Localizer["ColCardNoHeader"]';
 	</script>
 
 	<partial name="_ValidationScriptsPartial" />

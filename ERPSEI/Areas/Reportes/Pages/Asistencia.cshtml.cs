@@ -75,13 +75,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			InputFiltro = new FiltroModel();
 			ListaAsistencia = new Asistencia();
 		}
-
-		/*public JsonResult OnGetAsistenciaList()
-		{
-			List<Data.Entities.Empleados.Asistencia> asistencias = _asistenciaManager.GetAllAsync().Result;
-
-			return new JsonResult(asistencias);
-		}*/
 		public async Task<JsonResult> OnGetAsistenciasList()
 		{
 			string jsonResponse = string.Empty;
@@ -94,14 +87,13 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				// Construir el JSON para cada asistencia
 				jsonAsistencias.Add("{" +
 					$"\"Id\": \"{asis.Id}\", " +
+					$"\"NombreEmpleado\": \"{asis.NombreEmpleado}\", " +
 					$"\"FechaHora\": \"{asis.FechaHora}\", " +
 					$"\"Fecha\": \"{asis.Fecha}\", " +
 					$"\"Hora\": \"{asis.Hora}\", " +
 					$"\"Direccion\": \"{asis.Direccion}\", " +
 					$"\"NombreDispositivo\": \"{asis.NombreDispositivo}\", " +
-					$"\"SerialDispositivo\": \"{asis.SerialDispositivo}\", " +
-					$"\"NombreEmpleado\": \"{asis.NombreEmpleado}\", " +
-					$"\"NoTarjeta\": \"{asis.NoTarjeta}\", " +
+					$"\"SerialDispositivo\": \"{asis.SerialDispositivo}\" " +
 					"}");
 			}
 			jsonResponse = $"[{String.Join(",", jsonAsistencias)}]";

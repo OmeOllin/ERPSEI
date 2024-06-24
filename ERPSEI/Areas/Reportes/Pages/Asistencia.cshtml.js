@@ -13,6 +13,9 @@ function getIdSelections() {
 }
 
 function responseHandler(res) {
+    if (typeof res == "string" && res.length >= 1) {
+        res = JSON.parse(res);
+    }
     $.each(res, function (i, row) {
         row.state = $.inArray(row.id, selections) !== -1;
     });
@@ -28,6 +31,13 @@ function initTable() {
             {
                 title: colIdHeader,
                 field: "Id",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colNombreEmpleadoHeader,
+                field: "NombreEmpleado",
                 align: "center",
                 valign: "middle",
                 sortable: true
@@ -70,20 +80,6 @@ function initTable() {
             {
                 title: colSerialDispositivoHeader,
                 field: "SerialDispositivo",
-                align: "center",
-                valign: "middle",
-                sortable: true
-            },
-            {
-                title: colNombreEmpleadoHeader,
-                field: "NombreEmpleado",
-                align: "center",
-                valign: "middle",
-                sortable: true
-            },
-            {
-                title: colNoTarjetaHeader,
-                field: "NoTarjeta",
                 align: "center",
                 valign: "middle",
                 sortable: true

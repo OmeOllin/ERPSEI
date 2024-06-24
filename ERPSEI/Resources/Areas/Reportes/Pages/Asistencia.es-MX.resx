@@ -148,7 +148,7 @@
     <value>Hora Entrada</value>
   </data>
   <data name="ColIdHeader" xml:space="preserve">
-    <value>Id</value>
+    <value>Id Empleado</value>
   </data>
   <data name="ColNameHeader" xml:space="preserve">
     <value>Nombre</value>
