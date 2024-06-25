@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -98,6 +99,69 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			}
 			jsonResponse = $"[{String.Join(",", jsonAsistencias)}]";
 			return new JsonResult(jsonResponse);
-		} 
+		}
+
+		public async Task<JsonResult> OnPostFiltrarAsistencia([FromBody] FiltroModel inputFiltro)
+		{
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["AsistenciasFiltradosUnsuccessfully"]);
+			try
+			{
+				// Obtener todas las asistencias
+				List<Data.Entities.Empleados.Asistencia> asistencias = await _asistenciaManager.GetAllAsync();
+
+				// Aplicar filtros secuencialmente
+				if (!string.IsNullOrEmpty(inputFiltro.NombreEmpleado))
+				{
+					asistencias = asistencias.Where(a => a.NombreEmpleado.Contains(inputFiltro.NombreEmpleado, StringComparison.OrdinalIgnoreCase)).ToList();
+				}
+
+				if (inputFiltro.FechaIngresoInicio.HasValue)
+				{
+					asistencias = asistencias.Where(a => a.FechaHora >= inputFiltro.FechaIngresoInicio.Value.Date).ToList();
+				}
+
+				if (inputFiltro.FechaIngresoFin.HasValue)
+				{
+					// Asegurarse de incluir todas las asistencias hasta el final del día especificado
+					DateTime fechaFin = inputFiltro.FechaIngresoFin.Value.Date.AddDays(1).AddTicks(-1);
+					asistencias = asistencias.Where(a => a.FechaHora <= fechaFin).ToList();
+				}
+				// Si no se aplicaron filtros, retornar un resultado vacío para no actualizar la página
+				if (string.IsNullOrEmpty(inputFiltro.NombreEmpleado) && !inputFiltro.FechaIngresoInicio.HasValue && !inputFiltro.FechaIngresoFin.HasValue)
+				{
+					return new JsonResult(resp); // Retorna una respuesta vacía si no se aplicaron filtros
+				}
+
+
+				// Construir la respuesta JSON
+				List<string> jsonAsistencias = new List<string>();
+				foreach (var asis in asistencias)
+				{
+					jsonAsistencias.Add("{" +
+						$"\"Id\": \"{asis.Id}\", " +
+						$"\"NombreEmpleado\": \"{asis.NombreEmpleado}\", " +
+						$"\"FechaHora\": \"{asis.FechaHora}\", " +
+						$"\"Fecha\": \"{asis.Fecha}\", " +
+						$"\"Hora\": \"{asis.Hora}\", " +
+						$"\"Direccion\": \"{asis.Direccion}\", " +
+						$"\"NombreDispositivo\": \"{asis.NombreDispositivo}\", " +
+						$"\"SerialDispositivo\": \"{asis.SerialDispositivo}\" " +
+						"}");
+				}
+
+				string jsonResponse = $"[{String.Join(",", jsonAsistencias)}]";
+				resp.Datos = jsonResponse;
+				resp.TieneError = false;
+				resp.Mensaje = _strLocalizer["AsistenciasFiltradosSuccessfully"];
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+			}
+
+			return new JsonResult(resp);
+		}
+
+
 	}
 }
