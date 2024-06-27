@@ -127,7 +127,7 @@
     <value>Error al eliminar los registros</value>
   </data>
   <data name="RolIsRelated" xml:space="preserve">
-    <value>No se puede eliminar el rol porque existen módulos vinculados. Reasigne el rol de los módulos e inténtelo de nuevo.</value>
+    <value>No se puede eliminar el rol porque existen usuarios vinculados. Reasigne el rol de los usuarios e inténtelo de nuevo.</value>
   </data>
   <data name="RolSavedSuccessfully" xml:space="preserve">
     <value>¡Rol guardado satisfactoriamente!</value>
