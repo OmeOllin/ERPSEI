@@ -3,6 +3,7 @@ using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers.Usuarios;
 using ERPSEI.Requests;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
@@ -17,10 +18,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 	{
 		private readonly IAccesoModuloManager _accesoModuloManager;
 		private readonly IModuloManager _moduloManager;
-		private readonly AppUserManager _usuarioManager;
 		private readonly AppRoleManager _roleManager;
-		private readonly IStringLocalizer<UsuariosModel> _strLocalizer;
-		private readonly ILogger<UsuariosModel> _logger;
+		private readonly IStringLocalizer<RolesModel> _strLocalizer;
+		private readonly ILogger<RolesModel> _logger;
 		private readonly ApplicationDbContext _db;
 
 		[BindProperty]
@@ -31,27 +31,33 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			public string Id { get; set; } = string.Empty;
 
 			[Required(ErrorMessage = "Required")]
-			[Display(Name = "RolField")]
-			public string RolId { get; set; } = string.Empty;
-
-			[Required(ErrorMessage = "Required")]
 			[Display(Name = "FullNameField")]
 			public string NombreRol { get; set; } = string.Empty;
+
+			public ModuloModel?[] Modulos { get; set; } = Array.Empty<ModuloModel>();
+		}
+
+		public class ModuloModel
+		{
+			public int? ModuloId { get; set; }
+			public bool? PuedeTodo { get; set; } = false;
+			public bool? PuedeConsultar { get; set; } = false;
+			public bool? PuedeEditar { get; set; } = false;
+			public bool? PuedeEliminar { get; set; } = false;
+			public bool? PuedeAutorizar { get; set; } = false;
 		}
 
 		public RolesModel(
 			IAccesoModuloManager accesoModuloManager,
 			IModuloManager moduloManager,
-			AppUserManager usuarioManager,
 			AppRoleManager roleManager,
-			IStringLocalizer<UsuariosModel> stringLocalizer,
-			ILogger<UsuariosModel> logger,
+			IStringLocalizer<RolesModel> stringLocalizer,
+			ILogger<RolesModel> logger,
 			ApplicationDbContext db
 		)
 		{ 
 			_accesoModuloManager = accesoModuloManager;
 			_moduloManager = moduloManager;
-			_usuarioManager = usuarioManager;
 			_roleManager = roleManager;
 			_strLocalizer = stringLocalizer;
 			_logger = logger;
@@ -139,15 +145,23 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			}
 			try
 			{
-				await _db.Database.BeginTransactionAsync();
+				//Se busca si ya existe un registro con el mismo nombre.
+				AppRole? rol = await _roleManager.GetByNameAsync(InputRol.NombreRol);
 
-				//Procede a actualizar el usuario.
-				await updateUser(InputRol);
+				//Si ya existe un registro con el mismo nombre y los Id's no coinciden
+				if (rol != null && rol.Id != InputRol.Id)
+				{
+					//Ya existe un elemento con el mismo nombre.
+					resp.Mensaje = _strLocalizer["ErrorExistente"];
+				}
+				else
+				{
+					//Crea o actualiza el registro
+					await createOrUpdateRole(InputRol);
 
-				await _db.Database.CommitTransactionAsync();
-
-				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["SavedSuccessfully"];
+					resp.TieneError = false;
+					resp.Mensaje = _strLocalizer["SavedSuccessfully"];
+				}
 			}
 			catch (Exception ex)
 			{
@@ -157,29 +171,64 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resp);
 		}
-		private async Task updateUser(RolModel e)
+		private async Task createOrUpdateRole(RolModel e)
 		{
-			//Se busca usuario por id
-			AppUser? usuario = await _usuarioManager.FindByIdAsync(e.Id);
-			AppRole? rol = await _roleManager.FindByIdAsync(e.RolId);
+			try
+			{
+				await _db.Database.BeginTransactionAsync();
 
-			//Si se encontró usuario, obtiene su Id del registro existente.
-			if (usuario != null && rol != null) {
-				//Llena los datos del usuario.
-				if (await _usuarioManager.IsInRoleAsync(usuario, ServicesConfiguration.RolAdministrador) && rol.Name != ServicesConfiguration.RolAdministrador)
+				string idRol = "";
+				//Busca el registro por Id
+				AppRole? rol = await _roleManager.GetByIdAsync(e.Id);
+
+				//Si se encontró rol, obtiene su Id del registro existente. De lo contrario, se crea uno nuevo.
+				if (rol != null) { idRol = rol.Id; } else { rol = new AppRole(); }
+
+				rol.Name = e.NombreRol;
+
+				if (idRol.Length >= 1)
 				{
-					await _usuarioManager.RemoveFromRoleAsync(usuario, ServicesConfiguration.RolAdministrador);
-					await _usuarioManager.AddToRoleAsync(usuario, rol.Name ?? ServicesConfiguration.RolUsuario);
-				}
-				else if (await _usuarioManager.IsInRoleAsync(usuario, ServicesConfiguration.RolUsuario) && rol.Name != ServicesConfiguration.RolUsuario)
-				{
-					await _usuarioManager.RemoveFromRoleAsync(usuario, ServicesConfiguration.RolUsuario);
-					await _usuarioManager.AddToRoleAsync(usuario, rol.Name ?? ServicesConfiguration.RolUsuario);
+					//El registro ya existe, por lo que solo se actualiza.
+					await _roleManager.UpdateAsync(rol);
+
+					//Elimina los accesos del rol.
+					await _accesoModuloManager.DeleteByRolIdAsync(idRol);
 				}
 				else
 				{
-					await _usuarioManager.AddToRoleAsync(usuario, rol.Name ?? ServicesConfiguration.RolUsuario);
+					//De lo contrario, crea a la empresa y obtiene su id.
+					IdentityResult result = await _roleManager.CreateAsync(rol);
+					if(result.Succeeded)
+					{
+						idRol = rol?.Id??"";
+					}
 				}
+
+				//Crea los accesos del rol
+				foreach (ModuloModel? acceso in e.Modulos)
+				{
+					if (acceso != null)
+					{
+						await _accesoModuloManager.CreateAsync(
+							new AccesoModulo() { 
+								RolId = idRol,
+								ModuloId = acceso.ModuloId, 
+								PuedeTodo = acceso.PuedeTodo ?? false ? 1 : 0, 
+								PuedeConsultar = acceso.PuedeConsultar ?? false ? 1 : 0, 
+								PuedeEditar = acceso.PuedeEditar ?? false ? 1 : 0, 
+								PuedeEliminar = acceso.PuedeEliminar ?? false ? 1 : 0, 
+								PuedeAutorizar = acceso.PuedeAutorizar ?? false ? 1 : 0 
+							}
+						);
+					}
+				}
+
+				await _db.Database.CommitTransactionAsync();
+			}
+			catch (Exception)
+			{
+				await _db.Database.RollbackTransactionAsync();
+				throw;
 			}
 		}
 	}

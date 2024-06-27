@@ -94,5 +94,12 @@ namespace ERPSEI.Data.Managers.Usuarios
 
 			}
 		}
+
+		public async Task DeleteByRolIdAsync(string id)
+		{
+			List<AccesoModulo> accesos = await db.AccesosModulos.Where(a => a.RolId == id).ToListAsync();
+			if (accesos != null && accesos.Count >= 1) { db.AccesosModulos.RemoveRange(accesos); }
+			await db.SaveChangesAsync();
+		}
 	}
 }

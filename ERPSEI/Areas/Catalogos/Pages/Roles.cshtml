@@ -91,6 +91,7 @@
 								<div class="form-floating mb-3">
 									<input disabled id="inpRolNombre" asp-for="InputRol.NombreRol" type="text" class="form-control formInput" placeholder="@Localizer["NombreRolPlaceholder"]" />
 									<label for="inpRolNombre" asp-for="InputRol.NombreRol" class="form-label"></label>
+									<span asp-validation-for="InputRol.NombreRol" class="text-danger"></span>
 								</div>
 							</div>
 							<div class="col-12">
@@ -130,26 +131,26 @@
 										string idD = $"inpPuedeEliminar{m.NombreNormalizado}";
 										string idE = $"inpPuedeAutorizar{m.NombreNormalizado}";
 										<li class="list-group-item">
-											<div class="row">
+											<div class="row filaModulo">
 												<div class="col-5 border-end text-center align-content-center">
-													<h6 class="m-0">@m.Nombre</h6>
+													<h6 class="m-0 nombreModulo" idModulo="@m.Id" nombreNormalizado="@m.NombreNormalizado">@m.Nombre</h6>
 												</div>
 												<div class="col-1 text-center align-content-center">
-													<input class="form-check-input formInput" type="checkbox" value="" id="@idA">
+													<input class="form-check-input formInput permisoTodo" type="checkbox" value="" id="@idA">
 												</div>
 												<div class="col-1 text-center align-content-center">
-													<input class="form-check-input formInput" type="checkbox" value="" id="@idB">
+													<input class="form-check-input formInput permisoConsultar" type="checkbox" value="" id="@idB">
 												</div>
 												<div class="col-1 text-center align-content-center">
-													<input class="form-check-input formInput" type="checkbox" value="" id="@idC">
+													<input class="form-check-input formInput permisoEditar" type="checkbox" value="" id="@idC">
 												</div>
 												<div class="col-1 text-center align-content-center">
-													<input class="form-check-input formInput" type="checkbox" value="" id="@idD">
+													<input class="form-check-input formInput permisoEliminar" type="checkbox" value="" id="@idD">
 												</div>
 												@if(m.Nombre == "Prefacturas")
 												{
 													<div class="col-1 text-center align-content-center">
-														<input class="form-check-input formInput" type="checkbox" value="" id="@idE">
+														<input class="form-check-input formInput permisoAutorizar" type="checkbox" value="" id="@idE">
 													</div>
 												}
 											</div>

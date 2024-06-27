@@ -31,5 +31,19 @@ namespace ERPSEI.Data.Managers.Usuarios
                 .Include(r => r.Accesos)
                 .ToListAsync();
         }
-    }
+
+        public async Task<AppRole?> GetByNameAsync(string name)
+        {
+            return await _db.Roles
+                .Where(r => r.Name == name)
+                .FirstOrDefaultAsync();
+        }
+
+		public async Task<AppRole?> GetByIdAsync(string id)
+		{
+			return await _db.Roles
+				.Where(r => r.Id == id)
+				.FirstOrDefaultAsync();
+		}
+	}
 }

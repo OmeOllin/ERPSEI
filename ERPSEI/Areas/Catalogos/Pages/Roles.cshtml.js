@@ -160,6 +160,7 @@ function onBuscarClick() {
 ////////////////////////////////
 //Función para inicializar el cuadro de diálogo de los detalles del registro
 function initDetallesDialog(action, row) {
+    let inpRolId = document.getElementById("inpRolId");
     let inpRolNombre = document.getElementById("inpRolNombre");
     let dlgTitle = document.getElementById("dlgDetalleTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
@@ -187,6 +188,7 @@ function initDetallesDialog(action, row) {
             break;
     }
 
+    inpRolId.value = row.id;
     inpRolNombre.value = row.rol;
 
     row.modulos.forEach(function (m) {
@@ -231,16 +233,39 @@ function onGuardarClick() {
     //Si la forma no es válida, entonces finaliza.
     if (!valid) { return; }
 
-    let idField = document.getElementById("inpUsuarioId");
-    let selRolEmpleadoField = document.getElementById("selEmpleadoRol");
+    let idField = document.getElementById("inpRolId");
+    let inpRolNombre = document.getElementById("inpRolNombre");
+    let filasModulos = document.querySelectorAll(".filaModulo");
     let dlgTitle = document.getElementById("dlgDetalleTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
 
     summaryContainer.innerHTML = "";
 
+    let modulos = [];
+
+    filasModulos.forEach(function (row) {
+        let nombreModulo = row.querySelector(".nombreModulo");
+        let permisoTodo = row.querySelector(".permisoTodo");
+        let permisoConsultar = row.querySelector(".permisoConsultar");
+        let permisoEditar = row.querySelector(".permisoEditar");
+        let permisoEliminar = row.querySelector(".permisoEliminar");
+        let permisoAutorizar = row.querySelector(".permisoAutorizar");
+        modulos.push({
+            moduloId: nombreModulo.getAttribute("idModulo"),
+            nombre: nombreModulo.getAttribute("nombreNormalizado"),
+            puedeTodo: permisoTodo.checked,
+            puedeConsultar: permisoConsultar.checked,
+            puedeEditar: permisoEditar.checked,
+            puedeEliminar: permisoEliminar.checked,
+            puedeAutorizar: permisoAutorizar != null ? permisoAutorizar.checked || false : false
+        });
+    });
+
     let oParams = {
-        id: idField.value,
-        rolId: selRolEmpleadoField.value
+        id: idField.value == "Nuevo" ? 0 : idField.value,
+        nombreRol: inpRolNombre.value,
+        modulos: modulos
+        
     };
 
     doAjax(
