@@ -129,14 +129,14 @@
   <data name="ColNameHeader" xml:space="preserve">
     <value>Nombre</value>
   </data>
-  <data name="DeleteAreaDialogQuestion" xml:space="preserve">
-    <value>¿Está seguro que desea eliminar los registros seleccionados?</value>
-  </data>
-  <data name="DeleteAreaDialogTitle" xml:space="preserve">
-    <value>Eliminar rol</value>
-  </data>
   <data name="DeleteButton" xml:space="preserve">
     <value>Eliminar</value>
+  </data>
+  <data name="DeleteRolDialogQuestion" xml:space="preserve">
+    <value>¿Está seguro que desea eliminar los registros seleccionados?</value>
+  </data>
+  <data name="DeleteRolDialogTitle" xml:space="preserve">
+    <value>Eliminar rol</value>
   </data>
   <data name="EditButtonTitle" xml:space="preserve">
     <value>Editar</value>
