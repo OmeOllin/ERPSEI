@@ -1,4 +1,5 @@
 ﻿var table;
+var buttonRemove;
 var selections = [];
 var dlgDetalleModal = null;
 
@@ -10,7 +11,7 @@ const postOptions = { headers: { "RequestVerificationToken": $('input[name="__Re
 //Función para inicializar el módulo.
 document.addEventListener("DOMContentLoaded", function (event) {
     table = $("#table");
-
+    buttonRemove = $("#remove");
     dlgDetalleModal = new bootstrap.Modal(document.getElementById('dlgDetalle'), null);
 
     initTable();
@@ -112,6 +113,7 @@ function initTable() {
     table.on('check.bs.table uncheck.bs.table ' +
         'check-all.bs.table uncheck-all.bs.table',
         function () {
+            buttonRemove.prop('disabled', !table.bootstrapTable('getSelections').length);
             // save your data, here just save the current page
             selections = getIdSelections()
             // push or splice the selections if you want to save all data selections
@@ -119,6 +121,46 @@ function initTable() {
     );
     table.on('all.bs.table', function (e, name, args) {
         console.log(name, args)
+    });
+    buttonRemove.click(function () { onDeleteRolClick(selections); });
+}
+//Función para capturar el click de los botones para dar de baja roles. Ejecuta una llamada ajax para dar de baja roles.
+function onDeleteRolClick(ids = null) {
+    askConfirmation(dlgDeleteTitle, dlgDeleteQuestion, function () {
+        let oParams = {};
+
+        if (ids != null) { oParams.ids = ids; }
+        else { oParams.ids = [document.getElementById("inpRolId").value]; }
+
+        doAjax(
+            "/Catalogos/Roles/DeleteRoles",
+            oParams,
+            function (resp) {
+                if (resp.tieneError) {
+                    showError(dlgDeleteTitle, resp.mensaje);
+                    return;
+                }
+
+                table.bootstrapTable('remove', {
+                    field: 'id',
+                    values: oParams.ids
+                });
+
+                if (ids != null) {
+                    ids = [];
+                    selections = null;
+                    buttonRemove.prop('disabled', true);
+                }
+
+                onBuscarClick();
+
+                showSuccess(dlgDeleteTitle, resp.mensaje);
+            }, function (error) {
+                showError(dlgDeleteTitle, error);
+            },
+            postOptions
+        );
+
     });
 }
 ////////////////////////////////
