@@ -69,11 +69,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		private async Task<string> getLista()
 		{
 			string jsonResponse;
-			List<string> jsonModulos = new List<string>();
 			List<string> jsonResultados = new List<string>();
+			List<Modulo> modulos = await _moduloManager.GetAllAsync();
 
 			foreach (AppRole r in _roleManager.Roles)
 			{
+				//Se obtiene un listado de accesos del rol.
+				List<AccesoModulo> accesosRol = await _accesoModuloManager.GetByRolIdAsync(r.Id);
+				List<string> jsonModulos = new List<string>();
 				switch (r.Name)
 				{
 					case ServicesConfiguration.RolMaster:
@@ -82,12 +85,12 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						//Los roles default no serán mostrados.
 						break;
 					default:
-						foreach (Modulo m in await _moduloManager.GetAllAsync())
+						foreach (Modulo m in modulos)
 						{
-							List<AccesoModulo> accesosRol = await _accesoModuloManager.GetByRolIdAsync(r.Id);
 							AccesoModulo? acceso = accesosRol.Where(a => a.Modulo?.NombreNormalizado == m.NombreNormalizado).FirstOrDefault();
 							jsonModulos.Add(
 								"{" +
+									$"\"id\": \"{m.Id}\"," +
 									$"\"nombre\": \"{m.NombreNormalizado}\"," +
 									$"\"puedeTodo\": \"{acceso?.PuedeTodo == 1}\"," +
 									$"\"puedeConsultar\": \"{acceso?.PuedeConsultar == 1}\"," +
@@ -136,7 +139,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		
 		public async Task<JsonResult> OnPostSave()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["SavedUnsuccessfully"]);
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["RolSavedUnsuccessfully"]);
 
 			if (!ModelState.IsValid)
 			{
@@ -152,7 +155,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				if (rol != null && rol.Id != InputRol.Id)
 				{
 					//Ya existe un elemento con el mismo nombre.
-					resp.Mensaje = _strLocalizer["ErrorExistente"];
+					resp.Mensaje = _strLocalizer["ErrorRolExistente"];
 				}
 				else
 				{
@@ -160,7 +163,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					await createOrUpdateRole(InputRol);
 
 					resp.TieneError = false;
-					resp.Mensaje = _strLocalizer["SavedSuccessfully"];
+					resp.Mensaje = _strLocalizer["RolSavedSuccessfully"];
 				}
 			}
 			catch (Exception ex)
