@@ -120,6 +120,12 @@
   <data name="ErrorRolExistente" xml:space="preserve">
     <value>There is already a registered role with the same name. Please use another name for the new role.</value>
   </data>
+  <data name="FiltroSuccessfully" xml:space="preserve">
+    <value>Data successfully retrieved!</value>
+  </data>
+  <data name="FiltroUnsuccessfully" xml:space="preserve">
+    <value>Error filtering roles</value>
+  </data>
   <data name="RolDeletedSuccessfully" xml:space="preserve">
     <value>Records deleted succesfully!</value>
   </data>
