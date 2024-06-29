@@ -163,6 +163,11 @@ function initDetallesDialog(action, row) {
     let inpRolId = document.getElementById("inpRolId");
     let inpRolNombre = document.getElementById("inpRolNombre");
     let dlgTitle = document.getElementById("dlgDetalleTitle");
+    let inpPuedeTodoTodos = document.getElementById("inpPuedeTodoTodos");
+    let inpPuedeConsultarTodos = document.getElementById("inpPuedeConsultarTodos");
+    let inpPuedeEditarTodos = document.getElementById("inpPuedeEditarTodos");
+    let inpPuedeEliminarTodos = document.getElementById("inpPuedeEliminarTodos");
+    let inpPuedeAutorizarTodos = document.getElementById("inpPuedeAutorizarTodos");
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 
@@ -190,6 +195,11 @@ function initDetallesDialog(action, row) {
 
     inpRolId.value = row.id;
     inpRolNombre.value = row.rol;
+    inpPuedeTodoTodos.checked = false;
+    inpPuedeConsultarTodos.checked = false;
+    inpPuedeEditarTodos.checked = false;
+    inpPuedeEliminarTodos.checked = false;
+    inpPuedeAutorizarTodos.checked = false;
 
     row.modulos.forEach(function (m) {
         let inpPuedeTodo = document.getElementById(`inpPuedeTodo${m.nombre}`);
@@ -203,9 +213,14 @@ function initDetallesDialog(action, row) {
         inpPuedeEditar.checked = (m.puedeEditar || "False") == "True";
         inpPuedeEliminar.checked = (m.puedeEliminar || "False") == "True";
         if (inpPuedeAutorizar) { inpPuedeAutorizar.checked = (m.puedeAutorizar || "False") == "True"; }
+
+        if (inpPuedeAutorizar && inpPuedeAutorizar.checked) { onModuloPuedeAutorizarClick(m.id); }
+        if (inpPuedeEliminar && inpPuedeEliminar.checked) { onModuloPuedeEliminarClick(m.id); }
+        if (inpPuedeEditar && inpPuedeEditar.checked) { onModuloPuedeEditarClick(m.id); }
+        if (inpPuedeConsultar && inpPuedeConsultar.checked) { onModuloPuedeConsultarClick(m.id); }
+
+        /*onModuloPuedeTodoClick(m.id, false);*/
     });
-
-
 
     dlgDetalleModal.toggle();
 }
@@ -297,4 +312,163 @@ function onGuardarClick() {
         postOptions
     );
 }
+
+//Función para checar/deschecar todos los permisos de "todo" en todos los módulos
+function onPuedeTodoTodosClick() {
+    let inpPuedeTodoTodos = document.getElementById("inpPuedeTodoTodos");
+    let inpPuedeConsultarTodos = document.getElementById("inpPuedeConsultarTodos");
+    let inpPuedeEditarTodos = document.getElementById("inpPuedeEditarTodos");
+    let inpPuedeEliminarTodos = document.getElementById("inpPuedeEliminarTodos");
+    let inpPuedeAutorizarTodos = document.getElementById("inpPuedeAutorizarTodos");
+
+    inpPuedeConsultarTodos.checked = inpPuedeTodoTodos.checked;
+    inpPuedeEditarTodos.checked = inpPuedeTodoTodos.checked;
+    inpPuedeEliminarTodos.checked = inpPuedeTodoTodos.checked;
+    inpPuedeAutorizarTodos.checked = inpPuedeTodoTodos.checked;
+
+    let filasModulos = document.querySelectorAll(".filaModulo");
+    filasModulos.forEach(function (row) {
+        let permisoTodo = row.querySelector(".permisoTodo");
+        if (permisoTodo) {
+            permisoTodo.checked = inpPuedeTodoTodos.checked;
+            onModuloPuedeTodoClick(permisoTodo.getAttribute("idModulo"), false);
+        }
+    });
+}
+//Función para checar/deschecar todos los permisos de "consultar" en todos los módulos
+function onPuedeConsultarTodosClick() {
+    let inpPuedeConsultarTodos = document.getElementById("inpPuedeConsultarTodos");
+    let filasModulos = document.querySelectorAll(".filaModulo");
+    filasModulos.forEach(function (row) {
+        let permisoConsultar = row.querySelector(".permisoConsultar");
+        if (permisoConsultar) {
+            permisoConsultar.checked = inpPuedeConsultarTodos.checked;
+            verificarPermisosModulo(permisoConsultar.getAttribute("idModulo"));
+        }
+    });
+}
+//Función para checar/deschecar todos los permisos de "editar" en todos los módulos
+function onPuedeEditarTodosClick() {
+    let inpPuedeEditarTodos = document.getElementById("inpPuedeEditarTodos");
+    let filasModulos = document.querySelectorAll(".filaModulo");
+    filasModulos.forEach(function (row) {
+        let permisoEditar = row.querySelector(".permisoEditar");
+        if (permisoEditar) {
+            permisoEditar.checked = inpPuedeEditarTodos.checked;
+            verificarPermisosModulo(permisoEditar.getAttribute("idModulo"));
+        }
+    });
+}
+//Función para checar/deschecar todos los permisos de "elimiar" en todos los módulos
+function onPuedeEliminarTodosClick() {
+    let inpPuedeEliminarTodos = document.getElementById("inpPuedeEliminarTodos");
+    let filasModulos = document.querySelectorAll(".filaModulo");
+    filasModulos.forEach(function (row) {
+        let permisoEliminar = row.querySelector(".permisoEliminar");
+        if (permisoEliminar) {
+            permisoEliminar.checked = inpPuedeEliminarTodos.checked;
+            verificarPermisosModulo(permisoEliminar.getAttribute("idModulo"));
+        }
+    });
+}
+//Función para checar/deschecar todos los permisos de "autorizar" en todos los módulos
+function onPuedeAutorizarTodosClick() {
+    let inpPuedeAutorizarTodos = document.getElementById("inpPuedeAutorizarTodos");
+    let filasModulos = document.querySelectorAll(".filaModulo");
+    filasModulos.forEach(function (row) {
+        let permisoAutorizar = row.querySelector(".permisoAutorizar");
+        if (permisoAutorizar) {
+            permisoAutorizar.checked = inpPuedeAutorizarTodos.checked;
+            verificarPermisosModulo(permisoAutorizar.getAttribute("idModulo"));
+        }
+    });
+}
+
+//Función para checar/deschecar todos los permisos de "todo" en un solo módulo
+function onModuloPuedeTodoClick(idModulo, triggeredByUser) {
+    let permisoTodo = document.querySelector(`.permisoTodo[idModulo='${idModulo}']`);
+    let permisoConsultar = document.querySelector(`.permisoConsultar[idModulo='${idModulo}']`);
+    let permisoEditar = document.querySelector(`.permisoEditar[idModulo='${idModulo}']`);
+    let permisoEliminar = document.querySelector(`.permisoEliminar[idModulo='${idModulo}']`);
+    let permisoAutorizar = document.querySelector(`.permisoAutorizar[idModulo='${idModulo}']`);
+
+    if (permisoConsultar) { permisoConsultar.checked = permisoTodo.checked; }
+    if (permisoEditar) { permisoEditar.checked = permisoTodo.checked; }
+    if (permisoEliminar) { permisoEliminar.checked = permisoTodo.checked; }
+    if (permisoAutorizar) { permisoAutorizar.checked = permisoTodo.checked; }
+
+    if (triggeredByUser) {
+        let inputsTodo = document.querySelectorAll(`.permisoTodo`);
+        let inpPuedeTodoTodos = document.getElementById("inpPuedeTodoTodos");
+        let inputsTodoChecados = document.querySelectorAll(`.permisoTodo:checked`);
+
+        inpPuedeTodoTodos.checked = inputsTodo.length === inputsTodoChecados.length;
+        onModuloPuedeConsultarClick(idModulo);
+        onModuloPuedeEditarClick(idModulo);
+        onModuloPuedeEliminarClick(idModulo);
+        onModuloPuedeAutorizarClick(idModulo);
+    }
+}
+//Función para checar/deschecar el permiso de "Consultar" en un solo módulo
+function onModuloPuedeConsultarClick(idModulo) {
+    let inputsConsultar = document.querySelectorAll(`.permisoConsultar`);
+    let inpPuedeConsultarTodos = document.getElementById("inpPuedeConsultarTodos");
+    let inputsConsultarChecados = document.querySelectorAll(`.permisoConsultar:checked`);
+
+    inpPuedeConsultarTodos.checked = inputsConsultar.length === inputsConsultarChecados.length;
+
+    verificarPermisosModulo(idModulo);
+}
+//Función para checar/deschecar el permiso de "Editar" en un solo módulo
+function onModuloPuedeEditarClick(idModulo) {
+    let inputsEditar = document.querySelectorAll(`.permisoEditar`);
+    let inpPuedeEditarTodos = document.getElementById("inpPuedeEditarTodos");
+    let inputsEditarChecados = document.querySelectorAll(`.permisoEditar:checked`);
+
+    inpPuedeEditarTodos.checked = inputsEditar.length === inputsEditarChecados.length;
+
+    verificarPermisosModulo(idModulo);
+}
+//Función para checar/deschecar el permiso de "Eliminar" en un solo módulo
+function onModuloPuedeEliminarClick(idModulo) {
+    let inputsEliminar = document.querySelectorAll(`.permisoEliminar`);
+    let inpPuedeEliminarTodos = document.getElementById("inpPuedeEliminarTodos");
+    let inputsEliminarChecados = document.querySelectorAll(`.permisoEliminar:checked`);
+
+    inpPuedeEliminarTodos.checked = inputsEliminar.length === inputsEliminarChecados.length;
+
+    verificarPermisosModulo(idModulo);
+}
+//Función para checar/deschecar el permiso de "Autorizar" en un solo módulo
+function onModuloPuedeAutorizarClick(idModulo) {
+    let inputsAutorizar = document.querySelectorAll(`.permisoAutorizar`);
+    let inpPuedeAutorizarTodos = document.getElementById("inpPuedeAutorizarTodos");
+    let inputsAutorizarChecados = document.querySelectorAll(`.permisoAutorizar:checked`);
+
+    inpPuedeAutorizarTodos.checked = inputsAutorizar.length === inputsAutorizarChecados.length;
+
+    verificarPermisosModulo(idModulo);
+}
+
+function verificarPermisosModulo(idModulo) {
+    let permisoTodo = document.querySelector(`.permisoTodo[idModulo='${idModulo}']`);
+    let permisoConsultar = document.querySelector(`.permisoConsultar[idModulo='${idModulo}']`);
+    let permisoEditar = document.querySelector(`.permisoEditar[idModulo='${idModulo}']`);
+    let permisoEliminar = document.querySelector(`.permisoEliminar[idModulo='${idModulo}']`);
+    let permisoAutorizar = document.querySelector(`.permisoAutorizar[idModulo='${idModulo}']`);
+
+    let puedeConsultar = permisoConsultar ? (permisoConsultar.checked) : true;
+    let puedeEditar = permisoEditar ? (permisoEditar.checked) : true;
+    let puedeEliminar = permisoEliminar ? (permisoEliminar.checked) : true;
+    let puedeAutorizar = permisoAutorizar ? (permisoAutorizar.checked) : true;
+
+    permisoTodo.checked = puedeConsultar && puedeEditar && puedeEliminar && puedeAutorizar;
+
+    let inputsTodo = document.querySelectorAll(`.permisoTodo`);
+    let inpPuedeTodoTodos = document.getElementById("inpPuedeTodoTodos");
+    let inputsTodoChecados = document.querySelectorAll(`.permisoTodo:checked`);
+
+    inpPuedeTodoTodos.checked = inputsTodo.length === inputsTodoChecados.length;
+}
+
 ////////////////////////////////
