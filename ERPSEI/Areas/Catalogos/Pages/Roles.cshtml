@@ -103,23 +103,23 @@
 											</div>
 											<div class="col-1 text-center align-content-center">
 												<i class="bi bi-asterisk d-block p-0 btn"></i>
-												<input class="form-check-input formInput" type="checkbox" value="" id="inpPuedeTodoTodos">
+												<input class="form-check-input formInput" type="checkbox" value="" id="inpPuedeTodoTodos" onclick="onPuedeTodoTodosClick();">
 											</div>
 											<div class="col-1 text-center align-content-center">
 												<i class="bi bi-search d-block p-0 btn"></i>
-												<input class="form-check-input formInput" type="checkbox" value="" id="inpPuedeConsultarTodos">
+												<input class="form-check-input formInput" type="checkbox" value="" id="inpPuedeConsultarTodos" onclick="onPuedeConsultarTodosClick();">
 											</div>
 											<div class="col-1 text-center align-content-center">
 												<i class="bi bi-pencil d-block p-0 btn"></i>
-												<input class="form-check-input formInput" type="checkbox" value="" id="inpPuedeEditarTodos">
+												<input class="form-check-input formInput" type="checkbox" value="" id="inpPuedeEditarTodos" onclick="onPuedeEditarTodosClick();">
 											</div>
 											<div class="col-1 text-center align-content-center">
 												<i class="bi bi-x-lg d-block p-0 btn"></i>
-												<input class="form-check-input formInput" type="checkbox" value="" id="inpPuedeEliminarTodos">
+												<input class="form-check-input formInput" type="checkbox" value="" id="inpPuedeEliminarTodos" onclick="onPuedeEliminarTodosClick();">
 											</div>
 											<div class="col-1 text-center align-content-center">
 												<i class="bi bi-check-circle d-block p-0 btn"></i>
-												<input class="form-check-input formInput" type="checkbox" value="" id="inpPuedeAutorizarTodos">
+												<input class="form-check-input formInput" type="checkbox" value="" id="inpPuedeAutorizarTodos" onclick="onPuedeAutorizarTodosClick();">
 											</div>
 										</div>
 									</li>
@@ -136,21 +136,21 @@
 													<h6 class="m-0 nombreModulo" idModulo="@m.Id" nombreNormalizado="@m.NombreNormalizado">@m.Nombre</h6>
 												</div>
 												<div class="col-1 text-center align-content-center">
-													<input class="form-check-input formInput permisoTodo" type="checkbox" value="" id="@idA">
+													<input idModulo="@m.Id" class="form-check-input formInput permisoTodo" type="checkbox" value="" id="@idA" onclick="onModuloPuedeTodoClick('@m.Id', true)">
 												</div>
 												<div class="col-1 text-center align-content-center">
-													<input class="form-check-input formInput permisoConsultar" type="checkbox" value="" id="@idB">
+													<input idModulo="@m.Id" class="form-check-input formInput permisoConsultar" type="checkbox" value="" id="@idB" onclick="onModuloPuedeConsultarClick('@m.Id')">
 												</div>
 												<div class="col-1 text-center align-content-center">
-													<input class="form-check-input formInput permisoEditar" type="checkbox" value="" id="@idC">
+													<input idModulo="@m.Id" class="form-check-input formInput permisoEditar" type="checkbox" value="" id="@idC" onclick="onModuloPuedeEditarClick('@m.Id')">
 												</div>
 												<div class="col-1 text-center align-content-center">
-													<input class="form-check-input formInput permisoEliminar" type="checkbox" value="" id="@idD">
+													<input idModulo="@m.Id" class="form-check-input formInput permisoEliminar" type="checkbox" value="" id="@idD" onclick="onModuloPuedeEliminarClick('@m.Id')">
 												</div>
 												@if(m.Nombre == "Prefacturas")
 												{
 													<div class="col-1 text-center align-content-center">
-														<input class="form-check-input formInput permisoAutorizar" type="checkbox" value="" id="@idE">
+														<input idModulo="@m.Id" class="form-check-input formInput permisoAutorizar" type="checkbox" value="" id="@idE" onclick="onModuloPuedeAutorizarClick('@m.Id')">
 													</div>
 												}
 											</div>
