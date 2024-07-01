@@ -17,6 +17,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
     public class RolesModel : PageModel
 	{
 		private readonly IAccesoModuloManager _accesoModuloManager;
+		private readonly AppUserManager _userManager;
 		private readonly IModuloManager _moduloManager;
 		private readonly AppRoleManager _roleManager;
 		private readonly IStringLocalizer<RolesModel> _strLocalizer;
@@ -49,6 +50,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public RolesModel(
 			IAccesoModuloManager accesoModuloManager,
+			AppUserManager userManager,
 			IModuloManager moduloManager,
 			AppRoleManager roleManager,
 			IStringLocalizer<RolesModel> stringLocalizer,
@@ -57,6 +59,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		)
 		{ 
 			_accesoModuloManager = accesoModuloManager;
+			_userManager = userManager;
 			_moduloManager = moduloManager;
 			_roleManager = roleManager;
 			_strLocalizer = stringLocalizer;
@@ -136,7 +139,57 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resp);
 		}
-		
+
+		public async Task<JsonResult> OnPostDeleteRoles(string[] ids)
+		{
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["RolDeletedUnsuccessfully"]);
+			try
+			{
+				await _db.Database.BeginTransactionAsync();
+
+				foreach (string id in ids)
+				{
+					//Se obtiene el rol que se está intentando dar de baja
+					AppRole? rol = await _roleManager.GetByIdAsync(id);
+					//Se filtran todos los usuarios para obtener los que tienen asignado el rol que se intenta dar de baja
+					IList<AppUser> users = await _userManager.GetUsersInRoleAsync(rol?.Name??string.Empty);
+					//Se filtran todos los usuarios para obtener los que no están dados de baja
+					List<AppUser> usuariosActivosRelacionados = users.Where(u => !u.IsBanned).ToList();
+					//Si existen usuarios que tengan el rol asignado, se le notifica al usuario.
+					if (usuariosActivosRelacionados.Count() > 0)
+					{
+						List<string> names = new List<string>();
+						foreach (AppUser u in usuariosActivosRelacionados) { names.Add($"<i>{u.UserName}</i>"); }
+						resp.TieneError = true;
+						resp.Mensaje = $"{_strLocalizer["RolIsRelated"]}<br/><br/><i>{rol?.Name}</i><br/><br/>{string.Join("<br/>", names)}";
+						break;
+					}
+					else
+					{
+						//Procede a eliminar los accesos a módulos que se le hayan asignado al rol.
+						await _accesoModuloManager.DeleteByRolIdAsync(rol?.Id??string.Empty);
+
+						//En caso de no haber usuarios con el rol, procede a eliminar registro.
+						if (rol != null) { await _roleManager.DeleteAsync(rol); }
+
+						resp.TieneError = false;
+						resp.Mensaje = _strLocalizer["RolDeletedSuccessfully"];
+					}
+				}
+
+				if (resp.TieneError) { throw new Exception(resp.Mensaje); }
+
+				await _db.Database.CommitTransactionAsync();
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+				await _db.Database.RollbackTransactionAsync();
+			}
+
+			return new JsonResult(resp);
+		}
+
 		public async Task<JsonResult> OnPostSave()
 		{
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["RolSavedUnsuccessfully"]);
