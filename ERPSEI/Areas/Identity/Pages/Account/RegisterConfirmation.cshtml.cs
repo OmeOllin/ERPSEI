@@ -2,15 +2,14 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
+using ERPSEI.Data.Managers.Usuarios;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
+using ERPSEI.Email;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using System.Text;
 using Microsoft.Extensions.Localization;
-using ERPSEI.Data.Managers.Usuarios;
+using System.Text;
 
 namespace ERPSEI.Areas.Identity.Pages.Account
 {

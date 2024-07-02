@@ -3,7 +3,6 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
@@ -13,6 +12,7 @@ using System.Text.Encodings.Web;
 using Microsoft.Extensions.Localization;
 using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers.Usuarios;
+using ERPSEI.Email;
 
 namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 {
