@@ -10,6 +10,8 @@
 
         public int Deshabilitado { get; set; }
 
+        public string Categoria { get; set; } = string.Empty;
+
         public ICollection<AccesoModulo> Accesos { get; set; } = new List<AccesoModulo>();
     }
 }

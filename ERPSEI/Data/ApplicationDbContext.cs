@@ -309,23 +309,23 @@ namespace ERPSEI.Data
 
 			b.Entity<Modulo>()
 				.HasData(
-					new Modulo() { Id = 1, Nombre = "Gestión de Talento", NombreNormalizado = "gestiondetalento", Deshabilitado = 0 },
-					new Modulo() { Id = 2, Nombre = "Usuarios", NombreNormalizado = "usuarios", Deshabilitado = 0 },
-					new Modulo() { Id = 3, Nombre = "Puestos", NombreNormalizado = "puestos", Deshabilitado = 0 },
-					new Modulo() { Id = 4, Nombre = "Áreas", NombreNormalizado = "areas", Deshabilitado = 0 },
-					new Modulo() { Id = 5, Nombre = "Subareas", NombreNormalizado = "subareas", Deshabilitado = 0 },
-					new Modulo() { Id = 6, Nombre = "Oficinas", NombreNormalizado = "oficinas", Deshabilitado = 0 },
-					new Modulo() { Id = 7, Nombre = "Empresas", NombreNormalizado = "empresas", Deshabilitado = 0 },
-					new Modulo() { Id = 8, Nombre = "Orígenes", NombreNormalizado = "origenes", Deshabilitado = 0 },
-					new Modulo() { Id = 9, Nombre = "Niveles", NombreNormalizado = "niveles", Deshabilitado = 0 },
-					new Modulo() { Id = 10, Nombre = "Perfiles", NombreNormalizado = "perfiles", Deshabilitado = 0 },
-					new Modulo() { Id = 11, Nombre = "Vacaciones", NombreNormalizado = "vacaciones", Deshabilitado = 0 },
-					new Modulo() { Id = 12, Nombre = "Incapacidades", NombreNormalizado = "incapacidades", Deshabilitado = 0 },
-					new Modulo() { Id = 13, Nombre = "Permisos", NombreNormalizado = "permisos", Deshabilitado = 0 },
-					new Modulo() { Id = 14, Nombre = "Prefacturas", NombreNormalizado = "prefacturas", Deshabilitado = 0 },
-					new Modulo() { Id = 15, Nombre = "Organigrama", NombreNormalizado = "organigrama", Deshabilitado = 0 },
-					new Modulo() { Id = 16, Nombre = "Asistencia", NombreNormalizado = "asistencia", Deshabilitado = 0 },
-					new Modulo() { Id = 17, Nombre = "Roles", NombreNormalizado = "roles", Deshabilitado = 0 }
+					new Modulo() { Id = 1, Nombre = "Gestión de Talento", NombreNormalizado = "gestiondetalento", Deshabilitado = 0, Categoria = "catalogo" },
+					new Modulo() { Id = 2, Nombre = "Usuarios", NombreNormalizado = "usuarios", Deshabilitado = 0, Categoria = "catalogo" },
+					new Modulo() { Id = 3, Nombre = "Puestos", NombreNormalizado = "puestos", Deshabilitado = 0, Categoria = "catalogo" },
+					new Modulo() { Id = 4, Nombre = "Áreas", NombreNormalizado = "areas", Deshabilitado = 0, Categoria = "catalogo" },
+					new Modulo() { Id = 5, Nombre = "Subareas", NombreNormalizado = "subareas", Deshabilitado = 0, Categoria = "catalogo" },
+					new Modulo() { Id = 6, Nombre = "Oficinas", NombreNormalizado = "oficinas", Deshabilitado = 0, Categoria = "catalogo" },
+					new Modulo() { Id = 7, Nombre = "Empresas", NombreNormalizado = "empresas", Deshabilitado = 0, Categoria = "catalogo" },
+					new Modulo() { Id = 8, Nombre = "Orígenes", NombreNormalizado = "origenes", Deshabilitado = 0, Categoria = "catalogo" },
+					new Modulo() { Id = 9, Nombre = "Niveles", NombreNormalizado = "niveles", Deshabilitado = 0, Categoria = "catalogo" },
+					new Modulo() { Id = 10, Nombre = "Perfiles", NombreNormalizado = "perfiles", Deshabilitado = 0, Categoria = "catalogo" },
+					new Modulo() { Id = 11, Nombre = "Vacaciones", NombreNormalizado = "vacaciones", Deshabilitado = 0, Categoria = "erp" },
+					new Modulo() { Id = 12, Nombre = "Incapacidades", NombreNormalizado = "incapacidades", Deshabilitado = 0, Categoria = "erp" },
+					new Modulo() { Id = 13, Nombre = "Permisos", NombreNormalizado = "permisos", Deshabilitado = 0, Categoria = "erp" },
+					new Modulo() { Id = 14, Nombre = "Prefacturas", NombreNormalizado = "prefacturas", Deshabilitado = 0, Categoria = "erp" },
+					new Modulo() { Id = 15, Nombre = "Organigrama", NombreNormalizado = "organigrama", Deshabilitado = 0, Categoria = "reporte" },
+					new Modulo() { Id = 16, Nombre = "Asistencia", NombreNormalizado = "asistencia", Deshabilitado = 0, Categoria = "reporte" },
+					new Modulo() { Id = 17, Nombre = "Roles", NombreNormalizado = "roles", Deshabilitado = 0, Categoria = "catalogo" }
 				);
 		}
 	}
