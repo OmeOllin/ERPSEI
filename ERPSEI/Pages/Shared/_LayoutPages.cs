@@ -35,11 +35,14 @@ namespace ERPSEI.Pages.Shared
 		public static string CatalogoUsuarios => "Usuarios";
 		public static string CatalogoUsuariosNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoUsuarios);
 
-		#endregion
+        public static string CatalogoRoles => "Roles";
+        public static string CatalogoRolesNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoRoles);
 
-		#region Operaciones Empresas
+        #endregion
 
-		public static string CatalogoEmpresas => "Empresas";
+        #region Operaciones Empresas
+
+        public static string CatalogoEmpresas => "Empresas";
         public static string CatalogoEmpresasNavClass(ViewContext viewContext) => PageNavClass(viewContext, CatalogoEmpresas);
 
         public static string CatalogoOrigenes => "Origenes";

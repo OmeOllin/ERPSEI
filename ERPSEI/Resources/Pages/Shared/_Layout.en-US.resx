@@ -183,6 +183,9 @@
   <data name="RightFooter" xml:space="preserve">
     <value>Images by &lt;a href="https://www.freepik.com/author/stories"&gt;storyset&lt;/a&gt; on Freepik.com</value>
   </data>
+  <data name="RolesCatalogMenu" xml:space="preserve">
+    <value>Roles</value>
+  </data>
   <data name="SubareasCatalogMenu" xml:space="preserve">
     <value>Subareas</value>
   </data>
