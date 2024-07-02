@@ -21,13 +21,13 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
         private readonly AppUserManager _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IEmailSender _emailSender;
-        private readonly IStringLocalizer<AppUser> _localizer;   
+        private readonly IStringLocalizer<EmailModel> _localizer;   
 
         public EmailModel(
             AppUserManager userManager,
             SignInManager<AppUser> signInManager,
             IEmailSender emailSender,
-            IStringLocalizer<AppUser> stringLocalizer)
+            IStringLocalizer<EmailModel> stringLocalizer)
         {
             _userManager = userManager;
             _signInManager = signInManager;
