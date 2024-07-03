@@ -131,8 +131,8 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                     values: new { area = "Identity", userId = userId, email = Input.NewEmail, code = code },
                     protocol: Request.Scheme);
 
-                string emailBody = $"{_localizer["EmailBodyFP"]} {_localizer["EmailBodySP"]} {HtmlEncoder.Default.Encode(callbackUrl)}";
-                await _emailSender.SendEmailAsync(Input.NewEmail, _localizer["EmailSubject"], emailBody);
+                string emailBody = $"{_localizer["EmailBodyFP"]} <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>{_localizer["EmailBodySP"]}</a>";
+                _emailSender.SendEmailAsync(Input.NewEmail, _localizer["EmailSubject"], emailBody);
 
                 StatusMessage = _localizer["EmailSentSuccessful"];
                 return RedirectToPage();
@@ -165,7 +165,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                 pageHandler: null,
                 values: new { area = "Identity", userId = userId, code = code },
                 protocol: Request.Scheme);
-            await _emailSender.SendEmailAsync(
+            _emailSender.SendEmailAsync(
                 email,
                 _localizer["EmailSubject"],
                 $"{_localizer["EmailBodyFP"]} <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>{_localizer["EmailBodySP"]}</a>.");
