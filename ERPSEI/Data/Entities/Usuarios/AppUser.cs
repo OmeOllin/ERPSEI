@@ -9,6 +9,7 @@ namespace ERPSEI.Data.Entities.Usuarios
         public bool IsBanned { get; set; }
         public bool PasswordResetNeeded { get; set; }
         public bool IsPreregisterAuthorized { get; set; }
+        public bool IsMaster { get; set; }
 
         public int? EmpleadoId { get; set; }
         public Empleado? Empleado { get; set; }
