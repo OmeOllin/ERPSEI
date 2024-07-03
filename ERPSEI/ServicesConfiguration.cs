@@ -31,7 +31,7 @@ namespace ERPSEI
         public static List<AppRole> Roles = new List<AppRole>();
 
         public static string MasterPassword { get; set; } = string.Empty;
-        public static AppUser MasterUser { get; } = new AppUser();
+        public static AppUser MasterUser { get; } = new AppUser() { EmailConfirmed = true, IsPreregisterAuthorized = true, PasswordResetNeeded = false, IsMaster = true };
 
         public static void ConfigureEmail(WebApplicationBuilder _builder)
         {
@@ -44,9 +44,6 @@ namespace ERPSEI
 
             MasterUser.Email = address;
             MasterUser.UserName = address;
-            MasterUser.EmailConfirmed = true;
-            MasterUser.IsPreregisterAuthorized = true;
-            MasterUser.PasswordResetNeeded = false;
 
             _builder.Services.AddTransient<IEmailSender, EmailSender>(x =>
                 new EmailSender(address, password, smtp, port)
