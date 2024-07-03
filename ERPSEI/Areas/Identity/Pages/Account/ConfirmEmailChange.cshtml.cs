@@ -17,12 +17,12 @@ namespace ERPSEI.Areas.Identity.Pages.Account
     {
         private readonly AppUserManager _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        private readonly IStringLocalizer _localizer;
+        private readonly IStringLocalizer<ConfirmEmailChangeModel> _localizer;
 
         public ConfirmEmailChangeModel(
             AppUserManager userManager, 
             SignInManager<AppUser> signInManager,
-            IStringLocalizer stringLocalizer)
+            IStringLocalizer<ConfirmEmailChangeModel> stringLocalizer)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -49,10 +49,20 @@ namespace ERPSEI.Areas.Identity.Pages.Account
                 return NotFound($"{_localizer["UserLoadFails"]} '{userId}'.");
             }
 
+            string previousEmail = user.Email;
+
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             var result = await _userManager.ChangeEmailAsync(user, email, code);
             if (!result.Succeeded)
             {
+                StatusMessage = _localizer["EmailChangeFails"];
+                return Page();
+            }
+
+            result = await _userManager.SetUserNameAsync(user, email);
+            if (!result.Succeeded)
+            {
+                await _userManager.ChangeEmailAsync(user, previousEmail, code);
                 StatusMessage = _localizer["EmailChangeFails"];
                 return Page();
             }
