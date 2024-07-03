@@ -3,6 +3,7 @@ using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers.Usuarios;
 using Microsoft.AspNetCore.Identity;
 using ERPSEI.Email;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -87,8 +88,8 @@ using(IServiceScope scope = app.Services.CreateScope())
 	//Se crea instancia del administrador de usuarios
 	AppUserManager userManager = scope.ServiceProvider.GetRequiredService<AppUserManager>();
 
-	//Si no existe un usuario con el email de master, entonces lo crea
-	if (await userManager.FindByEmailAsync(ServicesConfiguration.MasterUser.Email ?? "") == null)
+	//Si no existe un usuario master, entonces lo crea
+	if (await userManager.Users.Where(u => u.IsMaster).FirstOrDefaultAsync() == null)
 	{
 		//Genera password para usuario master
 		ServicesConfiguration.MasterPassword = userManager.GenerateRandomPassword(10);
