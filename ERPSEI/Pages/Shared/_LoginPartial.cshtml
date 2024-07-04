@@ -4,12 +4,15 @@
 @using ERPSEI.Data.Entities.Empleados;
 @using Microsoft.AspNetCore.Mvc.Localization
 @inject SignInManager<AppUser> SignInManager
-@inject AppUserManager UserManager
+@inject AppUserManager UserManager;
 @inject IViewLocalizer Localizer;
 @inject IEmpleadoManager EmpleadoManager;
 @inject IArchivoEmpleadoManager ArchivoEmpleadoManager;
+@inject AppRoleManager RoleManager;
 @{
+    AppUser? usr = await UserManager.GetUserAsync(User);
     string? profilePic = string.Empty;
+    string? rolesString = string.Empty;
     if (SignInManager.IsSignedIn(User) && !(this.Context.Session.GetString("profilePic") != null && this.Context.Session.GetString("profilePic")?.Length >= 1))
     {
         ProfilePicture? profilePicFile;
@@ -35,8 +38,12 @@
                 profilePic = $"data:image/png;base64,{b64}";
             }
         }
-        
+
         this.Context.Session.SetString("profilePic", profilePic);
+
+        //Obtiene los roles del usuario
+        IList<string> roles = usr != null ? await UserManager.GetRolesAsync(usr) : new List<string>();
+        rolesString = String.Join(", ", roles);
     }
 
     profilePic = (this.Context.Session.GetString("profilePic") != null && this.Context.Session.GetString("profilePic")?.Length >= 1) ? this.Context.Session.GetString("profilePic") : "/img/default_profile_pic.png";
@@ -58,6 +65,7 @@
                                 <p class="list-group-item text-center">
                                     <img id="profilePicContainerB" class="medium-profile-pic" src="@profilePic" />
                                     <span class="mb-3"><b>@User.Identity?.Name</b></span>
+                                    <span class="mb-3">@rolesString</span>
                                 </p>
                                 <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
                                     <i class="bi bi-person-fill"></i> @Localizer["Profile"]
