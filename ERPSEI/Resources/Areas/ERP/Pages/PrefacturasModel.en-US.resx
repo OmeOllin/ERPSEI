@@ -135,4 +135,10 @@
   <data name="PrefacturaSavedUnsuccessfully" xml:space="preserve">
     <value>Error saving prebill</value>
   </data>
+  <data name="PrefacturasExportedSuccessfully" xml:space="preserve">
+    <value>Records exported successfully!</value>
+  </data>
+  <data name="PrefacturasExportedUnsuccessfully" xml:space="preserve">
+    <value>Error exporting records</value>
+  </data>
 </root>

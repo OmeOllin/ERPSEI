@@ -237,6 +237,12 @@
   <data name="EsManual" xml:space="preserve">
     <value>Manual</value>
   </data>
+  <data name="ExportButton" xml:space="preserve">
+    <value>Exportar a Excel</value>
+  </data>
+  <data name="ExportCFDIDialogTitle" xml:space="preserve">
+    <value>Exportar</value>
+  </data>
   <data name="FaltaEmpresaParaComparar" xml:space="preserve">
     <value>La primer empresa parece válida. Por favor, seleccione la otra empresa para validar</value>
   </data>
