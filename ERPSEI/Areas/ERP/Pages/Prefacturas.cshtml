@@ -148,6 +148,10 @@
 	<button id="btnAgregar" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dlgCFDI" onclick="onAgregarClick();">
 		<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
 	</button>
+	<button id="btnExportar" class="btn btn-primary" disabled>
+		<i class="bi bi-file-earmark-spreadsheet"></i> <span class="d-none d-sm-inline">@Localizer["ExportButton"]</span>
+	</button>
+	<a hidden id="downloadFileLink" href="@Url.Page("Prefacturas", "DownloadExcel")" class="btn btn-primary"></a>
 </div>
 <table id="table" class="table-sm"
 	   data-unique-id="id"
@@ -156,7 +160,6 @@
 	   data-show-fullscreen="true"
 	   data-show-columns="true"
 	   data-show-columns-toggle-all="true"
-	   data-show-export="true"
 	   data-click-to-select="true"
 	   data-minimum-count-columns="2"
 	   data-show-pagination-switch="true"
@@ -880,6 +883,7 @@
 		var dlgDeleteElementQuestion = '@Localizer["DeleteElementDialogQuestion"]';
 		var dlgConfirmActionTitle = '@Localizer["ConfirmActionTitle"]';
 		var dlgConfirmActionQuestion = '@Localizer["ConfirmActionQuestion"]';
+		var dlgExportTitle = '@Localizer["ExportCFDIDialogTitle"]';
 
 		var colSerieHeader = '@Localizer["ColSerieHeader"]';
 		var colFolioHeader = '@Localizer["ColFolioHeader"]';

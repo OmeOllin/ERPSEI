@@ -1,5 +1,5 @@
 ﻿var table;
-var buttonRemove;
+var buttonExport;
 var tableProdServ;
 var selections = [];
 var dlgProdServ = null;
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
     numFormatter = new Intl.NumberFormat(cultureName);
 
     table = $("#table");
-    buttonRemove = $("#remove");
+    buttonExport = $("#btnExportar");
     tableProdServ = $("#tableProductosServicios");
     dlgCFDI = document.getElementById('dlgCFDI');
     dlgCFDIModal = new bootstrap.Modal(dlgCFDI, null);
@@ -158,13 +158,44 @@ function onAgregarClick() {
     initCFDIDialog(NUEVO, oCFDINuevo);
     dlgCFDIModal.toggle();
 }
+//Función para exportar cfdis
+function onExportarCFDIClick(ids = null) {
+    let oParams = {};
+
+    if (ids != null) { oParams.ids = ids; }
+    else { oParams.ids = [document.getElementById("inpCFDIId").value]; }  
+
+    doAjax(
+        "/ERP/Prefacturas/ExportExcel",
+        oParams,
+        function (resp) {
+            if (resp.tieneError) {
+                showError(dlgExportTitle, resp.mensaje);
+                return;
+            }
+
+            if (ids != null) {
+                ids = [];
+                selections = null;
+                buttonExport.prop('disabled', true);
+                table.bootstrapTable('uncheckAll');
+            }
+
+            let fileLink = document.getElementById("downloadFileLink");
+            fileLink.click();
+
+            showSuccess(dlgExportTitle, resp.mensaje);
+        }, function (error) {
+            showError(dlgExportTitle, error);
+        },
+        postOptions
+    );
+}
 //Función para inicializar la tabla
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
         height: 550,
         locale: cultureName,
-        exportDataType: 'all',
-        exportTypes: ['excel'],
         columns: [
             {
                 field: "state",
@@ -241,13 +272,13 @@ function initTable() {
         ]
     })
     table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
-        buttonRemove.prop('disabled', !table.bootstrapTable('getSelections').length)
+        buttonExport.prop('disabled', !table.bootstrapTable('getSelections').length)
 
         // save your data, here just save the current page
         selections = getIdSelections()
         // push or splice the selections if you want to save all data selections
     });
-    buttonRemove.click(function () { onDeleteCFDIClick(selections); });
+    buttonExport.click(function () { onExportarCFDIClick(selections); });
 }
 //Función para capturar el click de los botones para dar de baja cfdis. Ejecuta una llamada ajax para dar de baja cfdis.
 function onDeleteCFDIClick(ids = null) {
@@ -274,7 +305,7 @@ function onDeleteCFDIClick(ids = null) {
                 if (ids != null) {
                     ids = [];
                     selections = null;
-                    buttonRemove.prop('disabled', true);
+                    buttonExport.prop('disabled', true);
                 }
 
                 onBuscarClick();

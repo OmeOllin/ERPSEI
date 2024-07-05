@@ -14,6 +14,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using NPOI.HSSF.UserModel;
+using NPOI.SS.UserModel;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.IdentityModel.Tokens;
+using System.Net.Mime;
 
 namespace ERPSEI.Areas.ERP.Pages
 {
@@ -28,6 +33,7 @@ namespace ERPSEI.Areas.ERP.Pages
 		private readonly IEmpresaManager _empresaManager;
 		private readonly IPrefacturaManager _prefacturaManager;
 		private readonly IConceptoManager _conceptoManager;
+		private readonly ITasaOCuotaManager _tasaOCuotaManager;
 		private readonly IStringLocalizer<PrefacturasModel> _strLocalizer;
 		private readonly ILogger<PrefacturasModel> _logger;
 
@@ -186,7 +192,7 @@ namespace ERPSEI.Areas.ERP.Pages
 
 			[Display(Name = "NumeroOperacionField")]
 			[RegularExpression(RegularExpressions.NumericFirstDigitNonZero, ErrorMessage = "Numeric")]
-			public int? NumeroOperacion {  get; set; }
+			public int? NumeroOperacion { get; set; }
 
 			public ConceptoModel?[] Conceptos { get; set; } = Array.Empty<ConceptoModel>();
 		}
@@ -200,10 +206,11 @@ namespace ERPSEI.Areas.ERP.Pages
 			IEmpresaManager empresaManager,
 			IPrefacturaManager prefacturaManager,
 			IConceptoManager conceptoManager,
-            IStringLocalizer<PrefacturasModel> stringLocalizer,
-            ILogger<PrefacturasModel> logger
-        )
-        {
+			ITasaOCuotaManager tasaOCuotaManager,
+			IStringLocalizer<PrefacturasModel> stringLocalizer,
+			ILogger<PrefacturasModel> logger
+		)
+		{
 			_db = db;
 			_userManager = userManager;
 			_perfilManager = perfilManager;
@@ -212,11 +219,12 @@ namespace ERPSEI.Areas.ERP.Pages
 			_empresaManager = empresaManager;
 			_prefacturaManager = prefacturaManager;
 			_conceptoManager = conceptoManager;
-            _strLocalizer = stringLocalizer;
-            _logger = logger;
+			_tasaOCuotaManager = tasaOCuotaManager;
+			_strLocalizer = stringLocalizer;
+			_logger = logger;
 
 			InputFiltro = new FiltroModel();
-            InputEmpresa = new EmpresaModel();
+			InputEmpresa = new EmpresaModel();
 			InputConceptos = new ConceptoModel();
 			InputTraslado = new TrasladoModel();
 			InputRetencion = new RetencionModel();
@@ -284,7 +292,7 @@ namespace ERPSEI.Areas.ERP.Pages
 			string nombreMetodo;
 			string nombreUsoCFDI;
 			string nombreExportacion;
-			
+
 			string jsonResponse;
 			List<string> jsonPrefacturas = new List<string>();
 			List<Prefactura> prefacturas;
@@ -344,9 +352,9 @@ namespace ERPSEI.Areas.ERP.Pages
 						$"\"exportacionId\": {p.ExportacionId}, " +
 						$"\"numeroOperacion\": \"{p.NumeroOperacion}\", " +
 						$"\"usuarioCreadorId\": \"{p.UsuarioCreadorId}\", " +
-                        $"\"usuarioAutorizadorId\": \"{p.UsuarioAutorizadorId}\", " +
-                        $"\"usuarioFinalizadorId\": \"{p.UsuarioFinalizadorId}\", " +
-                        $"\"conceptos\": [] " +
+						$"\"usuarioAutorizadorId\": \"{p.UsuarioAutorizadorId}\", " +
+						$"\"usuarioFinalizadorId\": \"{p.UsuarioFinalizadorId}\", " +
+						$"\"conceptos\": [] " +
 					"}"
 				);
 			}
@@ -369,8 +377,8 @@ namespace ERPSEI.Areas.ERP.Pages
 			if (conceptos != null)
 			{
 				List<Concepto> concepts = (from c in conceptos
-											orderby c.Id ascending
-											select c).ToList();
+										   orderby c.Id ascending
+										   select c).ToList();
 				foreach (Concepto c in concepts)
 				{
 					claveProdServ = c.ProductoServicio != null ? c.ProductoServicio.Clave : string.Empty;
@@ -396,7 +404,7 @@ namespace ERPSEI.Areas.ERP.Pages
 										$"\"descripcion\": \"{c.Descripcion}\", " +
 										$"\"unitario\": {c.PrecioUnitario}, " +
 										$"\"descuento\": {c.Descuento}, " +
-                                        $"\"traslado\": {{\"valor\": {c.Traslado} }}, " +
+										$"\"traslado\": {{\"valor\": {c.Traslado} }}, " +
 										$"\"retencion\": {{\"valor\": {c.Retencion} }}, " +
 										$"\"subtotalCalculado\": {subtotal}, " +
 										$"\"trasladoCalculado\": {traslado}, " +
@@ -408,7 +416,8 @@ namespace ERPSEI.Areas.ERP.Pages
 			return jsonConceptos;
 		}
 
-		public async Task<JsonResult> OnPostSave() {
+		public async Task<JsonResult> OnPostSave()
+		{
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["PrefacturaSavedUnsuccessfully"]);
 
 			if (!ModelState.IsValid)
@@ -496,18 +505,18 @@ namespace ERPSEI.Areas.ERP.Pages
 				}
 				else
 				{
-                    //De lo contrario...
+					//De lo contrario...
 
-                    //Se busca al usuario logeado
-                    AppUser? u = _userManager.FindByNameAsync(User.Identity?.Name ?? "").Result;
+					//Se busca al usuario logeado
+					AppUser? u = _userManager.FindByNameAsync(User.Identity?.Name ?? "").Result;
 
-                    //Se establece al usuario que creó la prefactura.
-                    prefactura.UsuarioCreadorId = u?.Id;
+					//Se establece al usuario que creó la prefactura.
+					prefactura.UsuarioCreadorId = u?.Id;
 					//Se establece el estatus de la prefactura en Creada
 					prefactura.EstatusId = idEstatusCreada;
 
-                    //Crea al empleado y obtiene su id.
-                    idPrefactura = await _prefacturaManager.CreateAsync(prefactura);
+					//Crea al empleado y obtiene su id.
+					idPrefactura = await _prefacturaManager.CreateAsync(prefactura);
 				}
 
 				//Crea los conceptos de la prefactura
@@ -537,9 +546,9 @@ namespace ERPSEI.Areas.ERP.Pages
 							ObjetoImpuestoId = c.ObjetoImpuestoId ?? 0,
 							TasaTraslado = tasaTraslado,
 							TasaRetencion = tasaRetencion,
-                            Traslado = traslado,
-                            Retencion = retencion,
-                            PrefacturaId = idPrefactura
+							Traslado = traslado,
+							Retencion = retencion,
+							PrefacturaId = idPrefactura
 						}
 					);
 				}
@@ -590,7 +599,7 @@ namespace ERPSEI.Areas.ERP.Pages
 					Perfil? perfilEmpresa = perfiles != null && perfiles.Count >= 1 ? perfiles.First() : null;
 
 					List<ProductoServicioPerfil> prodServEmpresa = new List<ProductoServicioPerfil>();
-					if (perfilEmpresa != null) { prodServEmpresa = perfilEmpresa.ProductosServiciosPerfil.ToList();  }
+					if (perfilEmpresa != null) { prodServEmpresa = perfilEmpresa.ProductosServiciosPerfil.ToList(); }
 
 					//Si viene establecido el id empresa, omite el elemento con ese id.
 					if (idempresa >= 1 && e.Id == idempresa) { continue; }
@@ -601,7 +610,7 @@ namespace ERPSEI.Areas.ERP.Pages
 					string serie = e.RFC != null ? e.RFC.Substring(0, 3) : string.Empty;
 					List<Prefactura> prefacturas = await _prefacturaManager.GetAllAsync(null, null, serie, null, null, null, null);
 					prefacturas = prefacturas.OrderByDescending(p => p.Id).ToList();
-					int proximoFolio = 0; 
+					int proximoFolio = 0;
 					int.TryParse(prefacturas.FirstOrDefault()?.Folio, out proximoFolio);
 					proximoFolio += 1;
 
@@ -746,14 +755,14 @@ namespace ERPSEI.Areas.ERP.Pages
 			{
 				foreach (UnidadMedida u in unidades)
 				{
-					if(u.Simbolo.Trim().Length >= 1)
+					if (u.Simbolo.Trim().Length >= 1)
 					{
-                        jsonUnidades.Add($"{{" +
-                                            $"\"id\": {u.Id}, " +
-                                            $"\"value\": \"{u.Clave} - ({u.Simbolo}) {u.Nombre}\", " +
-                                            $"\"label\": \"{u.Clave} - ({u.Simbolo}) {u.Nombre}\"" +
-                                        $"}}");
-                    }
+						jsonUnidades.Add($"{{" +
+											$"\"id\": {u.Id}, " +
+											$"\"value\": \"{u.Clave} - ({u.Simbolo}) {u.Nombre}\", " +
+											$"\"label\": \"{u.Clave} - ({u.Simbolo}) {u.Nombre}\"" +
+										$"}}");
+					}
 					else
 					{
 						jsonUnidades.Add($"{{" +
@@ -768,6 +777,248 @@ namespace ERPSEI.Areas.ERP.Pages
 			jsonResponse = $"[{string.Join(",", jsonUnidades)}]";
 
 			return jsonResponse;
+		}
+
+		public async Task<JsonResult> OnPostExportExcel(string[] ids)
+		{
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["PrefacturasExportedUnsuccessfully"]);
+			try
+			{
+				await _db.Database.BeginTransactionAsync();
+
+				//El llenado de datos comienza en la fila 1 del archivo ya que la fila 0 es el encabezado que se crea junto con el excel.
+				int rowIndex = 1;
+				List<TasaOCuota> impuestos = await _tasaOCuotaManager.GetAllAsync();
+				List<TasaOCuota> impuestosIEPS = impuestos.Where(t => t.ImpuestoId == 3).ToList();
+				List<TasaOCuota> impuestosIVA = impuestos.Where(t => t.ImpuestoId == 2).ToList();
+
+				//Crea el archivo Excel
+				using (HSSFWorkbook wb = await CreateExcel())
+				{
+					//Obtiene la primer hoja del archivo
+					ISheet sheet = wb.GetSheetAt(0);
+					//Crea el estilo de las celdas.
+					HSSFCellStyle cellStyle = (HSSFCellStyle)wb.CreateCellStyle();
+
+					foreach (string id in ids)
+					{
+						int intId = Convert.ToInt32(id);
+						Prefactura? p = await _prefacturaManager.GetByIdAsync(intId);
+						IRow row = sheet.CreateRow(rowIndex);
+
+						if(p != null)
+						{
+							decimal totalIEPS = getTotalIEPS(p.Conceptos, impuestosIEPS);
+							decimal totalIVA = getTotalIVA(p.Conceptos, impuestosIVA);
+
+							//Clave
+							CreateCell(row, 0, p.ReceptorId.ToString(), cellStyle);
+							//Cliente
+							CreateCell(row, 1, p.ReceptorId.ToString(), cellStyle);
+							//Fecha de elaboración
+							CreateCell(row, 2, p.Fecha.ToString("dd/mm/yyyy"), cellStyle);
+							//Su pedido
+							CreateCell(row, 3, string.Empty, cellStyle);
+							//Clave del artículo
+							CreateCell(row, 4, p.Conceptos.First().ProductoServicio?.Clave ??string.Empty, cellStyle);
+							//Cantidad
+							CreateCell(row, 5, p.Conceptos.First().Cantidad.ToString(), cellStyle);
+							//Precio
+							CreateCell(row, 6, p.Conceptos.First().PrecioUnitario.ToString(), cellStyle);
+							//Desc. 1
+							CreateCell(row, 7, string.Empty, cellStyle);
+							//Desc. 2
+							CreateCell(row, 8, string.Empty, cellStyle);
+							//Desc. 3
+							CreateCell(row, 9, string.Empty, cellStyle);
+							//Clave de vendedor
+							CreateCell(row, 10, string.Empty, cellStyle);
+							//Comisión
+							CreateCell(row, 11, string.Empty, cellStyle);
+							//Clave de esquema de impuestos
+							CreateCell(row, 12, string.Empty, cellStyle);
+							//I.E.P.S.
+							CreateCell(row, 13, totalIEPS.ToString(), cellStyle);
+							//Impuesto 2
+							CreateCell(row, 14, string.Empty, cellStyle);
+							//Impuesto 3
+							CreateCell(row, 15, string.Empty, cellStyle);
+							//I.V.A.
+							CreateCell(row, 16, totalIVA.ToString(), cellStyle);
+							//Impuesto 5
+							CreateCell(row, 17, string.Empty, cellStyle);
+							//Impuesto 6
+							CreateCell(row, 18, string.Empty, cellStyle);
+							//Impuesto 7
+							CreateCell(row, 19, string.Empty, cellStyle);
+							//Impuesto 8
+							CreateCell(row, 20, string.Empty, cellStyle);
+							//Método de pago
+							CreateCell(row, 21, p.MetodoPago?.Clave ?? string.Empty, cellStyle);
+							//Forma de Pago SAT
+							CreateCell(row, 22, p.FormaPago?.Clave ?? string.Empty, cellStyle);
+							//Uso CFDI
+							CreateCell(row, 23, p.UsoCFDI?.Clave ?? string.Empty, cellStyle);
+							//Clave SAT
+							CreateCell(row, 24, p.Conceptos.First().ProductoServicio?.Clave ?? string.Empty, cellStyle);
+							//Unidad SAT
+							CreateCell(row, 25, p.Conceptos.First().UnidadMedida?.Clave??string.Empty, cellStyle);
+							//Observaciones
+							CreateCell(row, 26, p.Conceptos.First().Descripcion ?? string.Empty, cellStyle);
+							//Observaciones de partida
+							CreateCell(row, 27, string.Empty, cellStyle);
+							//Fecha de entrega
+							CreateCell(row, 28, string.Empty, cellStyle);
+							//Fecha de vencimiento
+							CreateCell(row, 29, string.Empty, cellStyle);
+							//Descripcion
+							CreateCell(row, 30, p.Conceptos.First().Descripcion ?? string.Empty, cellStyle);
+
+							rowIndex++;
+						}
+					}
+
+					//Crea el archivo excel y lo exporta al usuario.
+					using (var fileData = new FileStream("wwwroot/templates/Prefacturas.xls", FileMode.OpenOrCreate))
+					{
+						wb.Write(fileData);
+					}
+
+					wb.Close();
+				}
+
+				await _db.Database.CommitTransactionAsync();
+
+				resp.TieneError = false;
+				resp.Mensaje = _strLocalizer["PrefacturasExportedSuccessfully"];
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+				resp.Mensaje = ex.Message;
+				await _db.Database.RollbackTransactionAsync();
+			}
+
+			return new JsonResult(resp);
+		}
+		private Task<HSSFWorkbook> CreateExcel()
+		{
+			HSSFWorkbook workbook = new HSSFWorkbook();
+			HSSFFont myFont = (HSSFFont)workbook.CreateFont();
+			myFont.FontHeightInPoints = 11;
+			myFont.FontName = "Tahoma";
+
+			// Define un borde
+			HSSFCellStyle borderedCellStyle = (HSSFCellStyle)workbook.CreateCellStyle();
+			borderedCellStyle.SetFont(myFont);
+			borderedCellStyle.BorderLeft = BorderStyle.Medium;
+			borderedCellStyle.BorderTop = BorderStyle.Medium;
+			borderedCellStyle.BorderRight = BorderStyle.Medium;
+			borderedCellStyle.BorderBottom = BorderStyle.Medium;
+			borderedCellStyle.VerticalAlignment = VerticalAlignment.Center;
+
+			ISheet Sheet = workbook.CreateSheet("Prefacturas");
+			//Creat The Headers of the excel
+			IRow HeaderRow = Sheet.CreateRow(0);
+
+			//Create The Actual Cells
+			CreateCell(HeaderRow, 0, "Clave", borderedCellStyle);
+			CreateCell(HeaderRow, 1, "Cliente", borderedCellStyle);
+			CreateCell(HeaderRow, 2, "Fecha de elaboración", borderedCellStyle);
+			CreateCell(HeaderRow, 3, "Su pedido", borderedCellStyle);
+			CreateCell(HeaderRow, 4, "Clave del artículo", borderedCellStyle);
+			CreateCell(HeaderRow, 5, "Cantidad", borderedCellStyle);
+			CreateCell(HeaderRow, 6, "Precio", borderedCellStyle);
+			CreateCell(HeaderRow, 7, "Desc. 1", borderedCellStyle);
+			CreateCell(HeaderRow, 8, "Desc. 2", borderedCellStyle);
+			CreateCell(HeaderRow, 9, "Desc. 3", borderedCellStyle);
+			CreateCell(HeaderRow, 10, "Clave de vendedor", borderedCellStyle);
+			CreateCell(HeaderRow, 11, "Comisión", borderedCellStyle);
+			CreateCell(HeaderRow, 12, "Clave de esquema de impuestos", borderedCellStyle);
+			CreateCell(HeaderRow, 13, "I.E.P.S.", borderedCellStyle);
+			CreateCell(HeaderRow, 14, "Impuesto 2", borderedCellStyle);
+			CreateCell(HeaderRow, 15, "Impuesto 3", borderedCellStyle);
+			CreateCell(HeaderRow, 16, "I.V.A.", borderedCellStyle);
+			CreateCell(HeaderRow, 17, "Impuesto 5", borderedCellStyle);
+			CreateCell(HeaderRow, 18, "Impuesto 6", borderedCellStyle);
+			CreateCell(HeaderRow, 19, "Impuesto 7", borderedCellStyle);
+			CreateCell(HeaderRow, 20, "Impuesto 8", borderedCellStyle);
+			CreateCell(HeaderRow, 21, "Método de pago", borderedCellStyle);
+			CreateCell(HeaderRow, 22, "Forma de Pago SAT", borderedCellStyle);
+			CreateCell(HeaderRow, 23, "Uso CFDI", borderedCellStyle);
+			CreateCell(HeaderRow, 24, "Clave SAT", borderedCellStyle);
+			CreateCell(HeaderRow, 25, "Unidad SAT", borderedCellStyle);
+			CreateCell(HeaderRow, 26, "Observaciones", borderedCellStyle);
+			CreateCell(HeaderRow, 27, "Observaciones de partida", borderedCellStyle);
+			CreateCell(HeaderRow, 28, "Fecha de entrega", borderedCellStyle);
+			CreateCell(HeaderRow, 29, "Fecha de vencimiento", borderedCellStyle);
+			CreateCell(HeaderRow, 30, "Descripcion", borderedCellStyle);
+
+			return Task.FromResult(workbook);
+		}
+		private void CreateCell(IRow CurrentRow, int CellIndex, string Value, HSSFCellStyle Style)
+		{
+			ICell Cell = CurrentRow.CreateCell(CellIndex);
+			Cell.SetCellValue(Value);
+			Cell.CellStyle = Style;
+		}
+		private decimal getTotalIEPS(ICollection<Concepto> conceptos, List<TasaOCuota> impuestos)
+		{
+			decimal total = 0;
+			foreach (Concepto c in conceptos)
+			{
+				if (c.ObjetoImpuestoId >= 2)
+				{
+					//Obtiene el valor total del IEPS
+					foreach (TasaOCuota t in impuestos)
+					{
+						if (c.TasaTraslado == (decimal)t.ValorMaximo)
+						{
+							total += c.Traslado;
+							break;
+						}
+						else if (c.TasaRetencion == (decimal)t.ValorMaximo)
+						{
+							total += c.Retencion;
+							break;
+						}
+					}
+				}
+			}
+
+			return total;
+		}
+		private decimal getTotalIVA(ICollection<Concepto> conceptos, List<TasaOCuota> impuestos)
+		{
+			decimal total = 0;
+			foreach (Concepto c in conceptos)
+			{
+				if (c.ObjetoImpuestoId >= 2)
+				{
+					//Obtiene el valor total del IVA
+					foreach (TasaOCuota t in impuestos)
+					{
+						if (c.TasaTraslado == (decimal)t.ValorMaximo)
+						{
+							total += c.Traslado;
+							break;
+						}
+						else if (c.TasaRetencion == (decimal)t.ValorMaximo)
+						{
+							total += c.Retencion;
+							break;
+						}
+					}
+
+				}
+			}
+
+			return total;
+		}
+
+		public ActionResult OnGetDownloadExcel()
+		{
+			return File("/templates/Prefacturas.xls", MediaTypeNames.Application.Octet, "Prefacturas.xls");
 		}
 	}
 }
