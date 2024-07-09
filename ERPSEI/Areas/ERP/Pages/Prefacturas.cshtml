@@ -3,6 +3,8 @@
 @using Microsoft.AspNetCore.Mvc.Localization;
 @using ERPSEI.Data.Entities.SAT;
 @using ERPSEI.Data.Managers.SAT;
+@using ERPSEI.Data.Entities.Usuarios;
+@using ERPSEI.Data.Managers.Usuarios;
 @model ERPSEI.Areas.ERP.Pages.PrefacturasModel
 @inject IViewLocalizer Localizer;
 @inject ITasaOCuotaManager TasaOCuotaManager;
@@ -14,6 +16,9 @@
 @inject IMetodoPagoManager MetodoPagoManager;
 @inject IUsoCFDIManager UsoCFDIManager;
 @inject IExportacionManager ExportacionManager;
+@inject IAccesoModuloManager AccesosModulosManager;
+@inject AppRoleManager RolesManager;
+@inject AppUserManager UsuariosManager;
 @{
 	ViewData["Title"] = Localizer["Title"];
 
@@ -36,6 +41,20 @@
 	List<MetodoPago> metodosPago = await MetodoPagoManager.GetAllAsync();
 	List<UsoCFDI> usosCFDI = await UsoCFDIManager.GetAllAsync();
 	List<Exportacion> exportaciones = await ExportacionManager.GetAllAsync();
+
+	AppUser? usr = await UsuariosManager.GetUserAsync(User);
+	IList<string> rolesUsuario = usr != null ? await UsuariosManager.GetRolesAsync(usr) : new List<string>();
+	List<AccesoModulo> accesos = new List<AccesoModulo>();
+	foreach (string rol in rolesUsuario)
+	{
+		AppRole? foundRole = await RolesManager.GetByNameAsync(rol);
+		accesos.AddRange(await AccesosModulosManager.GetByRolIdAsync(foundRole?.Id ?? string.Empty));
+	}
+	bool puedeTodo = accesos.Where(a => (a.Modulo?.NombreNormalizado == "prefacturas" && a.PuedeTodo == 1)).FirstOrDefault()?.PuedeTodo == 1;
+	bool puedeConsultar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "prefacturas" && a.PuedeConsultar == 1)).FirstOrDefault()?.PuedeConsultar == 1;
+	bool puedeEditar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "prefacturas" && a.PuedeEditar == 1)).FirstOrDefault()?.PuedeEditar == 1;
+	bool puedeEliminar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "prefacturas" && a.PuedeEliminar == 1)).FirstOrDefault()?.PuedeEliminar == 1;
+	bool puedeAutorizar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "prefacturas" && a.PuedeAutorizar == 1)).FirstOrDefault()?.PuedeAutorizar == 1;
 }
 <h3 class="title mb-3">@ViewData["Title"]</h3>
 
