@@ -808,73 +808,75 @@ namespace ERPSEI.Areas.ERP.Pages
 
 						if(p != null)
 						{
-							decimal totalIEPS = getTotalIEPS(p.Conceptos, impuestosIEPS);
-							decimal totalIVA = getTotalIVA(p.Conceptos, impuestosIVA);
+							string clave = p.Serie + p.Folio.PadLeft(6, '0');
 
-							//Clave
-							CreateCell(row, 0, p.ReceptorId.ToString(), cellStyle);
-							//Cliente
-							CreateCell(row, 1, p.ReceptorId.ToString(), cellStyle);
-							//Fecha de elaboración
-							CreateCell(row, 2, p.Fecha.ToString("dd/mm/yyyy"), cellStyle);
-							//Su pedido
-							CreateCell(row, 3, string.Empty, cellStyle);
-							//Clave del artículo
-							CreateCell(row, 4, p.Conceptos.First().ProductoServicio?.Clave ??string.Empty, cellStyle);
-							//Cantidad
-							CreateCell(row, 5, p.Conceptos.First().Cantidad.ToString(), cellStyle);
-							//Precio
-							CreateCell(row, 6, p.Conceptos.First().PrecioUnitario.ToString(), cellStyle);
-							//Desc. 1
-							CreateCell(row, 7, string.Empty, cellStyle);
-							//Desc. 2
-							CreateCell(row, 8, string.Empty, cellStyle);
-							//Desc. 3
-							CreateCell(row, 9, string.Empty, cellStyle);
-							//Clave de vendedor
-							CreateCell(row, 10, string.Empty, cellStyle);
-							//Comisión
-							CreateCell(row, 11, string.Empty, cellStyle);
-							//Clave de esquema de impuestos
-							CreateCell(row, 12, string.Empty, cellStyle);
-							//I.E.P.S.
-							CreateCell(row, 13, totalIEPS.ToString(), cellStyle);
-							//Impuesto 2
-							CreateCell(row, 14, string.Empty, cellStyle);
-							//Impuesto 3
-							CreateCell(row, 15, string.Empty, cellStyle);
-							//I.V.A.
-							CreateCell(row, 16, totalIVA.ToString(), cellStyle);
-							//Impuesto 5
-							CreateCell(row, 17, string.Empty, cellStyle);
-							//Impuesto 6
-							CreateCell(row, 18, string.Empty, cellStyle);
-							//Impuesto 7
-							CreateCell(row, 19, string.Empty, cellStyle);
-							//Impuesto 8
-							CreateCell(row, 20, string.Empty, cellStyle);
-							//Método de pago
-							CreateCell(row, 21, p.MetodoPago?.Clave ?? string.Empty, cellStyle);
-							//Forma de Pago SAT
-							CreateCell(row, 22, p.FormaPago?.Clave ?? string.Empty, cellStyle);
-							//Uso CFDI
-							CreateCell(row, 23, p.UsoCFDI?.Clave ?? string.Empty, cellStyle);
-							//Clave SAT
-							CreateCell(row, 24, p.Conceptos.First().ProductoServicio?.Clave ?? string.Empty, cellStyle);
-							//Unidad SAT
-							CreateCell(row, 25, p.Conceptos.First().UnidadMedida?.Clave??string.Empty, cellStyle);
-							//Observaciones
-							CreateCell(row, 26, p.Conceptos.First().Descripcion ?? string.Empty, cellStyle);
-							//Observaciones de partida
-							CreateCell(row, 27, string.Empty, cellStyle);
-							//Fecha de entrega
-							CreateCell(row, 28, string.Empty, cellStyle);
-							//Fecha de vencimiento
-							CreateCell(row, 29, string.Empty, cellStyle);
-							//Descripcion
-							CreateCell(row, 30, p.Conceptos.First().Descripcion ?? string.Empty, cellStyle);
+							foreach (Concepto c in p.Conceptos)
+                            {
+								//Clave
+								CreateCell(row, 0, clave, cellStyle);
+								//Cliente
+								CreateCell(row, 1, p.ReceptorId.ToString(), cellStyle);
+								//Fecha de elaboración
+								CreateCell(row, 2, p.Fecha.ToString("dd/mm/yyyy"), cellStyle);
+								//Su pedido
+								CreateCell(row, 3, string.Empty, cellStyle);
+								//Clave del artículo
+								CreateCell(row, 4, c.ProductoServicio?.Clave ?? string.Empty, cellStyle);
+								//Cantidad
+								CreateCell(row, 5, c.Cantidad.ToString(), cellStyle);
+								//Precio
+								CreateCell(row, 6, c.PrecioUnitario.ToString(), cellStyle);
+								//Desc. 1
+								CreateCell(row, 7, string.Empty, cellStyle);
+								//Desc. 2
+								CreateCell(row, 8, string.Empty, cellStyle);
+								//Desc. 3
+								CreateCell(row, 9, string.Empty, cellStyle);
+								//Clave de vendedor
+								CreateCell(row, 10, string.Empty, cellStyle);
+								//Comisión
+								CreateCell(row, 11, string.Empty, cellStyle);
+								//Clave de esquema de impuestos
+								CreateCell(row, 12, string.Empty, cellStyle);
+								//I.E.P.S.
+								CreateCell(row, 13, getIEPSConcepto(c, impuestosIEPS).ToString(), cellStyle);
+								//Impuesto 2
+								CreateCell(row, 14, string.Empty, cellStyle);
+								//Impuesto 3
+								CreateCell(row, 15, string.Empty, cellStyle);
+								//I.V.A.
+								CreateCell(row, 16, getIVAConcepto(c, impuestosIVA).ToString(), cellStyle);
+								//Impuesto 5
+								CreateCell(row, 17, string.Empty, cellStyle);
+								//Impuesto 6
+								CreateCell(row, 18, string.Empty, cellStyle);
+								//Impuesto 7
+								CreateCell(row, 19, string.Empty, cellStyle);
+								//Impuesto 8
+								CreateCell(row, 20, string.Empty, cellStyle);
+								//Método de pago
+								CreateCell(row, 21, p.MetodoPago?.Clave ?? string.Empty, cellStyle);
+								//Forma de Pago SAT
+								CreateCell(row, 22, p.FormaPago?.Clave ?? string.Empty, cellStyle);
+								//Uso CFDI
+								CreateCell(row, 23, p.UsoCFDI?.Clave ?? string.Empty, cellStyle);
+								//Clave SAT
+								CreateCell(row, 24, c.ProductoServicio?.Clave ?? string.Empty, cellStyle);
+								//Unidad SAT
+								CreateCell(row, 25, c.UnidadMedida?.Clave ?? string.Empty, cellStyle);
+								//Observaciones
+								CreateCell(row, 26, c.Descripcion ?? string.Empty, cellStyle);
+								//Observaciones de partida
+								CreateCell(row, 27, string.Empty, cellStyle);
+								//Fecha de entrega
+								CreateCell(row, 28, string.Empty, cellStyle);
+								//Fecha de vencimiento
+								CreateCell(row, 29, string.Empty, cellStyle);
+								//Descripcion
+								CreateCell(row, 30, c.Descripcion ?? string.Empty, cellStyle);
 
-							rowIndex++;
+								rowIndex++;
+							}
 						}
 					}
 
@@ -962,28 +964,56 @@ namespace ERPSEI.Areas.ERP.Pages
 			Cell.SetCellValue(Value);
 			Cell.CellStyle = Style;
 		}
+		private decimal getIEPSConcepto(Concepto c, List<TasaOCuota> impuestos)
+		{
+			decimal total = 0;
+			if (c.ObjetoImpuestoId >= 2)
+			{
+				//Obtiene el valor total del IEPS
+				foreach (TasaOCuota t in impuestos)
+				{
+					if (c.TasaTraslado == (decimal)t.ValorMaximo)
+					{
+						total += c.Traslado;
+						break;
+					}
+					else if (c.TasaRetencion == (decimal)t.ValorMaximo)
+					{
+						total += c.Retencion;
+						break;
+					}
+				}
+			}
+			return total;
+		}
+		private decimal getIVAConcepto(Concepto c, List<TasaOCuota> impuestos)
+		{
+			decimal total = 0;
+			if (c.ObjetoImpuestoId >= 2)
+			{
+				//Obtiene el valor total del IVA
+				foreach (TasaOCuota t in impuestos)
+				{
+					if (c.TasaTraslado == (decimal)t.ValorMaximo)
+					{
+						total += c.Traslado;
+						break;
+					}
+					else if (c.TasaRetencion == (decimal)t.ValorMaximo)
+					{
+						total += c.Retencion;
+						break;
+					}
+				}
+			}
+			return total;
+		}
 		private decimal getTotalIEPS(ICollection<Concepto> conceptos, List<TasaOCuota> impuestos)
 		{
 			decimal total = 0;
 			foreach (Concepto c in conceptos)
 			{
-				if (c.ObjetoImpuestoId >= 2)
-				{
-					//Obtiene el valor total del IEPS
-					foreach (TasaOCuota t in impuestos)
-					{
-						if (c.TasaTraslado == (decimal)t.ValorMaximo)
-						{
-							total += c.Traslado;
-							break;
-						}
-						else if (c.TasaRetencion == (decimal)t.ValorMaximo)
-						{
-							total += c.Retencion;
-							break;
-						}
-					}
-				}
+				total += getIEPSConcepto(c, impuestos);
 			}
 
 			return total;
@@ -993,24 +1023,7 @@ namespace ERPSEI.Areas.ERP.Pages
 			decimal total = 0;
 			foreach (Concepto c in conceptos)
 			{
-				if (c.ObjetoImpuestoId >= 2)
-				{
-					//Obtiene el valor total del IVA
-					foreach (TasaOCuota t in impuestos)
-					{
-						if (c.TasaTraslado == (decimal)t.ValorMaximo)
-						{
-							total += c.Traslado;
-							break;
-						}
-						else if (c.TasaRetencion == (decimal)t.ValorMaximo)
-						{
-							total += c.Retencion;
-							break;
-						}
-					}
-
-				}
+				total += getIVAConcepto(c, impuestos);
 			}
 
 			return total;
