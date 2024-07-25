@@ -804,14 +804,12 @@ namespace ERPSEI.Areas.ERP.Pages
 					{
 						int intId = Convert.ToInt32(id);
 						Prefactura? p = await _prefacturaManager.GetByIdAsync(intId);
-						IRow row = sheet.CreateRow(rowIndex);
-
 						if(p != null)
 						{
 							string clave = p.Serie + p.Folio.PadLeft(6, '0');
-
 							foreach (Concepto c in p.Conceptos)
                             {
+								IRow row = sheet.CreateRow(rowIndex);
 								//Clave
 								CreateCell(row, 0, clave, cellStyle);
 								//Cliente
