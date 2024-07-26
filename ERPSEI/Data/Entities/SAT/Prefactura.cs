@@ -1,4 +1,5 @@
 ﻿using ERPSEI.Data.Entities.Empresas;
+using ERPSEI.Data.Entities.SAT.Catalogos;
 using ERPSEI.Data.Entities.Usuarios;
 using System.ComponentModel.DataAnnotations.Schema;
 

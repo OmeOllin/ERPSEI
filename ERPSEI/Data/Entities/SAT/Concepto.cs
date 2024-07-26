@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using ERPSEI.Data.Entities.SAT.Catalogos;
 
 namespace ERPSEI.Data.Entities.SAT
 {
-	public class Concepto
+    public class Concepto
 	{
 		[DatabaseGenerated(DatabaseGeneratedOption.None)]
 		public int Id { get; set; }

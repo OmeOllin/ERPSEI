@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ERPSEI.Data.Entities.SAT
+namespace ERPSEI.Data.Entities.SAT.Catalogos
 {
-    public class Mes
+    public class Exportacion
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
@@ -11,7 +11,8 @@ namespace ERPSEI.Data.Entities.SAT
 
         public string Descripcion { get; set; } = string.Empty;
 
-		public int Deshabilitado { get; set; } = 0;
+        public int Deshabilitado { get; set; } = 0;
 
-	}
+        public ICollection<Prefactura> Prefacturas { get; set; } = new List<Prefactura>();
+    }
 }

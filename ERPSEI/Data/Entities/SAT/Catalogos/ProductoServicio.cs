@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using ERPSEI.Data.Entities.Empresas;
 
-namespace ERPSEI.Data.Entities.SAT
+namespace ERPSEI.Data.Entities.SAT.Catalogos
 {
     public class ProductoServicio
     {
@@ -20,7 +20,7 @@ namespace ERPSEI.Data.Entities.SAT
 
         public ICollection<ProductoServicioPerfil>? ProductosServiciosPerfil { get; set; }
 
-		public int Deshabilitado { get; set; } = 0;
+        public int Deshabilitado { get; set; } = 0;
 
-	}
+    }
 }

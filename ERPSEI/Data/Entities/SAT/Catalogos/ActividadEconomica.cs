@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using ERPSEI.Data.Entities.Empresas;
 
-namespace ERPSEI.Data.Entities.SAT
+namespace ERPSEI.Data.Entities.SAT.Catalogos
 {
     public class ActividadEconomica
     {
@@ -15,5 +15,5 @@ namespace ERPSEI.Data.Entities.SAT
         public ICollection<ActividadEconomicaEmpresa>? ActividadesEconomicasEmpresa { get; set; }
 
         public int Deshabilitado { get; set; } = 0;
-	}
+    }
 }

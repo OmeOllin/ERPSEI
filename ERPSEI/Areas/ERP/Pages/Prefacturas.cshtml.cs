@@ -19,10 +19,11 @@ using NPOI.SS.UserModel;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.IdentityModel.Tokens;
 using System.Net.Mime;
+using ERPSEI.Data.Entities.SAT.Catalogos;
 
 namespace ERPSEI.Areas.ERP.Pages
 {
-	[Authorize(Policy = "AccessPolicy")]
+    [Authorize(Policy = "AccessPolicy")]
 	public class PrefacturasModel : PageModel
 	{
 		private readonly ApplicationDbContext _db;

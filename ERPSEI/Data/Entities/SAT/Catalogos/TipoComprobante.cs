@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ERPSEI.Data.Entities.SAT
+namespace ERPSEI.Data.Entities.SAT.Catalogos
 {
     public class TipoComprobante
     {
@@ -13,8 +13,8 @@ namespace ERPSEI.Data.Entities.SAT
 
         public decimal ValorMaximo { get; set; }
 
-		public int Deshabilitado { get; set; } = 0;
+        public int Deshabilitado { get; set; } = 0;
 
-		public ICollection<Prefactura> Prefacturas { get; set; } = new List<Prefactura>();
-	}
+        public ICollection<Prefactura> Prefacturas { get; set; } = new List<Prefactura>();
+    }
 }

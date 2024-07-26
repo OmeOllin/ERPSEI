@@ -2,7 +2,7 @@
 using ERPSEI.Data;
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.Empresas;
-using ERPSEI.Data.Entities.SAT;
+using ERPSEI.Data.Entities.SAT.Catalogos;
 using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empleados;
@@ -21,7 +21,7 @@ using System.Reflection;
 
 namespace ERPSEI
 {
-	public static class ServicesConfiguration
+    public static class ServicesConfiguration
     {
         public const string RolMaster = "Master";
         public const string RolAdministrador = "Administrador";

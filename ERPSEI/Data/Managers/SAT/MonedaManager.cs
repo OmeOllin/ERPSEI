@@ -1,4 +1,4 @@
-﻿using ERPSEI.Data.Entities.SAT;
+﻿using ERPSEI.Data.Entities.SAT.Catalogos;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERPSEI.Data.Managers.SAT
