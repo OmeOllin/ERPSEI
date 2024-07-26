@@ -508,7 +508,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			if (!ModelState.IsValid)
 			{
-				resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray();
+				resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k]?.Errors ?? []).Select(m => m.ErrorMessage).ToArray();
 				return new JsonResult(resp);
 			}
 			try

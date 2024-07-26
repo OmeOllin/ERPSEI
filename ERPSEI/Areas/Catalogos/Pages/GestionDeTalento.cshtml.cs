@@ -11,6 +11,7 @@ using ExcelDataReader;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
@@ -611,7 +612,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			if (!ModelState.IsValid)
 			{
-				resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray();
+				resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k]?.Errors??[]).Select(m => m.ErrorMessage).ToArray();
 				return new JsonResult(resp);
 			}
 			try

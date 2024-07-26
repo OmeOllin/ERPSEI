@@ -144,6 +144,9 @@ namespace ERPSEI
             {
                 var assemblyName = new AssemblyName(typeof(ModelBindingMessages).GetTypeInfo().Assembly.FullName ?? "");
                 var F = _builder.Services.BuildServiceProvider().GetService<IStringLocalizerFactory>();
+
+                if(F == null) { return; }
+
                 var L = F.Create(nameof(ModelBindingMessages), assemblyName.Name ?? "");
 
                 options.ModelBindingMessageProvider.SetMissingBindRequiredValueAccessor((x) => L["MissingBindRequiredValueAccessor", x]);
