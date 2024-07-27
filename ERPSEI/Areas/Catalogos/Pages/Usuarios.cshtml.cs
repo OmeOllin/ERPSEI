@@ -62,10 +62,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			InputUsuario = new UsuarioModel();
 		}
 
-		private async Task<string> getLista()
+		private async Task<string> GetLista()
 		{
 			string jsonResponse;
-			List<string> jsonResultados = new List<string>();
+			List<string> jsonResultados = [];
 
 			foreach (AppUser u in _usuarioManager.Users)
 			{
@@ -97,10 +97,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostFiltrar()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["FiltroUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["FiltroUnsuccessfully"]);
 			try
 			{
-				resp.Datos = await getLista();
+				resp.Datos = await GetLista();
 				resp.TieneError = false;
 				resp.Mensaje = _strLocalizer["FiltroSuccessfully"];
 			}
@@ -114,7 +114,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		
 		public async Task<JsonResult> OnPostSave()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["SavedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["SavedUnsuccessfully"]);
 
 			if (!ModelState.IsValid)
 			{
@@ -126,7 +126,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				await _db.Database.BeginTransactionAsync();
 
 				//Procede a actualizar el usuario.
-				await updateUser(InputUsuario);
+				await UpdateUser(InputUsuario);
 
 				await _db.Database.CommitTransactionAsync();
 
@@ -141,7 +141,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resp);
 		}
-		private async Task updateUser(UsuarioModel e)
+		private async Task UpdateUser(UsuarioModel e)
 		{
 			//Se busca usuario por id
 			AppUser? usuario = await _usuarioManager.FindByIdAsync(e.Id);

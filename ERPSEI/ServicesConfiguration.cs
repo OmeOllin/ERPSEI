@@ -28,7 +28,7 @@ namespace ERPSEI
         public const string RolUsuario = "Usuario";
         public const string RolCandidato = "Candidato";
 
-        public static List<AppRole> Roles = new List<AppRole>();
+        private static readonly List<AppRole> Roles = [];
 
         public static string MasterPassword { get; set; } = string.Empty;
         public static AppUser MasterUser { get; } = new AppUser() { EmailConfirmed = true, IsPreregisterAuthorized = true, PasswordResetNeeded = false, IsMaster = true };
@@ -117,9 +117,8 @@ namespace ERPSEI
         }
 
         public static void ConfigureAuthorization(WebApplicationBuilder _builder) {
-			_builder.Services.AddAuthorization(options =>
-	            options.AddPolicy("AccessPolicy", policy => policy.Requirements.Add(new AccessRequirement()))
-            );
+			_builder.Services.AddAuthorizationBuilder()
+				.AddPolicy("AccessPolicy", policy => policy.Requirements.Add(new AccessRequirement()));
 
 			_builder.Services.AddScoped<IAuthorizationHandler, AccessHandler>();
 		}

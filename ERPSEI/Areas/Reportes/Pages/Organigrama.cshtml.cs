@@ -59,7 +59,7 @@ namespace ERPSEI.Areas.Reportes.Pages
         {
         }
 
-        private async Task<string> createNode(Empleado emp)
+        private static async Task<string> createNode(Empleado emp)
         {
 			string nombreArea = emp.Area != null ? emp.Area.Nombre : "";
             string nombreSubarea = emp.Subarea != null ? emp.Subarea.Nombre : "";
@@ -192,7 +192,7 @@ namespace ERPSEI.Areas.Reportes.Pages
 
             return empleados;
 		}
-        private List<Empleado> getJerarquiaHijos(List<Empleado> empleadosMutable, List<Empleado> empleadosIniciales, ref List<Empleado> empleadosProcesados)
+        private static List<Empleado> getJerarquiaHijos(List<Empleado> empleadosMutable, List<Empleado> empleadosIniciales, ref List<Empleado> empleadosProcesados)
         {
 			//Obtiene los empleados de cada empleado.
 			foreach (Empleado empleado in empleadosMutable)

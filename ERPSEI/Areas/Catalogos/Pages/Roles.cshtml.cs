@@ -35,7 +35,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Display(Name = "FullNameField")]
 			public string NombreRol { get; set; } = string.Empty;
 
-			public ModuloModel?[] Modulos { get; set; } = Array.Empty<ModuloModel>();
+			public ModuloModel?[] Modulos { get; set; } = [];
 		}
 
 		public class ModuloModel
@@ -69,17 +69,17 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			InputRol = new RolModel();
 		}
 
-		private async Task<string> getLista()
+		private async Task<string> GetLista()
 		{
 			string jsonResponse;
-			List<string> jsonResultados = new List<string>();
+			List<string> jsonResultados = [];
 			List<Modulo> modulos = await _moduloManager.GetAllAsync();
 
 			foreach (AppRole r in _roleManager.Roles)
 			{
 				//Se obtiene un listado de accesos del rol.
 				List<AccesoModulo> accesosRol = await _accesoModuloManager.GetByRolIdAsync(r.Id);
-				List<string> jsonModulos = new List<string>();
+				List<string> jsonModulos = [];
 				switch (r.Name)
 				{
 					case ServicesConfiguration.RolMaster:
@@ -125,10 +125,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostFiltrar()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["FiltroUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["FiltroUnsuccessfully"]);
 			try
 			{
-				resp.Datos = await getLista();
+				resp.Datos = await GetLista();
 				resp.TieneError = false;
 				resp.Mensaje = _strLocalizer["FiltroSuccessfully"];
 			}
@@ -142,7 +142,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostDeleteRoles(string[] ids)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["RolDeletedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["RolDeletedUnsuccessfully"]);
 			try
 			{
 				await _db.Database.BeginTransactionAsync();
@@ -156,9 +156,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					//Se filtran todos los usuarios para obtener los que no están dados de baja
 					List<AppUser> usuariosActivosRelacionados = users.Where(u => !u.IsBanned).ToList();
 					//Si existen usuarios que tengan el rol asignado, se le notifica al usuario.
-					if (usuariosActivosRelacionados.Count() > 0)
+					if (usuariosActivosRelacionados.Count > 0)
 					{
-						List<string> names = new List<string>();
+						List<string> names = [];
 						foreach (AppUser u in usuariosActivosRelacionados) { names.Add($"<i>{u.UserName}</i>"); }
 						resp.TieneError = true;
 						resp.Mensaje = $"{_strLocalizer["RolIsRelated"]}<br/><br/><i>{rol?.Name}</i><br/><br/>{string.Join("<br/>", names)}";
@@ -192,7 +192,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostSave()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["RolSavedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["RolSavedUnsuccessfully"]);
 
 			if (!ModelState.IsValid)
 			{
@@ -213,7 +213,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				else
 				{
 					//Crea o actualiza el registro
-					await createOrUpdateRole(InputRol);
+					await CreateOrUpdateRole(InputRol);
 
 					resp.TieneError = false;
 					resp.Mensaje = _strLocalizer["RolSavedSuccessfully"];
@@ -227,7 +227,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resp);
 		}
-		private async Task createOrUpdateRole(RolModel e)
+		private async Task CreateOrUpdateRole(RolModel e)
 		{
 			try
 			{

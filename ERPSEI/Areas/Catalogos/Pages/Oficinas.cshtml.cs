@@ -61,7 +61,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostDeleteOficinas(string[] ids)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["OfficesDeletedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["OfficesDeletedUnsuccessfully"]);
 			try
 			{
                 await _db.Database.BeginTransactionAsync();
@@ -69,15 +69,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
                 List<Oficina> oficinas = await _oficinaManager.GetAllAsync();
                 foreach (string id in ids)
                 {
-                    int sid = 0;
-                    if (!int.TryParse(id, out sid)) { sid = 0; }
-                    Oficina? oficina = oficinas.Where(p => p.Id == sid).FirstOrDefault();
+					if (!int.TryParse(id, out int sid)) { sid = 0; }
+					Oficina? oficina = oficinas.Where(p => p.Id == sid).FirstOrDefault();
                     List<Empleado> empleados = await _empleadoManager.GetAllAsync(null, null, null, null, null, null, null, sid, true);
                     List<Empleado> empleadosActivosRelacionados = empleados.Where(e => e.Deshabilitado == 0).ToList();
                     //Si existen empleados que tengan el registro asignado, se le notifica al usuario.
-                    if (empleadosActivosRelacionados.Count() > 0)
+                    if (empleadosActivosRelacionados.Count > 0)
                     {
-                        List<string> names = new List<string>();
+                        List<string> names = [];
                         foreach (Empleado e in empleadosActivosRelacionados) { names.Add($"<i>{e.Id} - {e.NombreCompleto}</i>"); }
                         resp.TieneError = true;
                         resp.Mensaje = $"{_strLocalizer["OfficeIsRelated"]}<br/><br/><i>{oficina?.Nombre}</i><br/><br/>{string.Join("<br/>", names)}";
@@ -113,7 +112,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostSaveOficina()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["OfficeSavedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["OfficeSavedUnsuccessfully"]);
 
 			try
 			{

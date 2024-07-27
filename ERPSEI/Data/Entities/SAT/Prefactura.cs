@@ -44,7 +44,7 @@ namespace ERPSEI.Data.Entities.SAT
 
 		public int? NumeroOperacion { get; set; }
 
-		public ICollection<Concepto> Conceptos { get; } = new List<Concepto>();
+		public ICollection<Concepto> Conceptos { get; } = [];
 
 		public int Deshabilitado { get; set; }
 

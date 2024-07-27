@@ -11,7 +11,7 @@ namespace ERPSEI.Data.Entities.SAT
 
 		public int Deshabilitado { get; set; } = 0;
 
-        public ICollection<Prefactura> Prefacturas { get; set; } = new HashSet<Prefactura>();
+        public ICollection<Prefactura> Prefacturas { get; set; } = [];
 
 	}
 }

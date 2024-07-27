@@ -93,7 +93,7 @@ namespace ERPSEI.Data
 			buildAccesos(modelBuilder);
 		}
 
-		private void buildEmpresas(ModelBuilder b) 
+		private static void buildEmpresas(ModelBuilder b) 
 		{
 			b.Entity<Empresa>().HasOne(e => e.Perfil).WithMany(p => p.Empresas).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Empresa>().HasOne(e => e.Origen).WithMany(o => o.Empresas).OnDelete(DeleteBehavior.NoAction);
@@ -121,7 +121,7 @@ namespace ERPSEI.Data
                 );
 		}
 
-		private void buildEmpleados(ModelBuilder b)
+		private static void buildEmpleados(ModelBuilder b)
 		{
 			b.Entity<ArchivoEmpleado>().HasOne(ae => ae.TipoArchivo).WithMany(ta => ta.ArchivosEmpleado).OnDelete(DeleteBehavior.NoAction);
 
@@ -264,7 +264,7 @@ namespace ERPSEI.Data
 			b.Entity<Oficina>().HasData(dataOficinas);
 		}
 
-		private void buildSAT(ModelBuilder b)
+		private static void buildSAT(ModelBuilder b)
 		{
 			b.Entity<TasaOCuota>().HasOne(t => t.Factor).WithMany(f => f.TasasOCuotas).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<TasaOCuota>().HasOne(t => t.Impuesto).WithMany(i => i.TasasOCuotas).OnDelete(DeleteBehavior.NoAction);
@@ -303,7 +303,7 @@ namespace ERPSEI.Data
                 );
         }
 
-		private void buildAccesos(ModelBuilder b)
+		private static void buildAccesos(ModelBuilder b)
 		{
 			b.Entity<AppRole>().HasMany(r => r.Accesos).WithOne(am => am.Rol).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Modulo>().HasMany(m => m.Accesos).WithOne(am => am.Modulo).OnDelete(DeleteBehavior.NoAction);

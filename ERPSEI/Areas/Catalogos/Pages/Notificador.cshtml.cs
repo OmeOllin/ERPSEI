@@ -8,19 +8,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 	[Authorize(Policy = "AccessPolicy")]
 	public class NotificadorModel : PageModel
     {
-        private readonly IEmpleadoManager _empleadoManager;
-        private readonly IStringLocalizer<NotificadorModel> _strLocalizer;
-        private readonly ILogger<NotificadorModel> _logger;
-
-        public NotificadorModel(
-            IEmpleadoManager empleadoManager,
-            IStringLocalizer<NotificadorModel> stringLocalizer,
-            ILogger<NotificadorModel> logger
-        )
+        
+        public NotificadorModel()
         {
-            _empleadoManager = empleadoManager;
-            _strLocalizer = stringLocalizer;
-            _logger = logger;
 
         }
 

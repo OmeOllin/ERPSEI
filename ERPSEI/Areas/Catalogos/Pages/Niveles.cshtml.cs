@@ -64,10 +64,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		public async Task<JsonResult> OnGetNivelesList()
         {
 			List<Nivel> niveles = await _catalogoManager.GetAllAsync();
-			List<string> jsonNiveles = new List<string>();
-			string jsonResponse = string.Empty;
-
-            foreach (Nivel n in niveles)
+			List<string> jsonNiveles = [];
+			foreach (Nivel n in niveles)
             {
 				jsonNiveles.Add(
 					"{" +
@@ -79,14 +77,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				);
             }
 
-			jsonResponse = $"[{string.Join(",", jsonNiveles)}]";
+			string jsonResponse = $"[{string.Join(",", jsonNiveles)}]";
 
 			return new JsonResult(jsonResponse);
 		}
 
 		public async Task<JsonResult> OnPostDeleteNiveles(string[] ids)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["DeletedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["DeletedUnsuccessfully"]);
 			try
 			{
 				await _db.Database.BeginTransactionAsync();
@@ -94,15 +92,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				List<Nivel> niveles = await _catalogoManager.GetAllAsync();
 				foreach (string id in ids)
 				{
-					int sid = 0;
-					if (!int.TryParse(id, out sid)) { sid = 0; }
+					if (!int.TryParse(id, out int sid)) { sid = 0; }
 					Nivel? nivel = niveles.Where(o => o.Id == sid).FirstOrDefault();
 					List<Empresa> empresas = await _empresaManager.GetAllAsync();
 					empresas = empresas.Where(e => e.NivelId == sid).ToList();
 					List<Empresa> empresasActivasRelacionadas = empresas.Where(e => e.Deshabilitado == 0).ToList();
-					if (empresasActivasRelacionadas.Count() > 0)
+					if (empresasActivasRelacionadas.Count > 0)
 					{
-						List<string> names = new List<string>();
+						List<string> names = [];
 						foreach (Empresa e in empresasActivasRelacionadas) { names.Add($"<i>{e.Id} - {e.RazonSocial}</i>"); }
 						resp.TieneError = true;
 						resp.Mensaje = $"{_strLocalizer["NivelIsRelated"]}<br/><br/><i>{nivel?.Nombre}</i><br/><br/>{string.Join("<br/>", names)}";
@@ -137,7 +134,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostSaveNivel()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["SavedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["SavedUnsuccessfully"]);
 
 			try
 			{

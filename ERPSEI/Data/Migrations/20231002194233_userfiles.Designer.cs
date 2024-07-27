@@ -13,7 +13,7 @@ namespace ERPSEI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20231002194233_userfiles")]
-    partial class userfiles
+    partial class Userfiles
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

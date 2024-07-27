@@ -47,7 +47,7 @@ namespace ERPSEI.Data.Managers.Usuarios
         }
 
         //Genera un número aleatorio de un rango dado.
-        private string RandomNumber(int min, int max)
+        private static string RandomNumber(int min, int max)
         {
             // Generate a random number
             Random random = new Random();
@@ -60,7 +60,7 @@ namespace ERPSEI.Data.Managers.Usuarios
 
         //Genera un string aleatorio con el tamaño y el case dados.
         //Si el segundo parámetro es verdadero, el string resultante será lowercase.
-        private string RandomString(int size, bool lowerCase)
+        private static string RandomString(int size, bool lowerCase)
         {
             StringBuilder builder = new StringBuilder();
             Random random = new Random();
@@ -75,7 +75,7 @@ namespace ERPSEI.Data.Managers.Usuarios
             return builder.ToString();
         }
 
-        private string RandomSymbol()
+        private static string RandomSymbol()
         {
             // Caracteres especiales permitidos
             string validChars = "!@#$%&*?";

@@ -4,18 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERPSEI.Data.Managers.SAT
 {
-    public class PrefacturaManager : IPrefacturaManager
+    public class PrefacturaManager(ApplicationDbContext _db) : IPrefacturaManager
 	{
-        ApplicationDbContext db { get; set; }
-
-        public PrefacturaManager(ApplicationDbContext _db)
-        {
-            db = _db;
-        }
-
-		private async Task<int> getNextId()
+		private async Task<int> GetNextId()
 		{
-			List<Prefactura> registros = await db.Prefacturas.ToListAsync();
+			List<Prefactura> registros = await _db.Prefacturas.ToListAsync();
 			Prefactura? last = registros.OrderByDescending(r => r.Id).FirstOrDefault();
 			int lastId = last != null ? last.Id : 0;
 			lastId += 1;
@@ -25,14 +18,14 @@ namespace ERPSEI.Data.Managers.SAT
 
 		public async Task<int> CreateAsync(Prefactura p)
 		{
-			p.Id = await getNextId();
-			db.Prefacturas.Add(p);
-			await db.SaveChangesAsync();
+			p.Id = await GetNextId();
+			_db.Prefacturas.Add(p);
+			await _db.SaveChangesAsync();
 			return p.Id;
 		}
 		public async Task UpdateAsync(Prefactura p)
 		{
-			Prefactura? n = db.Find<Prefactura>(p.Id);
+			Prefactura? n = _db.Find<Prefactura>(p.Id);
 			if (n != null)
 			{
 				n.Fecha = p.Fecha;
@@ -50,14 +43,14 @@ namespace ERPSEI.Data.Managers.SAT
                 n.UsuarioAutorizadorId = p.UsuarioAutorizadorId;
                 n.UsuarioFinalizadorId = p.UsuarioFinalizadorId;
 
-                await db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
 			}
 		}
 
 		public async Task DeleteAsync(Prefactura p)
 		{
-			db.Prefacturas.Remove(p);
-			await db.SaveChangesAsync();
+			_db.Prefacturas.Remove(p);
+			await _db.SaveChangesAsync();
 		}
 
 		public async Task DeleteByIdAsync(int id)
@@ -65,15 +58,15 @@ namespace ERPSEI.Data.Managers.SAT
 			Prefactura? p = await GetByIdAsync(id);
 			if (p != null)
 			{
-				db.Remove(p);
-				await db.SaveChangesAsync();
+				_db.Remove(p);
+				await _db.SaveChangesAsync();
 			}
 		}
 
 		public async Task DeleteMultipleByIdAsync(string[] ids)
 		{
 			//Inicia una transacción.
-			await db.Database.BeginTransactionAsync();
+			await _db.Database.BeginTransactionAsync();
 			try
 			{
 				foreach (string id in ids)
@@ -81,16 +74,16 @@ namespace ERPSEI.Data.Managers.SAT
 					Prefactura? a = await GetByIdAsync(int.Parse(id));
 					if (a != null)
 					{
-						db.Remove(a);
-						await db.SaveChangesAsync();
+						_db.Remove(a);
+						await _db.SaveChangesAsync();
 					}
 				}
 
-				await db.Database.CommitTransactionAsync();
+				await _db.Database.CommitTransactionAsync();
 			}
 			catch (Exception)
 			{
-				await db.Database.RollbackTransactionAsync();
+				await _db.Database.RollbackTransactionAsync();
 				throw;
 
 			}
@@ -98,7 +91,7 @@ namespace ERPSEI.Data.Managers.SAT
 
 		public async Task<List<Prefactura>> GetAllAsync()
 		{
-			return await db.Prefacturas.ToListAsync();
+			return await _db.Prefacturas.ToListAsync();
 		}
 
 		public async Task<List<Prefactura>> GetAllAsync(
@@ -112,15 +105,15 @@ namespace ERPSEI.Data.Managers.SAT
 			bool deshabilitado = false
 		)
 		{
-			return await db.Prefacturas
-				.Where(e => deshabilitado ? true : e.Deshabilitado == 0)
-				.Where(e => fechaInicio != null ? e.Fecha >= fechaInicio : true)
-				.Where(e => fechaFin!= null ? e.Fecha<= fechaFin : true)
-				.Where(e => serie != null ? e.Serie == serie : true)
-				.Where(e => monedaId != null ? e.MonedaId == monedaId : true)
-				.Where(e => formaPagoId != null ? e.FormaPagoId == formaPagoId : true)
-				.Where(e => metodoPagoId != null ? e.MetodoPagoId == metodoPagoId : true)
-				.Where(e => usoCFDIId != null ? e.UsoCFDIId == usoCFDIId : true)
+			return await _db.Prefacturas
+				.Where(e => deshabilitado || e.Deshabilitado == 0)
+				.Where(e => fechaInicio == null || e.Fecha >= fechaInicio)
+				.Where(e => fechaFin== null || e.Fecha<= fechaFin)
+				.Where(e => serie == null || e.Serie == serie)
+				.Where(e => monedaId == null || e.MonedaId == monedaId)
+				.Where(e => formaPagoId == null || e.FormaPagoId == formaPagoId)
+				.Where(e => metodoPagoId == null || e.MetodoPagoId == metodoPagoId)
+				.Where(e => usoCFDIId == null || e.UsoCFDIId == usoCFDIId)
 				.Include(e => e.Emisor).ThenInclude(e => e.RegimenFiscal)
 				.Include(e => e.Receptor).ThenInclude(r => r.RegimenFiscal)
 				.Include(e => e.TipoComprobante)
@@ -134,7 +127,7 @@ namespace ERPSEI.Data.Managers.SAT
 
 		public async Task<Prefactura?> GetByIdWithAdicionalesAsync(int id)
 		{
-			return await db.Prefacturas
+			return await _db.Prefacturas
 				.Where(e => e.Deshabilitado == 0)
 				.Where(e => e.Id == id)
 				.Include(e => e.Conceptos).ThenInclude(c => c.UnidadMedida)
@@ -144,7 +137,7 @@ namespace ERPSEI.Data.Managers.SAT
 
 		public async Task<Prefactura?> GetByIdAsync(int id)
         {
-            return await db.Prefacturas
+            return await _db.Prefacturas
 				.Where(e => e.Id == id)
 				.Include(e => e.Emisor).ThenInclude(e => e.RegimenFiscal)
 				.Include(e => e.Receptor).ThenInclude(r => r.RegimenFiscal)
@@ -162,7 +155,7 @@ namespace ERPSEI.Data.Managers.SAT
 
 		public async Task<Prefactura?> GetByNameAsync(string name)
 		{
-			return await db.Prefacturas.Where(p => $"{p.Serie.ToLower()}{p.Folio.ToLower()}" == name.ToLower()).FirstOrDefaultAsync();
+			return await _db.Prefacturas.Where(p => $"{p.Serie.ToLower()}{p.Folio.ToLower()}".Equals(name, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefaultAsync();
 		}
 
 	}

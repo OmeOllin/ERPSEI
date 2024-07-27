@@ -58,7 +58,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostDeletePuestos(string[] ids)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["PositionsDeletedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["PositionsDeletedUnsuccessfully"]);
 			try
 			{
                 await _db.Database.BeginTransactionAsync();
@@ -66,15 +66,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				List<Puesto> puestos = await _puestoManager.GetAllAsync();
                 foreach (string id in ids)
                 {
-                    int sid = 0;
-                    if (!int.TryParse(id, out sid)) { sid = 0; }
+					if (!int.TryParse(id, out int sid)) { sid = 0; }
 					Puesto? puesto = puestos.Where(p => p.Id == sid).FirstOrDefault();
                     List<Empleado> empleados = await _empleadoManager.GetAllAsync(null, null, null, null, sid, null, null ,null, true);
 					List<Empleado> empleadosActivosRelacionados = empleados.Where(e => e.Deshabilitado == 0).ToList();
                     //Si existen empleados que tengan el registro asignado, se le notifica al usuario.
-                    if (empleadosActivosRelacionados.Count() > 0)
+                    if (empleadosActivosRelacionados.Count > 0)
 					{
-						List<string> names = new List<string>();
+						List<string> names = [];
                         foreach (Empleado e in empleadosActivosRelacionados){ names.Add($"<i>{e.Id} - {e.NombreCompleto}</i>"); }
                         resp.TieneError = true;
                         resp.Mensaje = $"{_strLocalizer["PositionIsRelated"]}<br/><br/><i>{puesto?.Nombre}</i><br/><br/>{string.Join("<br/>", names)}";
@@ -110,7 +109,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostSavePuesto()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["PositionSavedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["PositionSavedUnsuccessfully"]);
 
 			try
 			{

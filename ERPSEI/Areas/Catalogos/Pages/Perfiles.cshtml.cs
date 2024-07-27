@@ -40,7 +40,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			[Display(Name = "SearchProductServiceField")]
 			public int? ProductoServicioId { get; set; }
-			public int?[] ProductosServicios { get; set; } = Array.Empty<int?>();
+			public int?[] ProductosServicios { get; set; } = [];
 		}
 
 		public PerfilesModel(
@@ -67,12 +67,12 @@ namespace ERPSEI.Areas.Catalogos.Pages
         {
 
 			string jsonResponse;
-			List<string> jsonPerfiles = new List<string>();
+			List<string> jsonPerfiles = [];
 			List<Perfil> perfiles = _catalogoManager.GetAllAsync().Result;
 
 			foreach ( Perfil p in perfiles)
 			{
-				List<string> jsonProdServ = getListJsonProductosServicios(p.ProductosServiciosPerfil);
+				List<string> jsonProdServ = GetListJsonProductosServicios(p.ProductosServiciosPerfil);
 				jsonPerfiles.Add(
 									"{" +
 										$"\"id\": {p.Id}," +
@@ -86,9 +86,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(jsonResponse);
 		}
-		private List<string> getListJsonProductosServicios(ICollection<ProductoServicioPerfil>? productosServicios)
+		private static List<string> GetListJsonProductosServicios(ICollection<ProductoServicioPerfil>? productosServicios)
 		{
-			List<string> jsonProdServ = new List<string>();
+			List<string> jsonProdServ = [];
 			if (productosServicios != null)
 			{
 				foreach (ProductoServicioPerfil a in productosServicios)
@@ -110,22 +110,21 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostDelete(string[] ids)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["DeletedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["DeletedUnsuccessfully"]);
 			try
 			{
 				await _db.Database.BeginTransactionAsync();
 
 				foreach (string id in ids)
 				{
-					int sid = 0;
-					if (!int.TryParse(id, out sid)) { sid = 0; }
+					if (!int.TryParse(id, out int sid)) { sid = 0; }
 					Perfil? perfil = await _catalogoManager.GetByIdAsync(sid);
 					List<Empresa> empresas = await _empresaManager.GetAllAsync();
 					empresas = empresas.Where(e => e.PerfilId == sid).ToList();
 					List<Empresa> empresasActivasRelacionadas = empresas.Where(e => e.Deshabilitado == 0).ToList();
-					if (empresasActivasRelacionadas.Count() > 0)
+					if (empresasActivasRelacionadas.Count > 0)
 					{
-						List<string> names = new List<string>();
+						List<string> names = [];
 						foreach (Empresa e in empresasActivasRelacionadas) { names.Add($"<i>{e.Id} - {e.RazonSocial}</i>"); }
 						resp.TieneError = true;
 						resp.Mensaje = $"{_strLocalizer["PerfilIsRelated"]}<br/><br/><i>{perfil?.Nombre}</i><br/><br/>{string.Join("<br/>", names)}";
@@ -170,7 +169,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostSave()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["SavedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["SavedUnsuccessfully"]);
 
 			try
 			{
@@ -192,7 +191,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					else
 					{
 						//Crea o actualiza el registro
-						await createOrUpdateProfile(Input);
+						await CreateOrUpdateProfile(Input);
 
 						resp.TieneError = false;
 						resp.Mensaje = _strLocalizer["SavedSuccessfully"];
@@ -207,7 +206,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resp);
 		}
-		private async Task createOrUpdateProfile(InputModel p)
+		private async Task CreateOrUpdateProfile(InputModel p)
 		{
 			try
 			{
@@ -258,7 +257,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostGetProductosServiciosSuggestion(string texto)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["ConsultadoUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["ConsultadoUnsuccessfully"]);
 			try
 			{
 				resp.Datos = await GetProductosServiciosSuggestion(texto);
@@ -275,7 +274,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		private async Task<string> GetProductosServiciosSuggestion(string texto)
 		{
 			string jsonResponse;
-			List<string> jsons = new List<string>();
+			List<string> jsons = [];
 
 			List<ProductoServicioBuscado> prodserv = await _productosServiciosManager.SearchProductService(texto);
 
