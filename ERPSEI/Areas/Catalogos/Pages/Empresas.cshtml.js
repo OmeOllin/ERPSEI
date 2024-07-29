@@ -165,7 +165,7 @@ function operateFormatter(value, row, index) {
 //Eventos de los iconos de operación
 window.operateEvents = {
     'click .see': function (e, value, row, index) {
-        puedeinitEmpresaDialog(VER, row);
+        initEmpresaDialog(VER, row);
     },
     'click .edit': function (e, value, row, index) {
         initEmpresaDialog(EDITAR, row);
