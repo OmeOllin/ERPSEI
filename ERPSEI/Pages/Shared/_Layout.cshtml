@@ -130,7 +130,26 @@
 
     foreach (AccesoModulo a in accesos)
     {
-        permisos.Add(a.Modulo?.NombreNormalizado ?? string.Empty, a.PuedeTodo == 1 || a.PuedeConsultar == 1 || a.PuedeEditar == 1 || a.PuedeEliminar == 1 || a.PuedeAutorizar == 1);
+        if (permisos.ContainsKey(a.Modulo?.NombreNormalizado ?? string.Empty))
+        {
+            //Mezcla los permisos de todos los roles para determinar el permiso final.
+
+            //Si el rol tiene cualquier permiso, entonces se considera que si tiene acceso al módulo. Si no hubiera ningún permiso, no se concede acceso al módulo.
+            bool esteRolTienePermiso = a.PuedeTodo == 1 || a.PuedeConsultar == 1 || a.PuedeEditar == 1 || a.PuedeEliminar == 1 || a.PuedeAutorizar == 1;
+
+            //Se guarda referencia del permiso actual del módulo.
+            bool elRolGuardadoTienePermiso = permisos[a.Modulo?.NombreNormalizado ?? string.Empty];
+
+            //De los roles, al menos uno tiene que tener acceso para garantizar el acceso. Si de todos los roles, ninguno tiene acceso, entonces no se concede acceso.
+            permisos[a.Modulo?.NombreNormalizado ?? string.Empty] = elRolGuardadoTienePermiso || esteRolTienePermiso;
+        }
+        else
+        {
+            //Guarda el permiso del módulo.
+
+            //Si el rol tiene cualquier permiso, entonces se considera que si tiene acceso al módulo. Si no hubiera ningún permiso, no se concede acceso al módulo.
+            permisos.Add(a.Modulo?.NombreNormalizado ?? string.Empty, a.PuedeTodo == 1 || a.PuedeConsultar == 1 || a.PuedeEditar == 1 || a.PuedeEliminar == 1 || a.PuedeAutorizar == 1);
+        }
     }
 
 }
