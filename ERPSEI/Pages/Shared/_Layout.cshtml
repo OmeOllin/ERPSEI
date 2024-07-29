@@ -29,39 +29,64 @@
 
     if(accesos.Count >= 0)
     {
-        accedeCatalogos = accesos.FindAll(m => m.Modulo?.Categoria == "catalogo").Count >= 1;
-        accedeERP = accesos.FindAll(m => m.Modulo?.Categoria == "erp").Count >= 1;
-        accedeReportes = accesos.FindAll(m => m.Modulo?.Categoria == "reporte").Count >= 1;
-
         tieneCatalogosRH = accesos.FindAll(m => 
-            m.Modulo?.NombreNormalizado == "gestiondetalento" ||
+            (m.Modulo?.NombreNormalizado == "gestiondetalento" ||
             m.Modulo?.NombreNormalizado == "usuarios" ||
             m.Modulo?.NombreNormalizado == "puestos" ||
             m.Modulo?.NombreNormalizado == "areas" ||
             m.Modulo?.NombreNormalizado == "subareas" ||
             m.Modulo?.NombreNormalizado == "oficinas" ||
-            m.Modulo?.NombreNormalizado == "roles"
+            m.Modulo?.NombreNormalizado == "roles") &&
+            (m.PuedeTodo == 1 || 
+            m.PuedeConsultar == 1 || 
+            m.PuedeEditar == 1 || 
+            m.PuedeEliminar == 1 || 
+            m.PuedeAutorizar == 1)
         ).Count >= 1;
         tieneERPRH = accesos.FindAll(m =>
-            m.Modulo?.NombreNormalizado == "vacaciones" ||
+            (m.Modulo?.NombreNormalizado == "vacaciones" ||
             m.Modulo?.NombreNormalizado == "incapacidades" ||
-            m.Modulo?.NombreNormalizado == "permisos"
+            m.Modulo?.NombreNormalizado == "permisos") &&
+            (m.PuedeTodo == 1 ||
+            m.PuedeConsultar == 1 ||
+            m.PuedeEditar == 1 ||
+            m.PuedeEliminar == 1 ||
+            m.PuedeAutorizar == 1)
         ).Count >= 1;
         tieneReportesRH = accesos.FindAll(m =>
-            m.Modulo?.NombreNormalizado == "organigrama" ||
-            m.Modulo?.NombreNormalizado == "asistencia"
+            (m.Modulo?.NombreNormalizado == "organigrama" ||
+            m.Modulo?.NombreNormalizado == "asistencia") &&
+            (m.PuedeTodo == 1 ||
+            m.PuedeConsultar == 1 ||
+            m.PuedeEditar == 1 ||
+            m.PuedeEliminar == 1 ||
+            m.PuedeAutorizar == 1)
         ).Count >= 1;
 
         tieneCatalogosEmpresas = accesos.FindAll(m =>
-            m.Modulo?.NombreNormalizado == "empresas" ||
+            (m.Modulo?.NombreNormalizado == "empresas" ||
             m.Modulo?.NombreNormalizado == "origenes" ||
             m.Modulo?.NombreNormalizado == "niveles" ||
-            m.Modulo?.NombreNormalizado == "perfiles"
+            m.Modulo?.NombreNormalizado == "perfiles") &&
+            (m.PuedeTodo == 1 ||
+            m.PuedeConsultar == 1 ||
+            m.PuedeEditar == 1 ||
+            m.PuedeEliminar == 1 ||
+            m.PuedeAutorizar == 1)
         ).Count >= 1;
         tieneERPEmpresas = accesos.FindAll(m =>
-            m.Modulo?.NombreNormalizado == "prefacturas"
+            (m.Modulo?.NombreNormalizado == "prefacturas") &&
+            (m.PuedeTodo == 1 ||
+            m.PuedeConsultar == 1 ||
+            m.PuedeEditar == 1 ||
+            m.PuedeEliminar == 1 ||
+            m.PuedeAutorizar == 1)
         ).Count >= 1;
         tieneReportesEmpresas = false;
+
+        accedeCatalogos = tieneCatalogosRH || tieneCatalogosEmpresas;
+        accedeERP = tieneERPRH || tieneERPEmpresas;
+        accedeReportes = tieneReportesRH || tieneReportesEmpresas;
     }
 
     string classDropdownCatalogos = string.Empty, classDivCatalogos = string.Empty;
@@ -165,88 +190,92 @@
                                     <div class="dropdown-menu shadow-lg mt-0 @classDropdownCatalogos" aria-labelledby="navbarDropdownMenuLink">
                                         <div class="container">
                                             <div class="row my-2">
-                                                <div class="@classDivCatalogos">
-                                                    <div class="list-group list-group-flush">
-                                                        <p class="mb-0 list-group-item text-uppercase text-center">
-                                                            <b>@Localizer["HumanResourcesMenu"]</b>
-                                                        </p>
-                                                        @if (permisos["gestiondetalento"])
-                                                        {
-                                                            <a class="dropdown-item p-2 @_LayoutPages.GestionDeTalentoNavClass(ViewContext)" asp-area="Catalogos" asp-page="/GestionDeTalento">
-                                                                <i class="bi bi-people-fill"></i> @Localizer["PersonalCatalogMenu"]
-                                                            </a>
-                                                        }
-                                                        @if (permisos["usuarios"])
-                                                        {
-                                                            <a class="dropdown-item p-2 @_LayoutPages.CatalogoUsuariosNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Usuarios">
-                                                                <i class="bi bi-person-fill-gear"></i> @Localizer["UsersCatalogMenu"]
-                                                            </a>
-                                                        }
-                                                        @if (permisos["roles"])
-                                                        {
-                                                            <a class="dropdown-item p-2 @_LayoutPages.CatalogoRolesNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Roles">
-                                                                <i class="bi bi-ui-checks"></i> @Localizer["RolesCatalogMenu"]
-                                                            </a>
-                                                        }
-                                                        @if (permisos["puestos"])
-                                                        {
-                                                            <a class="dropdown-item p-2 @_LayoutPages.CatalogoPuestosNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Puestos">
-                                                                <i class="bi bi-briefcase-fill"></i> @Localizer["PositionsCatalogMenu"]
-                                                            </a>
-                                                        }
-                                                        @if (permisos["areas"])
-                                                        {
-                                                            <a class="dropdown-item p-2 @_LayoutPages.CatalogoAreasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Areas">
-                                                                <i class="bi bi-boxes"></i> @Localizer["AreasCatalogMenu"]
-                                                            </a>
-                                                        }
-                                                        @if (permisos["subareas"])
-                                                        {
-                                                            <a class="dropdown-item p-2 @_LayoutPages.CatalogoSubareasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Subareas">
-                                                                <i class="bi bi-box"></i> @Localizer["SubareasCatalogMenu"]
-                                                            </a>
-                                                        }
-                                                        @if (permisos["oficinas"])
-                                                        {
-                                                            <a class="dropdown-item p-2 @_LayoutPages.CatalogoOficinasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Oficinas">
-                                                                <i class="bi bi-building-fill"></i> @Localizer["OfficesCatalogMenu"]
-                                                            </a>
-                                                        }
-                                                        
-
+                                                @if (tieneCatalogosRH)
+                                                {
+                                                    <div class="@classDivCatalogos">
+                                                        <div class="list-group list-group-flush">
+                                                            <p class="mb-0 list-group-item text-uppercase text-center">
+                                                                <b>@Localizer["HumanResourcesMenu"]</b>
+                                                            </p>
+                                                            @if (permisos.ContainsKey("gestiondetalento") ? permisos["gestiondetalento"] : false)
+                                                            {
+                                                                <a class="dropdown-item p-2 @_LayoutPages.GestionDeTalentoNavClass(ViewContext)" asp-area="Catalogos" asp-page="/GestionDeTalento">
+                                                                    <i class="bi bi-people-fill"></i> @Localizer["PersonalCatalogMenu"]
+                                                                </a>
+                                                            }
+                                                            @if (permisos.ContainsKey("usuarios") ? permisos["usuarios"] : false)
+                                                            {
+                                                                <a class="dropdown-item p-2 @_LayoutPages.CatalogoUsuariosNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Usuarios">
+                                                                    <i class="bi bi-person-fill-gear"></i> @Localizer["UsersCatalogMenu"]
+                                                                </a>
+                                                            }
+                                                            @if (permisos.ContainsKey("roles") ? permisos["roles"] : false)
+                                                            {
+                                                                <a class="dropdown-item p-2 @_LayoutPages.CatalogoRolesNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Roles">
+                                                                    <i class="bi bi-ui-checks"></i> @Localizer["RolesCatalogMenu"]
+                                                                </a>
+                                                            }
+                                                            @if (permisos.ContainsKey("puestos") ? permisos["puestos"] : false)
+                                                            {
+                                                                <a class="dropdown-item p-2 @_LayoutPages.CatalogoPuestosNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Puestos">
+                                                                    <i class="bi bi-briefcase-fill"></i> @Localizer["PositionsCatalogMenu"]
+                                                                </a>
+                                                            }
+                                                            @if (permisos.ContainsKey("areas") ? permisos["areas"] : false)
+                                                            {
+                                                                <a class="dropdown-item p-2 @_LayoutPages.CatalogoAreasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Areas">
+                                                                    <i class="bi bi-boxes"></i> @Localizer["AreasCatalogMenu"]
+                                                                </a>
+                                                            }
+                                                            @if (permisos.ContainsKey("subareas") ? permisos["subareas"] : false)
+                                                            {
+                                                                <a class="dropdown-item p-2 @_LayoutPages.CatalogoSubareasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Subareas">
+                                                                    <i class="bi bi-box"></i> @Localizer["SubareasCatalogMenu"]
+                                                                </a>
+                                                            }
+                                                            @if (permisos.ContainsKey("oficinas") ? permisos["oficinas"] : false)
+                                                            {
+                                                                <a class="dropdown-item p-2 @_LayoutPages.CatalogoOficinasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Oficinas">
+                                                                    <i class="bi bi-building-fill"></i> @Localizer["OfficesCatalogMenu"]
+                                                                </a>
+                                                            }
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="@classDivCatalogos">
-                                                    <div class="list-group list-group-flush">
-                                                        <p class="mb-0 list-group-item text-uppercase text-center">
-                                                            <b>@Localizer["FacturacionMenu"]</b>
-                                                        </p>
-                                                        @if (permisos["empresas"])
-                                                        {
-                                                            <a class="dropdown-item p-2 @_LayoutPages.CatalogoEmpresasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Empresas">
-                                                                <i class="bi bi-buildings"></i> @Localizer["EmpresasCatalogMenu"]
-                                                            </a>
-                                                        }
-                                                        @if (permisos["origenes"])
-                                                        {
-                                                            <a class="dropdown-item p-2 @_LayoutPages.CatalogoOrigenesNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Origenes">
-                                                                <i class="bi bi-flag-fill"></i> @Localizer["OriginsCatalogMenu"]
-                                                            </a>
-                                                        }
-                                                        @if (permisos["niveles"])
-                                                        {
-                                                            <a class="dropdown-item p-2 @_LayoutPages.CatalogoNivelesNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Niveles">
-                                                                <i class="bi bi-bookmark-check-fill"></i> @Localizer["LevelsCatalogMenu"]
-                                                            </a>
-                                                        }
-                                                        @if (permisos["perfiles"])
-                                                        {
-                                                            <a class="dropdown-item p-2 @_LayoutPages.CatalogoPerfilesNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Perfiles">
-                                                                <i class="bi bi-circle-square"></i> @Localizer["ProfilesCatalogMenu"]
-                                                            </a>
-                                                        }
+                                                }
+                                                @if (tieneCatalogosEmpresas)
+                                                {
+                                                    <div class="@classDivCatalogos">
+                                                        <div class="list-group list-group-flush">
+                                                            <p class="mb-0 list-group-item text-uppercase text-center">
+                                                                <b>@Localizer["FacturacionMenu"]</b>
+                                                            </p>
+                                                            @if (permisos.ContainsKey("empresas") ? permisos["empresas"] : false)
+                                                            {
+                                                                <a class="dropdown-item p-2 @_LayoutPages.CatalogoEmpresasNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Empresas">
+                                                                    <i class="bi bi-buildings"></i> @Localizer["EmpresasCatalogMenu"]
+                                                                </a>
+                                                            }
+                                                            @if (permisos.ContainsKey("origenes") ? permisos["origenes"] : false)
+                                                            {
+                                                                <a class="dropdown-item p-2 @_LayoutPages.CatalogoOrigenesNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Origenes">
+                                                                    <i class="bi bi-flag-fill"></i> @Localizer["OriginsCatalogMenu"]
+                                                                </a>
+                                                            }
+                                                            @if (permisos.ContainsKey("niveles") ? permisos["niveles"] : false)
+                                                            {
+                                                                <a class="dropdown-item p-2 @_LayoutPages.CatalogoNivelesNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Niveles">
+                                                                    <i class="bi bi-bookmark-check-fill"></i> @Localizer["LevelsCatalogMenu"]
+                                                                </a>
+                                                            }
+                                                            @if (permisos.ContainsKey("perfiles") ? permisos["perfiles"] : false)
+                                                            {
+                                                                <a class="dropdown-item p-2 @_LayoutPages.CatalogoPerfilesNavClass(ViewContext)" asp-area="Catalogos" asp-page="/Perfiles">
+                                                                    <i class="bi bi-circle-square"></i> @Localizer["ProfilesCatalogMenu"]
+                                                                </a>
+                                                            }
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                }
                                             </div>
                                         </div>
                                     </div>
@@ -263,44 +292,49 @@
                                     <div class="dropdown-menu shadow-lg mt-0 @classDropdownERP" aria-labelledby="navbarDropdownMenuLinkERP">
                                         <div class="container">
                                             <div class="row my-2">
-                                                <div class="@classDivERP">
-                                                    <div class="list-group list-group-flush">
-                                                        <p class="mb-0 list-group-item text-uppercase text-center">
-                                                            <b>@Localizer["HumanResourcesMenu"]</b>
-                                                        </p>
-                                                        @if (permisos["vacaciones"])
-                                                        {
-                                                            <a class="dropdown-item p-2 @_LayoutPages.VacacionesNavClass(ViewContext)" asp-area="" asp-page="/Building">
-                                                                <i class="bi bi-airplane-engines-fill"></i> @Localizer["VacationMenu"]
-                                                            </a>
-                                                        }
-                                                        @if (permisos["incapacidades"])
-                                                        {
-                                                            <a class="dropdown-item p-2 @_LayoutPages.IncapacidadesNavClass(ViewContext)" asp-area="" asp-page="/Building">
-                                                                <i class="bi bi-heart-pulse-fill"></i> @Localizer["DisabilitiesMenu"]
-                                                            </a>
-                                                        }
-                                                        @if (permisos["permisos"])
-                                                        {
-                                                            <a class="dropdown-item p-2 @_LayoutPages.PermisosNavClass(ViewContext)" asp-area="" asp-page="/Building">
-                                                                <i class="bi bi-calendar-check-fill"></i> @Localizer["PermissionsMenu"]
-                                                            </a>
-                                                        }
+                                                @if(tieneERPRH){
+                                                    <div class="@classDivERP">
+                                                        <div class="list-group list-group-flush">
+                                                            <p class="mb-0 list-group-item text-uppercase text-center">
+                                                                <b>@Localizer["HumanResourcesMenu"]</b>
+                                                            </p>
+                                                            @if (permisos.ContainsKey("vacaciones") ? permisos["vacaciones"] : false)
+                                                            {
+                                                                <a class="dropdown-item p-2 @_LayoutPages.VacacionesNavClass(ViewContext)" asp-area="" asp-page="/Building">
+                                                                    <i class="bi bi-airplane-engines-fill"></i> @Localizer["VacationMenu"]
+                                                                </a>
+                                                            }
+                                                            @if (permisos.ContainsKey("incapacidades") ? permisos["incapacidades"] : false)
+                                                            {
+                                                                <a class="dropdown-item p-2 @_LayoutPages.IncapacidadesNavClass(ViewContext)" asp-area="" asp-page="/Building">
+                                                                    <i class="bi bi-heart-pulse-fill"></i> @Localizer["DisabilitiesMenu"]
+                                                                </a>
+                                                            }
+                                                            @if (permisos.ContainsKey("permisos") ? permisos["permisos"] : false)
+                                                            {
+                                                                <a class="dropdown-item p-2 @_LayoutPages.PermisosNavClass(ViewContext)" asp-area="" asp-page="/Building">
+                                                                    <i class="bi bi-calendar-check-fill"></i> @Localizer["PermissionsMenu"]
+                                                                </a>
+                                                            }
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="@classDivERP">
-                                                    <div class="list-group list-group-flush">
-                                                        <p class="mb-0 list-group-item text-uppercase text-center">
-                                                            <b>@Localizer["FacturacionMenu"]</b>
-                                                        </p>
-                                                        @if (permisos["prefacturas"])
-                                                        {
-                                                            <a class="dropdown-item p-2 @_LayoutPages.PrefacturasNavClass(ViewContext)" asp-area="ERP" asp-page="/Prefacturas">
-                                                                <i class="bi bi-receipt-cutoff"></i> @Localizer["PrefacturasMenu"]
-                                                            </a>
-                                                        }
+                                                }
+                                                @if (tieneERPEmpresas)
+                                                {
+                                                    <div class="@classDivERP">
+                                                        <div class="list-group list-group-flush">
+                                                            <p class="mb-0 list-group-item text-uppercase text-center">
+                                                                <b>@Localizer["FacturacionMenu"]</b>
+                                                            </p>
+                                                            @if (permisos.ContainsKey("prefacturas") ? permisos["prefacturas"] : false)
+                                                            {
+                                                                <a class="dropdown-item p-2 @_LayoutPages.PrefacturasNavClass(ViewContext)" asp-area="ERP" asp-page="/Prefacturas">
+                                                                    <i class="bi bi-receipt-cutoff"></i> @Localizer["PrefacturasMenu"]
+                                                                </a>
+                                                            }
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                }
                                             </div>
                                         </div>
                                     </div>
@@ -317,25 +351,31 @@
                                     <div class="dropdown-menu shadow-lg mt-0 @classDropdownReportes" aria-labelledby="navbarDropdownMenuLinkReportes">
                                         <div class="container">
                                             <div class="row my-2">
-                                                <div class="@classDivReportes">
-                                                    <div class="list-group list-group-flush">
-                                                        <p class="mb-0 list-group-item text-uppercase text-center">
-                                                            <b>@Localizer["HumanResourcesMenu"]</b>
-                                                        </p>
-                                                        @if (permisos["organigrama"])
-                                                        {
-                                                            <a class="dropdown-item p-2 @_LayoutPages.OrganigramaNavClass(ViewContext)" asp-area="Reportes" asp-page="/Organigrama">
-                                                                <i class="bi bi-diagram-3-fill"></i> @Localizer["OrganizationChartMenu"]
-                                                            </a>
-                                                        }
-                                                        @if (permisos["asistencia"])
-                                                        {
-                                                            <a class="dropdown-item p-2 @_LayoutPages.AsistenciaNavClass(ViewContext)" asp-area="Reportes" asp-page="/Asistencia">
-                                                                <i class="bi bi-fingerprint"></i> @Localizer["AsistenciaMenu"]
-                                                            </a>
-                                                        }
+                                                @if (tieneReportesRH)
+                                                {  
+                                                    <div class="@classDivReportes">
+                                                        <div class="list-group list-group-flush">
+                                                            <p class="mb-0 list-group-item text-uppercase text-center">
+                                                                <b>@Localizer["HumanResourcesMenu"]</b>
+                                                            </p>
+                                                            @if (permisos.ContainsKey("organigrama") ? permisos["organigrama"] : false)
+                                                            {
+                                                                <a class="dropdown-item p-2 @_LayoutPages.OrganigramaNavClass(ViewContext)" asp-area="Reportes" asp-page="/Organigrama">
+                                                                    <i class="bi bi-diagram-3-fill"></i> @Localizer["OrganizationChartMenu"]
+                                                                </a>
+                                                            }
+                                                            @if (permisos.ContainsKey("asistencia") ? permisos["asistencia"] : false)
+                                                            {
+                                                                <a class="dropdown-item p-2 @_LayoutPages.AsistenciaNavClass(ViewContext)" asp-area="Reportes" asp-page="/Asistencia">
+                                                                    <i class="bi bi-fingerprint"></i> @Localizer["AsistenciaMenu"]
+                                                                </a>
+                                                            }
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                }
+                                                @if (tieneReportesEmpresas)
+                                                {
+                                                }
                                             </div>
                                         </div>
                                     </div>
