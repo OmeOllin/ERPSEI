@@ -104,6 +104,13 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		public async Task<JsonResult> OnPostFiltrarAsistencia([FromBody] FiltroModel inputFiltro)
 		{
 			ServerResponse resp = new ServerResponse(true, _strLocalizer["AsistenciasFiltradosUnsuccessfully"]);
+
+			if (inputFiltro == null)
+			{
+				resp.Mensaje = _strLocalizer["Favor de seleccionar rango de fechas"];
+				return new JsonResult(resp);
+			}
+
 			try
 			{
 				// Obtener todas las asistencias
@@ -122,14 +129,15 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 				if (inputFiltro.FechaIngresoFin.HasValue)
 				{
-					// Asegurarse de incluir todas las asistencias hasta el final del día especificado
 					DateTime fechaFin = inputFiltro.FechaIngresoFin.Value.Date.AddDays(1).AddTicks(-1);
 					asistencias = asistencias.Where(a => a.FechaHora <= fechaFin).ToList();
 				}
-				// Si no se aplicaron filtros, retornar un resultado vacío para no actualizar la página
-				if (string.IsNullOrEmpty(inputFiltro.NombreEmpleado) && !inputFiltro.FechaIngresoInicio.HasValue && !inputFiltro.FechaIngresoFin.HasValue)
+
+				// Verificar si se encontraron resultados
+				if (asistencias.Count == 0)
 				{
-					return new JsonResult(resp); // Retorna una respuesta vacía si no se aplicaron filtros
+					resp.Mensaje = _strLocalizer["NoRecordsFound"];
+					return new JsonResult(resp);
 				}
 
 
