@@ -131,13 +131,13 @@
 
     foreach (Modulo m in await ModulosManager.GetAllAsync())
     {
-        accesos = accesos.Where(a => a.Modulo?.NombreNormalizado == m.NombreNormalizado).ToList();
+        List<AccesoModulo> accesosEncontrados = accesos.Where(a => a.Modulo?.NombreNormalizado == m.NombreNormalizado).ToList();
 
-        bool puedeTodo = accesos.Where(a => a.PuedeTodo == 1).FirstOrDefault()?.PuedeTodo == 1;
-        bool puedeConsultar = accesos.Where(a => a.PuedeConsultar == 1).FirstOrDefault()?.PuedeConsultar == 1;
-        bool puedeEditar = accesos.Where(a => a.PuedeEditar == 1).FirstOrDefault()?.PuedeEditar == 1;
-        bool puedeEliminar = accesos.Where(a => a.PuedeEliminar == 1).FirstOrDefault()?.PuedeEliminar == 1;
-        bool puedeAutorizar = accesos.Where(a => a.PuedeAutorizar == 1).FirstOrDefault()?.PuedeAutorizar == 1;
+        bool puedeTodo = accesosEncontrados.Where(a => a.PuedeTodo == 1).FirstOrDefault()?.PuedeTodo == 1;
+        bool puedeConsultar = accesosEncontrados.Where(a => a.PuedeConsultar == 1).FirstOrDefault()?.PuedeConsultar == 1;
+        bool puedeEditar = accesosEncontrados.Where(a => a.PuedeEditar == 1).FirstOrDefault()?.PuedeEditar == 1;
+        bool puedeEliminar = accesosEncontrados.Where(a => a.PuedeEliminar == 1).FirstOrDefault()?.PuedeEliminar == 1;
+        bool puedeAutorizar = accesosEncontrados.Where(a => a.PuedeAutorizar == 1).FirstOrDefault()?.PuedeAutorizar == 1;
 
         permisos.Add(m.NombreNormalizado, puedeTodo || puedeConsultar || puedeEditar || puedeEliminar || puedeAutorizar);
     }
