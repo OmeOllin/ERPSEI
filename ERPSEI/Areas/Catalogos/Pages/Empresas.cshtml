@@ -6,12 +6,17 @@
 @using ERPSEI.Data.Entities.Empresas;
 @using ERPSEI.Data.Entities.SAT;
 @using ERPSEI.Data.Entities.SAT.Catalogos;
+@using ERPSEI.Data.Managers.Usuarios;
+@using ERPSEI.Data.Entities.Usuarios;
 @model EmpresasModel
 @inject IViewLocalizer Localizer;
 @inject IRWCatalogoManager<Perfil> PerfilesManager;
 @inject IRWCatalogoManager<Origen> OrigenesManager;
 @inject IRWCatalogoManager<Nivel> NivelesManager;
 @inject IRWCatalogoManager<ActividadEconomica> ActividadesEconomicasManager;
+@inject AppRoleManager RolesManager;
+@inject AppUserManager UsuariosManager;
+@inject IAccesoModuloManager AccesosModulosManager;
 @{
 	ViewData["Title"] = Localizer["Title"];
 
@@ -27,6 +32,20 @@
 	List<Origen> origenes = await OrigenesManager.GetAllAsync();
 	List<Nivel> niveles = await NivelesManager.GetAllAsync();
 	List<ActividadEconomica> actividadesEconomicas = await ActividadesEconomicasManager.GetAllAsync();
+
+	AppUser? usr = await UsuariosManager.GetUserAsync(User);
+	IList<string> rolesUsuario = usr != null ? await UsuariosManager.GetRolesAsync(usr) : new List<string>();
+	List<AccesoModulo> accesos = new List<AccesoModulo>();
+	foreach (string rol in rolesUsuario)
+	{
+		AppRole? foundRole = await RolesManager.GetByNameAsync(rol);
+		accesos.AddRange(await AccesosModulosManager.GetByRolIdAsync(foundRole?.Id ?? string.Empty));
+	}
+	bool puedeTodo = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeTodo == 1)).FirstOrDefault()?.PuedeTodo == 1;
+	bool puedeConsultar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeConsultar == 1)).FirstOrDefault()?.PuedeConsultar == 1;
+	bool puedeEditar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeEditar == 1)).FirstOrDefault()?.PuedeEditar == 1;
+	bool puedeEliminar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeEliminar == 1)).FirstOrDefault()?.PuedeEliminar == 1;
+	bool puedeAutorizar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeAutorizar == 1)).FirstOrDefault()?.PuedeAutorizar == 1;
 }
 <h3 class="title mb-3">@ViewData["Title"]</h3>
 
@@ -85,13 +104,16 @@
 						</div>
 					</div>
 				</form>
-				<div class="row text-end">
-					<div class="col-12">
-						<button id="btnBuscar" class="btn btn-primary" onclick="onBuscarClick();">
-							<i class="bi bi-search"></i> @Localizer["SearchButton"]
-						</button>
+				@if (puedeTodo || puedeConsultar || puedeEditar || puedeEliminar)
+				{
+					<div class="row text-end">
+						<div class="col-12">
+							<button id="btnBuscar" class="btn btn-primary" onclick="onBuscarClick();">
+								<i class="bi bi-search"></i> @Localizer["SearchButton"]
+							</button>
+						</div>
 					</div>
-				</div>
+				}
 			</div>
 		</div>
 	</div>
@@ -102,12 +124,18 @@
 <!-- --------------------------- -->
 <!-- Sección tabla de resultados -->
 <div id="toolbar" class="col-xl-12">
-	<button id="btnAgregar" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dlgEmpresa" onclick="onAgregarClick();">
-		<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
-	</button>
-	<button id="remove" class="btn btn-danger" disabled>
-		<i class="bi bi-ban"></i> <span class="d-none d-sm-inline">@Localizer["DeactivateButton"]</span>
-	</button>
+	@if (puedeTodo || puedeEditar)
+	{
+		<button id="btnAgregar" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dlgEmpresa" onclick="onAgregarClick();">
+			<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
+		</button>
+	}
+	@if (puedeTodo || puedeEliminar)
+	{
+		<button id="remove" class="btn btn-danger" disabled>
+			<i class="bi bi-ban"></i> <span class="d-none d-sm-inline">@Localizer["DeactivateButton"]</span>
+		</button>
+	}
 </div>
 <table id="table" class="table-sm"
 		data-unique-id="id"
@@ -341,12 +369,18 @@
 										<div class="row mb-3">
 											<h5 class="col-12"><i>@Localizer["ActividadesEconomicasPlaceholder"]</i></h5>
 											<div id="toolbarActividad" class="col-xl-12">
-												<button type="button" id="btnAgregarActividad" class="btn btn-primary formButton" data-bs-toggle="modal" data-bs-target="#dlgActividad" onclick="initDialogActividad();">
-													<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
-												</button>
-												<button type="button" id="removeActividad" class="btn btn-danger formButton" disabled>
-													<i class="bi bi-trash"></i> <span class="d-none d-sm-inline">@Localizer["DeleteButton"]</span>
-												</button>
+												@if (puedeTodo || puedeEditar)
+												{
+													<button type="button" id="btnAgregarActividad" class="btn btn-primary formButton" data-bs-toggle="modal" data-bs-target="#dlgActividad" onclick="initDialogActividad();">
+														<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
+													</button>
+												}
+												@if (puedeTodo || puedeEliminar)
+												{
+													<button type="button" id="removeActividad" class="btn btn-danger formButton" disabled>
+														<i class="bi bi-trash"></i> <span class="d-none d-sm-inline">@Localizer["DeleteButton"]</span>
+													</button>
+												}
 											</div>
 											<table id="tableActividades"
 												   data-unique-id="id"
@@ -382,9 +416,12 @@
 								<div id="collapseSectionTwo" class="accordion-collapse collapse show" aria-labelledby="segundaSeccion" data-bs-parent="#accordionTwo">
 									<div class="accordion-body">
 										<div class="col-12 text-end mb-3">
-											<button id="dlgEmpresaBtnAgregarBanco" type="button" class="btn btn-primary formButton" onclick="onAgregarBancoClick();">
-												<i class="bi bi-plus-lg"></i> @Localizer["AgregarBancoButtonText"]
-											</button>
+											@if (puedeTodo || puedeEditar)
+											{
+												<button id="dlgEmpresaBtnAgregarBanco" type="button" class="btn btn-primary formButton" onclick="onAgregarBancoClick();">
+													<i class="bi bi-plus-lg"></i> @Localizer["AgregarBancoButtonText"]
+												</button>			
+											}
 										</div>
 										<div id="bodyBancos" class="row"></div>
 									</div>
@@ -417,17 +454,23 @@
 			<div class="modal-footer" style="display: inline !important;">
 				<div class="container row">
 					<div class="col-5">
-						<button id="dlgEmpresaBtnDesactivar" type="button" class="btn btn-danger formButton" onclick="onDeleteEmpresaClick();" data-bs-dismiss="modal">
-							<i class="bi bi-ban"></i> @Localizer["DeactivateButton"]
-						</button>
+						@if (puedeTodo || puedeEliminar)
+						{
+							<button id="dlgEmpresaBtnDesactivar" type="button" class="btn btn-danger formButton" onclick="onDeleteEmpresaClick();" data-bs-dismiss="modal">
+								<i class="bi bi-ban"></i> @Localizer["DeactivateButton"]
+							</button>
+						}
 					</div>
 					<div class="col-7 text-end">
 						<button id="dlgEmpresaBtnCancelar" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
 							<i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
 						</button>
-						<button id="dlgEmpresaBtnGuardar" type="button" class="btn btn-primary formButton" onclick="onGuardarClick();">
-							<i class="bi bi-floppy"></i> @Localizer["SaveButtonTitle"]
-						</button>
+						@if (puedeTodo || puedeEditar)
+						{
+							<button id="dlgEmpresaBtnGuardar" type="button" class="btn btn-primary formButton" onclick="onGuardarClick();">
+								<i class="bi bi-floppy"></i> @Localizer["SaveButtonTitle"]
+							</button>
+						}
 					</div>
 				</div>
 			</div>
@@ -463,9 +506,12 @@
 				<button id="dlgBtnCancelar" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
 					<i class="bi bi-x-lg"></i> @Localizer["CloseButtonTitle"]
 				</button>
-				<button id="dlgBtnAgregar" type="button" class="btn btn-primary formButton" onclick="onAgregarActividadClick();">
-					<i class="bi bi-plus-lg"></i> @Localizer["AddButton"]
-				</button>
+				@if (puedeTodo || puedeEditar)
+				{
+					<button id="dlgBtnAgregar" type="button" class="btn btn-primary formButton" onclick="onAgregarActividadClick();">
+						<i class="bi bi-plus-lg"></i> @Localizer["AddButton"]
+					</button>
+				}
 			</div>
 		</div>
 	</div>
@@ -515,9 +561,12 @@
 				<button id="dlgExcelBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarImportarClick();" data-bs-dismiss="modal">
 					<i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
 				</button>
-				<button id="dlgExcelBtnImportar" type="button" class="btn btn-primary" onclick="onImportarClick();">
-					<i class="bi bi-upload"></i> @Localizer["ImportButtonText"]
-				</button>
+				@if (puedeTodo || puedeEditar)
+				{
+					<button id="dlgExcelBtnImportar" type="button" class="btn btn-primary" onclick="onImportarClick();">
+						<i class="bi bi-upload"></i> @Localizer["ImportButtonText"]
+					</button>
+				}
 			</div>
 		</div>
 	</div>
@@ -589,6 +638,12 @@
 		};
 		var invalidFormatTitle = '@Localizer["InvalidFormatTitle"]';
 		var invalidFormatMsg = '@Localizer["InvalidFormatMsg"]';
+
+		var puedeTodo = '@puedeTodo' == 'True';
+		var puedeConsultar = '@puedeConsultar' == 'True';
+		var puedeEditar = '@puedeEditar' == 'True';
+		var puedeEliminar = '@puedeEliminar' == 'True';
+		var puedeAutorizar = '@puedeAutorizar' == 'True';
 	</script>
 
 	<partial name="_ValidationScriptsPartial" />

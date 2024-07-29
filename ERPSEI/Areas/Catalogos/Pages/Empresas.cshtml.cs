@@ -1,12 +1,15 @@
 using ERPSEI.Data;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.SAT.Catalogos;
+using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empresas;
+using ERPSEI.Data.Managers.Usuarios;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
 using ExcelDataReader;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
@@ -21,6 +24,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
     [Authorize(Policy = "AccessPolicy")]
 	public class EmpresasModel : PageModel
 	{
+		private readonly IAccesoModuloManager _accesosModuloManager;
+		private readonly AppUserManager _usuariosManager;
+		private readonly AppRoleManager _rolesManager;
 		private readonly IEmpresaManager _empresaManager;
 		private readonly IBancoEmpresaManager _bancoEmpresaManager;
 		private readonly IArchivoEmpresaManager _archivoEmpresaManager;
@@ -32,6 +38,12 @@ namespace ERPSEI.Areas.Catalogos.Pages
         private readonly IStringLocalizer<EmpresasModel> _strLocalizer;
 		private readonly ILogger<EmpresasModel> _logger;
 		private readonly ApplicationDbContext _db;
+
+		private bool PuedeTodo { get; set; }
+		private bool PuedeConsultar { get; set; }
+		private bool PuedeEditar { get; set; }
+		private bool PuedeEliminar { get; set; }
+		private bool PuedeAutorizar { get; set; }
 
 		[BindProperty]
 		public FiltroModel InputFiltro { get; set; }
@@ -182,6 +194,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 
 		public EmpresasModel(
+			IAccesoModuloManager accesosModuloManager,
+			AppUserManager usuariosManager,
+			AppRoleManager rolesManager,
 			IEmpresaManager empresaManager,
 			IBancoEmpresaManager bancoEmpresaManager,
 			IArchivoEmpresaManager archivoEmpresaManager,
@@ -195,6 +210,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			ApplicationDbContext db
 		)
 		{
+			_accesosModuloManager = accesosModuloManager;
+			_usuariosManager = usuariosManager;
+			_rolesManager = rolesManager;
 			_empresaManager = empresaManager;
 			_bancoEmpresaManager = bancoEmpresaManager;
 			_archivoEmpresaManager = archivoEmpresaManager;
@@ -210,6 +228,23 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			InputFiltro = new FiltroModel();
 			InputEmpresa = new EmpresaModel();
 			InputImportar = new ImportarModel();
+		}
+
+		private async Task ConsultarPermisosUsuario()
+		{
+			AppUser? usr = await _usuariosManager.GetUserAsync(User);
+			IList<string> rolesUsuario = usr != null ? await _usuariosManager.GetRolesAsync(usr) : [];
+			List<AccesoModulo> accesos = [];
+			foreach (string rol in rolesUsuario)
+			{
+				AppRole? foundRole = await _rolesManager.GetByNameAsync(rol);
+				accesos.AddRange(await _accesosModuloManager.GetByRolIdAsync(foundRole?.Id ?? string.Empty));
+			}
+			PuedeTodo = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeTodo == 1)).FirstOrDefault()?.PuedeTodo == 1;
+			PuedeConsultar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeConsultar == 1)).FirstOrDefault()?.PuedeConsultar == 1;
+			PuedeEditar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeEditar == 1)).FirstOrDefault()?.PuedeEditar == 1;
+			PuedeEliminar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeEliminar == 1)).FirstOrDefault()?.PuedeEliminar == 1;
+			PuedeAutorizar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeAutorizar == 1)).FirstOrDefault()?.PuedeAutorizar == 1;
 		}
 
         private async Task<string> GetDatosAdicionalesEmpresa(int idEmpresa)
@@ -435,19 +470,37 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			return jsonArchivos;
 		}
 
-		public ActionResult OnGetDownloadPlantilla()
+		public async Task<ActionResult> OnGetDownloadPlantilla()
 		{
-			return File("/templates/PlantillaEmpresas.xlsx", MediaTypeNames.Application.Octet, "PlantillaEmpresas.xlsx");
+			await ConsultarPermisosUsuario();
+
+			if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
+			{
+				return File("/templates/PlantillaEmpresas.xlsx", MediaTypeNames.Application.Octet, "PlantillaEmpresas.xlsx");
+			}
+			else
+			{
+				return new EmptyResult();
+			}
 		}
 
         public async Task<JsonResult> OnPostDatosAdicionalesEmpresa(int idEmpresa)
         {
             ServerResponse resp = new(true, _strLocalizer["EmpresaConsultadaUnsuccessfully"]);
-            try
-            {
-                resp.Datos = await GetDatosAdicionalesEmpresa(idEmpresa);
-                resp.TieneError = false;
-                resp.Mensaje = _strLocalizer["EmpresaConsultadaSuccessfully"];
+			try
+			{
+				await ConsultarPermisosUsuario();
+
+				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
+				{
+					resp.Datos = await GetDatosAdicionalesEmpresa(idEmpresa);
+					resp.TieneError = false;
+					resp.Mensaje = _strLocalizer["EmpresaConsultadaSuccessfully"];
+				}
+				else
+				{
+					resp.Mensaje = _strLocalizer["AccesoDenegado"];
+				}
             }
             catch (Exception ex)
             {
@@ -461,9 +514,18 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			ServerResponse resp = new(true, _strLocalizer["EmpresasFiltradasUnsuccessfully"]);
 			try
 			{
-				resp.Datos = await GetListaEmpresas(InputFiltro);
-				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["EmpresasFiltradasSuccessfully"];
+				await ConsultarPermisosUsuario();
+
+				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
+				{
+					resp.Datos = await GetListaEmpresas(InputFiltro);
+					resp.TieneError = false;
+					resp.Mensaje = _strLocalizer["EmpresasFiltradasSuccessfully"];
+				}
+				else
+				{
+					resp.Mensaje = _strLocalizer["AccesoDenegado"];
+				}
 			}
 			catch (Exception ex)
 			{
@@ -479,14 +541,23 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			await _db.Database.BeginTransactionAsync();
 			try
 			{
-                foreach (string id in ids)
-                {
-					int intId = Convert.ToInt32(id);
-					await _empresaManager.DisableByIdAsync(intId);
-                }
+				await ConsultarPermisosUsuario();
 
-				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["EmpresasDeletedSuccessfully"];
+				if (PuedeTodo || PuedeEliminar) 
+				{
+					foreach (string id in ids)
+					{
+						int intId = Convert.ToInt32(id);
+						await _empresaManager.DisableByIdAsync(intId);
+					}
+
+					resp.TieneError = false;
+					resp.Mensaje = _strLocalizer["EmpresasDeletedSuccessfully"];
+				}
+				else
+				{
+					resp.Mensaje = _strLocalizer["AccesoDenegado"];
+				}
 
 				await _db.Database.CommitTransactionAsync();
 			}
@@ -503,36 +574,45 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		{
 			ServerResponse resp = new(true, _strLocalizer["EmpresaSavedUnsuccessfully"]);
 
-			//Se remueve el campo Plantilla para que no sea validado ya que no pertenece a este proceso.
-			ModelState.Remove("Plantilla");
+			await ConsultarPermisosUsuario();
 
-			if (!ModelState.IsValid)
+			if (PuedeTodo || PuedeEditar)
 			{
-				resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k]?.Errors ?? []).Select(m => m.ErrorMessage).ToArray();
-				return new JsonResult(resp);
-			}
-			try
-			{
-				//Valida que no exista una empresa registrada con los mismos datos. En caso de haber, se deja el mensaje en resp.Mensajes para ser mostrado al usuario.
-				string validacion = await ValidarSiExisteEmpresa(InputEmpresa, false);
+				//Se remueve el campo Plantilla para que no sea validado ya que no pertenece a este proceso.
+				ModelState.Remove("Plantilla");
 
-				//Si la longitud del mensaje de respuesta es menor o igual a cero, se considera que no hubo errores anteriores.
-				if ((validacion ?? string.Empty).Length <= 0)
+				if (!ModelState.IsValid)
 				{
-					//Procede a crear o actualizar la empresa.
-					await CreateOrUpdateCompany(InputEmpresa);
-
-					resp.TieneError = false;
-					resp.Mensaje = _strLocalizer["EmpresaSavedSuccessfully"];
+					resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k]?.Errors ?? []).Select(m => m.ErrorMessage).ToArray();
+					return new JsonResult(resp);
 				}
-				else
+				try
 				{
-					resp.Mensaje = validacion;
-                }
+					//Valida que no exista una empresa registrada con los mismos datos. En caso de haber, se deja el mensaje en resp.Mensajes para ser mostrado al usuario.
+					string validacion = await ValidarSiExisteEmpresa(InputEmpresa, false);
+
+					//Si la longitud del mensaje de respuesta es menor o igual a cero, se considera que no hubo errores anteriores.
+					if ((validacion ?? string.Empty).Length <= 0)
+					{
+						//Procede a crear o actualizar la empresa.
+						await CreateOrUpdateCompany(InputEmpresa);
+
+						resp.TieneError = false;
+						resp.Mensaje = _strLocalizer["EmpresaSavedSuccessfully"];
+					}
+					else
+					{
+						resp.Mensaje = validacion;
+					}
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex.Message);
+				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex.Message);
+				resp.Mensaje = _strLocalizer["AccesoDenegado"];
 			}
 
 			return new JsonResult(resp);
@@ -682,37 +762,45 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			ServerResponse resp = new(true, _strLocalizer["EmpresasImportadasUnsuccessfully"]);
 			try
 			{
-				if (Request.Form.Files.Count >= 1)
-				{
-					//Se procesa el archivo excel.
-					using Stream s = Request.Form.Files[0].OpenReadStream();
-					using var reader = ExcelReaderFactory.CreateReader(s);
-					DataSet result = reader.AsDataSet(new ExcelDataSetConfiguration() { FilterSheet = (tableReader, sheetIndex) => sheetIndex == 0 });
-					foreach (DataRow row in result.Tables[0].Rows)
+				await ConsultarPermisosUsuario();
+
+				if (PuedeTodo || PuedeEditar) { 
+					if (Request.Form.Files.Count >= 1)
 					{
-						//Omite el procesamiento del row de encabezado
-						if (result.Tables[0].Rows.IndexOf(row) == 0)
+						//Se procesa el archivo excel.
+						using Stream s = Request.Form.Files[0].OpenReadStream();
+						using var reader = ExcelReaderFactory.CreateReader(s);
+						DataSet result = reader.AsDataSet(new ExcelDataSetConfiguration() { FilterSheet = (tableReader, sheetIndex) => sheetIndex == 0 });
+						foreach (DataRow row in result.Tables[0].Rows)
 						{
-							resp.TieneError = false;
-							resp.Mensaje = _strLocalizer["EmpresasImportadasSuccessfully"];
-							continue;
-						}
+							//Omite el procesamiento del row de encabezado
+							if (result.Tables[0].Rows.IndexOf(row) == 0)
+							{
+								resp.TieneError = false;
+								resp.Mensaje = _strLocalizer["EmpresasImportadasSuccessfully"];
+								continue;
+							}
 
-						string vmsg = await CreateCompanyFromExcelRow(row);
+							string vmsg = await CreateCompanyFromExcelRow(row);
 
-						//Si la longitud del mensaje de respuesta es mayor o igual a uno, se considera que hubo errores.
-						if ((vmsg ?? "").Length >= 1)
-						{
-							resp.TieneError = true;
-							resp.Mensaje = vmsg;
-							break;
-						}
-						else
-						{
-							resp.TieneError = false;
-							resp.Mensaje = _strLocalizer["EmpresasImportadasSuccessfully"];
+							//Si la longitud del mensaje de respuesta es mayor o igual a uno, se considera que hubo errores.
+							if ((vmsg ?? "").Length >= 1)
+							{
+								resp.TieneError = true;
+								resp.Mensaje = vmsg;
+								break;
+							}
+							else
+							{
+								resp.TieneError = false;
+								resp.Mensaje = _strLocalizer["EmpresasImportadasSuccessfully"];
+							}
 						}
 					}
+				}
+				else
+				{
+					resp.Mensaje = _strLocalizer["AccesoDenegado"];
 				}
 			}
 			catch (Exception ex)
@@ -821,9 +909,18 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			ServerResponse resp = new(true, _strLocalizer["ConsultadoUnsuccessfully"]);
 			try
 			{
-				resp.Datos = await GetActividadesEconomicasSuggestion(texto);
-				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["ConsultadoSuccessfully"];
+				await ConsultarPermisosUsuario();
+
+				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
+				{
+					resp.Datos = await GetActividadesEconomicasSuggestion(texto);
+					resp.TieneError = false;
+					resp.Mensaje = _strLocalizer["ConsultadoSuccessfully"];
+				}
+				else
+				{
+					resp.Mensaje = _strLocalizer["AccesoDenegado"];
+				}
 			}
 			catch (Exception ex)
 			{
