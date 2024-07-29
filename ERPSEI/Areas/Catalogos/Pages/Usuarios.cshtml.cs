@@ -71,19 +71,26 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			{
 				if(await _usuarioManager.IsInRoleAsync(u, ServicesConfiguration.RolMaster)) { continue; }
 
-				AppRole? rol = null;
-				if (await _usuarioManager.IsInRoleAsync(u, ServicesConfiguration.RolAdministrador)) { rol = await _roleManager.FindByNameAsync(ServicesConfiguration.RolAdministrador); }
-				else if (await _usuarioManager.IsInRoleAsync(u, ServicesConfiguration.RolUsuario)) { rol = await _roleManager.FindByNameAsync(ServicesConfiguration.RolUsuario); }
-				string nombreRol = rol != null ? rol.Name??_strLocalizer["EmptyRoleName"] : _strLocalizer["EmptyRoleName"];
-				string idRol = rol != null ? rol.Id ?? string.Empty : string.Empty;
+                IList<string> rolesUsuario = await _usuarioManager.GetRolesAsync(u);
+
+                List<string> idRoles = [];
+                List<string> nombreRoles = [];
+                foreach (string r in rolesUsuario)
+                {
+                    AppRole? foundRole = await _roleManager.GetByNameAsync(r);
+					idRoles.Add(foundRole?.Id ?? "0");
+                    nombreRoles.Add(foundRole?.Name ?? string.Empty);
+                }
+
+				if (nombreRoles.Count <= 0) { nombreRoles.Add(_strLocalizer["EmptyRoleName"]); }
 
 				Empleado? emp = await _empleadoManager.GetByIdAsync(u.EmpleadoId??0);
 				string nombreEmpleado = emp != null ? emp.NombreCompleto : _strLocalizer["EmptyEmployeeName"];
 				jsonResultados.Add(
 					"{" +
 						$"\"id\": \"{u.Id}\"," +
-						$"\"rolId\": \"{idRol}\"," +
-						$"\"rol\": \"{nombreRol}\"," +
+						$"\"rolId\": \"{string.Join(", ", idRoles)}\"," +
+						$"\"rol\": \"{string.Join(", ", nombreRoles)}\"," +
 						$"\"nombreUsuario\": \"{u.UserName}\"," +
 						$"\"nombreEmpleado\": \"{nombreEmpleado}\"" +
 					"}"
