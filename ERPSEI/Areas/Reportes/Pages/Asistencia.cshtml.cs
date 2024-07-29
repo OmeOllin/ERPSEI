@@ -1,24 +1,15 @@
 using ERPSEI.Data;
-using ERPSEI.Data.Entities.Empleados;
-using ERPSEI.Data.Entities.Usuarios;
-using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empleados;
-using ERPSEI.Data.Managers.SAT;
 using ERPSEI.Requests;
-using ERPSEI.Resources;
-using ExcelDataReader.Log;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.CodeAnalysis.Elfie.Serialization;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-	[Authorize(Policy = "AccessPolicy")]
+    [Authorize(Policy = "AccessPolicy")]
 	public class AsistenciaModel(
 		ApplicationDbContext db,
 		IEmpleadoManager empleadoManager,
@@ -61,12 +52,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			public string NoTarjeta { get; set; } = string.Empty;
 		}
 
-		public Task<JsonResult> OnGetAsistenciasList()
 		public async Task<JsonResult> OnGetAsistenciasList()
+		{ 
 			string jsonResponse;
 			List<string> jsonAsistencias = [];
-			List<Data.Entities.Empleados.Asistencia> asistencias = asistenciaManager.GetAllAsync().Result; 
-			List<Data.Entities.Empleados.Asistencia> asistencias = _asistenciaManager.GetAllAsync().Result; 
+			List<Data.Entities.Empleados.Asistencia> asistencias = await asistenciaManager.GetAllAsync(); 
 
 			foreach (Data.Entities.Empleados.Asistencia asis in asistencias)
 			{
@@ -83,16 +73,16 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					"}");
 			}
 			jsonResponse = $"[{String.Join(",", jsonAsistencias)}]";
-			return Task.FromResult(new JsonResult(jsonResponse));
+			return new JsonResult(jsonResponse);
 		}
 
 		public async Task<JsonResult> OnPostFiltrarAsistencia([FromBody] FiltroModel inputFiltro)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["AsistenciasFiltradosUnsuccessfully"]);
+			ServerResponse resp = new ServerResponse(true, stringLocalizer["AsistenciasFiltradosUnsuccessfully"]);
 			try
 			{
 				// Obtener todas las asistencias
-				List<Data.Entities.Empleados.Asistencia> asistencias = await _asistenciaManager.GetAllAsync();
+				List<Data.Entities.Empleados.Asistencia> asistencias = await asistenciaManager.GetAllAsync();
 
 				// Aplicar filtros secuencialmente
 				if (!string.IsNullOrEmpty(inputFiltro.NombreEmpleado))
@@ -137,11 +127,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				string jsonResponse = $"[{String.Join(",", jsonAsistencias)}]";
 				resp.Datos = jsonResponse;
 				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["AsistenciasFiltradosSuccessfully"];
+				resp.Mensaje = stringLocalizer["AsistenciasFiltradosSuccessfully"];
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex.Message);
+				logger.LogError(ex.Message);
 			}
 
 			return new JsonResult(resp);
