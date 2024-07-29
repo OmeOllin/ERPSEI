@@ -29,22 +29,6 @@ namespace ERPSEI.Data.Managers.Empleados
             bool deshabilitado = false
         );
 
-		/*public Task<List<Asistencia>> GetAllAsistenciaAsync(
-			DateTime? fechaInicio = null,
-			DateTime? fechaFin = null,
-            string? nombreEmpleado = null,
-
-			int? asistenciaId = null,
-			string? nombre = null,
-			DateOnly? fecha = null,
-			TimeOnly? horaEntrada = null,
-			TimeOnly? horaSalida = null,
-			int? retardo = null,
-			int? total = null,
-			int? falta = null
-			//bool deshabilitado = false
-		);*/
-
 		public Task<Empleado?> GetEmpleadoLoginAsync(int id);
 
         public Task<Empleado?> GetEmpleadoOrganigramaAsync(int id);

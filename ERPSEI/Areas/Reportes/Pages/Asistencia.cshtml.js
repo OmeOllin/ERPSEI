@@ -1,177 +1,111 @@
 ﻿var table;
-var buttonRemove;
 var selections = [];
-var dlg = null;
-var dlgModal = null;
-
-const NUEVO = 0;
-const EDITAR = 1;
-const VER = 2;
-const postOptions = { headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() } }
+const postOptions = {
+    headers: {
+        "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+    }
+};
 
 document.addEventListener("DOMContentLoaded", function (event) {
     table = $("#table");
-    buttonRemove = $("#remove");
-    dlg = document.getElementById('dlgAsistencia');
-    dlgModal = new bootstrap.Modal(dlg, null);
-    //Función para limpiar el cuadro de diálogo cuando es cerrado
-    dlg.addEventListener('hidden.bs.modal', function (event) {
-        onCerrarClick();
-    });
-
     initTable();
+
+    let btnBuscar = document.getElementById("btnBuscar");
+    btnBuscar.addEventListener("click", onBuscarClick);
 });
 
-//Funcionalidad Tabla
-function getIdSelections() {
-    return $.map(table.bootstrapTable('getSelections'), function (row) {
-        return row.id
-    })
-}
 function responseHandler(res) {
+    if (typeof res === "string" && res.length >= 1) {
+        res = JSON.parse(res);
+    }
     $.each(res, function (i, row) {
-        row.state = $.inArray(row.id, selections) !== -1
-    })
-    return res
+        row.state = $.inArray(row.id, selections) !== -1;
+    });
+    return res;
 }
+
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
         height: 550,
         locale: cultureName,
         exportDataType: 'all',
         exportTypes: ['excel'],
-        columns: [
-            {
-                title: colNombreHeader,
-                field: "Nombre",
-                align: "center",
-                valign: "middle",
-                sortable: true
-            },
-            {
-                title: colFechaHoraHeader,
-                field: "Fecha",
-                align: "center",
-                valign: "middle",
-                sortable: true
-            },
-            {
-                title: colFechaHeader,
-                field: "Hora",
-                align: "center",
-                valign: "middle",
-                sortable: true
-            },
-            {
-                title: colHoraHeader,
-                field: "Hora",
-                align: "center",
-                valign: "middle",
-                sortable: true
-            },
-            {
-                title: colDireccionHeader,
-                field: "Direccion",
-                align: "center",
-                valign: "middle",
-                sortable: true
-            },
-            {
-                title: colNombreDispositivoHeader,
-                field: "NombreDispositivo",
-                align: "center",
-                valign: "middle",
-                sortable: true
-            },
-            {
-                title: colSerialDispositivoHeader,
-                field: "SerialDispositivo",
-                align: "center",
-                valign: "middle",
-                sortable: true
-            }
+        columns: [{
+            title: colIdHeader,
+            field: "Id",
+            align: "center",
+            valign: "middle",
+            sortable: true
+        },
+        {
+            title: colNombreEmpleadoHeader,
+            field: "NombreEmpleado",
+            align: "center",
+            valign: "middle",
+            sortable: true
+        },
+        {
+            title: colFechaHoraHeader,
+            field: "FechaHora",
+            align: "center",
+            valign: "middle",
+            sortable: true
+        },
+        {
+            title: colFechaHeader,
+            field: "Fecha",
+            align: "center",
+            valign: "middle",
+            sortable: true
+        },
+        {
+            title: colHoraHeader,
+            field: "Hora",
+            align: "center",
+            valign: "middle",
+            sortable: true
+        },
+        {
+            title: colDireccionHeader,
+            field: "Direccion",
+            align: "center",
+            valign: "middle",
+            sortable: true
+        },
+        {
+            title: colNombreDispositivoHeader,
+            field: "NombreDispositivo",
+            align: "center",
+            valign: "middle",
+            sortable: true
+        },
+        {
+            title: colSerialDispositivoHeader,
+            field: "SerialDispositivo",
+            align: "center",
+            valign: "middle",
+            sortable: true
+        }
         ]
-    })
-    table.on('check.bs.table uncheck.bs.table ' +
-        'check-all.bs.table uncheck-all.bs.table',
-        function () {
-            buttonRemove.prop('disabled', !table.bootstrapTable('getSelections').length)
-
-            // save your data, here just save the current page
-            selections = getIdSelections()
-            // push or splice the selections if you want to save all data selections
-        })
-    table.on('all.bs.table', function (e, name, args) {
-        console.log(name, args)
-    })
-    buttonRemove.click(function () {
-        askConfirmation(dlgDeleteTitle, dlgDeleteQuestion, function () {
-            let oParams = { ids: selections };
-
-            doAjax(
-                "/Catalogos/Asistencias/DeleteAsistencias",
-                oParams,
-                function (resp) {
-                    if (resp.tieneError) {
-                        showError(dlgDeleteTitle, resp.mensaje);
-                        return;
-                    }
-
-                    table.bootstrapTable('remove', {
-                        field: 'id',
-                        values: selections
-                    })
-                    selections = [];
-                    buttonRemove.prop('disabled', true);
-
-                    let e = document.querySelector("[name='refresh']");
-                    e.click();
-
-                    showSuccess(dlgDeleteTitle, resp.mensaje);
-                }, function (error) {
-                    showError(dlgDeleteTitle, error);
-                },
-                postOptions
-            );
-
-        });
-    })
+    });
 }
-/////////////////////
-function onGuardarClick() {
-    // Ejecuta la validación
-    $("#theForm").validate();
-    // Determina los errores
-    let valid = $("#theForm").valid();
-    // Si la forma no es válida, entonces finaliza.
-    if (!valid) { return; }
 
-    let idField = document.getElementById("inpAsistenciaId");
-    let nombreField = document.getElementById("inpAsistenciaNombre");
-    let fechaHoraField = document.getElementById("inpAsistenciaFechaHora");
-    let fechaField = document.getElementById("inpAsistenciaFecha");
-    let horaField = document.getElementById("inpAsistenciaHora");
-    let direccionField = document.getElementById("inpAsistenciaDireccion");
-    let nombreDispositivoField = document.getElementById("inpAsistenciaNombreDispositivo");
-    let serialDispositivoField = document.getElementById("inpAsistenciaSerialDispositivo");
-    let noTarjetaField = document.getElementById("inpAsistenciaNoTarjeta");
+// Función para manejar el click en el botón de búsqueda
+function onBuscarClick() {
+    let nombreField = document.getElementById("inpFiltroNombreEmpleado").value.trim();
+    let fechaInicioField = document.getElementById("inpFiltroFechaIngresoInicio").value.trim();
+    let fechaFinField = document.getElementById("inpFiltroFechaIngresoFin").value.trim();
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 
     let oParams = {
-        id: idField.value == "Nuevo" ? 0 : idField.value,
-        nombre: nombreField.value,
-        fechaHora: fechaHoraField.value, 
-        fecha: fechaField.value,
-        hora: horaField.value,
-        direccion: direccionField.value,
-        nombreDispositivo: nombreDispositivoField.value,
-        serialDispositivo: serialDispositivoField.value,
-        noTarjeta: noTarjetaField.value
+        nombreEmpleado: nombreField,
+        fechaIngresoInicio: fechaInicioField,
+        fechaIngresoFin: fechaFinField
     };
 
     doAjax(
-        "/Catalogos/Asistencias/SaveAsistencia",
+        "/Reportes/Asistencia/FiltrarAsistencia",
         oParams,
         function (resp) {
             if (resp.tieneError) {
@@ -182,19 +116,33 @@ function onGuardarClick() {
                     });
                     summaryContainer.innerHTML += `<ul>${summary}</ul>`;
                 }
-                showError(dlgTitle.innerHTML, resp.mensaje);
+                showError(btnBuscar.innerHTML, resp.mensaje);
                 return;
             }
 
-            btnClose.click();
-
-            let e = document.querySelector("[name='refresh']");
-            e.click();
-
-            showSuccess(dlgTitle.innerHTML, resp.mensaje);
-        }, function (error) {
+            table.bootstrapTable('load', responseHandler(resp.datos));
+        },
+        function (error) {
             showError("Error", error);
         },
         postOptions
     );
+}
+
+// Función para realizar la llamada AJAX
+function doAjax(url, data, successCallback, errorCallback, options) {
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        headers: options.headers,
+        success: function (response) {
+            if (successCallback) successCallback(response);
+        },
+        error: function (xhr, status, error) {
+            console.error("AJAX Error:", error);
+            if (errorCallback) errorCallback(error);
+        }
+    });
 }

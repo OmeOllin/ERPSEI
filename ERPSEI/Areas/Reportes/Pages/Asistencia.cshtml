@@ -84,7 +84,7 @@
 	   data-side-pagination="client"
 	   data-response-handler="responseHandler"
 	   data-buttons-class="primary"
-	   data-url="/Catalogos/Asistencias/AsistenciasList"> <!--Revisar esta liga, ya que no muestra registros-->
+	   data-url="/Reportes/Asistencia/AsistenciasList"> <!--Revisar esta liga, ya que no muestra registros-->
 	<thead>
 		<tr align="center" valign="middle" class="bg-primary bg-opacity-10">
 		</tr>
@@ -113,6 +113,7 @@
 								</div>
 							</div>
 						</div>
+
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
@@ -176,15 +177,6 @@
 								</div>
 							</div>
 						</div>
-						<div class="row">
-							<div class="col-12">
-								<div class="form-floating mb-3">
-									<input id="inpAsistenciaNoTarjeta" asp-for="ListaAsistencia.NoTarjeta" type="text" class="form-control" placeholder="@Localizer["NoTarjetaPlaceholder"]" />
-									<label asp-for="ListaAsistencia.NoTarjeta" class="form-label required"></label>
-									<span asp-validation-for="ListaAsistencia.NoTarjeta" class="text-danger"></span>
-								</div>
-							</div>
-						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -224,7 +216,8 @@
 		var dlgNuevoTitle = '@Localizer["NewDialogTitle"]';
 		var dlgDeleteTitle = '@Localizer["DeletePositionDialogTitle"]';
 		var dlgDeleteQuestion = '@Localizer["DeletePositionDialogQuestion"]';
-		var colNombreHeader = '@Localizer["ColNameHeader"]';
+		var colIdHeader = '@Localizer["ColIdHeader"]';
+		var colNombreEmpleadoHeader = '@Localizer["ColNameHeader"]';
 		var colFechaHoraHeader = '@Localizer["ColDateTimeHeader"]';
 		var colFechaHeader = '@Localizer["ColDateHeader"]';
 		var colHoraHeader = '@Localizer["ColTimeHeader"]';
