@@ -1,12 +1,15 @@
 using ERPSEI.Data;
 using ERPSEI.Data.Entities.Empresas;
-using ERPSEI.Data.Entities.SAT;
+using ERPSEI.Data.Entities.SAT.Catalogos;
+using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empresas;
+using ERPSEI.Data.Managers.Usuarios;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
 using ExcelDataReader;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
@@ -18,9 +21,12 @@ using System.Text;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-	[Authorize(Policy = "AccessPolicy")]
+    [Authorize(Policy = "AccessPolicy")]
 	public class EmpresasModel : PageModel
 	{
+		private readonly IAccesoModuloManager _accesosModuloManager;
+		private readonly AppUserManager _usuariosManager;
+		private readonly AppRoleManager _rolesManager;
 		private readonly IEmpresaManager _empresaManager;
 		private readonly IBancoEmpresaManager _bancoEmpresaManager;
 		private readonly IArchivoEmpresaManager _archivoEmpresaManager;
@@ -32,6 +38,12 @@ namespace ERPSEI.Areas.Catalogos.Pages
         private readonly IStringLocalizer<EmpresasModel> _strLocalizer;
 		private readonly ILogger<EmpresasModel> _logger;
 		private readonly ApplicationDbContext _db;
+
+		private bool PuedeTodo { get; set; }
+		private bool PuedeConsultar { get; set; }
+		private bool PuedeEditar { get; set; }
+		private bool PuedeEliminar { get; set; }
+		private bool PuedeAutorizar { get; set; }
 
 		[BindProperty]
 		public FiltroModel InputFiltro { get; set; }
@@ -145,16 +157,16 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			[Display(Name = "SearchEconomicActivityField")]
             public int? ActividadEconomicaId {  get; set; }
-			public int?[] ActividadesEconomicas { get; set; } = Array.Empty<int?>();
+			public int?[] ActividadesEconomicas { get; set; } = [];
 
 			[DataType(DataType.MultilineText)]
 			[StringLength(5000, ErrorMessage = "FieldLength", MinimumLength = 1)]
             [Display(Name = "ObjetoSocialField")]
             public string? ObjetoSocial {  get; set; } = string.Empty;
 
-            public BancoModel?[] Bancos { get; set; } = Array.Empty<BancoModel>();
+            public BancoModel?[] Bancos { get; set; } = [];
 
-            public ArchivoModel?[] Archivos { get; set; } = Array.Empty<ArchivoModel>();
+            public ArchivoModel?[] Archivos { get; set; } = [];
 		}
 
 		public class BancoModel
@@ -170,7 +182,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			public string? Nombre { get; set; } = string.Empty;
 			public int? TipoArchivoId { get; set; }
 			public string? Extension { get; set; } = string.Empty;
-			public string? imgSrc { get; set; } = string.Empty;
+			public string? ImgSrc { get; set; } = string.Empty;
 		}
 
 		[BindProperty]
@@ -182,6 +194,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 
 		public EmpresasModel(
+			IAccesoModuloManager accesosModuloManager,
+			AppUserManager usuariosManager,
+			AppRoleManager rolesManager,
 			IEmpresaManager empresaManager,
 			IBancoEmpresaManager bancoEmpresaManager,
 			IArchivoEmpresaManager archivoEmpresaManager,
@@ -195,6 +210,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			ApplicationDbContext db
 		)
 		{
+			_accesosModuloManager = accesosModuloManager;
+			_usuariosManager = usuariosManager;
+			_rolesManager = rolesManager;
 			_empresaManager = empresaManager;
 			_bancoEmpresaManager = bancoEmpresaManager;
 			_archivoEmpresaManager = archivoEmpresaManager;
@@ -212,20 +230,37 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			InputImportar = new ImportarModel();
 		}
 
-        private async Task<string> getDatosAdicionalesEmpresa(int idEmpresa)
+		private async Task ConsultarPermisosUsuario()
+		{
+			AppUser? usr = await _usuariosManager.GetUserAsync(User);
+			IList<string> rolesUsuario = usr != null ? await _usuariosManager.GetRolesAsync(usr) : [];
+			List<AccesoModulo> accesos = [];
+			foreach (string rol in rolesUsuario)
+			{
+				AppRole? foundRole = await _rolesManager.GetByNameAsync(rol);
+				accesos.AddRange(await _accesosModuloManager.GetByRolIdAsync(foundRole?.Id ?? string.Empty));
+			}
+			PuedeTodo = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeTodo == 1)).FirstOrDefault()?.PuedeTodo == 1;
+			PuedeConsultar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeConsultar == 1)).FirstOrDefault()?.PuedeConsultar == 1;
+			PuedeEditar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeEditar == 1)).FirstOrDefault()?.PuedeEditar == 1;
+			PuedeEliminar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeEliminar == 1)).FirstOrDefault()?.PuedeEliminar == 1;
+			PuedeAutorizar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeAutorizar == 1)).FirstOrDefault()?.PuedeAutorizar == 1;
+		}
+
+        private async Task<string> GetDatosAdicionalesEmpresa(int idEmpresa)
         {
             string jsonResponse = string.Empty;
             Empresa? e = await _empresaManager.GetByIdWithAdicionalesAsync(idEmpresa);
 
             if (e == null) { return jsonResponse; }
 
-			List<string> jsonActividades = getListJsonActividades(e.ActividadesEconomicasEmpresa);
+			List<string> jsonActividades = GetListJsonActividades(e.ActividadesEconomicasEmpresa);
 
-			List<string> jsonBancos = getListJsonBancos(e.BancosEmpresa);
+			List<string> jsonBancos = GetListJsonBancos(e.BancosEmpresa);
 
             List<string> jsonArchivos;
             List<SemiArchivoEmpresa> archivos = await _archivoEmpresaManager.GetFilesByEmpresaIdAsync(idEmpresa);
-            jsonArchivos = getListJsonArchivos(archivos);
+            jsonArchivos = GetListJsonArchivos(archivos);
 
             jsonResponse = $"{{" +
 								$"\"actividadesEconomicas\": [{string.Join(",", jsonActividades)}], " +
@@ -235,13 +270,13 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
             return jsonResponse;
         }
-        private async Task<string> getListaEmpresas(FiltroModel? filtro = null)
+        private async Task<string> GetListaEmpresas(FiltroModel? filtro = null)
 		{
 			string nombreOrigen;
 			string nombreNivel;
 			string nombrePerfil;
 			string jsonResponse;
-			List<string> jsonEmpresas = new List<string>();
+			List<string> jsonEmpresas = [];
 			List<Empresa> empresas;
 
 			if(filtro != null)
@@ -264,7 +299,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				nombreNivel = e.Nivel != null ? e.Nivel.Nombre : string.Empty;
 				nombrePerfil = e.Perfil != null ? e.Perfil.Nombre : string.Empty;
 
-				e.ObjetoSocial = jsonEscape(e.ObjetoSocial??string.Empty);
+				e.ObjetoSocial = JsonEscape(e.ObjetoSocial??string.Empty);
 
 				DateTime? fechaConstitucion = e.FechaConstitucion == DateTime.MinValue ? null : e.FechaConstitucion;
 				DateTime? fechaInicioOperacion = e.FechaInicioOperacion == DateTime.MinValue ? null : e.FechaInicioOperacion;
@@ -307,13 +342,13 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return jsonResponse;
 		}
-		private string jsonEscape(string str)
+		private static string JsonEscape(string str)
 		{
 			return str.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t");
 		}
-		private List<string> getListJsonActividades(ICollection<ActividadEconomicaEmpresa>? actividades)
+		private static List<string> GetListJsonActividades(ICollection<ActividadEconomicaEmpresa>? actividades)
 		{
-			List<string> jsonActividades = new List<string>();
+			List<string> jsonActividades = [];
 			if (actividades != null)
 			{
 				foreach (ActividadEconomicaEmpresa a in actividades)
@@ -332,9 +367,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return jsonActividades;
 		}
-		private List<string> getListJsonBancos(ICollection<BancoEmpresa>? bancos)
+		private static List<string> GetListJsonBancos(ICollection<BancoEmpresa>? bancos)
         {
-            List<string> jsonBancos = new List<string>();
+            List<string> jsonBancos = [];
             if (bancos != null)
             {
                 foreach (BancoEmpresa b in bancos)
@@ -352,15 +387,15 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
             return jsonBancos;
         }
-        private List<string> getListJsonArchivos(ICollection<SemiArchivoEmpresa>? archivos)
+        private List<string> GetListJsonArchivos(ICollection<SemiArchivoEmpresa>? archivos)
 		{
-			List<string> jsonArchivos = new List<string>();
+			List<string> jsonArchivos = [];
 			if (archivos != null)
 			{
 				//Si la empresa ya tiene archivos, se llena el arreglo de datos a partir de ellos.					
-				List<SemiArchivoEmpresa> empresaFiles = (from empresaFile in archivos
+				List<SemiArchivoEmpresa> empresaFiles = [.. (from empresaFile in archivos
 												   orderby empresaFile.TipoArchivoId ascending
-												   select empresaFile).ToList();
+												   select empresaFile)];
 
 				foreach (SemiArchivoEmpresa a in empresaFiles)
 				{
@@ -435,19 +470,37 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			return jsonArchivos;
 		}
 
-		public ActionResult OnGetDownloadPlantilla()
+		public async Task<ActionResult> OnGetDownloadPlantilla()
 		{
-			return File("/templates/PlantillaEmpresas.xlsx", MediaTypeNames.Application.Octet, "PlantillaEmpresas.xlsx");
+			await ConsultarPermisosUsuario();
+
+			if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
+			{
+				return File("/templates/PlantillaEmpresas.xlsx", MediaTypeNames.Application.Octet, "PlantillaEmpresas.xlsx");
+			}
+			else
+			{
+				return new EmptyResult();
+			}
 		}
 
         public async Task<JsonResult> OnPostDatosAdicionalesEmpresa(int idEmpresa)
         {
-            ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpresaConsultadaUnsuccessfully"]);
-            try
-            {
-                resp.Datos = await getDatosAdicionalesEmpresa(idEmpresa);
-                resp.TieneError = false;
-                resp.Mensaje = _strLocalizer["EmpresaConsultadaSuccessfully"];
+            ServerResponse resp = new(true, _strLocalizer["EmpresaConsultadaUnsuccessfully"]);
+			try
+			{
+				await ConsultarPermisosUsuario();
+
+				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
+				{
+					resp.Datos = await GetDatosAdicionalesEmpresa(idEmpresa);
+					resp.TieneError = false;
+					resp.Mensaje = _strLocalizer["EmpresaConsultadaSuccessfully"];
+				}
+				else
+				{
+					resp.Mensaje = _strLocalizer["AccesoDenegado"];
+				}
             }
             catch (Exception ex)
             {
@@ -458,12 +511,21 @@ namespace ERPSEI.Areas.Catalogos.Pages
         }
         public async Task<JsonResult> OnPostFiltrarEmpresas()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpresasFiltradasUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["EmpresasFiltradasUnsuccessfully"]);
 			try
 			{
-				resp.Datos = await getListaEmpresas(InputFiltro);
-				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["EmpresasFiltradasSuccessfully"];
+				await ConsultarPermisosUsuario();
+
+				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
+				{
+					resp.Datos = await GetListaEmpresas(InputFiltro);
+					resp.TieneError = false;
+					resp.Mensaje = _strLocalizer["EmpresasFiltradasSuccessfully"];
+				}
+				else
+				{
+					resp.Mensaje = _strLocalizer["AccesoDenegado"];
+				}
 			}
 			catch (Exception ex)
 			{
@@ -475,18 +537,27 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		
 		public async Task<JsonResult> OnPostDisableEmpresas(string[] ids)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpresasDeletedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["EmpresasDeletedUnsuccessfully"]);
 			await _db.Database.BeginTransactionAsync();
 			try
 			{
-                foreach (string id in ids)
-                {
-					int intId = Convert.ToInt32(id);
-					await _empresaManager.DisableByIdAsync(intId);
-                }
+				await ConsultarPermisosUsuario();
 
-				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["EmpresasDeletedSuccessfully"];
+				if (PuedeTodo || PuedeEliminar) 
+				{
+					foreach (string id in ids)
+					{
+						int intId = Convert.ToInt32(id);
+						await _empresaManager.DisableByIdAsync(intId);
+					}
+
+					resp.TieneError = false;
+					resp.Mensaje = _strLocalizer["EmpresasDeletedSuccessfully"];
+				}
+				else
+				{
+					resp.Mensaje = _strLocalizer["AccesoDenegado"];
+				}
 
 				await _db.Database.CommitTransactionAsync();
 			}
@@ -501,45 +572,54 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		
 		public async Task<JsonResult> OnPostSaveEmpresa()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpresaSavedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["EmpresaSavedUnsuccessfully"]);
 
-			//Se remueve el campo Plantilla para que no sea validado ya que no pertenece a este proceso.
-			ModelState.Remove("Plantilla");
+			await ConsultarPermisosUsuario();
 
-			if (!ModelState.IsValid)
+			if (PuedeTodo || PuedeEditar)
 			{
-				resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray();
-				return new JsonResult(resp);
-			}
-			try
-			{
-				//Valida que no exista una empresa registrada con los mismos datos. En caso de haber, se deja el mensaje en resp.Mensajes para ser mostrado al usuario.
-				string validacion = await validarSiExisteEmpresa(InputEmpresa, false);
+				//Se remueve el campo Plantilla para que no sea validado ya que no pertenece a este proceso.
+				ModelState.Remove("Plantilla");
 
-				//Si la longitud del mensaje de respuesta es menor o igual a cero, se considera que no hubo errores anteriores.
-				if ((validacion ?? string.Empty).Length <= 0)
+				if (!ModelState.IsValid)
 				{
-					//Procede a crear o actualizar la empresa.
-					await createOrUpdateCompany(InputEmpresa);
-
-					resp.TieneError = false;
-					resp.Mensaje = _strLocalizer["EmpresaSavedSuccessfully"];
+					resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k]?.Errors ?? []).Select(m => m.ErrorMessage).ToArray();
+					return new JsonResult(resp);
 				}
-				else
+				try
 				{
-					resp.Mensaje = validacion;
-                }
+					//Valida que no exista una empresa registrada con los mismos datos. En caso de haber, se deja el mensaje en resp.Mensajes para ser mostrado al usuario.
+					string validacion = await ValidarSiExisteEmpresa(InputEmpresa, false);
+
+					//Si la longitud del mensaje de respuesta es menor o igual a cero, se considera que no hubo errores anteriores.
+					if ((validacion ?? string.Empty).Length <= 0)
+					{
+						//Procede a crear o actualizar la empresa.
+						await CreateOrUpdateCompany(InputEmpresa);
+
+						resp.TieneError = false;
+						resp.Mensaje = _strLocalizer["EmpresaSavedSuccessfully"];
+					}
+					else
+					{
+						resp.Mensaje = validacion;
+					}
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex.Message);
+				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex.Message);
+				resp.Mensaje = _strLocalizer["AccesoDenegado"];
 			}
 
 			return new JsonResult(resp);
 		}
-		private async Task<string> validarSiExisteEmpresa(EmpresaModel emp, bool rfcAsKey)
+		private async Task<string> ValidarSiExisteEmpresa(EmpresaModel emp, bool rfcAsKey)
 		{
-			List<Empresa> coincidences = new List<Empresa>();
+			List<Empresa> coincidences = [];
 			List<Empresa> emps = await _empresaManager.GetAllAsync();
 
 			if (rfcAsKey)
@@ -555,14 +635,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			//Valido que no exista empresa que tenga los mismos datos.
 			coincidences = emps.Where(e => (e.RazonSocial ?? "").Length >= 1 && e.RazonSocial == emp.RazonSocial).ToList();
-            if (coincidences.Count() >= 1) { return $"{_strLocalizer["ErrorEmpresaExistenteA"]} {_strLocalizer["RazonSocial"]} {emp.RazonSocial}. {_strLocalizer["ErrorEmpresaExistenteB"]}."; }
+            if (coincidences.Count >= 1) { return $"{_strLocalizer["ErrorEmpresaExistenteA"]} {_strLocalizer["RazonSocial"]} {emp.RazonSocial}. {_strLocalizer["ErrorEmpresaExistenteB"]}."; }
 
 			coincidences = emps.Where(e => (e.RFC ?? "").Length >= 1 && e.RFC == emp.RFC).ToList();
-			if (coincidences.Count() >= 1) { return $"{_strLocalizer["ErrorEmpresaExistenteA"]} {_strLocalizer["RFC"]} {emp.RFC}. {_strLocalizer["ErrorEmpresaExistenteB"]}."; }
+			if (coincidences.Count >= 1) { return $"{_strLocalizer["ErrorEmpresaExistenteA"]} {_strLocalizer["RFC"]} {emp.RFC}. {_strLocalizer["ErrorEmpresaExistenteB"]}."; }
 
 			return string.Empty;
 		}
-		private async Task createOrUpdateCompany(EmpresaModel e)
+		private async Task CreateOrUpdateCompany(EmpresaModel e)
 		{
 			try
 			{
@@ -658,7 +738,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					//Se usa la info para guardar el archivo.
 					await _archivoEmpresaManager.CreateAsync(
 						new ArchivoEmpresa() { 
-							Archivo = (a.imgSrc ?? string.Empty).Length >= 1 ? Convert.FromBase64String(a.imgSrc ?? string.Empty) : Array.Empty<byte>(), 
+							Archivo = (a.ImgSrc ?? string.Empty).Length >= 1 ? Convert.FromBase64String(a.ImgSrc ?? string.Empty) : [], 
 							EmpresaId = idEmpresa, 
 							Extension = a.Extension ?? string.Empty, 
 							Nombre = a.Nombre ?? string.Empty, 
@@ -679,43 +759,48 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostImportarEmpresas()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpresasImportadasUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["EmpresasImportadasUnsuccessfully"]);
 			try
 			{
-				if (Request.Form.Files.Count >= 1)
-				{
-					//Se procesa el archivo excel.
-					using (Stream s = Request.Form.Files[0].OpenReadStream())
+				await ConsultarPermisosUsuario();
+
+				if (PuedeTodo || PuedeEditar) { 
+					if (Request.Form.Files.Count >= 1)
 					{
-						using (var reader = ExcelReaderFactory.CreateReader(s))
+						//Se procesa el archivo excel.
+						using Stream s = Request.Form.Files[0].OpenReadStream();
+						using var reader = ExcelReaderFactory.CreateReader(s);
+						DataSet result = reader.AsDataSet(new ExcelDataSetConfiguration() { FilterSheet = (tableReader, sheetIndex) => sheetIndex == 0 });
+						foreach (DataRow row in result.Tables[0].Rows)
 						{
-							DataSet result = reader.AsDataSet(new ExcelDataSetConfiguration() { FilterSheet = (tableReader, sheetIndex) => sheetIndex == 0 });
-							foreach (DataRow row in result.Tables[0].Rows)
+							//Omite el procesamiento del row de encabezado
+							if (result.Tables[0].Rows.IndexOf(row) == 0)
 							{
-								//Omite el procesamiento del row de encabezado
-								if (result.Tables[0].Rows.IndexOf(row) == 0) {
-									resp.TieneError = false;
-									resp.Mensaje = _strLocalizer["EmpresasImportadasSuccessfully"];
-									continue; 
-								}
+								resp.TieneError = false;
+								resp.Mensaje = _strLocalizer["EmpresasImportadasSuccessfully"];
+								continue;
+							}
 
-								string vmsg = await CreateCompanyFromExcelRow(row);
+							string vmsg = await CreateCompanyFromExcelRow(row);
 
-								//Si la longitud del mensaje de respuesta es mayor o igual a uno, se considera que hubo errores.
-								if ((vmsg ?? "").Length >= 1)
-								{
-									resp.TieneError = true;
-									resp.Mensaje = vmsg;
-									break;
-								}
-								else
-								{
-									resp.TieneError = false;
-									resp.Mensaje = _strLocalizer["EmpresasImportadasSuccessfully"];
-								}
+							//Si la longitud del mensaje de respuesta es mayor o igual a uno, se considera que hubo errores.
+							if ((vmsg ?? "").Length >= 1)
+							{
+								resp.TieneError = true;
+								resp.Mensaje = vmsg;
+								break;
+							}
+							else
+							{
+								resp.TieneError = false;
+								resp.Mensaje = _strLocalizer["EmpresasImportadasSuccessfully"];
 							}
 						}
 					}
+				}
+				else
+				{
+					resp.Mensaje = _strLocalizer["AccesoDenegado"];
 				}
 			}
 			catch (Exception ex)
@@ -727,10 +812,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resp);
 		}
-		private string normalizePhrase(string s)
+		private static string NormalizePhrase(string s)
 		{
             string[] parts = s.Split(" ", StringSplitOptions.RemoveEmptyEntries);
-			List<string> normalizedPhrase = new List<string>();
+			List<string> normalizedPhrase = [];
 
             foreach (string part in parts){ normalizedPhrase.Add(part.Trim()); }
 
@@ -738,8 +823,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 		private async Task<string> CreateCompanyFromExcelRow(DataRow row)
         {
-            string validationMsg = string.Empty;
-
 			Perfil? perfil = await _perfilManager.GetByNameAsync(row[1].ToString()?.Trim() ?? string.Empty);
             Origen? origen = await _origenManager.GetByNameAsync(row[2].ToString()?.Trim() ?? string.Empty);
             Nivel? nivel = await _nivelManager.GetByNameAsync(row[3].ToString()?.Trim() ?? string.Empty);
@@ -747,29 +830,25 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			string actividadesEconomicas = row[17].ToString()?.Trim() ?? string.Empty;
 			string[] actividades = actividadesEconomicas.Split((char)10, StringSplitOptions.RemoveEmptyEntries);
 
-			List<int?> listActividades = new List<int?>();
+			List<int?> listActividades = [];
             foreach (string item in actividades)
             {
-				string phrase = normalizePhrase(item);
+				string phrase = NormalizePhrase(item);
 				ActividadEconomica? actividadEconomica = await _actividadEconomicaManager.GetByNameAsync(phrase);
 				if(actividadEconomica != null) { listActividades.Add(actividadEconomica.Id); } else { _logger.LogDebug($"Actividad económica {phrase} no encontrada de la empresa {row[0].ToString()?.Trim() ?? string.Empty}"); }
             }
 
 
-			DateTime fc;
-			DateTime.TryParse(row[4].ToString()?.Trim(), out fc);
-			DateTime fio;
-            DateTime.TryParse(row[5].ToString()?.Trim(), out fio);
-			DateTime fif;
-			DateTime.TryParse(row[6].ToString()?.Trim(), out fif);
-			DateTime fia;
-			DateTime.TryParse(row[7].ToString()?.Trim(), out fia);
+			_ = DateTime.TryParse(row[4].ToString()?.Trim(), out DateTime fc);
+			_ = DateTime.TryParse(row[5].ToString()?.Trim(), out DateTime fio);
+			_ = DateTime.TryParse(row[6].ToString()?.Trim(), out DateTime fif);
+			_ = DateTime.TryParse(row[7].ToString()?.Trim(), out DateTime fia);
 
-			EmpresaModel e = new EmpresaModel() {
+			EmpresaModel e = new() {
 				RazonSocial = row[0].ToString()?.Trim() ?? string.Empty,
-				PerfilId = perfil != null ? perfil.Id : null,
-				OrigenId = origen != null ? origen.Id : null,
-				NivelId = nivel != null ? nivel.Id : null,
+				PerfilId = perfil?.Id,
+				OrigenId = origen?.Id,
+				NivelId = nivel?.Id,
 				FechaConstitucion = fc,
 				FechaInicioOperacion = fio,
 				FechaInicioFacturacion = fif,
@@ -783,13 +862,13 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				CorreoFiscal = row[14].ToString()?.Trim() ?? string.Empty,
 				CorreoFacturacion = row[15].ToString()?.Trim() ?? string.Empty,
 				Telefono = row[16].ToString()?.Trim() ?? string.Empty,
-				ActividadesEconomicas = listActividades.ToArray(),
+				ActividadesEconomicas = [.. listActividades],
                 ObjetoSocial = row[18].ToString()?.Trim() ?? string.Empty
 			};
 
-			e.ObjetoSocial = jsonEscape(e.ObjetoSocial);
+			e.ObjetoSocial = JsonEscape(e.ObjetoSocial);
 
-			List<BancoModel> bancos = new List<BancoModel>();
+			List<BancoModel> bancos = [];
 			//Si existe banco 1, agrega uno al listado.
 			if ((row[19].ToString()?.Trim() ?? string.Empty).Length >= 1) { bancos.Add(new BancoModel() { Banco = row[19].ToString()?.Trim() ?? string.Empty, Responsable = row[20].ToString()?.Trim() ?? string.Empty, Firmante = row[21].ToString()?.Trim() ?? string.Empty }); }
 			//Si existe banco 2, agrega uno al listado.
@@ -801,25 +880,25 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			//Si existe banco 5, agrega uno al listado.
 			if ((row[31].ToString()?.Trim() ?? string.Empty).Length >= 1) { bancos.Add(new BancoModel() { Banco = row[31].ToString()?.Trim() ?? string.Empty, Responsable = row[32].ToString()?.Trim() ?? string.Empty, Firmante = row[33].ToString()?.Trim() ?? string.Empty }); }
 
-			e.Bancos = bancos.ToArray();
+			e.Bancos = [.. bancos];
 
-			List<ArchivoModel> archivos = new List<ArchivoModel>();
+			List<ArchivoModel> archivos = [];
 			//Crea los archivos de la empresa.
 			foreach (FileTypes i in Enum.GetValues(typeof(FileTypes)))
 			{
-				archivos.Add(new ArchivoModel() { Extension = "", imgSrc = "", Nombre = "", TipoArchivoId = (int)i });
+				archivos.Add(new ArchivoModel() { Extension = "", ImgSrc = "", Nombre = "", TipoArchivoId = (int)i });
 			}
 
-			e.Archivos = archivos.ToArray();
+			e.Archivos = [.. archivos];
 
 			//Valida que no exista una empresa registrada con los mismos datos. En caso de haber, se deja el mensaje en resp.Mensajes para ser mostrado al usuario.
-			validationMsg = await validarSiExisteEmpresa(e, true);
+			string validationMsg = await ValidarSiExisteEmpresa(e, true);
 
 			//Si la longitud del mensaje de respuesta es menor o igual a cero, se considera que no hubo errores anteriores.
 			if ((validationMsg ?? "").Length <= 0)
 			{
 				//Procede a crear o actualizar la empresa.
-				await createOrUpdateCompany(e);
+				await CreateOrUpdateCompany(e);
 			}
 
 			return validationMsg ?? "";
@@ -827,12 +906,21 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostGetActividadesEconomicasSuggestion(string texto)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["ConsultadoUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["ConsultadoUnsuccessfully"]);
 			try
 			{
-				resp.Datos = await GetActividadesEconomicasSuggestion(texto);
-				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["ConsultadoSuccessfully"];
+				await ConsultarPermisosUsuario();
+
+				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
+				{
+					resp.Datos = await GetActividadesEconomicasSuggestion(texto);
+					resp.TieneError = false;
+					resp.Mensaje = _strLocalizer["ConsultadoSuccessfully"];
+				}
+				else
+				{
+					resp.Mensaje = _strLocalizer["AccesoDenegado"];
+				}
 			}
 			catch (Exception ex)
 			{
@@ -844,7 +932,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		private async Task<string> GetActividadesEconomicasSuggestion(string texto)
 		{
 			string jsonResponse;
-			List<string> jsons = new List<string>();
+			List<string> jsons = [];
 
 			List<ActividadEconomica> actividades = await _actividadEconomicaManager.GetAllAsync();
 			actividades = actividades.Where(e => e.Nombre.ToLowerInvariant().Contains(texto.ToLowerInvariant()) || e.Clave.ToLowerInvariant().Contains(texto.ToLowerInvariant())).Take(20).ToList();

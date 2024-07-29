@@ -11,6 +11,7 @@ using ExcelDataReader;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
@@ -214,16 +215,16 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Display(Name = "PhoneNumberField")]
 			public string? TelefonoContacto2 { get; set; } = string.Empty;
 
-			public ArchivoModel?[] Archivos { get; set; } = Array.Empty<ArchivoModel>();
+			public ArchivoModel?[] Archivos { get; set; } = [];
 		}
 
 		public class ArchivoModel
 		{
 			public string? Id { get; set; } = string.Empty;
-			public string? nombre { get; set; } = string.Empty;
-			public int? tipoArchivoId { get; set; }
-			public string? extension { get; set; } = string.Empty;
-			public string? imgSrc { get; set; } = string.Empty;
+			public string? Nombre { get; set; } = string.Empty;
+			public int? TipoArchivoId { get; set; }
+			public string? Extension { get; set; } = string.Empty;
+			public string? ImgSrc { get; set; } = string.Empty;
 		}
 
 		[BindProperty]
@@ -288,10 +289,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		{
 			string jsonResponse;
 			string nombreJefe;
-			Empleado? e = await _empleadoManager.GetByIdWithAdicionalesAsync(idEmpleado);
-
-			if (e == null) { throw new Exception($"No se encontró información del empleado id {idEmpleado}"); }
-
+			Empleado? e = await _empleadoManager.GetByIdWithAdicionalesAsync(idEmpleado) ?? throw new Exception($"No se encontró información del empleado id {idEmpleado}");
 			Empleado? jefe = e.JefeId != null ? await _empleadoManager.GetByIdAsync((int)e.JefeId) : null;
 			List<SemiArchivoEmpleado> archivos = await _archivoEmpleadoManager.GetFilesByEmpleadoIdAsync(idEmpleado);
             foreach (SemiArchivoEmpleado a in archivos)
@@ -308,9 +306,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			nombreJefe = jefe != null ? jefe.NombreCompleto : "";
 
-			jsonContactosEmergencia = getListJsonContactosEmergencia(e.ContactosEmergencia);
+			jsonContactosEmergencia = GetListJsonContactosEmergencia(e.ContactosEmergencia);
 
-			jsonArchivos = getListJsonArchivos(archivos);
+			jsonArchivos = GetListJsonArchivos(archivos);
 
 			jsonResponse = $"{{" +
 								$"\"jefeId\": {e.JefeId ?? 0}, " +
@@ -329,9 +327,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			string nombreOficina;
 			string nombreGenero;
 			string nombreEstadoCivil;
-			bool usuarioConfirmado = false;
 			string jsonResponse;
-			List<string> jsonEmpleados = new List<string>();
+			List<string> jsonEmpleados = [];
 			List<Empleado> empleados;
 
 			if (filtro != null)
@@ -361,7 +358,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				nombreGenero = e.Genero != null ? e.Genero.Nombre : "";
 				nombreEstadoCivil = e.EstadoCivil != null ? e.EstadoCivil.Nombre : "";
 				AppUser? usuario = e.UserId != null && e.UserId.Length >= 1 ? await _userManager.FindByIdAsync(e.UserId) : null;
-				usuarioConfirmado = usuario != null && usuario.EmailConfirmed;
+				bool usuarioConfirmado = usuario != null && usuario.EmailConfirmed;
 
 				DateTime? fechaIngreso = e.FechaIngreso == DateTime.MinValue ? null : e.FechaIngreso;
 				DateTime? fechaNacimiento = e.FechaNacimiento == DateTime.MinValue ? null : e.FechaNacimiento;
@@ -410,14 +407,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return jsonResponse;
 		}
-		private List<string> getListJsonContactosEmergencia(ICollection<ContactoEmergencia>? contactos)
+		private static List<string> GetListJsonContactosEmergencia(ICollection<ContactoEmergencia>? contactos)
 		{
-			List<string> jsonContactosEmergencia = new List<string>();
+			List<string> jsonContactosEmergencia = [];
 			if (contactos != null)
 			{
-				List<ContactoEmergencia> contacts = (from c in contactos
+				List<ContactoEmergencia> contacts = [.. (from c in contactos
 													  orderby c.Id ascending
-													  select c).ToList();
+													  select c)];
 				foreach (ContactoEmergencia c in contacts)
 				{
 					jsonContactosEmergencia.Add($"{{\"nombre\": \"{c.Nombre}\", \"telefono\": \"{c.Telefono}\"}}");
@@ -425,15 +422,15 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			}
 			return jsonContactosEmergencia;
 		}
-		private List<string> getListJsonArchivos(ICollection<SemiArchivoEmpleado>? archivos)
+		private List<string> GetListJsonArchivos(ICollection<SemiArchivoEmpleado>? archivos)
 		{
-			List<string> jsonArchivos = new List<string>();
+			List<string> jsonArchivos = [];
 			if (archivos != null)
 			{
 				//Si el usuario ya tiene archivos, se llena el arreglo de datos a partir de ellos.					
-				List<SemiArchivoEmpleado> userFiles = (from userFile in archivos
+				List<SemiArchivoEmpleado> userFiles = [.. (from userFile in archivos
 												   orderby userFile.TipoArchivoId ascending
-												   select userFile).ToList();
+												   select userFile)];
 
 				foreach (SemiArchivoEmpleado a in userFiles)
 				{
@@ -515,7 +512,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostDatosAdicionalesEmpleado(int idEmpleado)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadoConsultadoUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["EmpleadoConsultadoUnsuccessfully"]);
 			try
 			{
 				resp.Datos = await GetDatosAdicionalesEmpleado(idEmpleado);
@@ -531,7 +528,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 		public async Task<JsonResult> OnPostFiltrarEmpleados()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadosFiltradosUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["EmpleadosFiltradosUnsuccessfully"]);
 			try
 			{
 				resp.Datos = await GetTalentList(InputFiltro);
@@ -548,7 +545,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		
 		public async Task<JsonResult> OnPostDisableEmpleados(string[] ids)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadosDisabledUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["EmpleadosDisabledUnsuccessfully"]);
 			try
 			{
 				await _db.Database.BeginTransactionAsync();
@@ -565,9 +562,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					//Se filtran todos los empleados para obtener los que no están dados de baja
                     List<Empleado> empleadosActivosRelacionados = empleados.Where(e => e.Deshabilitado == 0).ToList();
 					//Si existen empleados que tengan el registro asignado, se le notifica al usuario.
-					if (empleadosActivosRelacionados.Count() > 0)
+					if (empleadosActivosRelacionados.Count > 0)
 					{
-                        List<string> names = new List<string>();
+                        List<string> names = [];
                         foreach (Empleado e in empleadosActivosRelacionados) { names.Add($"<i>{e.Id} - {e.NombreCompleto}</i>"); }
                         resp.TieneError = true;
                         resp.Mensaje = $"{_strLocalizer["EmpleadoIsRelated"]}<br/><br/><i>{empleado?.NombreCompleto}</i><br/><br/>{string.Join("<br/>", names)}";
@@ -604,26 +601,26 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		
 		public async Task<JsonResult> OnPostSaveEmpleado()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadoSavedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["EmpleadoSavedUnsuccessfully"]);
 
 			//Se remueve el campo Plantilla para que no sea validado ya que no pertenece a este proceso.
 			ModelState.Remove("Plantilla");
 
 			if (!ModelState.IsValid)
 			{
-				resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray();
+				resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k]?.Errors??[]).Select(m => m.ErrorMessage).ToArray();
 				return new JsonResult(resp);
 			}
 			try
 			{
 				//Valida que no exista un empleado registrado con los mismos datos. En caso de haber, se deja el mensaje en resp.Mensajes para ser mostrado al usuario.
-				string validacion = await validarSiExisteEmpleado(InputEmpleado, false);
+				string validacion = await ValidarSiExisteEmpleado(InputEmpleado, false);
 
 				//Si la longitud del mensaje de respuesta es menor o igual a cero, se considera que no hubo errores anteriores.
 				if ((validacion ?? string.Empty).Length <= 0)
 				{
 					//Procede a crear o actualizar el empleado.
-					await createOrUpdateEmployee(InputEmpleado);
+					await CreateOrUpdateEmployee(InputEmpleado);
 
 					resp.TieneError = false;
 					resp.Mensaje = _strLocalizer["EmpleadoSavedSuccessfully"];
@@ -640,9 +637,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resp);
 		}
-		private async Task<string> validarSiExisteEmpleado(EmpleadoModel emp, bool curpAsKey)
+		private async Task<string> ValidarSiExisteEmpleado(EmpleadoModel emp, bool curpAsKey)
 		{
-			List<Empleado> coincidences = new List<Empleado>();
+			List<Empleado> coincidences = [];
 			List<Empleado> emps = await _empleadoManager.GetAllAsync();
 
 			if (curpAsKey)
@@ -658,23 +655,23 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
             //Valido que no exista empleado que tenga los mismos datos.
             coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.NombreCompleto ?? "").Length >= 1 && e.NombreCompleto == $"{emp.Nombre} {emp.ApellidoPaterno} {emp.ApellidoMaterno}").ToList();
-            if (coincidences.Count() >= 1) { return $"{_strLocalizer["ErrorEmpleadoExistenteA"]} {_strLocalizer["Nombre"]} {emp.Nombre} {emp.ApellidoPaterno} {emp.ApellidoMaterno}. {_strLocalizer["ErrorEmpleadoExistenteB"]}."; }
+            if (coincidences.Count >= 1) { return $"{_strLocalizer["ErrorEmpleadoExistenteA"]} {_strLocalizer["Nombre"]} {emp.Nombre} {emp.ApellidoPaterno} {emp.ApellidoMaterno}. {_strLocalizer["ErrorEmpleadoExistenteB"]}."; }
 
             coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.Email ?? "").Length >= 1 && e.Email == emp.Email).ToList();
-            if (coincidences.Count() >= 1) { return $"{_strLocalizer["ErrorEmpleadoExistenteA"]} {_strLocalizer["Correo"]} {emp.Email}. {_strLocalizer["ErrorEmpleadoExistenteB"]}."; }
+            if (coincidences.Count >= 1) { return $"{_strLocalizer["ErrorEmpleadoExistenteA"]} {_strLocalizer["Correo"]} {emp.Email}. {_strLocalizer["ErrorEmpleadoExistenteB"]}."; }
 
             coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.CURP ?? "").Length >= 1 && e.CURP == emp.CURP).ToList();
-            if (coincidences.Count() >= 1) { return $"{_strLocalizer["ErrorEmpleadoExistenteA"]} {_strLocalizer["CURP"]} {emp.CURP}. {_strLocalizer["ErrorEmpleadoExistenteB"]}."; }
+            if (coincidences.Count >= 1) { return $"{_strLocalizer["ErrorEmpleadoExistenteA"]} {_strLocalizer["CURP"]} {emp.CURP}. {_strLocalizer["ErrorEmpleadoExistenteB"]}."; }
 
             coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.RFC ?? "").Length >= 1 && e.RFC == emp.RFC).ToList();
-            if (coincidences.Count() >= 1) { return $"{_strLocalizer["ErrorEmpleadoExistenteA"]} {_strLocalizer["RFC"]} {emp.RFC}. {_strLocalizer["ErrorEmpleadoExistenteB"]}."; }
+            if (coincidences.Count >= 1) { return $"{_strLocalizer["ErrorEmpleadoExistenteA"]} {_strLocalizer["RFC"]} {emp.RFC}. {_strLocalizer["ErrorEmpleadoExistenteB"]}."; }
 
             coincidences = emps.Where(e => e.Deshabilitado == 0 && (e.NSS ?? "").Length >= 1 && e.NSS == emp.NSS).ToList();
-            if (coincidences.Count() >= 1) { return $"{_strLocalizer["ErrorEmpleadoExistenteA"]} {_strLocalizer["NSS"]} {emp.NSS}. {_strLocalizer["ErrorEmpleadoExistenteB"]}."; }
+            if (coincidences.Count >= 1) { return $"{_strLocalizer["ErrorEmpleadoExistenteA"]} {_strLocalizer["NSS"]} {emp.NSS}. {_strLocalizer["ErrorEmpleadoExistenteB"]}."; }
 
             return string.Empty;
 		}
-		private async Task createOrUpdateEmployee(EmpleadoModel e)
+		private async Task CreateOrUpdateEmployee(EmpleadoModel e)
 		{
 			try
 			{
@@ -685,7 +682,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				//Se busca empleado por id
 				Empleado? empleado = await _empleadoManager.GetByIdAsync(e.Id);
 				//Si no se encontró empleado por id, se busca el empleado por su CURP. 
-				if (empleado == null) { empleado = await _empleadoManager.GetByCURPAsync(e.CURP ?? string.Empty); }
+				empleado ??= await _empleadoManager.GetByCURPAsync(e.CURP ?? string.Empty);
 
 				//Si se encontró empleado, obtiene su Id del registro existente. De lo contrario, se crea uno nuevo.
 				if (empleado != null) { idEmpleado = empleado.Id; } else { empleado = new Empleado(); }
@@ -746,11 +743,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
                     await _archivoEmpleadoManager.CreateAsync(
 						new ArchivoEmpleado()
                         {
-                            Archivo = (a.imgSrc ?? string.Empty).Length >= 1 ? Convert.FromBase64String(a.imgSrc ?? string.Empty) : Array.Empty<byte>(),
+                            Archivo = (a.ImgSrc ?? string.Empty).Length >= 1 ? Convert.FromBase64String(a.ImgSrc ?? string.Empty) : [],
                             EmpleadoId = idEmpleado,
-                            Extension = a.extension ?? string.Empty,
-                            Nombre = a.nombre ?? string.Empty,
-                            TipoArchivoId = a.tipoArchivoId
+                            Extension = a.Extension ?? string.Empty,
+                            Nombre = a.Nombre ?? string.Empty,
+                            TipoArchivoId = a.TipoArchivoId
                         }
                     );
                 }
@@ -766,41 +763,38 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostImportarEmpleados()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadosImportadosUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["EmpleadosImportadosUnsuccessfully"]);
 			try
 			{
 				if (Request.Form.Files.Count >= 1)
 				{
 					//Se procesa el archivo excel.
-					using (Stream s = Request.Form.Files[0].OpenReadStream())
+					using Stream s = Request.Form.Files[0].OpenReadStream();
+					using var reader = ExcelReaderFactory.CreateReader(s);
+					DataSet result = reader.AsDataSet(new ExcelDataSetConfiguration() { FilterSheet = (tableReader, sheetIndex) => sheetIndex == 0 });
+					foreach (DataRow row in result.Tables[0].Rows)
 					{
-						using (var reader = ExcelReaderFactory.CreateReader(s))
+						//Omite el procesamiento del row de encabezado
+						if (result.Tables[0].Rows.IndexOf(row) == 0)
 						{
-							DataSet result = reader.AsDataSet(new ExcelDataSetConfiguration() { FilterSheet = (tableReader, sheetIndex) => sheetIndex == 0 });
-							foreach (DataRow row in result.Tables[0].Rows)
-							{
-								//Omite el procesamiento del row de encabezado
-								if (result.Tables[0].Rows.IndexOf(row) == 0) {
-									resp.TieneError = false;
-									resp.Mensaje = _strLocalizer["EmpleadosImportadosSuccessfully"];
-									continue; 
-								}
+							resp.TieneError = false;
+							resp.Mensaje = _strLocalizer["EmpleadosImportadosSuccessfully"];
+							continue;
+						}
 
-								string vmsg = await CreateEmployeeFromExcelRow(row);
+						string vmsg = await CreateEmployeeFromExcelRow(row);
 
-								//Si la longitud del mensaje de respuesta es mayor o igual a uno, se considera que hubo errores.
-								if ((vmsg ?? "").Length >= 1)
-								{
-									resp.TieneError = true;
-									resp.Mensaje = vmsg;
-									break;
-								}
-								else
-								{
-									resp.TieneError = false;
-									resp.Mensaje = _strLocalizer["EmpleadosImportadosSuccessfully"];
-								}
-							}
+						//Si la longitud del mensaje de respuesta es mayor o igual a uno, se considera que hubo errores.
+						if ((vmsg ?? "").Length >= 1)
+						{
+							resp.TieneError = true;
+							resp.Mensaje = vmsg;
+							break;
+						}
+						else
+						{
+							resp.TieneError = false;
+							resp.Mensaje = _strLocalizer["EmpleadosImportadosSuccessfully"];
 						}
 					}
 				}
@@ -816,7 +810,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 		private async Task<string> CreateEmployeeFromExcelRow(DataRow row)
 		{
-			string validationMsg = string.Empty;
 			Genero? genero = await _generoManager.GetByNameAsync(row[5].ToString()?.Trim() ?? string.Empty);
 			EstadoCivil? estadoCivil = await _estadoCivilManager.GetByNameAsync(row[6].ToString()?.Trim() ?? string.Empty);
 			Puesto? puesto = await _puestoManager.GetByNameAsync(row[8].ToString()?.Trim() ?? string.Empty);
@@ -825,25 +818,23 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			Oficina? oficina = await _oficinaManager.GetByNameAsync(row[11].ToString()?.Trim() ?? string.Empty);
 			Empleado? jefe = await _empleadoManager.GetByNameAsync(row[12].ToString()?.Trim() ?? string.Empty);
 
-			DateTime fn;
-			DateTime fi;
-			DateTime.TryParse(row[3].ToString(), out fn);
-			DateTime.TryParse(row[13].ToString(), out fi);
+			_ = DateTime.TryParse(row[3].ToString(), out DateTime fn);
+			_ = DateTime.TryParse(row[13].ToString(), out DateTime fi);
 
-			EmpleadoModel e = new EmpleadoModel() {
+			EmpleadoModel e = new() {
 				Nombre = row[0].ToString()?.Trim() ?? string.Empty,
 				ApellidoPaterno = row[1].ToString()?.Trim() ?? string.Empty,
 				ApellidoMaterno = row[2].ToString()?.Trim() ?? string.Empty,
 				FechaNacimiento = fn,
 				Telefono = row[4].ToString()?.Trim() ?? string.Empty,
-				GeneroId = genero != null ? genero.Id : null,
-				EstadoCivilId = estadoCivil != null ? estadoCivil.Id : null,
+				GeneroId = genero?.Id,
+				EstadoCivilId = estadoCivil?.Id,
 				Direccion = row[7].ToString()?.Trim() ?? string.Empty,
 				PuestoId = puesto != null ? puesto.Id : 0,
 				AreaId = area != null ? area.Id : 0,
-				SubareaId = subarea != null ? subarea.Id : null,
-				OficinaId = oficina != null ? oficina.Id : null,
-				JefeId = jefe != null ? jefe.Id : null,
+				SubareaId = subarea?.Id,
+				OficinaId = oficina?.Id,
+				JefeId = jefe?.Id,
 				FechaIngreso = fi,
 				Email = row[14].ToString()?.Trim() ?? string.Empty,
 				NombreContacto1 = row[15].ToString()?.Trim() ?? string.Empty,
@@ -856,23 +847,23 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				NombrePreferido = row[22].ToString()?.Trim() ?? string.Empty,
 			};
 
-			List<ArchivoModel> archivos = new List<ArchivoModel>();
+			List<ArchivoModel> archivos = [];
 			//Crea los archivos del usuario.
 			foreach (FileTypes i in Enum.GetValues(typeof(FileTypes)))
 			{
-				archivos.Add(new ArchivoModel() { extension = "", imgSrc = "", nombre = "", tipoArchivoId = (int)i });
+				archivos.Add(new ArchivoModel() { Extension = "", ImgSrc = "", Nombre = "", TipoArchivoId = (int)i });
 			}
 
-			e.Archivos = archivos.ToArray();
+			e.Archivos = [.. archivos];
 
 			//Valida que no exista un empleado registrado con los mismos datos. En caso de haber, se deja el mensaje en resp.Mensajes para ser mostrado al usuario.
-			validationMsg = await validarSiExisteEmpleado(e, true);
+			string validationMsg = await ValidarSiExisteEmpleado(e, true);
 
 			//Si la longitud del mensaje de respuesta es menor o igual a cero, se considera que no hubo errores anteriores.
 			if ((validationMsg ?? "").Length <= 0)
 			{
 				//Procede a crear o actualizar el empleado.
-				await createOrUpdateEmployee(e);
+				await CreateOrUpdateEmployee(e);
 			}
 
 			return validationMsg ?? "";
@@ -893,7 +884,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 		public async Task<IActionResult> OnPostInvitarEmpleado(int id)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadoInvitadoUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["EmpleadoInvitadoUnsuccessfully"]);
 			try
 			{
 				//Se busca al empleado por Id
@@ -990,7 +981,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostGetEmpleadosSuggestion(string texto)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["ConsultadoUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["ConsultadoUnsuccessfully"]);
 			try
 			{
 				resp.Datos = await GetEmpleadosSuggestion(texto);
@@ -1007,7 +998,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		private async Task<string> GetEmpleadosSuggestion(string texto)
 		{
 			string jsonResponse;
-			List<string> jsons = new List<string>();
+			List<string> jsons = [];
 
 			List<Empleado> empleados = await _empleadoManager.GetAllAsync();
 			empleados = empleados.Where(e => e.NombreCompleto.ToLowerInvariant().Contains(texto.ToLowerInvariant())).Take(20).ToList();

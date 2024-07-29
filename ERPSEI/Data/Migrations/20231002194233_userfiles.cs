@@ -5,7 +5,7 @@
 namespace ERPSEI.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class userfiles : Migration
+    public partial class Userfiles : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

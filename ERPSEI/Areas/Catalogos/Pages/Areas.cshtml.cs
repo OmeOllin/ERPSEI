@@ -61,7 +61,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostDeleteAreas(string[] ids)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["AreasDeletedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["AreasDeletedUnsuccessfully"]);
 			try
 			{
                 await _db.Database.BeginTransactionAsync();
@@ -69,15 +69,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
                 List<Area> areas = await _areaManager.GetAllAsync();
 				foreach (string id in ids)
 				{
-                    int sid = 0;
-                    if (!int.TryParse(id, out sid)) { sid = 0; }
-                    Area? area = areas.Where(p => p.Id == sid).FirstOrDefault();
+					if (!int.TryParse(id, out int sid)) { sid = 0; }
+					Area? area = areas.Where(p => p.Id == sid).FirstOrDefault();
                     List<Empleado> empleados = await _empleadoManager.GetAllAsync(null, null, null, null, null, sid, null, null, true);
                     List<Empleado> empleadosActivosRelacionados = empleados.Where(e => e.Deshabilitado == 0).ToList();
                     //Si existen empleados que tengan el registro asignado, se le notifica al usuario.
-                    if (empleadosActivosRelacionados.Count() > 0)
+                    if (empleadosActivosRelacionados.Count > 0)
                     {
-                        List<string> names = new List<string>();
+                        List<string> names = [];
                         foreach (Empleado e in empleadosActivosRelacionados) { names.Add($"<i>{e.Id} - {e.NombreCompleto}</i>"); }
                         resp.TieneError = true;
                         resp.Mensaje = $"{_strLocalizer["AreaIsRelated"]}<br/><br/><i>{area?.Nombre}</i><br/><br/>{string.Join("<br/>", names)}";
@@ -113,13 +112,13 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostSaveArea()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["AreaSavedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["AreaSavedUnsuccessfully"]);
 
 			try
 			{
 				if (!ModelState.IsValid)
 				{
-					resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray();
+					resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k]?.Errors ?? []).Select(m => m.ErrorMessage).ToArray();
 				}
 				else
 				{

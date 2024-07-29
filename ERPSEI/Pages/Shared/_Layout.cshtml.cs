@@ -2,13 +2,12 @@
 
 namespace ERPSEI.Pages.Shared
 {
-    public class _LayoutModel : PageModel
+    public class LayoutModel : PageModel
     {
-        private readonly ILogger<_LayoutModel> _logger;
 
-        public _LayoutModel(ILogger<_LayoutModel> logger)
+        public LayoutModel()
         {
-            _logger = logger;
+            
         }
 
         public void OnGet()

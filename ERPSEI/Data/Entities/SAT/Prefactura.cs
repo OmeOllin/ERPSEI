@@ -1,4 +1,5 @@
 ﻿using ERPSEI.Data.Entities.Empresas;
+using ERPSEI.Data.Entities.SAT.Catalogos;
 using ERPSEI.Data.Entities.Usuarios;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -43,7 +44,7 @@ namespace ERPSEI.Data.Entities.SAT
 
 		public int? NumeroOperacion { get; set; }
 
-		public ICollection<Concepto> Conceptos { get; } = new List<Concepto>();
+		public ICollection<Concepto> Conceptos { get; } = [];
 
 		public int Deshabilitado { get; set; }
 

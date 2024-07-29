@@ -127,7 +127,7 @@ namespace ERPSEI.Pages
 
             return ftr;
 		}
-        private string prefacturaToHTML(Prefactura pf)
+        private static string prefacturaToHTML(Prefactura pf)
         {
 			decimal subtotalTotal = 0,
 					descuentosTotal = 0,
@@ -249,7 +249,7 @@ namespace ERPSEI.Pages
 
             return html;
 		}
-        private async Task<string> fileToB64(string filepath)
+        private static async Task<string> fileToB64(string filepath)
         {
 			byte[] buffer;
 			using (FileStream pdf = System.IO.File.OpenRead(filepath))

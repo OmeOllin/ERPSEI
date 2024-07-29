@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ERPSEI.Data.Entities.SAT
+namespace ERPSEI.Data.Entities.SAT.Catalogos
 {
     public class Impuesto
     {
@@ -15,13 +15,13 @@ namespace ERPSEI.Data.Entities.SAT
 
         public bool Traslado { get; set; }
 
-        public bool Local {  get; set; }
+        public bool Local { get; set; }
 
         public bool Federal { get; set; }
 
-		public int Deshabilitado { get; set; } = 0;
+        public int Deshabilitado { get; set; } = 0;
 
-		public ICollection<TasaOCuota>? TasasOCuotas { get; set; }
+        public ICollection<TasaOCuota>? TasasOCuotas { get; set; }
 
-	}
+    }
 }

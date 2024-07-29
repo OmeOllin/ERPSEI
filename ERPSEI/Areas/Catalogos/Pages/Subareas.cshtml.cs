@@ -63,7 +63,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		{
 			string nombreArea;
 			string jsonResponse;
-			List<string> jsonAreas = new List<string>();
+			List<string> jsonAreas = [];
 			List<Subarea> subareas = _subareaManager.GetAllAsync().Result;
 			foreach (Subarea sa in subareas)
 			{
@@ -78,7 +78,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostDeleteSubareas(string[] ids)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["SubareasDeletedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["SubareasDeletedUnsuccessfully"]);
 			try
 			{
 				await _db.Database.BeginTransactionAsync();
@@ -86,15 +86,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
                 List<Subarea> subareas = await _subareaManager.GetAllAsync();
                 foreach (string id in ids)
                 {
-					int sid = 0;
-					if (!int.TryParse(id, out sid)) { sid = 0; }
-                    Subarea? subarea = subareas.Where(sa => sa.Id == sid).FirstOrDefault();
+					if (!int.TryParse(id, out int sid)) { sid = 0; }
+					Subarea? subarea = subareas.Where(sa => sa.Id == sid).FirstOrDefault();
                     List<Empleado> empleados = await _empleadoManager.GetAllAsync(null, null, null, null, null, null, sid, null, true);
                     List<Empleado> empleadosActivosRelacionados = empleados.Where(e => e.Deshabilitado == 0).ToList();
 					//Si existen empleados que tengan el registro asignado, se le notifica al usuario.
-					if (empleadosActivosRelacionados.Count() > 0)
+					if (empleadosActivosRelacionados.Count > 0)
 					{
-						List<string> names = new List<string>();
+						List<string> names = [];
 						foreach (Empleado e in empleadosActivosRelacionados){ names.Add($"<i>{e.Id} - {e.NombreCompleto}</i>"); }
 						resp.TieneError = true;
 						resp.Mensaje = $"{_strLocalizer["SubareaIsRelated"]}<br/><br/><i>{subarea?.Nombre}</i><br/><br/>{string.Join("<br/>", names)}";
@@ -130,7 +129,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostSaveSubarea()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["SubareaSavedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["SubareaSavedUnsuccessfully"]);
 
 			try
 			{
@@ -138,7 +137,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 				if (!ModelState.IsValid)
 				{
-					resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray();
+					resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k]?.Errors ?? []).Select(m => m.ErrorMessage).ToArray();
 				}
 				else
 				{

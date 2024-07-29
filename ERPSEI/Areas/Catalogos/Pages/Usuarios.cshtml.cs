@@ -62,28 +62,35 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			InputUsuario = new UsuarioModel();
 		}
 
-		private async Task<string> getLista()
+		private async Task<string> GetLista()
 		{
 			string jsonResponse;
-			List<string> jsonResultados = new List<string>();
+			List<string> jsonResultados = [];
 
 			foreach (AppUser u in _usuarioManager.Users)
 			{
 				if(await _usuarioManager.IsInRoleAsync(u, ServicesConfiguration.RolMaster)) { continue; }
 
-				AppRole? rol = null;
-				if (await _usuarioManager.IsInRoleAsync(u, ServicesConfiguration.RolAdministrador)) { rol = await _roleManager.FindByNameAsync(ServicesConfiguration.RolAdministrador); }
-				else if (await _usuarioManager.IsInRoleAsync(u, ServicesConfiguration.RolUsuario)) { rol = await _roleManager.FindByNameAsync(ServicesConfiguration.RolUsuario); }
-				string nombreRol = rol != null ? rol.Name??_strLocalizer["EmptyRoleName"] : _strLocalizer["EmptyRoleName"];
-				string idRol = rol != null ? rol.Id ?? string.Empty : string.Empty;
+                IList<string> rolesUsuario = await _usuarioManager.GetRolesAsync(u);
+
+                List<string> idRoles = [];
+                List<string> nombreRoles = [];
+                foreach (string r in rolesUsuario)
+                {
+                    AppRole? foundRole = await _roleManager.GetByNameAsync(r);
+					idRoles.Add(foundRole?.Id ?? "0");
+                    nombreRoles.Add(foundRole?.Name ?? string.Empty);
+                }
+
+				if (nombreRoles.Count <= 0) { nombreRoles.Add(_strLocalizer["EmptyRoleName"]); }
 
 				Empleado? emp = await _empleadoManager.GetByIdAsync(u.EmpleadoId??0);
 				string nombreEmpleado = emp != null ? emp.NombreCompleto : _strLocalizer["EmptyEmployeeName"];
 				jsonResultados.Add(
 					"{" +
 						$"\"id\": \"{u.Id}\"," +
-						$"\"rolId\": \"{idRol}\"," +
-						$"\"rol\": \"{nombreRol}\"," +
+						$"\"rolId\": \"{string.Join(", ", idRoles)}\"," +
+						$"\"rol\": \"{string.Join(", ", nombreRoles)}\"," +
 						$"\"nombreUsuario\": \"{u.UserName}\"," +
 						$"\"nombreEmpleado\": \"{nombreEmpleado}\"" +
 					"}"
@@ -97,10 +104,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostFiltrar()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["FiltroUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["FiltroUnsuccessfully"]);
 			try
 			{
-				resp.Datos = await getLista();
+				resp.Datos = await GetLista();
 				resp.TieneError = false;
 				resp.Mensaje = _strLocalizer["FiltroSuccessfully"];
 			}
@@ -114,11 +121,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		
 		public async Task<JsonResult> OnPostSave()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["SavedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["SavedUnsuccessfully"]);
 
 			if (!ModelState.IsValid)
 			{
-				resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray();
+				resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k]?.Errors ?? []).Select(m => m.ErrorMessage).ToArray();
 				return new JsonResult(resp);
 			}
 			try
@@ -126,7 +133,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				await _db.Database.BeginTransactionAsync();
 
 				//Procede a actualizar el usuario.
-				await updateUser(InputUsuario);
+				await UpdateUser(InputUsuario);
 
 				await _db.Database.CommitTransactionAsync();
 
@@ -141,30 +148,23 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resp);
 		}
-		private async Task updateUser(UsuarioModel e)
+		private async Task UpdateUser(UsuarioModel e)
 		{
 			//Se busca usuario por id
 			AppUser? usuario = await _usuarioManager.FindByIdAsync(e.Id);
-			AppRole? rol = await _roleManager.FindByIdAsync(e.RolId);
+            AppRole? nuevoRol = await _roleManager.FindByIdAsync(e.RolId);
 
 			//Si se encontró usuario, obtiene su Id del registro existente.
-			if (usuario != null && rol != null) {
-				//Llena los datos del usuario.
-				if (await _usuarioManager.IsInRoleAsync(usuario, ServicesConfiguration.RolAdministrador) && rol.Name != ServicesConfiguration.RolAdministrador)
-				{
-					await _usuarioManager.RemoveFromRoleAsync(usuario, ServicesConfiguration.RolAdministrador);
-					await _usuarioManager.AddToRoleAsync(usuario, rol.Name ?? ServicesConfiguration.RolUsuario);
-				}
-				else if (await _usuarioManager.IsInRoleAsync(usuario, ServicesConfiguration.RolUsuario) && rol.Name != ServicesConfiguration.RolUsuario)
-				{
-					await _usuarioManager.RemoveFromRoleAsync(usuario, ServicesConfiguration.RolUsuario);
-					await _usuarioManager.AddToRoleAsync(usuario, rol.Name ?? ServicesConfiguration.RolUsuario);
-				}
-				else
-				{
-					await _usuarioManager.AddToRoleAsync(usuario, rol.Name ?? ServicesConfiguration.RolUsuario);
-				}
-			}
+			if (usuario != null && nuevoRol != null) {
+				//Obtiene los roles actuales del usuario.
+                IList<string> rolesUsuario = await _usuarioManager.GetRolesAsync(usuario);
+
+				//Se quitan todos los roles que tenía el usuario.
+                foreach (string nombreRol in rolesUsuario){ await _usuarioManager.RemoveFromRoleAsync(usuario, nombreRol); }
+
+                //Se establece el nuevo rol del usuario. Si no se encuentra el rol, entonces se usa el rol de usuario por default.
+                await _usuarioManager.AddToRoleAsync(usuario, nuevoRol.Name ?? ServicesConfiguration.RolUsuario);
+            }
 		}
 	}
 }

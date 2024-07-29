@@ -19,16 +19,17 @@ using System.Linq;
 namespace ERPSEI.Areas.Catalogos.Pages
 {
 	[Authorize(Policy = "AccessPolicy")]
-	public class AsistenciaModel : PageModel
+	public class AsistenciaModel(
+		ApplicationDbContext db,
+		IEmpleadoManager empleadoManager,
+		IAsistenciaManager asistenciaManager,
+		IStringLocalizer<AsistenciaModel> stringLocalizer,
+		ILogger<AsistenciaModel> logger
+		) : PageModel
 	{
-		private readonly ApplicationDbContext _db;
-		private readonly IEmpleadoManager _empleadoManager;
-		private readonly IAsistenciaManager _asistenciaManager;
-		private readonly IStringLocalizer<AsistenciaModel> _strLocalizer;
-		private readonly ILogger<AsistenciaModel> _logger;
 
 		[BindProperty]
-		public FiltroModel InputFiltro { get; set; }
+		public FiltroModel InputFiltro { get; set; } = new FiltroModel();
 		public class FiltroModel
 		{
 			[DataType(DataType.Text)]
@@ -45,7 +46,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 
 		[BindProperty]
-		public Asistencia ListaAsistencia { get; set; }
+		public Asistencia ListaAsistencia { get; set; } = new Asistencia();
 		public class Asistencia
 		{
 			[Display(Name = "Id")]
@@ -59,29 +60,13 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			public string NombreEmpleado { get; set; } = string.Empty;
 			public string NoTarjeta { get; set; } = string.Empty;
 		}
-		public AsistenciaModel(
-			ApplicationDbContext db,
-			IEmpleadoManager empleadoManager,
-			IAsistenciaManager asistenciaManager,
-			IStringLocalizer<AsistenciaModel> stringLocalizer,
-			ILogger<AsistenciaModel> logger
-		)
-		{
-			_db = db;
-			_empleadoManager = empleadoManager;
-			_asistenciaManager = asistenciaManager;
-			_strLocalizer = stringLocalizer;
-			_logger = logger;
 
-			InputFiltro = new FiltroModel();
-			ListaAsistencia = new Asistencia();
-		}
+		public Task<JsonResult> OnGetAsistenciasList()
 		public async Task<JsonResult> OnGetAsistenciasList()
-		{
-			string jsonResponse = string.Empty;
-			List<Data.Entities.Empleados.Asistencia> asistencias = await _asistenciaManager.GetAllAsync();
-			List<string> jsonAsistencias = new List<string>();
-			
+			string jsonResponse;
+			List<string> jsonAsistencias = [];
+			List<Data.Entities.Empleados.Asistencia> asistencias = asistenciaManager.GetAllAsync().Result; 
+			List<Data.Entities.Empleados.Asistencia> asistencias = _asistenciaManager.GetAllAsync().Result; 
 
 			foreach (Data.Entities.Empleados.Asistencia asis in asistencias)
 			{
@@ -98,7 +83,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					"}");
 			}
 			jsonResponse = $"[{String.Join(",", jsonAsistencias)}]";
-			return new JsonResult(jsonResponse);
+			return Task.FromResult(new JsonResult(jsonResponse));
 		}
 
 		public async Task<JsonResult> OnPostFiltrarAsistencia([FromBody] FiltroModel inputFiltro)

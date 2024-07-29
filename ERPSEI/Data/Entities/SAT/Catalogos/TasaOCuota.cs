@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ERPSEI.Data.Entities.SAT
+namespace ERPSEI.Data.Entities.SAT.Catalogos
 {
     public class TasaOCuota
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
-		public bool Rango { get; set; }
+        public bool Rango { get; set; }
 
         public bool Fijo { get; set; }
 
@@ -25,9 +25,9 @@ namespace ERPSEI.Data.Entities.SAT
 
         public bool Traslado { get; set; }
 
-        public bool Retencion {  get; set; }
+        public bool Retencion { get; set; }
 
-		public int Deshabilitado { get; set; } = 0;
+        public int Deshabilitado { get; set; } = 0;
 
-	}
+    }
 }

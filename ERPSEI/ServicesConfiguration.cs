@@ -2,7 +2,7 @@
 using ERPSEI.Data;
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.Empresas;
-using ERPSEI.Data.Entities.SAT;
+using ERPSEI.Data.Entities.SAT.Catalogos;
 using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empleados;
@@ -21,14 +21,14 @@ using System.Reflection;
 
 namespace ERPSEI
 {
-	public static class ServicesConfiguration
+    public static class ServicesConfiguration
     {
         public const string RolMaster = "Master";
         public const string RolAdministrador = "Administrador";
         public const string RolUsuario = "Usuario";
         public const string RolCandidato = "Candidato";
 
-        public static List<AppRole> Roles = new List<AppRole>();
+        private static readonly List<AppRole> Roles = [];
 
         public static string MasterPassword { get; set; } = string.Empty;
         public static AppUser MasterUser { get; } = new AppUser() { EmailConfirmed = true, IsPreregisterAuthorized = true, PasswordResetNeeded = false, IsMaster = true };
@@ -117,9 +117,8 @@ namespace ERPSEI
         }
 
         public static void ConfigureAuthorization(WebApplicationBuilder _builder) {
-			_builder.Services.AddAuthorization(options =>
-	            options.AddPolicy("AccessPolicy", policy => policy.Requirements.Add(new AccessRequirement()))
-            );
+			_builder.Services.AddAuthorizationBuilder()
+				.AddPolicy("AccessPolicy", policy => policy.Requirements.Add(new AccessRequirement()));
 
 			_builder.Services.AddScoped<IAuthorizationHandler, AccessHandler>();
 		}
@@ -144,6 +143,9 @@ namespace ERPSEI
             {
                 var assemblyName = new AssemblyName(typeof(ModelBindingMessages).GetTypeInfo().Assembly.FullName ?? "");
                 var F = _builder.Services.BuildServiceProvider().GetService<IStringLocalizerFactory>();
+
+                if(F == null) { return; }
+
                 var L = F.Create(nameof(ModelBindingMessages), assemblyName.Name ?? "");
 
                 options.ModelBindingMessageProvider.SetMissingBindRequiredValueAccessor((x) => L["MissingBindRequiredValueAccessor", x]);

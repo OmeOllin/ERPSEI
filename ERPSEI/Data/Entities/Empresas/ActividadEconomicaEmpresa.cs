@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using ERPSEI.Data.Entities.SAT;
+using ERPSEI.Data.Entities.SAT.Catalogos;
 
 namespace ERPSEI.Data.Entities.Empresas
 {

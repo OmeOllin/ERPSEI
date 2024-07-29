@@ -1,6 +1,7 @@
 using ERPSEI.Data;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.SAT;
+using ERPSEI.Data.Entities.SAT.Catalogos;
 using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empresas;
@@ -12,33 +13,32 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.IdentityModel.Tokens;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
 
 namespace ERPSEI.Areas.ERP.Pages
 {
 	[Authorize(Policy = "AccessPolicy")]
-	public class PrefacturasModel : PageModel
+	public class PrefacturasModel(
+			ApplicationDbContext db,
+			UserManager<AppUser> userManager,
+			IRWCatalogoManager<Perfil> perfilManager,
+			IUnidadMedidaManager unidadMedidaManager,
+			IProductoServicioManager productosServiciosManager,
+			IEmpresaManager empresaManager,
+			IPrefacturaManager prefacturaManager,
+			IConceptoManager conceptoManager,
+			ITasaOCuotaManager tasaOCuotaManager,
+			IStringLocalizer<PrefacturasModel> stringLocalizer,
+			ILogger<PrefacturasModel> logger
+		) : PageModel
 	{
-		private readonly ApplicationDbContext _db;
-		private readonly UserManager<AppUser> _userManager;
-		private readonly IRWCatalogoManager<Perfil> _perfilManager;
-		private readonly IUnidadMedidaManager _unidadMedidaManager;
-		private readonly IProductoServicioManager _productosServiciosManager;
-		private readonly IEmpresaManager _empresaManager;
-		private readonly IPrefacturaManager _prefacturaManager;
-		private readonly IConceptoManager _conceptoManager;
-		private readonly ITasaOCuotaManager _tasaOCuotaManager;
-		private readonly IStringLocalizer<PrefacturasModel> _strLocalizer;
-		private readonly ILogger<PrefacturasModel> _logger;
 
 		[BindProperty]
-		public FiltroModel InputFiltro { get; set; }
+		public FiltroModel InputFiltro { get; set; } = new FiltroModel();
 
 		public class FiltroModel
 		{
@@ -67,7 +67,7 @@ namespace ERPSEI.Areas.ERP.Pages
 		}
 
 		[BindProperty]
-		public EmpresaModel InputEmpresa { get; set; }
+		public EmpresaModel InputEmpresa { get; set; } = new EmpresaModel();
 
 		public class EmpresaModel()
 		{
@@ -78,7 +78,7 @@ namespace ERPSEI.Areas.ERP.Pages
 			public string? TextoReceptor { get; set; } = string.Empty;
 		}
 
-		public ConceptoModel InputConceptos { get; set; }
+		public ConceptoModel InputConceptos { get; set; } = new ConceptoModel();
 
 		public class ConceptoModel
 		{
@@ -113,7 +113,7 @@ namespace ERPSEI.Areas.ERP.Pages
 			public int? ProductoServicioId { get; set; }
 		}
 
-		public TrasladoModel InputTraslado { get; set; }
+		public TrasladoModel InputTraslado { get; set; } = new TrasladoModel();
 		public class TrasladoModel
 		{
 			[Required(ErrorMessage = "Required")]
@@ -125,7 +125,7 @@ namespace ERPSEI.Areas.ERP.Pages
 			public decimal? Valor { get; set; }
 		}
 
-		public RetencionModel InputRetencion { get; set; }
+		public RetencionModel InputRetencion { get; set; } = new RetencionModel();
 		public class RetencionModel
 		{
 			[Required(ErrorMessage = "Required")]
@@ -138,7 +138,7 @@ namespace ERPSEI.Areas.ERP.Pages
 		}
 
 		[BindProperty]
-		public CFDIModel InputCFDI { get; set; }
+		public CFDIModel InputCFDI { get; set; } = new CFDIModel();
 
 		public class CFDIModel
 		{
@@ -194,41 +194,7 @@ namespace ERPSEI.Areas.ERP.Pages
 			[RegularExpression(RegularExpressions.NumericFirstDigitNonZero, ErrorMessage = "Numeric")]
 			public int? NumeroOperacion { get; set; }
 
-			public ConceptoModel?[] Conceptos { get; set; } = Array.Empty<ConceptoModel>();
-		}
-
-		public PrefacturasModel(
-			ApplicationDbContext db,
-			UserManager<AppUser> userManager,
-			IRWCatalogoManager<Perfil> perfilManager,
-			IUnidadMedidaManager unidadMedidaManager,
-			IProductoServicioManager productosServiciosManager,
-			IEmpresaManager empresaManager,
-			IPrefacturaManager prefacturaManager,
-			IConceptoManager conceptoManager,
-			ITasaOCuotaManager tasaOCuotaManager,
-			IStringLocalizer<PrefacturasModel> stringLocalizer,
-			ILogger<PrefacturasModel> logger
-		)
-		{
-			_db = db;
-			_userManager = userManager;
-			_perfilManager = perfilManager;
-			_unidadMedidaManager = unidadMedidaManager;
-			_productosServiciosManager = productosServiciosManager;
-			_empresaManager = empresaManager;
-			_prefacturaManager = prefacturaManager;
-			_conceptoManager = conceptoManager;
-			_tasaOCuotaManager = tasaOCuotaManager;
-			_strLocalizer = stringLocalizer;
-			_logger = logger;
-
-			InputFiltro = new FiltroModel();
-			InputEmpresa = new EmpresaModel();
-			InputConceptos = new ConceptoModel();
-			InputTraslado = new TrasladoModel();
-			InputRetencion = new RetencionModel();
-			InputCFDI = new CFDIModel();
+			public ConceptoModel?[] Conceptos { get; set; } = [];
 		}
 
 		public void OnGet()
@@ -237,32 +203,32 @@ namespace ERPSEI.Areas.ERP.Pages
 
 		public async Task<JsonResult> OnPostDatosAdicionales(int idPrefactura)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["ConsultadoUnsuccessfully"]);
+			ServerResponse resp = new(true, stringLocalizer["ConsultadoUnsuccessfully"]);
 			try
 			{
 				resp.Datos = await GetDatosAdicionales(idPrefactura);
 				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["ConsultadoSuccessfully"];
+				resp.Mensaje = stringLocalizer["ConsultadoSuccessfully"];
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex.Message);
+				logger.LogError(message: ex.Message);
 			}
 
 			return new JsonResult(resp);
 		}
 		public async Task<JsonResult> OnPostFiltrar()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["ConsultadoUnsuccessfully"]);
+			ServerResponse resp = new(true, stringLocalizer["ConsultadoUnsuccessfully"]);
 			try
 			{
 				resp.Datos = await GetPrefacturasList(InputFiltro);
 				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["ConsultadoSuccessfully"];
+				resp.Mensaje = stringLocalizer["ConsultadoSuccessfully"];
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex.Message);
+				logger.LogError(message: ex.Message);
 			}
 
 			return new JsonResult(resp);
@@ -270,13 +236,10 @@ namespace ERPSEI.Areas.ERP.Pages
 		private async Task<string> GetDatosAdicionales(int idPrefactura)
 		{
 			string jsonResponse;
-			Prefactura? p = await _prefacturaManager.GetByIdWithAdicionalesAsync(idPrefactura);
-
-			if (p == null) { throw new Exception($"No se encontró información de la prefactura id {idPrefactura}"); }
-
+			Prefactura? p = await prefacturaManager.GetByIdWithAdicionalesAsync(idPrefactura) ?? throw new Exception($"No se encontró información de la prefactura id {idPrefactura}");
 			List<string> jsonConceptos;
 
-			jsonConceptos = getListJsonConceptos(p.Conceptos);
+			jsonConceptos = GetListJsonConceptos(p.Conceptos);
 
 			jsonResponse = $"{{" +
 								$"\"conceptos\": [{string.Join(",", jsonConceptos)}] " +
@@ -294,12 +257,12 @@ namespace ERPSEI.Areas.ERP.Pages
 			string nombreExportacion;
 
 			string jsonResponse;
-			List<string> jsonPrefacturas = new List<string>();
+			List<string> jsonPrefacturas = [];
 			List<Prefactura> prefacturas;
 
 			if (filtro != null)
 			{
-				prefacturas = await _prefacturaManager.GetAllAsync(
+				prefacturas = await prefacturaManager.GetAllAsync(
 					filtro.FechaInicio,
 					filtro.FechaFin,
 					filtro.Serie,
@@ -312,7 +275,7 @@ namespace ERPSEI.Areas.ERP.Pages
 			}
 			else
 			{
-				prefacturas = await _prefacturaManager.GetAllAsync();
+				prefacturas = await prefacturaManager.GetAllAsync();
 			}
 
 			foreach (Prefactura p in prefacturas)
@@ -363,7 +326,7 @@ namespace ERPSEI.Areas.ERP.Pages
 
 			return jsonResponse;
 		}
-		private List<string> getListJsonConceptos(ICollection<Concepto>? conceptos)
+		private static List<string> GetListJsonConceptos(ICollection<Concepto>? conceptos)
 		{
 			decimal subtotal = 0,
 				traslado = 0,
@@ -373,12 +336,12 @@ namespace ERPSEI.Areas.ERP.Pages
 				nombreProdServ,
 				nombreUnidad,
 				nombreObjetoImpuesto;
-			List<string> jsonConceptos = new List<string>();
+			List<string> jsonConceptos = [];
 			if (conceptos != null)
 			{
-				List<Concepto> concepts = (from c in conceptos
+				List<Concepto> concepts = [.. (from c in conceptos
 										   orderby c.Id ascending
-										   select c).ToList();
+										   select c)];
 				foreach (Concepto c in concepts)
 				{
 					claveProdServ = c.ProductoServicio != null ? c.ProductoServicio.Clave : string.Empty;
@@ -418,25 +381,25 @@ namespace ERPSEI.Areas.ERP.Pages
 
 		public async Task<JsonResult> OnPostSave()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["PrefacturaSavedUnsuccessfully"]);
+			ServerResponse resp = new(true, stringLocalizer["PrefacturaSavedUnsuccessfully"]);
 
 			if (!ModelState.IsValid)
 			{
-				resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray();
+				resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k]?.Errors ?? []).Select(m => m.ErrorMessage).ToArray();
 				return new JsonResult(resp);
 			}
 			try
 			{
-				string validacion = await validarSerieFolio(InputCFDI);
+				string validacion = await ValidarSerieFolio(InputCFDI);
 
 				//Si la longitud del mensaje de respuesta es menor o igual a cero, se considera que no hubo errores anteriores.
 				if ((validacion ?? string.Empty).Length <= 0)
 				{
 					//Procede a crear o actualizar la prefactura.
-					await createOrUpdatePrefactura(InputCFDI);
+					await CreateOrUpdatePrefactura(InputCFDI);
 
 					resp.TieneError = false;
-					resp.Mensaje = _strLocalizer["PrefacturaSavedSuccessfully"];
+					resp.Mensaje = stringLocalizer["PrefacturaSavedSuccessfully"];
 				}
 				else
 				{
@@ -445,36 +408,36 @@ namespace ERPSEI.Areas.ERP.Pages
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex.Message);
+				logger.LogError(message: ex.Message);
 			}
 
 			return new JsonResult(resp);
 		}
-		private async Task<string> validarSerieFolio(CFDIModel prefactura)
+		private async Task<string> ValidarSerieFolio(CFDIModel prefactura)
 		{
-			List<Prefactura> coincidences = new List<Prefactura>();
-			List<Prefactura> prefs = await _prefacturaManager.GetAllAsync();
+			List<Prefactura> coincidences = [];
+			List<Prefactura> prefs = await prefacturaManager.GetAllAsync();
 
 			//Excluyo al empleado con el Id actual.
 			prefs = prefs.Where(e => e.Id != prefactura.Id).ToList();
 
 			//Valido que no exista prefactura con misma serie y folio.
 			coincidences = prefs.Where(e => e.Deshabilitado == 0 && ($"{e.Serie}{e.Folio}" == $"{prefactura.Serie}{prefactura.Folio}")).ToList();
-			if (coincidences.Count() >= 1) { return $"{_strLocalizer["ErrorPrefacturaExistenteA"]} {prefactura.Serie}{prefactura.Folio}. {_strLocalizer["ErrorPrefacturaExistenteB"]}."; }
+			if (coincidences.Count >= 1) { return $"{stringLocalizer["ErrorPrefacturaExistenteA"]} {prefactura.Serie}{prefactura.Folio}. {stringLocalizer["ErrorPrefacturaExistenteB"]}."; }
 
 			return string.Empty;
 		}
-		private async Task createOrUpdatePrefactura(CFDIModel prefacturaModel)
+		private async Task CreateOrUpdatePrefactura(CFDIModel prefacturaModel)
 		{
 			try
 			{
-				await _db.Database.BeginTransactionAsync();
+				await db.Database.BeginTransactionAsync();
 
 				int idPrefactura = 0;
 				int idEstatusCreada = 1;
 
 				//Se busca prefactura por id
-				Prefactura? prefactura = await _prefacturaManager.GetByIdAsync(prefacturaModel.Id);
+				Prefactura? prefactura = await prefacturaManager.GetByIdAsync(prefacturaModel.Id);
 
 				//Si se encontró prefactura, obtiene su Id del registro existente. De lo contrario, se crea uno nuevo.
 				if (prefactura != null) { idPrefactura = prefactura.Id; } else { prefactura = new Prefactura(); }
@@ -498,17 +461,17 @@ namespace ERPSEI.Areas.ERP.Pages
 				if (idPrefactura >= 1)
 				{
 					//Si la prefactura ya existía, la actualiza.
-					await _prefacturaManager.UpdateAsync(prefactura);
+					await prefacturaManager.UpdateAsync(prefactura);
 
 					//Elimina los conceptos de la prefactura.
-					await _conceptoManager.DeleteByPrefacturaIdAsync(idPrefactura);
+					await conceptoManager.DeleteByPrefacturaIdAsync(idPrefactura);
 				}
 				else
 				{
 					//De lo contrario...
 
 					//Se busca al usuario logeado
-					AppUser? u = _userManager.FindByNameAsync(User.Identity?.Name ?? "").Result;
+					AppUser? u = userManager.FindByNameAsync(User.Identity?.Name ?? "").Result;
 
 					//Se establece al usuario que creó la prefactura.
 					prefactura.UsuarioCreadorId = u?.Id;
@@ -516,7 +479,7 @@ namespace ERPSEI.Areas.ERP.Pages
 					prefactura.EstatusId = idEstatusCreada;
 
 					//Crea al empleado y obtiene su id.
-					idPrefactura = await _prefacturaManager.CreateAsync(prefactura);
+					idPrefactura = await prefacturaManager.CreateAsync(prefactura);
 				}
 
 				//Crea los conceptos de la prefactura
@@ -534,7 +497,7 @@ namespace ERPSEI.Areas.ERP.Pages
 						retencion = subtotal * tasaRetencion;
 
 					//Se usa la info para guardar el concepto.
-					await _conceptoManager.CreateAsync(
+					await conceptoManager.CreateAsync(
 						new Concepto()
 						{
 							ProductoServicioId = c.ProductoServicioId ?? 0,
@@ -553,31 +516,30 @@ namespace ERPSEI.Areas.ERP.Pages
 					);
 				}
 
-				await _db.Database.CommitTransactionAsync();
+				await db.Database.CommitTransactionAsync();
 			}
 			catch (Exception)
 			{
-				await _db.Database.RollbackTransactionAsync();
+				await db.Database.RollbackTransactionAsync();
 				throw;
 			}
 		}
 
 		public async Task<JsonResult> OnPostGetEmpresaSuggestion(string texto, string idempresa)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["ConsultadoUnsuccessfully"]);
+			ServerResponse resp = new(true, stringLocalizer["ConsultadoUnsuccessfully"]);
 			try
 			{
-				int idEmp = 0;
 
-				if (!int.TryParse(idempresa, out idEmp)) { idEmp = 0; }
+				if (!int.TryParse(idempresa, out int idEmp)) { idEmp = 0; }
 
 				resp.Datos = await GetEmpresasSuggestion(texto, idEmp);
 				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["ConsultadoSuccessfully"];
+				resp.Mensaje = stringLocalizer["ConsultadoSuccessfully"];
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex.Message);
+				logger.LogError(message: ex.Message);
 			}
 
 			return new JsonResult(resp);
@@ -585,33 +547,32 @@ namespace ERPSEI.Areas.ERP.Pages
 		private async Task<string> GetEmpresasSuggestion(string texto, int idempresa)
 		{
 			string jsonResponse;
-			List<string> jsonEmpresas = new List<string>();
+			List<string> jsonEmpresas = [];
 
-			List<EmpresaBuscada> empresas = await _empresaManager.SearchEmpresas(texto);
+			List<EmpresaBuscada> empresas = await empresaManager.SearchEmpresas(texto);
 
 			if (empresas != null)
 			{
 				foreach (EmpresaBuscada e in empresas)
 				{
-					Empresa? emp = await _empresaManager.GetByIdWithAdicionalesAsync(e.Id);
-					List<Perfil> perfiles = await _perfilManager.GetAllAsync();
+					Empresa? emp = await empresaManager.GetByIdWithAdicionalesAsync(e.Id);
+					List<Perfil> perfiles = await perfilManager.GetAllAsync();
 					perfiles = perfiles.Where(p => p.Id == emp?.PerfilId).ToList();
 					Perfil? perfilEmpresa = perfiles != null && perfiles.Count >= 1 ? perfiles.First() : null;
 
-					List<ProductoServicioPerfil> prodServEmpresa = new List<ProductoServicioPerfil>();
-					if (perfilEmpresa != null) { prodServEmpresa = perfilEmpresa.ProductosServiciosPerfil.ToList(); }
+					List<ProductoServicioPerfil> prodServEmpresa = [];
+					if (perfilEmpresa != null) { prodServEmpresa = [.. perfilEmpresa.ProductosServiciosPerfil]; }
 
 					//Si viene establecido el id empresa, omite el elemento con ese id.
 					if (idempresa >= 1 && e.Id == idempresa) { continue; }
 
-					e.ObjetoSocial = jsonEscape(e.ObjetoSocial ?? string.Empty);
-					List<string> jsonActividades = getListJsonActividades(emp?.ActividadesEconomicasEmpresa);
-					List<string> jsonProductosServicios = getListJsonProductosServicios(prodServEmpresa);
-					string serie = e.RFC != null ? e.RFC.Substring(0, 3) : string.Empty;
-					List<Prefactura> prefacturas = await _prefacturaManager.GetAllAsync(null, null, serie, null, null, null, null);
-					prefacturas = prefacturas.OrderByDescending(p => p.Id).ToList();
-					int proximoFolio = 0;
-					int.TryParse(prefacturas.FirstOrDefault()?.Folio, out proximoFolio);
+					e.ObjetoSocial = JsonEscape(e.ObjetoSocial ?? string.Empty);
+					List<string> jsonActividades = GetListJsonActividades(emp?.ActividadesEconomicasEmpresa);
+					List<string> jsonProductosServicios = GetListJsonProductosServicios(prodServEmpresa);
+					string serie = e.RFC != null ? e.RFC[..3] : string.Empty;
+					List<Prefactura> prefacturas = await prefacturaManager.GetAllAsync(null, null, serie, null, null, null, null);
+					prefacturas = [.. prefacturas.OrderByDescending(p => p.Id)];
+					_ = int.TryParse(prefacturas.FirstOrDefault()?.Folio, out int proximoFolio);
 					proximoFolio += 1;
 
 					jsonEmpresas.Add($"{{" +
@@ -640,9 +601,9 @@ namespace ERPSEI.Areas.ERP.Pages
 
 			return jsonResponse;
 		}
-		private List<string> getListJsonProductosServicios(ICollection<ProductoServicioPerfil>? psp)
+		private static List<string> GetListJsonProductosServicios(ICollection<ProductoServicioPerfil>? psp)
 		{
-			List<string> jsonProdServ = new List<string>();
+			List<string> jsonProdServ = [];
 			if (psp != null)
 			{
 				foreach (ProductoServicioPerfil a in psp)
@@ -660,9 +621,9 @@ namespace ERPSEI.Areas.ERP.Pages
 
 			return jsonProdServ;
 		}
-		private List<string> getListJsonActividades(ICollection<ActividadEconomicaEmpresa>? actividades)
+		private static List<string> GetListJsonActividades(ICollection<ActividadEconomicaEmpresa>? actividades)
 		{
-			List<string> jsonActividades = new List<string>();
+			List<string> jsonActividades = [];
 			if (actividades != null)
 			{
 				foreach (ActividadEconomicaEmpresa a in actividades)
@@ -681,23 +642,23 @@ namespace ERPSEI.Areas.ERP.Pages
 
 			return jsonActividades;
 		}
-		private string jsonEscape(string str)
+		private static string JsonEscape(string str)
 		{
 			return str.Replace("\n", "<br />").Replace("\r", "<br />").Replace("\t", "<br />");
 		}
 
 		public async Task<JsonResult> OnPostGetProductosServiciosSuggestion(string texto)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["ConsultadoUnsuccessfully"]);
+			ServerResponse resp = new(true, stringLocalizer["ConsultadoUnsuccessfully"]);
 			try
 			{
 				resp.Datos = await GetProductosServiciosSuggestion(texto);
 				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["ConsultadoSuccessfully"];
+				resp.Mensaje = stringLocalizer["ConsultadoSuccessfully"];
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex.Message);
+				logger.LogError(message: ex.Message);
 			}
 
 			return new JsonResult(resp);
@@ -705,9 +666,9 @@ namespace ERPSEI.Areas.ERP.Pages
 		private async Task<string> GetProductosServiciosSuggestion(string texto)
 		{
 			string jsonResponse;
-			List<string> jsons = new List<string>();
+			List<string> jsons = [];
 
-			List<ProductoServicioBuscado> prodserv = await _productosServiciosManager.SearchProductService(texto);
+			List<ProductoServicioBuscado> prodserv = await productosServiciosManager.SearchProductService(texto);
 
 			if (prodserv != null)
 			{
@@ -730,16 +691,16 @@ namespace ERPSEI.Areas.ERP.Pages
 
 		public async Task<JsonResult> OnPostGetUnidadesSuggestion(string texto)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["ConsultadoUnsuccessfully"]);
+			ServerResponse resp = new(true, stringLocalizer["ConsultadoUnsuccessfully"]);
 			try
 			{
 				resp.Datos = await GetUnidadesSuggestion(texto);
 				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["ConsultadoSuccessfully"];
+				resp.Mensaje = stringLocalizer["ConsultadoSuccessfully"];
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex.Message);
+				logger.LogError(message: ex.Message);
 			}
 
 			return new JsonResult(resp);
@@ -747,9 +708,9 @@ namespace ERPSEI.Areas.ERP.Pages
 		private async Task<string> GetUnidadesSuggestion(string texto)
 		{
 			string jsonResponse;
-			List<string> jsonUnidades = new List<string>();
+			List<string> jsonUnidades = [];
 
-			List<UnidadMedida> unidades = await _unidadMedidaManager.SearchUnidades(texto);
+			List<UnidadMedida> unidades = await unidadMedidaManager.SearchUnidades(texto);
 
 			if (unidades != null)
 			{
@@ -781,14 +742,14 @@ namespace ERPSEI.Areas.ERP.Pages
 
 		public async Task<JsonResult> OnPostExportExcel(string[] ids)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["PrefacturasExportedUnsuccessfully"]);
+			ServerResponse resp = new(true, stringLocalizer["PrefacturasExportedUnsuccessfully"]);
 			try
 			{
-				await _db.Database.BeginTransactionAsync();
+				await db.Database.BeginTransactionAsync();
 
 				//El llenado de datos comienza en la fila 1 del archivo ya que la fila 0 es el encabezado que se crea junto con el excel.
 				int rowIndex = 1;
-				List<TasaOCuota> impuestos = await _tasaOCuotaManager.GetAllAsync();
+				List<TasaOCuota> impuestos = await tasaOCuotaManager.GetAllAsync();
 				List<TasaOCuota> impuestosIEPS = impuestos.Where(t => t.ImpuestoId == 3).ToList();
 				List<TasaOCuota> impuestosIVA = impuestos.Where(t => t.ImpuestoId == 2).ToList();
 
@@ -803,15 +764,13 @@ namespace ERPSEI.Areas.ERP.Pages
 					foreach (string id in ids)
 					{
 						int intId = Convert.ToInt32(id);
-						Prefactura? p = await _prefacturaManager.GetByIdAsync(intId);
-						IRow row = sheet.CreateRow(rowIndex);
-
+						Prefactura? p = await prefacturaManager.GetByIdAsync(intId);
 						if(p != null)
 						{
 							string clave = p.Serie + p.Folio.PadLeft(6, '0');
-
 							foreach (Concepto c in p.Conceptos)
                             {
+								IRow row = sheet.CreateRow(rowIndex);
 								//Clave
 								CreateCell(row, 0, clave, cellStyle);
 								//Cliente
@@ -839,13 +798,13 @@ namespace ERPSEI.Areas.ERP.Pages
 								//Clave de esquema de impuestos
 								CreateCell(row, 12, string.Empty, cellStyle);
 								//I.E.P.S.
-								CreateCell(row, 13, getIEPSConcepto(c, impuestosIEPS).ToString(), cellStyle);
+								CreateCell(row, 13, GetIEPSConcepto(c, impuestosIEPS).ToString(), cellStyle);
 								//Impuesto 2
 								CreateCell(row, 14, string.Empty, cellStyle);
 								//Impuesto 3
 								CreateCell(row, 15, string.Empty, cellStyle);
 								//I.V.A.
-								CreateCell(row, 16, getIVAConcepto(c, impuestosIVA).ToString(), cellStyle);
+								CreateCell(row, 16, GetIVAConcepto(c, impuestosIVA).ToString(), cellStyle);
 								//Impuesto 5
 								CreateCell(row, 17, string.Empty, cellStyle);
 								//Impuesto 6
@@ -889,23 +848,23 @@ namespace ERPSEI.Areas.ERP.Pages
 					wb.Close();
 				}
 
-				await _db.Database.CommitTransactionAsync();
+				await db.Database.CommitTransactionAsync();
 
 				resp.TieneError = false;
-				resp.Mensaje = _strLocalizer["PrefacturasExportedSuccessfully"];
+				resp.Mensaje = stringLocalizer["PrefacturasExportedSuccessfully"];
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex.Message);
+				logger.LogError(message: ex.Message);
 				resp.Mensaje = ex.Message;
-				await _db.Database.RollbackTransactionAsync();
+				await db.Database.RollbackTransactionAsync();
 			}
 
 			return new JsonResult(resp);
 		}
-		private Task<HSSFWorkbook> CreateExcel()
+		private static Task<HSSFWorkbook> CreateExcel()
 		{
-			HSSFWorkbook workbook = new HSSFWorkbook();
+			HSSFWorkbook workbook = new();
 			HSSFFont myFont = (HSSFFont)workbook.CreateFont();
 			myFont.FontHeightInPoints = 11;
 			myFont.FontName = "Tahoma";
@@ -958,13 +917,13 @@ namespace ERPSEI.Areas.ERP.Pages
 
 			return Task.FromResult(workbook);
 		}
-		private void CreateCell(IRow CurrentRow, int CellIndex, string Value, HSSFCellStyle Style)
+		private static void CreateCell(IRow CurrentRow, int CellIndex, string Value, HSSFCellStyle Style)
 		{
 			ICell Cell = CurrentRow.CreateCell(CellIndex);
 			Cell.SetCellValue(Value);
 			Cell.CellStyle = Style;
 		}
-		private decimal getIEPSConcepto(Concepto c, List<TasaOCuota> impuestos)
+		private static decimal GetIEPSConcepto(Concepto c, List<TasaOCuota> impuestos)
 		{
 			decimal total = 0;
 			if (c.ObjetoImpuestoId >= 2)
@@ -986,7 +945,7 @@ namespace ERPSEI.Areas.ERP.Pages
 			}
 			return total;
 		}
-		private decimal getIVAConcepto(Concepto c, List<TasaOCuota> impuestos)
+		private static decimal GetIVAConcepto(Concepto c, List<TasaOCuota> impuestos)
 		{
 			decimal total = 0;
 			if (c.ObjetoImpuestoId >= 2)
@@ -1008,26 +967,26 @@ namespace ERPSEI.Areas.ERP.Pages
 			}
 			return total;
 		}
-		private decimal getTotalIEPS(ICollection<Concepto> conceptos, List<TasaOCuota> impuestos)
-		{
-			decimal total = 0;
-			foreach (Concepto c in conceptos)
-			{
-				total += getIEPSConcepto(c, impuestos);
-			}
+		//private decimal getTotalIEPS(ICollection<Concepto> conceptos, List<TasaOCuota> impuestos)
+		//{
+		//	decimal total = 0;
+		//	foreach (Concepto c in conceptos)
+		//	{
+		//		total += GetIEPSConcepto(c, impuestos);
+		//	}
 
-			return total;
-		}
-		private decimal getTotalIVA(ICollection<Concepto> conceptos, List<TasaOCuota> impuestos)
-		{
-			decimal total = 0;
-			foreach (Concepto c in conceptos)
-			{
-				total += getIVAConcepto(c, impuestos);
-			}
+		//	return total;
+		//}
+		//private decimal getTotalIVA(ICollection<Concepto> conceptos, List<TasaOCuota> impuestos)
+		//{
+		//	decimal total = 0;
+		//	foreach (Concepto c in conceptos)
+		//	{
+		//		total += GetIVAConcepto(c, impuestos);
+		//	}
 
-			return total;
-		}
+		//	return total;
+		//}
 
 		public ActionResult OnGetDownloadExcel()
 		{

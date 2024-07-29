@@ -1,5 +1,5 @@
 ﻿using ERPSEI.Data.Entities.Empresas;
-using ERPSEI.Data.Entities.SAT;
+using ERPSEI.Data.Entities.SAT.Catalogos;
 
 namespace ERPSEI.Data.Managers.SAT
 {

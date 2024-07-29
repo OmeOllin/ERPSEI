@@ -14,27 +14,17 @@ using System.Text;
 namespace ERPSEI.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
-    public class RegisterConfirmationModel : PageModel
+    public class RegisterConfirmationModel(
+		AppUserManager userManager,
+		IEmailSender sender,
+		IStringLocalizer<RegisterConfirmationModel> localizer) : PageModel
     {
-        private readonly AppUserManager _userManager;
-        private readonly IEmailSender _sender;
-        private readonly IStringLocalizer<RegisterConfirmationModel> _localizer;
 
-        public RegisterConfirmationModel(
-            AppUserManager userManager, 
-            IEmailSender sender,
-            IStringLocalizer<RegisterConfirmationModel> localizer)
-        {
-            _userManager = userManager;
-            _sender = sender;
-            _localizer = localizer;
-        }
-
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public string Email { get; set; }
+		/// <summary>
+		///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+		///     directly from your code. This API may change or be removed in future releases.
+		/// </summary>
+		public string Email { get; set; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -54,12 +44,12 @@ namespace ERPSEI.Areas.Identity.Pages.Account
             {
                 return RedirectToPage("/Index");
             }
-            returnUrl = returnUrl ?? Url.Content("~/");
+            returnUrl ??= Url.Content("~/");
 
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await userManager.FindByEmailAsync(email);
             if (user == null)
             {
-                return NotFound($"{_localizer["UserLoadFails"]} '{email}'.");
+                return NotFound($"{localizer["UserLoadFails"]} '{email}'.");
             }
 
             Email = email;
@@ -67,13 +57,13 @@ namespace ERPSEI.Areas.Identity.Pages.Account
             //DisplayConfirmAccountLink = true;
             if (DisplayConfirmAccountLink)
             {
-                var userId = await _userManager.GetUserIdAsync(user);
-                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var userId = await userManager.GetUserIdAsync(user);
+                var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                 EmailConfirmationUrl = Url.Page(
                     "/Account/ConfirmEmail",
                     pageHandler: null,
-                    values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
+                    values: new { area = "Identity", userId, code, returnUrl },
                     protocol: Request.Scheme);
             }
 

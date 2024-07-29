@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     initTable();
 
     let btnBuscar = document.getElementById("btnBuscar");
-    btnBuscar.click();
+    if (btnBuscar) { btnBuscar.click(); }
 
     autoCompletar("#inpFiltroActividadEconomica");
     autoCompletar("#inpEmpresaActividadEconomica");
@@ -145,16 +145,22 @@ function operateFormatter(value, row, index) {
     let icons = [];
 
     //Icono Ver
-    icons.push(`<li><a class="dropdown-item see" href="#" title="${btnVerTitle}"><i class="bi bi-search"></i> ${btnVerTitle}</a></li>`);
+    if (puedeTodo || puedeConsultar || puedeEditar || puedeEliminar) { icons.push(`<li><a class="dropdown-item see" href="#" title="${btnVerTitle}"><i class="bi bi-search"></i> ${btnVerTitle}</a></li>`); }
     //Icono Editar
-    icons.push(`<li><a class="dropdown-item edit" href="#" title="${btnEditarTitle}"><i class="bi bi-pencil-fill"></i> ${btnEditarTitle}</a></li>`);
+    if (puedeTodo || puedeEditar) { icons.push(`<li><a class="dropdown-item edit" href="#" title="${btnEditarTitle}"><i class="bi bi-pencil-fill"></i> ${btnEditarTitle}</a></li>`); }
 
-    return `<div class="dropdown">
-              <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-three-dots-vertical success"></i>
-              </button>
-              <ul class="dropdown-menu">${icons.join("")}</ul>
-            </div>`;
+    if (icons.length >= 1) {
+
+        return `<div class="dropdown">
+                  <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-three-dots-vertical success"></i>
+                  </button>
+                  <ul class="dropdown-menu">${icons.join("")}</ul>
+                </div>`;
+    }
+    else {
+        return '';
+    }
 }
 //Eventos de los iconos de operación
 window.operateEvents = {
@@ -293,13 +299,13 @@ function initTable() {
     table.on('check.bs.table uncheck.bs.table ' +
         'check-all.bs.table uncheck-all.bs.table',
         function () {
-            buttonRemove.prop('disabled', !table.bootstrapTable('getSelections').length)
+            if (buttonRemove) { buttonRemove.prop('disabled', !table.bootstrapTable('getSelections').length) }
 
             // save your data, here just save the current page
             selections = getIdSelections()
             // push or splice the selections if you want to save all data selections
         });
-    buttonRemove.click(function () { onDeleteEmpresaClick(selections); });
+    if (buttonRemove) { buttonRemove.click(function () { onDeleteEmpresaClick(selections); }); }
 }
 //Función para capturar el click de los botones para dar de baja empresas. Ejecuta una llamada ajax para dar de baja empresas.
 function onDeleteEmpresaClick(ids = null) {
@@ -541,9 +547,19 @@ function establecerDatosAdicionales(row, action) {
         let iconClass = "opacity-25";
         let nameClass = "opacity-25";
         let nameHTML = `<div class="overflowed-text">${emptySelectItemText}</div>`;
-        let editDisabled = action == VER ? "disabled" : "";
+        let editDisabled = (puedeTodo || puedeConsultar || puedeEditar || puedeEliminar) ? (action == VER ? "disabled" : "") : ("disabled");
         let itemVerHTML = "";
+        let itemEditarHTML = "";
+        let itemEliminarHTML = "";
+        let menuHTML = "";
         let actualizar = a.actualizar || 0;
+
+        if (puedeTodo || puedeEditar || puedeEliminar) {
+            itemEditarHTML = `<li><a class='dropdown-item edit ${editDisabled}' onclick='onEditDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-pencil-fill'></i> ${btnEditarTitle}</a></li>`;
+        }
+        if (puedeTodo || puedeEliminar) {
+            itemEliminarHTML = `<li><a class="dropdown-item disableable" inputName="selector${a.tipoArchivoId}" onclick="onDeleteClick(this);" sourceId="selector${a.tipoArchivoId}" sourceLength="${a.fileSize}"><i class="bi bi-x-lg"></i> ${btnEliminarTitle}</a></li>`;
+        }
 
         if (parseInt(a.fileSize) >= 1) {
             //Si el tamaño del archivo es mayor o igual a 1 byte, agrega un archivo al DOM con la información.
@@ -551,7 +567,22 @@ function establecerDatosAdicionales(row, action) {
             iconClass = "document-icon-filled";
             nameClass = "document-name-filled";
             nameHTML = `<div class="overflowed-text">${a.nombre}</div>.<div>${a.extension}</div>`;
-            itemVerHTML = `<li><a class='dropdown-item see' onclick='onVerDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-search'></i> ${btnVerTitle}</a></li>`;
+            if (puedeTodo || puedeConsultar || puedeEditar || puedeEliminar) {
+                itemVerHTML = `<li><a class='dropdown-item see' onclick='onVerDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-search'></i> ${btnVerTitle}</a></li>`;
+            }
+        }
+
+        if (itemVerHTML.length >= 1 || itemEditarHTML.length >= 1 || itemEliminarHTML.length >= 1) {
+            menuHTML = `<div class="dropdown">
+                            <button class="btn p-0 p-lg-2 p-xl-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical success"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                ${itemVerHTML}
+                                ${itemEditarHTML}
+                                ${itemEliminarHTML}
+                            </ul>
+                        </div>`;
         }
 
         $("#bodyArchivos").append(
@@ -562,16 +593,7 @@ function establecerDatosAdicionales(row, action) {
                     <div id="fileName${a.tipoArchivoId}" class="align-self-center col-10 ${nameClass} p-2" style="display:flex; color:dimgray">${nameHTML}</div>
                     <div class="align-self-center col-1">
                         <input type="file" actualizar="${actualizar}" id="selector${a.tipoArchivoId}" sourceId="${a.id}" sourceName="${a.nombre}.${a.extension}" sourceLength="${a.fileSize}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
-                        <div class="dropdown">
-                            <button class="btn p-0 p-lg-2 p-xl-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-three-dots-vertical success"></i>
-                            </button>
-                            <ul class="dropdown-menu">
-                                ${itemVerHTML}
-                                <li><a class='dropdown-item edit ${editDisabled}' onclick='onEditDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-pencil-fill'></i> ${btnEditarTitle}</a></li>
-                                <li><a class="dropdown-item disableable" inputName="selector${a.tipoArchivoId}" onclick="onDeleteClick(this);" sourceId="selector${a.tipoArchivoId}" sourceLength="${a.fileSize}"><i class="bi bi-x-lg"></i> ${btnEliminarTitle}</a></li>
-                            </ul>
-                        </div>
+                        ${menuHTML}
                     </div>
                 </div>
             </div>`
@@ -895,14 +917,19 @@ function actividadDescFormatter(value, row, index) {
 }
 //Función para dar formato a los iconos de operación de los registros de actividades económicas
 function operateFormatterActividad(value, row, index) {
-    switch (dialogMode) {
-        case NUEVO:
-        case EDITAR:
-            return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton"></i></a>`;
-            break;
-        default:
-            return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton disabled"></i></a>`;
-            break;
+    if (puedeTodo || puedeEliminar) {
+        switch (dialogMode) {
+            case NUEVO:
+            case EDITAR:
+                return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton"></i></a>`;
+                break;
+            default:
+                return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton disabled"></i></a>`;
+                break;
+        }
+    }
+    else {
+        return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton disabled"></i></a>`;
     }
 }
 //Eventos de los iconos de operación
@@ -943,21 +970,23 @@ function initTableActividad(data = null) {
         ]
     });
     tableActividad.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
-        $("#removeActividad").prop('disabled', !tableActividad.bootstrapTable('getSelections').length)
+        if ($("#removeActividad")) { $("#removeActividad").prop('disabled', !tableActividad.bootstrapTable('getSelections').length) }
     });
-    $("#removeActividad").click(function () {
-        askConfirmation(btnEliminarTitle, dlgDeleteElementQuestion, function () {
-            let elements = tableActividad.bootstrapTable('getSelections');
-            let data = tableActividad.bootstrapTable('getData');
-            let newData = [];
-            data.forEach(function (d) {
-                let foundElement = elements.find(f => f.id == d.id);
-                if (!foundElement) { newData.push(d); }
+    if ($("#removeActividad")) {
+        $("#removeActividad").click(function () {
+            askConfirmation(btnEliminarTitle, dlgDeleteElementQuestion, function () {
+                let elements = tableActividad.bootstrapTable('getSelections');
+                let data = tableActividad.bootstrapTable('getData');
+                let newData = [];
+                data.forEach(function (d) {
+                    let foundElement = elements.find(f => f.id == d.id);
+                    if (!foundElement) { newData.push(d); }
+                });
+                initTableActividad(newData);
+                $("#removeActividad").prop('disabled', true);
             });
-            initTableActividad(newData);
-            $("#removeActividad").prop('disabled', true);
         });
-    });
+    }
 }
 //Función para obtener el archivo de un input
 function getFile(inputId) {

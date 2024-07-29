@@ -62,7 +62,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostDeleteOrigenes(string[] ids)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["DeletedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["DeletedUnsuccessfully"]);
 			try
 			{
 				await _db.Database.BeginTransactionAsync();
@@ -70,15 +70,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				List<Origen> origenes = await _origenManager.GetAllAsync();
                 foreach (string id in ids)
                 {
-					int sid = 0;
-					if (!int.TryParse(id, out sid)) { sid = 0; }
+					if (!int.TryParse(id, out int sid)) { sid = 0; }
 					Origen? origen = origenes.Where(o => o.Id == sid).FirstOrDefault();
 					List<Empresa> empresas = await _empresaManager.GetAllAsync();
 					empresas = empresas.Where(e => e.OrigenId == sid).ToList();
 					List<Empresa> empresasActivasRelacionadas = empresas.Where(e => e.Deshabilitado == 0).ToList();
-					if(empresasActivasRelacionadas.Count() > 0)
+					if(empresasActivasRelacionadas.Count > 0)
 					{
-						List<string> names = new List<string>();
+						List<string> names = [];
 						foreach (Empresa e in empresasActivasRelacionadas) { names.Add($"<i>{e.Id} - {e.RazonSocial}</i>"); }
 						resp.TieneError = true;
 						resp.Mensaje = $"{_strLocalizer["OrigenIsRelated"]}<br/><br/><i>{origen?.Nombre}</i><br/><br/>{string.Join("<br/>", names)}";
@@ -113,13 +112,13 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostSaveOrigen()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["SavedUnsuccessfully"]);
+			ServerResponse resp = new(true, _strLocalizer["SavedUnsuccessfully"]);
 
 			try
 			{
 				if (!ModelState.IsValid)
 				{
-					resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray();
+					resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k]?.Errors ?? []).Select(m => m.ErrorMessage).ToArray();
 				}
 				else
 				{
