@@ -152,26 +152,19 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		{
 			//Se busca usuario por id
 			AppUser? usuario = await _usuarioManager.FindByIdAsync(e.Id);
-			AppRole? rol = await _roleManager.FindByIdAsync(e.RolId);
+            AppRole? nuevoRol = await _roleManager.FindByIdAsync(e.RolId);
 
 			//Si se encontró usuario, obtiene su Id del registro existente.
-			if (usuario != null && rol != null) {
-				//Llena los datos del usuario.
-				if (await _usuarioManager.IsInRoleAsync(usuario, ServicesConfiguration.RolAdministrador) && rol.Name != ServicesConfiguration.RolAdministrador)
-				{
-					await _usuarioManager.RemoveFromRoleAsync(usuario, ServicesConfiguration.RolAdministrador);
-					await _usuarioManager.AddToRoleAsync(usuario, rol.Name ?? ServicesConfiguration.RolUsuario);
-				}
-				else if (await _usuarioManager.IsInRoleAsync(usuario, ServicesConfiguration.RolUsuario) && rol.Name != ServicesConfiguration.RolUsuario)
-				{
-					await _usuarioManager.RemoveFromRoleAsync(usuario, ServicesConfiguration.RolUsuario);
-					await _usuarioManager.AddToRoleAsync(usuario, rol.Name ?? ServicesConfiguration.RolUsuario);
-				}
-				else
-				{
-					await _usuarioManager.AddToRoleAsync(usuario, rol.Name ?? ServicesConfiguration.RolUsuario);
-				}
-			}
+			if (usuario != null && nuevoRol != null) {
+				//Obtiene los roles actuales del usuario.
+                IList<string> rolesUsuario = await _usuarioManager.GetRolesAsync(usuario);
+
+				//Se quitan todos los roles que tenía el usuario.
+                foreach (string nombreRol in rolesUsuario){ await _usuarioManager.RemoveFromRoleAsync(usuario, nombreRol); }
+
+                //Se establece el nuevo rol del usuario. Si no se encuentra el rol, entonces se usa el rol de usuario por default.
+                await _usuarioManager.AddToRoleAsync(usuario, nuevoRol.Name ?? ServicesConfiguration.RolUsuario);
+            }
 		}
 	}
 }
