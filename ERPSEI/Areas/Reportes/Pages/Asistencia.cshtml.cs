@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
+using static ERPSEI.Areas.Catalogos.Pages.GestionDeTalentoModel;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
@@ -35,6 +36,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Display(Name = "FechaFinField")]
 			public DateTime? FechaIngresoFin { get; set; }
 		}
+		public class ArchivoModel
+		{
+			public string? Id { get; set; } = string.Empty;
+			public string? nombre { get; set; } = string.Empty;
+			public int? tipoArchivoId { get; set; }
+			public string? extension { get; set; } = string.Empty;
+			public string? imgSrc { get; set; } = string.Empty;
+		}
 
 		[BindProperty]
 		public Asistencia ListaAsistencia { get; set; } = new Asistencia();
@@ -50,6 +59,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			public string SerialDispositivo { get; set; } = string.Empty;
 			public string NombreEmpleado { get; set; } = string.Empty;
 			public string NoTarjeta { get; set; } = string.Empty;
+			public ArchivoModel?[] Archivos { get; set; } = Array.Empty<ArchivoModel>();
 		}
 
 		public async Task<JsonResult> OnGetAsistenciasList()
@@ -78,6 +88,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostFiltrarAsistencia([FromBody] FiltroModel inputFiltro)
 		{
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["AsistenciasFiltradosUnsuccessfully"]);
+
+			if (inputFiltro == null)
+			{
+				resp.Mensaje = _strLocalizer["Favor de seleccionar rango de fechas"];
+				return new JsonResult(resp);
+			}
+
 			ServerResponse resp = new ServerResponse(true, stringLocalizer["AsistenciasFiltradosUnsuccessfully"]);
 			try
 			{
@@ -97,14 +115,15 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 				if (inputFiltro.FechaIngresoFin.HasValue)
 				{
-					// Asegurarse de incluir todas las asistencias hasta el final del día especificado
 					DateTime fechaFin = inputFiltro.FechaIngresoFin.Value.Date.AddDays(1).AddTicks(-1);
 					asistencias = asistencias.Where(a => a.FechaHora <= fechaFin).ToList();
 				}
-				// Si no se aplicaron filtros, retornar un resultado vacío para no actualizar la página
-				if (string.IsNullOrEmpty(inputFiltro.NombreEmpleado) && !inputFiltro.FechaIngresoInicio.HasValue && !inputFiltro.FechaIngresoFin.HasValue)
+
+				// Verificar si se encontraron resultados
+				if (asistencias.Count == 0)
 				{
-					return new JsonResult(resp); // Retorna una respuesta vacía si no se aplicaron filtros
+					resp.Mensaje = _strLocalizer["NoRecordsFound"];
+					return new JsonResult(resp);
 				}
 
 
@@ -135,6 +154,107 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			}
 
 			return new JsonResult(resp);
+		}
+
+
+		public async Task<JsonResult> OnPostImportarEmpleados()
+		{
+			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadosImportadosUnsuccessfully"]);
+			try
+			{
+				if (Request.Form.Files.Count >= 1)
+				{
+					//Se procesa el archivo excel.
+					using (Stream s = Request.Form.Files[0].OpenReadStream())
+					{
+						using (var reader = ExcelReaderFactory.CreateReader(s))
+						{
+							DataSet result = reader.AsDataSet(new ExcelDataSetConfiguration() { FilterSheet = (tableReader, sheetIndex) => sheetIndex == 0 });
+							foreach (DataRow row in result.Tables[0].Rows)
+							{
+								//Omite el procesamiento del row de encabezado
+								if (result.Tables[0].Rows.IndexOf(row) == 0)
+								{
+									resp.TieneError = false;
+									resp.Mensaje = _strLocalizer["EmpleadosImportadosSuccessfully"];
+									continue;
+								}
+
+								string vmsg = await CreateEmployeeFromExcelRow(row);
+
+								//Si la longitud del mensaje de respuesta es mayor o igual a uno, se considera que hubo errores.
+								if ((vmsg ?? "").Length >= 1)
+								{
+									resp.TieneError = true;
+									resp.Mensaje = vmsg;
+									break;
+								}
+								else
+								{
+									resp.TieneError = false;
+									resp.Mensaje = _strLocalizer["EmpleadosImportadosSuccessfully"];
+								}
+							}
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+				resp.TieneError = true;
+				resp.Mensaje = _strLocalizer["EmpleadosImportadosUnsuccessfully"];
+			}
+
+			return new JsonResult(resp);
+		}
+
+		private async Task<string> CreateEmployeeFromExcelRow(DataRow row)
+		{
+			string validationMsg = string.Empty;
+
+			DateTime fechahora;
+			DateOnly fecha;
+			TimeSpan hora;
+
+			DateTime.TryParse(row[1].ToString(), out fechahora);
+			DateOnly.TryParse(row[2].ToString(), out fecha);
+			TimeSpan.TryParse(row[3].ToString(), out hora);
+
+
+			Asistencia asistencia = new Asistencia()
+			{
+				Id = row[0].ToString()?.Trim() ?? string.Empty,
+				FechaHora = fechahora,
+				Fecha = fecha,
+				Hora = hora,
+				Direccion = row[4].ToString()?.Trim() ?? string.Empty,
+				NombreDispositivo = row[5].ToString()?.Trim() ?? string.Empty,
+				SerialDispositivo = row[6].ToString()?.Trim() ?? string.Empty,
+				NombreEmpleado = row[7].ToString()?.Trim() ?? string.Empty,
+				NoTarjeta = row[8].ToString()?.Trim() ?? string.Empty,
+			};
+
+			List<ArchivoModel> archivos = new List<ArchivoModel>();
+			//Crea los archivos del usuario.
+			foreach (FileTypes i in Enum.GetValues(typeof(FileTypes)))
+			{
+				archivos.Add(new ArchivoModel() { extension = "", imgSrc = "", nombre = "", tipoArchivoId = (int)i });
+			}
+
+			asistencia.Archivos = archivos.ToArray();
+
+			//Valida que no exista un empleado registrado con los mismos datos. En caso de haber, se deja el mensaje en resp.Mensajes para ser mostrado al usuario.
+			//validationMsg = await validarSiExisteEmpleado(e, true);
+
+			//Si la longitud del mensaje de respuesta es menor o igual a cero, se considera que no hubo errores anteriores.
+			/*if ((validationMsg ?? "").Length <= 0)
+			{
+				//Procede a crear o actualizar el empleado.
+				await createOrUpdateEmployee(e);
+			}*/
+
+			return validationMsg ?? "";
 		}
 
 

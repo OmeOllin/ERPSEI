@@ -123,6 +123,9 @@
   <data name="AddButton" xml:space="preserve">
     <value>Agregar</value>
   </data>
+  <data name="CancelButtonTitle" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
   <data name="ColAbsencesHeader" xml:space="preserve">
     <value>Faltas</value>
   </data>
@@ -204,6 +207,18 @@
   <data name="IdColumn" xml:space="preserve">
     <value>ID</value>
   </data>
+  <data name="ImportButtonText" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="ImportExcelDialogTitle" xml:space="preserve">
+    <value>Importar asistencia</value>
+  </data>
+  <data name="ImportExcelSuggestionA" xml:space="preserve">
+    <value>Descargue la plantilla y rellénela con su información para cargar datos correctamente.</value>
+  </data>
+  <data name="ImportExcelSuggestionB" xml:space="preserve">
+    <value>Seleccione el archivo que rellenó con su información e importe los datos.</value>
+  </data>
   <data name="NameColumn" xml:space="preserve">
     <value>Nombre</value>
   </data>
@@ -212,6 +227,9 @@
   </data>
   <data name="NombrePlaceholder" xml:space="preserve">
     <value>Nombre</value>
+  </data>
+  <data name="PlantillaButtonTitle" xml:space="preserve">
+    <value>Descargar plantilla</value>
   </data>
   <data name="RetardoPlaceholder" xml:space="preserve">
     <value>Retardo</value>
