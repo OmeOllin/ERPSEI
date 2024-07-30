@@ -274,7 +274,7 @@ function onImportarClick() {
     }
 
     doAjax(
-        "/Reportes/Asistencia/ImportarEmpleados",
+        "/Reportes/Asistencia/ImportarAsistencia",
         {},
         function (resp) {
             if (resp.tieneError) {

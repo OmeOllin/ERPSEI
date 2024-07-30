@@ -1,12 +1,16 @@
 using ERPSEI.Data;
+using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Managers.Empleados;
 using ERPSEI.Requests;
+using ExcelDataReader;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
-using static ERPSEI.Areas.Catalogos.Pages.GestionDeTalentoModel;
+using System.Data;
+using System.Net.Mime;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
@@ -43,6 +47,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			public int? tipoArchivoId { get; set; }
 			public string? extension { get; set; } = string.Empty;
 			public string? imgSrc { get; set; } = string.Empty;
+		}
+
+		[BindProperty]
+		public ImportarModel InputImportar { get; set; }
+		public class ImportarModel
+		{
+			[Required(ErrorMessage = "Required")]
+			public IFormFile? Plantilla { get; set; }
 		}
 
 		[BindProperty]
@@ -88,15 +100,15 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnPostFiltrarAsistencia([FromBody] FiltroModel inputFiltro)
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["AsistenciasFiltradosUnsuccessfully"]);
+			ServerResponse resp = new ServerResponse(true, stringLocalizer["AsistenciasFiltradosUnsuccessfully"]);
 
 			if (inputFiltro == null)
 			{
-				resp.Mensaje = _strLocalizer["Favor de seleccionar rango de fechas"];
+				resp.Mensaje = stringLocalizer["Favor de seleccionar rango de fechas"];
 				return new JsonResult(resp);
 			}
 
-			ServerResponse resp = new ServerResponse(true, stringLocalizer["AsistenciasFiltradosUnsuccessfully"]);
+			ServerResponse responseServ = new (true, stringLocalizer["AsistenciasFiltradosUnsuccessfully"]);
 			try
 			{
 				// Obtener todas las asistencias
@@ -122,7 +134,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				// Verificar si se encontraron resultados
 				if (asistencias.Count == 0)
 				{
-					resp.Mensaje = _strLocalizer["NoRecordsFound"];
+					resp.Mensaje = stringLocalizer["NoRecordsFound"];
 					return new JsonResult(resp);
 				}
 
@@ -157,9 +169,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 
 
-		public async Task<JsonResult> OnPostImportarEmpleados()
+		public async Task<JsonResult> OnPostImportarAsistencia()
 		{
-			ServerResponse resp = new ServerResponse(true, _strLocalizer["EmpleadosImportadosUnsuccessfully"]);
+			ServerResponse resp = new ServerResponse(true, stringLocalizer["EmpleadosImportadosUnsuccessfully"]);
 			try
 			{
 				if (Request.Form.Files.Count >= 1)
@@ -176,11 +188,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 								if (result.Tables[0].Rows.IndexOf(row) == 0)
 								{
 									resp.TieneError = false;
-									resp.Mensaje = _strLocalizer["EmpleadosImportadosSuccessfully"];
+									resp.Mensaje = stringLocalizer["AsistenciaImportadoSuccessfully"];
 									continue;
 								}
 
-								string vmsg = await CreateEmployeeFromExcelRow(row);
+								string vmsg = await CreateAsistenciaFromExcelRow(row);
 
 								//Si la longitud del mensaje de respuesta es mayor o igual a uno, se considera que hubo errores.
 								if ((vmsg ?? "").Length >= 1)
@@ -192,7 +204,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 								else
 								{
 									resp.TieneError = false;
-									resp.Mensaje = _strLocalizer["EmpleadosImportadosSuccessfully"];
+									resp.Mensaje = stringLocalizer["AsistenciaImportadoSuccessfully"];
 								}
 							}
 						}
@@ -201,15 +213,21 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex.Message);
+				logger.LogError(ex.Message);
 				resp.TieneError = true;
-				resp.Mensaje = _strLocalizer["EmpleadosImportadosUnsuccessfully"];
+				resp.Mensaje = stringLocalizer["AsistenciaImportadoUnsuccessfully"];
 			}
 
 			return new JsonResult(resp);
 		}
 
-		private async Task<string> CreateEmployeeFromExcelRow(DataRow row)
+		public async Task<ActionResult> OnGetDownloadPlantillaA()
+		{
+			
+				return File("/templates/PlantillaAsistencia.xlsx", MediaTypeNames.Application.Octet, "PlantillaAsistencia.xlsx");
+			
+		}
+		private async Task<string> CreateAsistenciaFromExcelRow(DataRow row)
 		{
 			string validationMsg = string.Empty;
 
@@ -220,7 +238,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			DateTime.TryParse(row[1].ToString(), out fechahora);
 			DateOnly.TryParse(row[2].ToString(), out fecha);
 			TimeSpan.TryParse(row[3].ToString(), out hora);
-
 
 			Asistencia asistencia = new Asistencia()
 			{
@@ -236,7 +253,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			};
 
 			List<ArchivoModel> archivos = new List<ArchivoModel>();
-			//Crea los archivos del usuario.
+			// Crea los archivos del usuario.
 			foreach (FileTypes i in Enum.GetValues(typeof(FileTypes)))
 			{
 				archivos.Add(new ArchivoModel() { extension = "", imgSrc = "", nombre = "", tipoArchivoId = (int)i });
@@ -244,18 +261,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			asistencia.Archivos = archivos.ToArray();
 
-			//Valida que no exista un empleado registrado con los mismos datos. En caso de haber, se deja el mensaje en resp.Mensajes para ser mostrado al usuario.
-			//validationMsg = await validarSiExisteEmpleado(e, true);
-
-			//Si la longitud del mensaje de respuesta es menor o igual a cero, se considera que no hubo errores anteriores.
-			/*if ((validationMsg ?? "").Length <= 0)
-			{
-				//Procede a crear o actualizar el empleado.
-				await createOrUpdateEmployee(e);
-			}*/
-
-			return validationMsg ?? "";
+			// Retornar una cadena vacía ya que no se realizan validaciones
+			return validationMsg;
 		}
+
 
 
 	}
