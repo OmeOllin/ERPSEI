@@ -191,31 +191,86 @@
 		</div>
 	</div>
 </form>
+
 <!-- --------------------------- -->
-<!-- --------------------------- -->
+<!-- Sección Importar Excel ---- -->
+<div id="dlgImportarExcel" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 id="dlgExcelTitle" class="modal-title">@Localizer["ImportExcelDialogTitle"]</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body align-items-center">
+				<div class="alert d-flex align-items-center" role="alert">
+					<i class="bi bi-1-circle-fill me-2" style="font-size: x-large"></i>
+					<div>@Localizer["ImportExcelSuggestionA"]</div>
+				</div>
+				<div class="container">
+					<div class="row">
+						<div class="col-12 text-center mb-3">
+							<a id="dlgExcelBtnPlantilla" href="@Url.Page("Asistencia", "DownloadPlantilla")" class="btn btn-primary">
+								<i class="bi bi-file-earmark-ruled"></i> @Localizer["PlantillaButtonTitle"]
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="alert d-flex align-items-center" role="alert">
+					<i class="bi bi-2-circle-fill me-2" style="font-size: x-large"></i>
+					<div>@Localizer["ImportExcelSuggestionB"]</div>
+				</div>
+				<div class="container">
+					<div class="row">
+						<div class="col-12">
+							<form id="importForm" method="post">
+								<input asp-for="InputImportar.Plantilla" id="excelFile" onchange="onExcelSelectorChanged(this);" class="form-control" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+								<span asp-validation-for="InputImportar.Plantilla" class="text-danger"></span>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button id="dlgExcelBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarImportarClick();" data-bs-dismiss="modal">
+					<i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
+				</button>
+				<button id="dlgExcelBtnImportar" type="button" class="btn btn-primary" onclick="onImportarClick();">
+					<i class="bi bi-upload"></i> @Localizer["ImportButtonText"]
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
 @section Scripts {
 	<link rel="stylesheet" href="~/lib/bootstrap-table/bootstrap-table.min.css">
+	<link rel="stylesheet" href="~/lib/jquery-ui/jquery-ui.min.css">
+	<script src="~/lib/jquery-ui/jquery-ui.min.js"></script>
+	<script src="~/js/autocompletar.js"></script>
 
 	<script src="~/lib/bootstrap-table/extensions/export/tableExport.min.js"></script>
-
-	<script src="~/lib/bootstrap-table/bootstrap-table.min.js"></script>
+	<script src="~/lib/bootstrap-table/bootstrap-table.min.js"></script>+
 	<script src="~/lib/bootstrap-table/locale/bootstrap-table-es-MX.min.js"></script>
 	<script src="~/lib/bootstrap-table/locale/bootstrap-table-en-US.min.js"></script>
 	<script src="~/lib/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
 
+	<link rel="stylesheet" href="~/css/Asistencia.css" />
 	<script src="~/../Areas/Reportes/Pages/Asistencia.cshtml.js"></script>
 
 	<script type="text/javascript">
 		var cultureName = "@cultureName";
 		var btnImportarText = '@Localizer["ImportButtonText"]';
 		var btnImportarTitle = '@Localizer["ImportButtonTitle"]';
+		var btnInvitarTitle = '@Localizer["InviteButtonTitle"]';
 		var btnVerTitle = '@Localizer["SeeButtonTitle"]';
 		var btnEditarTitle = '@Localizer["EditButtonTitle"]';
+		var btnEliminarTitle = '@Localizer["DeleteButton"]';
 		var dlgEditarTitle = '@Localizer["EditDialogTitle"]';
 		var dlgVerTitle = '@Localizer["SeeDialogTitle"]';
 		var dlgNuevoTitle = '@Localizer["NewDialogTitle"]';
-		var dlgDeleteTitle = '@Localizer["DeletePositionDialogTitle"]';
-		var dlgDeleteQuestion = '@Localizer["DeletePositionDialogQuestion"]';
+		var dlgDeleteTitle = '@Localizer["DeleteEmpleadoDialogTitle"]';
+		var dlgDeleteQuestion = '@Localizer["DeleteEmpleadoDialogQuestion"]';
 		var colIdHeader = '@Localizer["ColIdHeader"]';
 		var colNombreEmpleadoHeader = '@Localizer["ColNameHeader"]';
 		var colFechaHoraHeader = '@Localizer["ColDateTimeHeader"]';
@@ -224,6 +279,13 @@
 		var colDireccionHeader = '@Localizer["ColDirectionHeader"]';
 		var colNombreDispositivoHeader = '@Localizer["ColDeviceNameHeader"]';
 		var colSerialDispositivoHeader = '@Localizer["ColSerialNameHeader"]';
+
+		var invalidFormatTitle = '@Localizer["InvalidFormatTitle"]';
+		var invalidFormatMsg = '@Localizer["InvalidFormatMsg"]';
+		var fileFormatTitle = '@Localizer["FileFormatTitle"]';
+		var fileFormatMessage = '@Localizer["FileFormatMessage"]';
+		var maxFileSizeTitle = '@Localizer["MaxFileSizeTitle"]';
+		var maxFileSizeMessage = '@Localizer["MaxFileSizeMessage"]';
 	</script>
 
 	<partial name="_ValidationScriptsPartial" />
