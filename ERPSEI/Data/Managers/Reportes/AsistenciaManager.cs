@@ -18,7 +18,7 @@ namespace ERPSEI.Data.Managers.Reportes
 			return await db.Asistencias.ToListAsync();
 		}
 
-		public async Task<Asistencia?> GetByIdAsync(string id)
+		public async Task<Asistencia?> GetByIdAsync(int id)
 		{
 			return await db.Asistencias.Where(a => a.Id == id).FirstOrDefaultAsync();
 		}
@@ -28,7 +28,7 @@ namespace ERPSEI.Data.Managers.Reportes
 			return await db.Asistencias.Where(a => a.NombreEmpleado.ToLower() == name.ToLower()).FirstOrDefaultAsync();
 		}
 
-		public async Task<Asistencia?> GetByIdAsync(int id)
+		public async Task<Asistencia?> GetByIdAsync(string id)
 		{
 			return await GetByIdAsync(id.ToString());
 		}

@@ -5,7 +5,7 @@ namespace ERPSEI.Data.Entities.Empleados
 	public class Asistencia 
 	{
 		[DatabaseGenerated(DatabaseGeneratedOption.None)] 
-		public string Id { get; set; } = string.Empty;
+		public int Id { get; set; }
 		public string Horario { get; set; } = string.Empty;
 		public string NombreEmpleado { get; set; } = string.Empty;
 		public DateOnly Fecha { get; set; }
@@ -14,6 +14,6 @@ namespace ERPSEI.Data.Entities.Empleados
 		public string ResultadoE { get; set; } = string.Empty;
 		public TimeSpan Salida { get; set; }
 		public string ResultadoS { get; set; } = string.Empty;
-		
+		public int HorarioId { get; set; }
 	}
 }
