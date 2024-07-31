@@ -62,7 +62,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		public class Asistencia
 		{
 			[Display(Name = "Id")]
-			public string Id { get; set; } = string.Empty;
+			public int Id { get; set; }
 			public string Horario { get; set; } = string.Empty;
 			public string NombreEmpleado { get; set; } = string.Empty;
 			public DateOnly Fecha { get; set; }
@@ -71,32 +71,33 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			public string ResultadoE { get; set; } = string.Empty;
 			public TimeSpan Salida { get; set; }
 			public string ResultadoS { get; set; } = string.Empty;
+			public int IdHorario { get; set; }
 			public ArchivoModel?[] Archivos { get; set; } = Array.Empty<ArchivoModel>();
 		}
 
 		public async Task<JsonResult> OnGetAsistenciasList()
-		{ 
-			string jsonResponse;
-			List<string> jsonAsistencias = [];
-			List<Data.Entities.Empleados.Asistencia> asistencias = await asistenciaManager.GetAllAsync(); 
+		{
+			List<string> jsonAsistencias = new List<string>();
+			List<Data.Entities.Empleados.Asistencia> asistencias = await asistenciaManager.GetAllAsync();
 
 			foreach (Data.Entities.Empleados.Asistencia asis in asistencias)
 			{
-				// Construir el JSON para cada asistencia
 				jsonAsistencias.Add("{" +
 					$"\"Horario\": \"{asis.Horario}\", " +
 					$"\"NombreEmpleado\": \"{asis.NombreEmpleado}\", " +
 					$"\"Fecha\": \"{asis.Fecha}\", " +
 					$"\"Dia\": \"{asis.Dia}\", " +
 					$"\"Entrada\": \"{asis.Entrada}\", " +
-					$"\"Resultado\": \"{asis.ResultadoE}\", " +
-					$"\"Salida\": \"{asis.Salida}\" " +
-					$"\"Resultado\": \"{asis.ResultadoS}\" " +
+					$"\"ResultadoE\": \"{asis.ResultadoE}\", " +
+					$"\"Salida\": \"{asis.Salida}\", " +
+					$"\"ResultadoS\": \"{asis.ResultadoS}\"" +
 					"}");
 			}
-			jsonResponse = $"[{String.Join(",", jsonAsistencias)}]";
+
+			string jsonResponse = $"[{string.Join(",", jsonAsistencias)}]";
 			return new JsonResult(jsonResponse);
 		}
+
 
 		public async Task<JsonResult> OnPostFiltrarAsistencia([FromBody] FiltroModel inputFiltro)
 		{
