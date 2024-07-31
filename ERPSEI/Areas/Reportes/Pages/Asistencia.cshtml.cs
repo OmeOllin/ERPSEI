@@ -63,14 +63,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		{
 			[Display(Name = "Id")]
 			public string Id { get; set; } = string.Empty;
-			public DateTime FechaHora { get; set; }
-			public DateOnly Fecha { get; set; }
-			public TimeSpan Hora { get; set; }
-			public string Direccion { get; set; } = string.Empty;
-			public string NombreDispositivo { get; set; } = string.Empty;
-			public string SerialDispositivo { get; set; } = string.Empty;
+			public string Horario { get; set; } = string.Empty;
 			public string NombreEmpleado { get; set; } = string.Empty;
-			public string NoTarjeta { get; set; } = string.Empty;
+			public DateOnly Fecha { get; set; }
+			public string Dia { get; set; } = string.Empty;
+			public TimeSpan Entrada { get; set; }
+			public string ResultadoE { get; set; } = string.Empty;
+			public TimeSpan Salida { get; set; }
+			public string ResultadoS { get; set; } = string.Empty;
 			public ArchivoModel?[] Archivos { get; set; } = Array.Empty<ArchivoModel>();
 		}
 
@@ -84,14 +84,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			{
 				// Construir el JSON para cada asistencia
 				jsonAsistencias.Add("{" +
-					$"\"Id\": \"{asis.Id}\", " +
+					$"\"Horario\": \"{asis.Horario}\", " +
 					$"\"NombreEmpleado\": \"{asis.NombreEmpleado}\", " +
-					$"\"FechaHora\": \"{asis.FechaHora}\", " +
 					$"\"Fecha\": \"{asis.Fecha}\", " +
-					$"\"Hora\": \"{asis.Hora}\", " +
-					$"\"Direccion\": \"{asis.Direccion}\", " +
-					$"\"NombreDispositivo\": \"{asis.NombreDispositivo}\", " +
-					$"\"SerialDispositivo\": \"{asis.SerialDispositivo}\" " +
+					$"\"Dia\": \"{asis.Dia}\", " +
+					$"\"Entrada\": \"{asis.Entrada}\", " +
+					$"\"Resultado\": \"{asis.ResultadoE}\", " +
+					$"\"Salida\": \"{asis.Salida}\" " +
+					$"\"Resultado\": \"{asis.ResultadoS}\" " +
 					"}");
 			}
 			jsonResponse = $"[{String.Join(",", jsonAsistencias)}]";
@@ -122,13 +122,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 				if (inputFiltro.FechaIngresoInicio.HasValue)
 				{
-					asistencias = asistencias.Where(a => a.FechaHora >= inputFiltro.FechaIngresoInicio.Value.Date).ToList();
+					DateOnly fechaInicio = DateOnly.FromDateTime(inputFiltro.FechaIngresoInicio.Value);
+					asistencias = asistencias.Where(a => a.Fecha >= fechaInicio).ToList();
 				}
 
 				if (inputFiltro.FechaIngresoFin.HasValue)
 				{
-					DateTime fechaFin = inputFiltro.FechaIngresoFin.Value.Date.AddDays(1).AddTicks(-1);
-					asistencias = asistencias.Where(a => a.FechaHora <= fechaFin).ToList();
+					DateOnly fechaFin = DateOnly.FromDateTime(inputFiltro.FechaIngresoFin.Value);
+					asistencias = asistencias.Where(a => a.Fecha <= fechaFin).ToList();
 				}
 
 				// Verificar si se encontraron resultados
@@ -144,15 +145,15 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				foreach (var asis in asistencias)
 				{
 					jsonAsistencias.Add("{" +
-						$"\"Id\": \"{asis.Id}\", " +
-						$"\"NombreEmpleado\": \"{asis.NombreEmpleado}\", " +
-						$"\"FechaHora\": \"{asis.FechaHora}\", " +
-						$"\"Fecha\": \"{asis.Fecha}\", " +
-						$"\"Hora\": \"{asis.Hora}\", " +
-						$"\"Direccion\": \"{asis.Direccion}\", " +
-						$"\"NombreDispositivo\": \"{asis.NombreDispositivo}\", " +
-						$"\"SerialDispositivo\": \"{asis.SerialDispositivo}\" " +
-						"}");
+					$"\"Horario\": \"{asis.Horario}\", " +
+					$"\"NombreEmpleado\": \"{asis.NombreEmpleado}\", " +
+					$"\"Fecha\": \"{asis.Fecha}\", " +
+					$"\"Dia\": \"{asis.Dia}\", " +
+					$"\"Entrada\": \"{asis.Entrada}\", " +
+					$"\"Resultado\": \"{asis.ResultadoE}\", " +
+					$"\"Salida\": \"{asis.Salida}\" " +
+					$"\"Resultado\": \"{asis.ResultadoS}\" " +
+					"}");
 				}
 
 				string jsonResponse = $"[{String.Join(",", jsonAsistencias)}]";
@@ -231,25 +232,24 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		{
 			string validationMsg = string.Empty;
 
-			DateTime fechahora;
 			DateOnly fecha;
-			TimeSpan hora;
+			TimeSpan horaE;
+			TimeSpan horaS;
 
-			DateTime.TryParse(row[1].ToString(), out fechahora);
 			DateOnly.TryParse(row[2].ToString(), out fecha);
-			TimeSpan.TryParse(row[3].ToString(), out hora);
+			TimeSpan.TryParse(row[4].ToString(), out horaE);
+			TimeSpan.TryParse(row[6].ToString(), out horaS);
 
 			Asistencia asistencia = new Asistencia()
 			{
-				Id = row[0].ToString()?.Trim() ?? string.Empty,
-				FechaHora = fechahora,
+				Horario = row[0].ToString()?.Trim() ?? string.Empty,
+				NombreEmpleado = row[1].ToString()?.Trim() ?? string.Empty,
 				Fecha = fecha,
-				Hora = hora,
-				Direccion = row[4].ToString()?.Trim() ?? string.Empty,
-				NombreDispositivo = row[5].ToString()?.Trim() ?? string.Empty,
-				SerialDispositivo = row[6].ToString()?.Trim() ?? string.Empty,
-				NombreEmpleado = row[7].ToString()?.Trim() ?? string.Empty,
-				NoTarjeta = row[8].ToString()?.Trim() ?? string.Empty,
+				Dia = row[3].ToString()?.Trim() ?? string.Empty,
+				Entrada = horaE,
+				ResultadoE = row[5].ToString()?.Trim() ?? string.Empty,
+				Salida = horaS,
+				ResultadoS = row[7].ToString()?.Trim() ?? string.Empty,
 			};
 
 			List<ArchivoModel> archivos = new List<ArchivoModel>();

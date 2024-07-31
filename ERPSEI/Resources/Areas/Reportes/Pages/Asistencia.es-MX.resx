@@ -138,23 +138,56 @@
   <data name="ColDateTimeHeader" xml:space="preserve">
     <value>Fecha Hora</value>
   </data>
+  <data name="ColDayHeader" xml:space="preserve">
+    <value>Día</value>
+  </data>
   <data name="ColDepartureTimeHeader" xml:space="preserve">
     <value>Hora Salida</value>
   </data>
   <data name="ColDeviceNameHeader" xml:space="preserve">
     <value>Nombre Dispositivo</value>
   </data>
+  <data name="colDiaHeader" xml:space="preserve">
+    <value>Día</value>
+  </data>
   <data name="ColDirectionHeader" xml:space="preserve">
     <value>Dirección</value>
   </data>
+  <data name="colEntradaHeader" xml:space="preserve">
+    <value>Entrada</value>
+  </data>
+  <data name="ColEntryHeader" xml:space="preserve">
+    <value>Entrada</value>
+  </data>
   <data name="ColEntryTimeHeader" xml:space="preserve">
     <value>Hora Entrada</value>
+  </data>
+  <data name="ColExitHeader" xml:space="preserve">
+    <value>Salida</value>
+  </data>
+  <data name="colHorarioHeader" xml:space="preserve">
+    <value>Horario</value>
   </data>
   <data name="ColIdHeader" xml:space="preserve">
     <value>Id Empleado</value>
   </data>
   <data name="ColNameHeader" xml:space="preserve">
     <value>Nombre</value>
+  </data>
+  <data name="colResultadoEHeader" xml:space="preserve">
+    <value>Resultado</value>
+  </data>
+  <data name="colResultadoSHeader" xml:space="preserve">
+    <value>Resultado</value>
+  </data>
+  <data name="ColResultEntryHeader" xml:space="preserve">
+    <value>Resultado</value>
+  </data>
+  <data name="ColResultExitHeader" xml:space="preserve">
+    <value>Resultado</value>
+  </data>
+  <data name="colSalidaHeader" xml:space="preserve">
+    <value>Salida</value>
   </data>
   <data name="ColSerialNameHeader" xml:space="preserve">
     <value>Serial Dispositivo</value>

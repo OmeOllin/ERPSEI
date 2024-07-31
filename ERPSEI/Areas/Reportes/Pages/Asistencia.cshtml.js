@@ -119,8 +119,8 @@ function initTable() {
         toolbar: '#toolbar', // Asegúrate de que este ID coincida con el elemento HTML donde quieres que aparezcan los botones
         buttons: additionalButtons, // Asegúrate de que `additionalButtons` esté siendo llamado correctamente aquí
         columns: [{
-            title: colIdHeader,
-            field: "Id",
+            title: colHorarioHeader,
+            field: "Horario",
             align: "center",
             valign: "middle",
             sortable: true
@@ -133,13 +133,6 @@ function initTable() {
             sortable: true
         },
         {
-            title: colFechaHoraHeader,
-            field: "FechaHora",
-            align: "center",
-            valign: "middle",
-            sortable: true
-        },
-        {
             title: colFechaHeader,
             field: "Fecha",
             align: "center",
@@ -147,29 +140,36 @@ function initTable() {
             sortable: true
         },
         {
-            title: colHoraHeader,
-            field: "Hora",
+            title: colDiaHeader,
+            field: "Día",
             align: "center",
             valign: "middle",
             sortable: true
         },
         {
-            title: colDireccionHeader,
-            field: "Direccion",
+            title: colEntradaHeader,
+            field: "Entrada",
             align: "center",
             valign: "middle",
             sortable: true
         },
         {
-            title: colNombreDispositivoHeader,
-            field: "NombreDispositivo",
+            title: colResultadoEHeader,
+            field: "Resultado",
             align: "center",
             valign: "middle",
             sortable: true
         },
         {
-            title: colSerialDispositivoHeader,
-            field: "SerialDispositivo",
+            title: colSalidaHeader,
+            field: "Salida",
+            align: "center",
+            valign: "middle",
+            sortable: true
+        },
+        {
+            title: colResultadoSHeader,
+            field: "Resultado",
             align: "center",
             valign: "middle",
             sortable: true
