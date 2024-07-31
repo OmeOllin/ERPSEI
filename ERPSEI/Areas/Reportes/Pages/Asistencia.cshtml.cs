@@ -222,7 +222,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			return new JsonResult(resp);
 		}
 
-		public async Task<ActionResult> OnGetDownloadPlantillaA()
+		public ActionResult OnGetDownloadPlantillaA()
 		{
 			
 				return File("/templates/PlantillaAsistencia.xlsx", MediaTypeNames.Application.Octet, "PlantillaAsistencia.xlsx");
