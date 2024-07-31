@@ -136,10 +136,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				// Verificar si se encontraron resultados
 				if (asistencias.Count == 0)
 				{
-					resp.Mensaje = stringLocalizer["NoRecordsFound"];
+					resp.Mensaje = stringLocalizer["Registro(s) no encontrado(s)"];
 					return new JsonResult(resp);
 				}
-
 
 				// Construir la respuesta JSON
 				List<string> jsonAsistencias = new List<string>();
@@ -148,19 +147,20 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					jsonAsistencias.Add("{" +
 					$"\"Horario\": \"{asis.Horario}\", " +
 					$"\"NombreEmpleado\": \"{asis.NombreEmpleado}\", " +
-					$"\"Fecha\": \"{asis.Fecha}\", " +
+					$"\"Fecha\": \"{asis.Fecha:yyyy-MM-dd}\", " + // Asumiendo que Fecha es DateTime
 					$"\"Dia\": \"{asis.Dia}\", " +
 					$"\"Entrada\": \"{asis.Entrada}\", " +
-					$"\"Resultado\": \"{asis.ResultadoE}\", " +
-					$"\"Salida\": \"{asis.Salida}\" " +
-					$"\"Resultado\": \"{asis.ResultadoS}\" " +
+					$"\"ResultadoE\": \"{asis.ResultadoE}\", " +
+					$"\"Salida\": \"{asis.Salida}\", " + // Añadida coma después de "Salida"
+					$"\"ResultadoS\": \"{asis.ResultadoS}\" " +
 					"}");
 				}
 
-				string jsonResponse = $"[{String.Join(",", jsonAsistencias)}]";
+				string jsonResponse = $"[{string.Join(",", jsonAsistencias)}]";
 				resp.Datos = jsonResponse;
 				resp.TieneError = false;
 				resp.Mensaje = stringLocalizer["AsistenciasFiltradosSuccessfully"];
+
 			}
 			catch (Exception ex)
 			{
