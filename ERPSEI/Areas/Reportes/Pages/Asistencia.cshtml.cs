@@ -11,17 +11,20 @@ using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Net.Mime;
+using ERPSEI.Pages.Shared;
+using ERPSEI.Data.Entities.Reportes;
+using ERPSEI.Data.Managers.Reportes;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
     [Authorize(Policy = "AccessPolicy")]
 	public class AsistenciaModel(
-		ApplicationDbContext db,
-		IEmpleadoManager empleadoManager,
+		IHorariosManager horariosManager,
 		IAsistenciaManager asistenciaManager,
+		IEmpleadoManager empleadoManager,
 		IStringLocalizer<AsistenciaModel> stringLocalizer,
 		ILogger<AsistenciaModel> logger
-		) : PageModel
+		) : ERPPageModel
 	{
 
 		[BindProperty]
@@ -40,51 +43,25 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Display(Name = "FechaFinField")]
 			public DateTime? FechaIngresoFin { get; set; }
 		}
-		public class ArchivoModel
-		{
-			public string? Id { get; set; } = string.Empty;
-			public string? nombre { get; set; } = string.Empty;
-			public int? tipoArchivoId { get; set; }
-			public string? extension { get; set; } = string.Empty;
-			public string? imgSrc { get; set; } = string.Empty;
-		}
 
 		[BindProperty]
-		public ImportarModel InputImportar { get; set; }
+		public ImportarModel InputImportar { get; set; } = new ImportarModel();
 		public class ImportarModel
 		{
 			[Required(ErrorMessage = "Required")]
 			public IFormFile? Plantilla { get; set; }
 		}
 
-		[BindProperty]
-		public Asistencia ListaAsistencia { get; set; } = new Asistencia();
-		public class Asistencia
-		{
-			[Display(Name = "Id")]
-			public int Id { get; set; }
-			public string Horario { get; set; } = string.Empty;
-			public string NombreEmpleado { get; set; } = string.Empty;
-			public DateOnly Fecha { get; set; }
-			public string Dia { get; set; } = string.Empty;
-			public TimeSpan Entrada { get; set; }
-			public string ResultadoE { get; set; } = string.Empty;
-			public TimeSpan Salida { get; set; }
-			public string ResultadoS { get; set; } = string.Empty;
-			public int IdHorario { get; set; }
-			public ArchivoModel?[] Archivos { get; set; } = Array.Empty<ArchivoModel>();
-		}
-
 		public async Task<JsonResult> OnGetAsistenciasList()
 		{
 			List<string> jsonAsistencias = new List<string>();
-			List<Data.Entities.Empleados.Asistencia> asistencias = await asistenciaManager.GetAllAsync();
+			List<Data.Entities.Reportes.Asistencia> asistencias = await asistenciaManager.GetAllAsync();
 
-			foreach (Data.Entities.Empleados.Asistencia asis in asistencias)
+			foreach (Data.Entities.Reportes.Asistencia asis in asistencias)
 			{
 				jsonAsistencias.Add("{" +
-					$"\"Horario\": \"{asis.Horario}\", " +
-					$"\"NombreEmpleado\": \"{asis.NombreEmpleado}\", " +
+					$"\"Horario\": \"{asis.Horario?.NombreHorario}\", " +
+					$"\"NombreEmpleado\": \"{asis.Empleado?.NombreCompleto}\", " +
 					$"\"Fecha\": \"{asis.Fecha}\", " +
 					$"\"Dia\": \"{asis.Dia}\", " +
 					$"\"Entrada\": \"{asis.Entrada}\", " +
@@ -113,12 +90,12 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			try
 			{
 				// Obtener todas las asistencias
-				List<Data.Entities.Empleados.Asistencia> asistencias = await asistenciaManager.GetAllAsync();
+				List<Data.Entities.Reportes.Asistencia> asistencias = await asistenciaManager.GetAllAsync();
 
 				// Aplicar filtros secuencialmente
 				if (!string.IsNullOrEmpty(inputFiltro.NombreEmpleado))
 				{
-					asistencias = asistencias.Where(a => a.NombreEmpleado.Contains(inputFiltro.NombreEmpleado, StringComparison.OrdinalIgnoreCase)).ToList();
+					asistencias = asistencias.Where(a => a.Empleado != null && a.Empleado.NombreCompleto.Contains(inputFiltro.NombreEmpleado, StringComparison.OrdinalIgnoreCase)).ToList();
 				}
 
 				if (inputFiltro.FechaIngresoInicio.HasValue)
@@ -145,8 +122,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				foreach (var asis in asistencias)
 				{
 					jsonAsistencias.Add("{" +
-					$"\"Horario\": \"{asis.Horario}\", " +
-					$"\"NombreEmpleado\": \"{asis.NombreEmpleado}\", " +
+					$"\"Horario\": \"{asis.Horario?.NombreHorario}\", " +
+					$"\"NombreEmpleado\": \"{asis.Empleado?.NombreCompleto}\", " +
 					$"\"Fecha\": \"{asis.Fecha:yyyy-MM-dd}\", " + // Asumiendo que Fecha es DateTime
 					$"\"Dia\": \"{asis.Dia}\", " +
 					$"\"Entrada\": \"{asis.Entrada}\", " +
@@ -225,13 +202,19 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public ActionResult OnGetDownloadPlantillaA()
 		{
-			
+			if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
+			{
 				return File("/templates/PlantillaAsistencia.xlsx", MediaTypeNames.Application.Octet, "PlantillaAsistencia.xlsx");
-			
+			}
+			else
+			{
+				return new EmptyResult();
+			}
 		}
 		private async Task<string> CreateAsistenciaFromExcelRow(DataRow row)
 		{
-			string validationMsg = string.Empty;
+			Horarios? horario = await horariosManager.GetByNameAsync(row[0].ToString()?.Trim() ?? string.Empty);
+			Empleado? empleado = await empleadoManager.GetByNameAsync(row[1].ToString()?.Trim() ?? string.Empty);
 
 			DateOnly fecha;
 			TimeSpan horaE;
@@ -243,8 +226,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			Asistencia asistencia = new Asistencia()
 			{
-				Horario = row[0].ToString()?.Trim() ?? string.Empty,
-				NombreEmpleado = row[1].ToString()?.Trim() ?? string.Empty,
+				HorarioId = horario?.Id,
+				EmpleadoId = empleado?.Id,
 				Fecha = fecha,
 				Dia = row[3].ToString()?.Trim() ?? string.Empty,
 				Entrada = horaE,
@@ -253,17 +236,10 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				ResultadoS = row[7].ToString()?.Trim() ?? string.Empty,
 			};
 
-			List<ArchivoModel> archivos = new List<ArchivoModel>();
-			// Crea los archivos del usuario.
-			foreach (FileTypes i in Enum.GetValues(typeof(FileTypes)))
-			{
-				archivos.Add(new ArchivoModel() { extension = "", imgSrc = "", nombre = "", tipoArchivoId = (int)i });
-			}
-
-			asistencia.Archivos = archivos.ToArray();
+			await asistenciaManager.CreateAsync(asistencia);
 
 			// Retornar una cadena vacía ya que no se realizan validaciones
-			return validationMsg;
+			return string.Empty;
 		}
 
 

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using ERPSEI.Data.Entities.Reportes;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERPSEI.Data.Entities.Empleados
 {
@@ -67,6 +68,6 @@ namespace ERPSEI.Data.Entities.Empleados
 		//Empleados de los que el empleado es jefe
 		[NotMapped]
 		public List<Empleado>? Empleados { get; set; }
-
+		public ICollection<Asistencia>? Asistencias { get; }
 	}
 }

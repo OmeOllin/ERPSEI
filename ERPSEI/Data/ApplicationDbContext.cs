@@ -1,5 +1,6 @@
 ﻿using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.Empresas;
+using ERPSEI.Data.Entities.Reportes;
 using ERPSEI.Data.Entities.SAT;
 using ERPSEI.Data.Entities.SAT.Catalogos;
 using ERPSEI.Data.Entities.SAT.cfdiv40;
@@ -117,6 +118,15 @@ namespace ERPSEI.Data
 
 			//Accesos
 			buildAccesos(modelBuilder);
+
+			//Asistencias
+			buildAsistencias(modelBuilder);
+		}
+
+		private static void buildAsistencias(ModelBuilder b) 
+		{
+			b.Entity<Asistencia>().HasOne(e => e.Empleado).WithMany(a => a.Asistencias).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<Asistencia>().HasOne(e => e.Horario).WithMany(a => a.Asistencias).OnDelete(DeleteBehavior.NoAction);
 		}
 
 		private static void buildEmpresas(ModelBuilder b) 
@@ -159,7 +169,7 @@ namespace ERPSEI.Data
 			b.Entity<Empleado>().HasOne(e => e.Oficina).WithMany(o => o.Empleados).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Empleado>().HasMany(e => e.ContactosEmergencia).WithOne(ce => ce.Empleado).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Empleado>().HasMany(e => e.ArchivosEmpleado).WithOne(ae => ae.Empleado).OnDelete(DeleteBehavior.NoAction);
-			//b.Entity<Empleado>().HasMany(e => e.Asistencias).WithOne(a => a.Empleado).OnDelete(DeleteBehavior.NoAction);
+			
 
 			b.Entity<TipoArchivo>()
 				.HasData(

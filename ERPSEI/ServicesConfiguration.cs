@@ -65,6 +65,14 @@ namespace ERPSEI
 
             ConfigureDIEmpleados(_builder);
 		}
+
+        private static void ConfigureDIAsistencias(WebApplicationBuilder _builder) 
+        {
+			//Asistencias
+			_builder.Services.AddScoped<IAsistenciaManager, AsistenciaManager>();
+			_builder.Services.AddScoped<IHorariosManager, HorariosManager>();
+		}
+
         private static void ConfigureDIFacturacion(WebApplicationBuilder _builder)
         {
             //Catálogos SAT
@@ -120,8 +128,7 @@ namespace ERPSEI
 			_builder.Services.AddScoped<IRCatalogoManager<Genero>, GeneroManager>();
 			_builder.Services.AddScoped<IRCatalogoManager<EstadoCivil>, EstadoCivilManager>();
 
-            //Asistencias
-			_builder.Services.AddScoped<IAsistenciaManager, AsistenciaManager>();
+            
 		}    
 
 		public static void ConfigureIdentity(WebApplicationBuilder _builder)
