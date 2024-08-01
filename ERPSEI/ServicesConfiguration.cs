@@ -16,13 +16,12 @@ using ERPSEI.TokenProviders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
-using NPOI.OpenXmlFormats.Dml.Chart;
 using System.Globalization;
 using System.Reflection;
 
 namespace ERPSEI
 {
-    public static class ServicesConfiguration
+	public static class ServicesConfiguration
     {
         public const string RolMaster = "Master";
         public const string RolAdministrador = "Administrador";
@@ -55,7 +54,10 @@ namespace ERPSEI
         {
             var connectionString = _builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             _builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
-            _builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+            if (_builder.Environment.IsDevelopment())
+            {
+                _builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+            }
 
             ConfigureDIFacturacion(_builder);
 
