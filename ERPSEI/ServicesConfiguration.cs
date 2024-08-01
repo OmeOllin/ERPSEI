@@ -16,6 +16,7 @@ using ERPSEI.TokenProviders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using NPOI.OpenXmlFormats.Dml.Chart;
 using System.Globalization;
 using System.Reflection;
 
@@ -56,20 +57,21 @@ namespace ERPSEI
             _builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
             _builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-			_builder.Services.AddScoped<IAccesoModuloManager, AccesoModuloManager>();
-			_builder.Services.AddScoped<AppRoleManager, AppRoleManager>();
-            _builder.Services.AddScoped<IModuloManager, ModuloManager>();
+            ConfigureDIFacturacion(_builder);
 
-			_builder.Services.AddScoped<IAsistenciaManager, AsistenciaManager>();
+            ConfigureDIEmpresas(_builder);
 
-			_builder.Services.AddScoped<IConceptoManager, ConceptoManager>();
-            _builder.Services.AddScoped<IPrefacturaManager, PrefacturaManager>();
-            _builder.Services.AddScoped<IExportacionManager, ExportacionManager>();
+            ConfigureDIEmpleados(_builder);
+		}
+        private static void ConfigureDIFacturacion(WebApplicationBuilder _builder)
+        {
+            //Catálogos SAT
+			_builder.Services.AddScoped<IExportacionManager, ExportacionManager>();
 			_builder.Services.AddScoped<IFormaPagoManager, FormaPagoManager>();
 			_builder.Services.AddScoped<IImpuestoManager, ImpuestoManager>();
 			_builder.Services.AddScoped<IMesManager, MesManager>();
 			_builder.Services.AddScoped<IMetodoPagoManager, MetodoPagoManager>();
-            _builder.Services.AddScoped<IMonedaManager, MonedaManager>();
+			_builder.Services.AddScoped<IMonedaManager, MonedaManager>();
 			_builder.Services.AddScoped<IObjetoImpuestoManager, ObjetoImpuestoManager>();
 			_builder.Services.AddScoped<IPeriodicidadManager, PeriodicidadManager>();
 			_builder.Services.AddScoped<IRegimenFiscalManager, RegimenFiscalManager>();
@@ -82,29 +84,43 @@ namespace ERPSEI
 			_builder.Services.AddScoped<IProductoServicioManager, ProductoServicioManager>();
 			_builder.Services.AddScoped<IRWCatalogoManager<ActividadEconomica>, ActividadEconomicaManager>();
 
+            //Prefacturas
+			_builder.Services.AddScoped<IConceptoManager, ConceptoManager>();
+			_builder.Services.AddScoped<IPrefacturaManager, PrefacturaManager>();
+		}
+        private static void ConfigureDIEmpresas(WebApplicationBuilder _builder)
+        {
+            //Gestión de Empresas
 			_builder.Services.AddScoped<IBancoEmpresaManager, BancoEmpresaManager>();
 			_builder.Services.AddScoped<IArchivoEmpresaManager, ArchivoEmpresaManager>();
 			_builder.Services.AddScoped<IEmpresaManager, EmpresaManager>();
-            _builder.Services.AddScoped<IProductoServicioPerfilManager, ProductoServicioPerfilManager>();
+			_builder.Services.AddScoped<IProductoServicioPerfilManager, ProductoServicioPerfilManager>();
 			_builder.Services.AddScoped<IRWCatalogoManager<Perfil>, PerfilManager>();
 			_builder.Services.AddScoped<IRWCatalogoManager<Origen>, OrigenManager>();
 			_builder.Services.AddScoped<IRWCatalogoManager<Nivel>, NivelManager>();
 			_builder.Services.AddScoped<IActividadEconomicaEmpresaManager, ActividadEconomicaEmpresaManager>();
+		}
+        private static void ConfigureDIEmpleados(WebApplicationBuilder _builder) 
+        {
+            //Accesos módulos
+			_builder.Services.AddScoped<IAccesoModuloManager, AccesoModuloManager>();
+			_builder.Services.AddScoped<AppRoleManager, AppRoleManager>();
+			_builder.Services.AddScoped<IModuloManager, ModuloManager>();
 
+            //Gestión de Talento
 			_builder.Services.AddScoped<IArchivoEmpleadoManager, ArchivoEmpleadoManager>();
 			_builder.Services.AddScoped<IContactoEmergenciaManager, ContactoEmergenciaManager>();
-
 			_builder.Services.AddScoped<IEmpleadoManager, EmpleadoManager>();
 			_builder.Services.AddScoped<IRWCatalogoManager<Puesto>, PuestoManager>();
 			_builder.Services.AddScoped<IRWCatalogoManager<Area>, AreaManager>();
 			_builder.Services.AddScoped<IRWCatalogoManager<Oficina>, OficinaManager>();
 			_builder.Services.AddScoped<IRWCatalogoManager<Subarea>, SubareaManager>();
-
 			_builder.Services.AddScoped<IRCatalogoManager<Genero>, GeneroManager>();
 			_builder.Services.AddScoped<IRCatalogoManager<EstadoCivil>, EstadoCivilManager>();
 
-			//_builder.Services.AddScoped<IRWCatalogoManager<Asistencias>, AsistenciasManager>();
-		}
+            //Asistencias
+			_builder.Services.AddScoped<IAsistenciaManager, AsistenciaManager>();
+		}    
 
 		public static void ConfigureIdentity(WebApplicationBuilder _builder)
         {
