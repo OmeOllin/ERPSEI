@@ -7,500 +7,117 @@
 	[System.Xml.Serialization.XmlRootAttribute(Namespace = "http://www.sat.gob.mx/cfd/4", IsNullable = false)]
 	public partial class Comprobante
 	{
+		public int Id { get; set; }
 
-		private ComprobanteInformacionGlobal? informacionGlobalField;
+		public ComprobanteInformacionGlobal? InformacionGlobal{ get; set; }
 
-		private ComprobanteCfdiRelacionados[]? cfdiRelacionadosField;
-
-		private ComprobanteEmisor? emisorField;
-
-		private ComprobanteReceptor? receptorField;
-
-		private ComprobanteConcepto[]? conceptosField;
-
-		private ComprobanteImpuestos? impuestosField;
-
-		private ComprobanteComplemento? complementoField;
-
-		private ComprobanteAddenda? addendaField;
-
-		private string versionField;
-
-		private string serieField = string.Empty;
-
-		private string folioField = string.Empty;
-
-		private System.DateTime fechaField;
-
-		private string selloField = string.Empty;
-
-		private string formaPagoField = string.Empty;
-
-		private bool formaPagoFieldSpecified;
-
-		private string noCertificadoField = string.Empty;
-
-		private string certificadoField = string.Empty;
-
-		private string condicionesDePagoField = string.Empty;
-
-		private decimal subTotalField;
-
-		private decimal descuentoField;
-
-		private bool descuentoFieldSpecified;
-
-		private string monedaField = string.Empty;
-
-		private decimal tipoCambioField;
-
-		private bool tipoCambioFieldSpecified;
-
-		private decimal totalField;
-
-		private string tipoDeComprobanteField = string.Empty;
-
-		private string exportacionField = string.Empty;
-
-		private string metodoPagoField = string.Empty;
-
-		private bool metodoPagoFieldSpecified;
-
-		private string lugarExpedicionField = string.Empty;
-
-		private string confirmacionField = string.Empty;
-
-		public Comprobante()
-		{
-			this.versionField = "4.0";
-		}
-
-		/// <remarks/>
-		public ComprobanteInformacionGlobal? InformacionGlobal
-		{
-			get
-			{
-				return this.informacionGlobalField;
-			}
-			set
-			{
-				this.informacionGlobalField = value;
-			}
-		}
-
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlElementAttribute("CfdiRelacionados")]
-		public ComprobanteCfdiRelacionados[]? CfdiRelacionados
-		{
-			get
-			{
-				return this.cfdiRelacionadosField;
-			}
-			set
-			{
-				this.cfdiRelacionadosField = value;
-			}
-		}
+		public ComprobanteCfdiRelacionados[]? CfdiRelacionados { get; set; }
 
-		/// <remarks/>
-		public ComprobanteEmisor? Emisor
-		{
-			get
-			{
-				return this.emisorField;
-			}
-			set
-			{
-				this.emisorField = value;
-			}
-		}
+		
+		public ComprobanteEmisor? Emisor { get; set; }
 
-		/// <remarks/>
-		public ComprobanteReceptor? Receptor
-		{
-			get
-			{
-				return this.receptorField;
-			}
-			set
-			{
-				this.receptorField = value;
-			}
-		}
+		
+		public ComprobanteReceptor? Receptor { get; set; }
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlArrayItemAttribute("Concepto", IsNullable = false)]
-		public ComprobanteConcepto[]? Conceptos
-		{
-			get
-			{
-				return this.conceptosField;
-			}
-			set
-			{
-				this.conceptosField = value;
-			}
-		}
+		public ComprobanteConcepto[]? Conceptos { get; set; }
 
-		/// <remarks/>
-		public ComprobanteImpuestos? Impuestos
-		{
-			get
-			{
-				return this.impuestosField;
-			}
-			set
-			{
-				this.impuestosField = value;
-			}
-		}
+		
+		public ComprobanteImpuestos? Impuestos { get; set; }
 
-		/// <remarks/>
-		public ComprobanteComplemento? Complemento
-		{
-			get
-			{
-				return this.complementoField;
-			}
-			set
-			{
-				this.complementoField = value;
-			}
-		}
-
-		/// <remarks/>
-		public ComprobanteAddenda? Addenda
-		{
-			get
-			{
-				return this.addendaField;
-			}
-			set
-			{
-				this.addendaField = value;
-			}
-		}
-
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Version
-		{
-			get
-			{
-				return this.versionField;
-			}
-			set
-			{
-				this.versionField = value;
-			}
-		}
+		public string Version { get; set; } = "4.0";
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Serie
-		{
-			get
-			{
-				return this.serieField;
-			}
-			set
-			{
-				this.serieField = value;
-			}
-		}
+		public string Serie { get; set; } = string.Empty;
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Folio
-		{
-			get
-			{
-				return this.folioField;
-			}
-			set
-			{
-				this.folioField = value;
-			}
-		}
+		public string Folio { get; set; } = string.Empty;
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public System.DateTime Fecha
-		{
-			get
-			{
-				return this.fechaField;
-			}
-			set
-			{
-				this.fechaField = value;
-			}
-		}
+		public System.DateTime Fecha { get; set; }
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Sello
-		{
-			get
-			{
-				return this.selloField;
-			}
-			set
-			{
-				this.selloField = value;
-			}
-		}
+		public string Sello { get; set; } = string.Empty;
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string FormaPago
-		{
-			get
-			{
-				return this.formaPagoField;
-			}
-			set
-			{
-				this.formaPagoField = value;
-			}
-		}
+		public string FormaPago { get; set; } = string.Empty;
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlIgnoreAttribute()]
-		public bool FormaPagoSpecified
-		{
-			get
-			{
-				return this.formaPagoFieldSpecified;
-			}
-			set
-			{
-				this.formaPagoFieldSpecified = value;
-			}
-		}
+		public bool FormaPagoSpecified { get; set; }
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string NoCertificado
-		{
-			get
-			{
-				return this.noCertificadoField;
-			}
-			set
-			{
-				this.noCertificadoField = value;
-			}
-		}
+		public string NoCertificado { get; set; } = string.Empty;
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Certificado
-		{
-			get
-			{
-				return this.certificadoField;
-			}
-			set
-			{
-				this.certificadoField = value;
-			}
-		}
+		public string Certificado {  get; set; } = string.Empty;
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string CondicionesDePago
-		{
-			get
-			{
-				return this.condicionesDePagoField;
-			}
-			set
-			{
-				this.condicionesDePagoField = value;
-			}
-		}
+		public string CondicionesDePago { get; set; } = string.Empty;
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public decimal SubTotal
-		{
-			get
-			{
-				return this.subTotalField;
-			}
-			set
-			{
-				this.subTotalField = value;
-			}
-		}
+		public decimal SubTotal { get; set; }
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public decimal Descuento
-		{
-			get
-			{
-				return this.descuentoField;
-			}
-			set
-			{
-				this.descuentoField = value;
-			}
-		}
+		public decimal Descuento { get; set; }
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlIgnoreAttribute()]
-		public bool DescuentoSpecified
-		{
-			get
-			{
-				return this.descuentoFieldSpecified;
-			}
-			set
-			{
-				this.descuentoFieldSpecified = value;
-			}
-		}
+		public bool DescuentoSpecified { get; set; }
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Moneda
-		{
-			get
-			{
-				return this.monedaField;
-			}
-			set
-			{
-				this.monedaField = value;
-			}
-		}
+		public string Moneda { get; set; } = string.Empty;
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public decimal TipoCambio
-		{
-			get
-			{
-				return this.tipoCambioField;
-			}
-			set
-			{
-				this.tipoCambioField = value;
-			}
-		}
+		public decimal TipoCambio { get; set; }
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlIgnoreAttribute()]
-		public bool TipoCambioSpecified
-		{
-			get
-			{
-				return this.tipoCambioFieldSpecified;
-			}
-			set
-			{
-				this.tipoCambioFieldSpecified = value;
-			}
-		}
+		public bool TipoCambioSpecified { get; set; }
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public decimal Total
-		{
-			get
-			{
-				return this.totalField;
-			}
-			set
-			{
-				this.totalField = value;
-			}
-		}
+		public decimal Total { get; set; }
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string TipoDeComprobante
-		{
-			get
-			{
-				return this.tipoDeComprobanteField;
-			}
-			set
-			{
-				this.tipoDeComprobanteField = value;
-			}
-		}
+		public string TipoDeComprobante { get; set; } = string.Empty;
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Exportacion
-		{
-			get
-			{
-				return this.exportacionField;
-			}
-			set
-			{
-				this.exportacionField = value;
-			}
-		}
+		public string Exportacion { get; set; } = string.Empty;
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string MetodoPago
-		{
-			get
-			{
-				return this.metodoPagoField;
-			}
-			set
-			{
-				this.metodoPagoField = value;
-			}
-		}
+		public string MetodoPago { get; set; } = string.Empty;
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlIgnoreAttribute()]
-		public bool MetodoPagoSpecified
-		{
-			get
-			{
-				return this.metodoPagoFieldSpecified;
-			}
-			set
-			{
-				this.metodoPagoFieldSpecified = value;
-			}
-		}
+		public bool MetodoPagoSpecified { get; set; }
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string LugarExpedicion
-		{
-			get
-			{
-				return this.lugarExpedicionField;
-			}
-			set
-			{
-				this.lugarExpedicionField = value;
-			}
-		}
+		public string LugarExpedicion { get; set; } = string.Empty;
 
-		/// <remarks/>
+		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Confirmacion
-		{
-			get
-			{
-				return this.confirmacionField;
-			}
-			set
-			{
-				this.confirmacionField = value;
-			}
-		}
+		public string Confirmacion { get; set; } = string.Empty;
 	}
 }

@@ -6,21 +6,8 @@
 	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.sat.gob.mx/cfd/4")]
 	public partial class ComprobanteConceptoComplementoConcepto
 	{
-
-		private System.Xml.XmlElement[]? anyField;
-
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAnyElementAttribute()]
-		public System.Xml.XmlElement[]? Any
-		{
-			get
-			{
-				return this.anyField;
-			}
-			set
-			{
-				this.anyField = value;
-			}
-		}
+		public System.Xml.XmlElement[]? Any { get; set; }
 	}
 }

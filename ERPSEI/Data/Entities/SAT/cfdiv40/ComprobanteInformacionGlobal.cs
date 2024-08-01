@@ -6,53 +6,18 @@
 	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.sat.gob.mx/cfd/4")]
 	public partial class ComprobanteInformacionGlobal
 	{
-
-		private string periodicidadField = string.Empty;
-
-		private string mesesField = string.Empty;
-
-		private short añoField;
+		public int Id { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Periodicidad
-		{
-			get
-			{
-				return this.periodicidadField;
-			}
-			set
-			{
-				this.periodicidadField = value;
-			}
-		}
+		public string Periodicidad { get; set; } = string.Empty;
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Meses
-		{
-			get
-			{
-				return this.mesesField;
-			}
-			set
-			{
-				this.mesesField = value;
-			}
-		}
+		public string Meses { get; set; } = string.Empty;
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public short Año
-		{
-			get
-			{
-				return this.añoField;
-			}
-			set
-			{
-				this.añoField = value;
-			}
-		}
+		public short Año { get; set; }
 	}
 }

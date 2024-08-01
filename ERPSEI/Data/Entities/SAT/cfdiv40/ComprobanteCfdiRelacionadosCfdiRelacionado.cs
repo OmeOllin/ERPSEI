@@ -6,21 +6,10 @@
 	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.sat.gob.mx/cfd/4")]
 	public partial class ComprobanteCfdiRelacionadosCfdiRelacionado
 	{
-
-		private string uUIDField = string.Empty;
+		public int Id { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string UUID
-		{
-			get
-			{
-				return this.uUIDField;
-			}
-			set
-			{
-				this.uUIDField = value;
-			}
-		}
+		public string UUID { get; set; } = string.Empty;
 	}
 }

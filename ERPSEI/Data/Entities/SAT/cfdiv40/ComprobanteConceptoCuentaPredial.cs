@@ -6,21 +6,10 @@
 	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.sat.gob.mx/cfd/4")]
 	public partial class ComprobanteConceptoCuentaPredial
 	{
-
-		private string numeroField = string.Empty;
+		public int Id { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Numero
-		{
-			get
-			{
-				return this.numeroField;
-			}
-			set
-			{
-				this.numeroField = value;
-			}
-		}
+		public string Numero { get; set; } = string.Empty;
 	}
 }

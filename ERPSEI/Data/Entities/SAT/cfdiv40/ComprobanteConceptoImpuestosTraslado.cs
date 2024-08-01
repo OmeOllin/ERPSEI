@@ -6,117 +6,34 @@
 	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.sat.gob.mx/cfd/4")]
 	public partial class ComprobanteConceptoImpuestosTraslado
 	{
-
-		private decimal baseField;
-
-		private string impuestoField = string.Empty;
-
-		private string tipoFactorField = string.Empty;
-
-		private decimal tasaOCuotaField;
-
-		private bool tasaOCuotaFieldSpecified;
-
-		private decimal importeField;
-
-		private bool importeFieldSpecified;
+		public int Id { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public decimal Base
-		{
-			get
-			{
-				return this.baseField;
-			}
-			set
-			{
-				this.baseField = value;
-			}
-		}
+		public decimal Base { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Impuesto
-		{
-			get
-			{
-				return this.impuestoField;
-			}
-			set
-			{
-				this.impuestoField = value;
-			}
-		}
+		public string Impuesto { get; set; } = string.Empty;
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string TipoFactor
-		{
-			get
-			{
-				return this.tipoFactorField;
-			}
-			set
-			{
-				this.tipoFactorField = value;
-			}
-		}
+		public string TipoFactor { get; set; } = string.Empty;
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public decimal TasaOCuota
-		{
-			get
-			{
-				return this.tasaOCuotaField;
-			}
-			set
-			{
-				this.tasaOCuotaField = value;
-			}
-		}
+		public decimal TasaOCuota { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlIgnoreAttribute()]
-		public bool TasaOCuotaSpecified
-		{
-			get
-			{
-				return this.tasaOCuotaFieldSpecified;
-			}
-			set
-			{
-				this.tasaOCuotaFieldSpecified = value;
-			}
-		}
+		public bool TasaOCuotaSpecified { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public decimal Importe
-		{
-			get
-			{
-				return this.importeField;
-			}
-			set
-			{
-				this.importeField = value;
-			}
-		}
+		public decimal Importe {  get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlIgnoreAttribute()]
-		public bool ImporteSpecified
-		{
-			get
-			{
-				return this.importeFieldSpecified;
-			}
-			set
-			{
-				this.importeFieldSpecified = value;
-			}
-		}
+		public bool ImporteSpecified {  get; set; }
 	}
 }

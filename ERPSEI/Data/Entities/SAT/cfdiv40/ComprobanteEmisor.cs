@@ -6,69 +6,22 @@
 	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.sat.gob.mx/cfd/4")]
 	public partial class ComprobanteEmisor
 	{
-
-		private string rfcField = string.Empty;
-
-		private string nombreField = string.Empty;
-
-		private string regimenFiscalField = string.Empty;
-
-		private string facAtrAdquirenteField = string.Empty;
+		public int Id { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Rfc
-		{
-			get
-			{
-				return this.rfcField;
-			}
-			set
-			{
-				this.rfcField = value;
-			}
-		}
+		public string Rfc { get; set; } = string.Empty;
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Nombre
-		{
-			get
-			{
-				return this.nombreField;
-			}
-			set
-			{
-				this.nombreField = value;
-			}
-		}
+		public string Nombre { get; set; } = string.Empty;
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string RegimenFiscal
-		{
-			get
-			{
-				return this.regimenFiscalField;
-			}
-			set
-			{
-				this.regimenFiscalField = value;
-			}
-		}
+		public string RegimenFiscal { get; set; } = string.Empty;
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string FacAtrAdquirente
-		{
-			get
-			{
-				return this.facAtrAdquirenteField;
-			}
-			set
-			{
-				this.facAtrAdquirenteField = value;
-			}
-		}
+		public string FacAtrAdquirente { get; set; } = string.Empty;
 	}
 }

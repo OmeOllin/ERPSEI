@@ -6,69 +6,22 @@
 	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.sat.gob.mx/cfd/4")]
 	public partial class ComprobanteConceptoACuentaTerceros
 	{
-
-		private string rfcACuentaTercerosField = string.Empty;
-
-		private string nombreACuentaTercerosField = string.Empty;
-
-		private string regimenFiscalACuentaTercerosField = string.Empty;
-
-		private string domicilioFiscalACuentaTercerosField = string.Empty;
+		public int Id { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string RfcACuentaTerceros
-		{
-			get
-			{
-				return this.rfcACuentaTercerosField;
-			}
-			set
-			{
-				this.rfcACuentaTercerosField = value;
-			}
-		}
+		public string RfcACuentaTerceros { get; set; } = string.Empty;
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string NombreACuentaTerceros
-		{
-			get
-			{
-				return this.nombreACuentaTercerosField;
-			}
-			set
-			{
-				this.nombreACuentaTercerosField = value;
-			}
-		}
+		public string NombreACuentaTerceros { get; set; } = string.Empty;
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string RegimenFiscalACuentaTerceros
-		{
-			get
-			{
-				return this.regimenFiscalACuentaTercerosField;
-			}
-			set
-			{
-				this.regimenFiscalACuentaTercerosField = value;
-			}
-		}
+		public string RegimenFiscalACuentaTerceros { get; set; } = string.Empty;
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string DomicilioFiscalACuentaTerceros
-		{
-			get
-			{
-				return this.domicilioFiscalACuentaTercerosField;
-			}
-			set
-			{
-				this.domicilioFiscalACuentaTercerosField = value;
-			}
-		}
+		public string DomicilioFiscalACuentaTerceros { get; set; } = string.Empty;
 	}
 }

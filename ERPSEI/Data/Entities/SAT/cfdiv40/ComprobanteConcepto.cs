@@ -6,274 +6,68 @@
 	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.sat.gob.mx/cfd/4")]
 	public partial class ComprobanteConcepto
 	{
-
-		private ComprobanteConceptoImpuestos? impuestosField;
-
-		private ComprobanteConceptoACuentaTerceros? aCuentaTercerosField;
-
-		private ComprobanteConceptoInformacionAduanera[]? informacionAduaneraField;
-
-		private ComprobanteConceptoCuentaPredial[]? cuentaPredialField;
-
-		private ComprobanteConceptoComplementoConcepto? complementoConceptoField;
-
-		private ComprobanteConceptoParte[]? parteField;
-
-		private string claveProdServField = string.Empty;
-
-		private string noIdentificacionField = string.Empty;
-
-		private decimal cantidadField;
-
-		private string claveUnidadField = string.Empty;
-
-		private string unidadField = string.Empty;
-
-		private string descripcionField = string.Empty;
-
-		private decimal valorUnitarioField;
-
-		private decimal importeField;
-
-		private decimal descuentoField;
-
-		private bool descuentoFieldSpecified;
-
-		private string objetoImpField = string.Empty;
+		public int Id { get; set; }
 
 		/// <remarks/>
-		public ComprobanteConceptoImpuestos? Impuestos
-		{
-			get
-			{
-				return this.impuestosField;
-			}
-			set
-			{
-				this.impuestosField = value;
-			}
-		}
+		public ComprobanteConceptoImpuestos? Impuestos {  get; set; }
 
 		/// <remarks/>
-		public ComprobanteConceptoACuentaTerceros? ACuentaTerceros
-		{
-			get
-			{
-				return this.aCuentaTercerosField;
-			}
-			set
-			{
-				this.aCuentaTercerosField = value;
-			}
-		}
+		public ComprobanteConceptoACuentaTerceros? ACuentaTerceros {  get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlElementAttribute("InformacionAduanera")]
-		public ComprobanteConceptoInformacionAduanera[]? InformacionAduanera
-		{
-			get
-			{
-				return this.informacionAduaneraField;
-			}
-			set
-			{
-				this.informacionAduaneraField = value;
-			}
-		}
+		public ComprobanteConceptoInformacionAduanera[]? InformacionAduanera {  get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlElementAttribute("CuentaPredial")]
-		public ComprobanteConceptoCuentaPredial[]? CuentaPredial
-		{
-			get
-			{
-				return this.cuentaPredialField;
-			}
-			set
-			{
-				this.cuentaPredialField = value;
-			}
-		}
-
-		/// <remarks/>
-		public ComprobanteConceptoComplementoConcepto? ComplementoConcepto
-		{
-			get
-			{
-				return this.complementoConceptoField;
-			}
-			set
-			{
-				this.complementoConceptoField = value;
-			}
-		}
+		public ComprobanteConceptoCuentaPredial[]? CuentaPredial {  get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlElementAttribute("Parte")]
-		public ComprobanteConceptoParte[]? Parte
-		{
-			get
-			{
-				return this.parteField;
-			}
-			set
-			{
-				this.parteField = value;
-			}
-		}
+		public ComprobanteConceptoParte[]? Parte {  get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string ClaveProdServ
-		{
-			get
-			{
-				return this.claveProdServField;
-			}
-			set
-			{
-				this.claveProdServField = value;
-			}
-		}
+		public string ClaveProdServ { get; set; } = string.Empty;
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string NoIdentificacion
-		{
-			get
-			{
-				return this.noIdentificacionField;
-			}
-			set
-			{
-				this.noIdentificacionField = value;
-			}
-		}
+		public string NoIdentificacion { get; set; } = string.Empty;
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public decimal Cantidad
-		{
-			get
-			{
-				return this.cantidadField;
-			}
-			set
-			{
-				this.cantidadField = value;
-			}
-		}
+		public decimal Cantidad { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string ClaveUnidad
-		{
-			get
-			{
-				return this.claveUnidadField;
-			}
-			set
-			{
-				this.claveUnidadField = value;
-			}
-		}
+		public string ClaveUnidad { get; set; } = string.Empty;
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Unidad
-		{
-			get
-			{
-				return this.unidadField;
-			}
-			set
-			{
-				this.unidadField = value;
-			}
-		}
+		public string Unidad { get; set; } = string.Empty;
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Descripcion
-		{
-			get
-			{
-				return this.descripcionField;
-			}
-			set
-			{
-				this.descripcionField = value;
-			}
-		}
+		public string Descripcion { get; set; } = string.Empty;
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public decimal ValorUnitario
-		{
-			get
-			{
-				return this.valorUnitarioField;
-			}
-			set
-			{
-				this.valorUnitarioField = value;
-			}
-		}
+		public decimal ValorUnitario { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public decimal Importe
-		{
-			get
-			{
-				return this.importeField;
-			}
-			set
-			{
-				this.importeField = value;
-			}
-		}
+		public decimal Importe { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public decimal Descuento
-		{
-			get
-			{
-				return this.descuentoField;
-			}
-			set
-			{
-				this.descuentoField = value;
-			}
-		}
+		public decimal Descuento { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlIgnoreAttribute()]
-		public bool DescuentoSpecified
-		{
-			get
-			{
-				return this.descuentoFieldSpecified;
-			}
-			set
-			{
-				this.descuentoFieldSpecified = value;
-			}
-		}
+		public bool DescuentoSpecified { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string ObjetoImp
-		{
-			get
-			{
-				return this.objetoImpField;
-			}
-			set
-			{
-				this.objetoImpField = value;
-			}
-		}
+		public string ObjetoImp { get; set; } = string.Empty;
 	}
 }

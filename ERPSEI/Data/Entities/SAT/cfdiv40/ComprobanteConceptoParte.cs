@@ -6,165 +6,46 @@
 	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.sat.gob.mx/cfd/4")]
 	public partial class ComprobanteConceptoParte
 	{
-
-		private ComprobanteConceptoParteInformacionAduanera[]? informacionAduaneraField;
-
-		private string claveProdServField = string.Empty;
-
-		private string noIdentificacionField = string.Empty;
-
-		private decimal cantidadField;
-
-		private string unidadField = string.Empty;
-
-		private string descripcionField = string.Empty;
-
-		private decimal valorUnitarioField;
-
-		private bool valorUnitarioFieldSpecified;
-
-		private decimal importeField;
-
-		private bool importeFieldSpecified;
+		public int Id { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlElementAttribute("InformacionAduanera")]
-		public ComprobanteConceptoParteInformacionAduanera[]? InformacionAduanera
-		{
-			get
-			{
-				return this.informacionAduaneraField;
-			}
-			set
-			{
-				this.informacionAduaneraField = value;
-			}
-		}
+		public ComprobanteConceptoParteInformacionAduanera[]? InformacionAduanera { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string ClaveProdServ
-		{
-			get
-			{
-				return this.claveProdServField;
-			}
-			set
-			{
-				this.claveProdServField = value;
-			}
-		}
+		public string ClaveProdServ { get; set; } = string.Empty;
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string NoIdentificacion
-		{
-			get
-			{
-				return this.noIdentificacionField;
-			}
-			set
-			{
-				this.noIdentificacionField = value;
-			}
-		}
+		public string NoIdentificacion { get; set; } = string.Empty;
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public decimal Cantidad
-		{
-			get
-			{
-				return this.cantidadField;
-			}
-			set
-			{
-				this.cantidadField = value;
-			}
-		}
+		public decimal Cantidad { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Unidad
-		{
-			get
-			{
-				return this.unidadField;
-			}
-			set
-			{
-				this.unidadField = value;
-			}
-		}
+		public string Unidad { get; set; } = string.Empty;
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Descripcion
-		{
-			get
-			{
-				return this.descripcionField;
-			}
-			set
-			{
-				this.descripcionField = value;
-			}
-		}
+		public string Descripcion { get; set; } = string.Empty;
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public decimal ValorUnitario
-		{
-			get
-			{
-				return this.valorUnitarioField;
-			}
-			set
-			{
-				this.valorUnitarioField = value;
-			}
-		}
+		public decimal ValorUnitario { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlIgnoreAttribute()]
-		public bool ValorUnitarioSpecified
-		{
-			get
-			{
-				return this.valorUnitarioFieldSpecified;
-			}
-			set
-			{
-				this.valorUnitarioFieldSpecified = value;
-			}
-		}
+		public bool ValorUnitarioSpecified { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public decimal Importe
-		{
-			get
-			{
-				return this.importeField;
-			}
-			set
-			{
-				this.importeField = value;
-			}
-		}
+		public decimal Importe { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlIgnoreAttribute()]
-		public bool ImporteSpecified
-		{
-			get
-			{
-				return this.importeFieldSpecified;
-			}
-			set
-			{
-				this.importeFieldSpecified = value;
-			}
-		}
+		public bool ImporteSpecified { get; set; }
 	}
 }

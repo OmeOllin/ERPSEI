@@ -6,101 +6,30 @@
 	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.sat.gob.mx/cfd/4")]
 	public partial class ComprobanteImpuestos
 	{
-
-		private ComprobanteImpuestosRetencion[]? retencionesField;
-
-		private ComprobanteImpuestosTraslado[]? trasladosField;
-
-		private decimal totalImpuestosRetenidosField;
-
-		private bool totalImpuestosRetenidosFieldSpecified;
-
-		private decimal totalImpuestosTrasladadosField;
-
-		private bool totalImpuestosTrasladadosFieldSpecified;
+		public int Id { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlArrayItemAttribute("Retencion", IsNullable = false)]
-		public ComprobanteImpuestosRetencion[]? Retenciones
-		{
-			get
-			{
-				return this.retencionesField;
-			}
-			set
-			{
-				this.retencionesField = value;
-			}
-		}
+		public ComprobanteImpuestosRetencion[]? Retenciones { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlArrayItemAttribute("Traslado", IsNullable = false)]
-		public ComprobanteImpuestosTraslado[]? Traslados
-		{
-			get
-			{
-				return this.trasladosField;
-			}
-			set
-			{
-				this.trasladosField = value;
-			}
-		}
+		public ComprobanteImpuestosTraslado[]? Traslados { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public decimal TotalImpuestosRetenidos
-		{
-			get
-			{
-				return this.totalImpuestosRetenidosField;
-			}
-			set
-			{
-				this.totalImpuestosRetenidosField = value;
-			}
-		}
+		public decimal TotalImpuestosRetenidos {  get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlIgnoreAttribute()]
-		public bool TotalImpuestosRetenidosSpecified
-		{
-			get
-			{
-				return this.totalImpuestosRetenidosFieldSpecified;
-			}
-			set
-			{
-				this.totalImpuestosRetenidosFieldSpecified = value;
-			}
-		}
+		public bool TotalImpuestosRetenidosSpecified { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public decimal TotalImpuestosTrasladados
-		{
-			get
-			{
-				return this.totalImpuestosTrasladadosField;
-			}
-			set
-			{
-				this.totalImpuestosTrasladadosField = value;
-			}
-		}
+		public decimal TotalImpuestosTrasladados {  get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlIgnoreAttribute()]
-		public bool TotalImpuestosTrasladadosSpecified
-		{
-			get
-			{
-				return this.totalImpuestosTrasladadosFieldSpecified;
-			}
-			set
-			{
-				this.totalImpuestosTrasladadosFieldSpecified = value;
-			}
-		}
+		public bool TotalImpuestosTrasladadosSpecified {  get; set; }
 	}
 }

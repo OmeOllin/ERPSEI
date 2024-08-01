@@ -2,16 +2,17 @@
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.SAT;
 using ERPSEI.Data.Entities.SAT.Catalogos;
+using ERPSEI.Data.Entities.SAT.cfdiv40;
 using ERPSEI.Data.Entities.Usuarios;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERPSEI.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, string>
-    {
+	public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, string>
+	{
 		//Tablas de trabajo Empleados
-        public DbSet<ArchivoEmpleado> ArchivosEmpleado { get; set; }
+		public DbSet<ArchivoEmpleado> ArchivosEmpleado { get; set; }
 		public DbSet<Empleado> Empleados { get; set; }
 		public DbSet<ContactoEmergencia> ContactosEmergencia { get; set; }
 
@@ -45,6 +46,28 @@ namespace ERPSEI.Data
 		//Tablas de trabajo SAT
 		public DbSet<Prefactura> Prefacturas { get; set; }
 		public DbSet<Concepto> Conceptos { get; set; }
+		//public DbSet<ComprobanteAddenda> ComprobantesAddendas { get; set; }
+		public DbSet<ComprobanteCfdiRelacionados> ComprobantesCfdisRelacionados { get; set; }
+		//public DbSet<ComprobanteComplemento> ComprobantesComplementos { get; set; }
+		public DbSet<ComprobanteConcepto> ComprobantesConceptos { get; set; }
+		public DbSet<ComprobanteConceptoACuentaTerceros> ComprobantesConceptosACuentaTerceros { get; set; }
+		//public DbSet<ComprobanteConceptoComplementoConcepto> ComprobantesConceptosComplementosConceptos { get; set; }
+		public DbSet<ComprobanteConceptoCuentaPredial> ComprobantesConceptosCuentasPrediales { get; set; }
+		public DbSet<ComprobanteConceptoImpuestos> ComprobantesConceptosImpuestos { get; set; }
+		public DbSet<ComprobanteConceptoImpuestosRetencion> ComprobantesConceptosImpuestosRetenciones { get; set; }
+		public DbSet<ComprobanteConceptoImpuestosTraslado> ComprobantesConceptosImpuestosTraslados { get; set; }
+		public DbSet<ComprobanteConceptoInformacionAduanera> ComprobantesConceptosInformacionesAduaneras { get; set; }
+		public DbSet<ComprobanteConceptoParte> ComprobantesConceptosPartes { get; set; }
+		public DbSet<ComprobanteConceptoParteInformacionAduanera> ComprobantesConceptosPartesInformacionesAduaneras { get; set; }
+		public DbSet<ComprobanteEmisor> ComprobantesEmisores { get; set; }
+		public DbSet<ComprobanteImpuestos> ComprobantesImpuestos { get; set; }
+		public DbSet<ComprobanteImpuestosRetencion> ComprobantesImpuestosRetenciones { get; set; }
+		public DbSet<ComprobanteImpuestosTraslado> ComprobantesImpuestosTraslados { get; set; }
+		public DbSet<ComprobanteInformacionGlobal> ComprobantesInformacionesGlobales { get; set; }
+		public DbSet<ComprobanteReceptor> ComprobantesReceptores { get; set; }
+
+
+		public DbSet<Comprobante> Comprobantes { get; set; }
 
 		//Catálogos no Administrables SAT
 		public DbSet<Exportacion> Exportaciones { get; set; }
@@ -304,7 +327,38 @@ namespace ERPSEI.Data
                     new EstatusPrefactura() { Id = 2, Descripcion = "Autorizada" },
                     new EstatusPrefactura() { Id = 3, Descripcion = "Finalizada" }
                 );
-        }
+
+			b.Entity<Comprobante>().Property(c => c.Descuento).HasPrecision(18, 6);
+			b.Entity<Comprobante>().Property(c => c.SubTotal).HasPrecision(18, 6);
+			b.Entity<Comprobante>().Property(c => c.TipoCambio).HasPrecision(18, 6);
+			b.Entity<Comprobante>().Property(c => c.Total).HasPrecision(18, 6);
+
+			b.Entity<ComprobanteConcepto>().Property(c => c.Cantidad).HasPrecision(18, 6);
+			b.Entity<ComprobanteConcepto>().Property(c => c.Descuento).HasPrecision(18, 6);
+			b.Entity<ComprobanteConcepto>().Property(c => c.Importe).HasPrecision(18, 6);
+			b.Entity<ComprobanteConcepto>().Property(c => c.ValorUnitario).HasPrecision(18, 6);
+
+			b.Entity<ComprobanteConceptoImpuestosRetencion>().Property(c => c.Base).HasPrecision(18, 6);
+			b.Entity<ComprobanteConceptoImpuestosRetencion>().Property(c => c.Importe).HasPrecision(18, 6);
+			b.Entity<ComprobanteConceptoImpuestosRetencion>().Property(c => c.TasaOCuota).HasPrecision(18, 6);
+
+			b.Entity<ComprobanteConceptoImpuestosTraslado>().Property(c => c.Base).HasPrecision(18, 6);
+			b.Entity<ComprobanteConceptoImpuestosTraslado>().Property(c => c.Importe).HasPrecision(18, 6);
+			b.Entity<ComprobanteConceptoImpuestosTraslado>().Property(c => c.TasaOCuota).HasPrecision(18, 6);
+
+			b.Entity<ComprobanteConceptoParte>().Property(c => c.Cantidad).HasPrecision(18, 6);
+			b.Entity<ComprobanteConceptoParte>().Property(c => c.Importe).HasPrecision(18, 6);
+			b.Entity<ComprobanteConceptoParte>().Property(c => c.ValorUnitario).HasPrecision(18, 6);
+
+			b.Entity<ComprobanteImpuestos>().Property(c => c.TotalImpuestosRetenidos).HasPrecision(18, 6);
+			b.Entity<ComprobanteImpuestos>().Property(c => c.TotalImpuestosTrasladados).HasPrecision(18, 6);
+
+			b.Entity<ComprobanteImpuestosRetencion>().Property(c => c.Importe).HasPrecision(18, 6);
+
+			b.Entity<ComprobanteImpuestosTraslado>().Property(c => c.Base).HasPrecision(18, 6);
+			b.Entity<ComprobanteImpuestosTraslado>().Property(c => c.TasaOCuota).HasPrecision(18, 6);
+			b.Entity<ComprobanteImpuestosTraslado>().Property(c => c.Importe).HasPrecision(18, 6);
+		}
 
 		private static void buildAccesos(ModelBuilder b)
 		{
