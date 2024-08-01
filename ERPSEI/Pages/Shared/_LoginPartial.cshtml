@@ -13,33 +13,36 @@
     AppUser? usr = await UserManager.GetUserAsync(User);
     string? profilePic = string.Empty;
     string? rolesString = string.Empty;
-    if (SignInManager.IsSignedIn(User) && !(this.Context.Session.GetString("profilePic") != null && this.Context.Session.GetString("profilePic")?.Length >= 1))
+    if (SignInManager.IsSignedIn(User))
     {
-        ProfilePicture? profilePicFile;
-        AppUser? u = UserManager.FindByNameAsync(User.Identity?.Name??"").Result;
-        Empleado? e = EmpleadoManager.GetEmpleadoLoginAsync(u?.EmpleadoId??0).Result;
-
-        profilePicFile = await ArchivoEmpleadoManager.GetProfilePicByEmpleadoId(u?.EmpleadoId??0);
-
-        //Si el archivo tiene contenido
-        if (profilePicFile != null && profilePicFile.Archivo.Length >= 1)
+        if (!(this.Context.Session.GetString("profilePic") != null && this.Context.Session.GetString("profilePic")?.Length >= 1))
         {
-            //Asigna la información del archivo al arreglo de datos.
-            string b64 = Convert.ToBase64String(profilePicFile.Archivo);
-            bool isJPG = profilePicFile.Extension == "jpg" || profilePicFile.Extension == "jpeg";
-            bool isPNG = profilePicFile.Extension == "png";
+            ProfilePicture? profilePicFile;
+            AppUser? u = UserManager.FindByNameAsync(User.Identity?.Name??"").Result;
+            Empleado? e = EmpleadoManager.GetEmpleadoLoginAsync(u?.EmpleadoId??0).Result;
 
-            if (isJPG)
+            profilePicFile = await ArchivoEmpleadoManager.GetProfilePicByEmpleadoId(u?.EmpleadoId??0);
+
+            //Si el archivo tiene contenido
+            if (profilePicFile != null && profilePicFile.Archivo.Length >= 1)
             {
-                profilePic = $"data:image/jpeg;base64,{b64}";
+                //Asigna la información del archivo al arreglo de datos.
+                string b64 = Convert.ToBase64String(profilePicFile.Archivo);
+                bool isJPG = profilePicFile.Extension == "jpg" || profilePicFile.Extension == "jpeg";
+                bool isPNG = profilePicFile.Extension == "png";
+
+                if (isJPG)
+                {
+                    profilePic = $"data:image/jpeg;base64,{b64}";
+                }
+                else if (isPNG)
+                {
+                    profilePic = $"data:image/png;base64,{b64}";
+                }
             }
-            else if (isPNG)
-            {
-                profilePic = $"data:image/png;base64,{b64}";
-            }
+
+            this.Context.Session.SetString("profilePic", profilePic);
         }
-
-        this.Context.Session.SetString("profilePic", profilePic);
 
         //Obtiene los roles del usuario
         IList<string> roles = usr != null ? await UserManager.GetRolesAsync(usr) : new List<string>();
