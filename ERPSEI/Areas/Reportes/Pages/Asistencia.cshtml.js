@@ -32,56 +32,6 @@ function responseHandler(res) {
     });
     return res;
 }
-//Función para dar formato al detalle de empleado
-function detailFormatter(index, row) {
-    return `<div class="container-fluid alert alert-primary mb-0">
-                <div class="row">
-                    <div class="col-sm-12 col-md-6 col-lg-3 mb-2">
-						<i class="bi bi-cake2-fill"></i> <span><b>${colFechaNacimientoHeader}: </b>${row.fechaNacimiento}</span>
-					</div>
-					<div class="col-sm-12 col-md-6 col-lg-3 mb-2">
-						<i class="bi bi-telephone-fill"> </i><span><b>${colTelefonoHeader}: </b>${row.telefono}</span>
-					</div>
-					<div class="col-sm-12 col-md-6 col-lg-3 mb-2">
-						<i class="bi bi-building-fill"></i> <span><b>${colOficinaHeader}: </b>${row.oficina}</span>
-					</div>
-					<div class="col-sm-12 col-md-6 col-lg-3 mb-2">
-						<i class="bi bi-yin-yang"></i> <span><b>${colEstadoCivilHeader}: </b>${row.estadoCivil}</span>
-					</div>
-					<div class="col-12 mb-2">
-						<i class="bi bi-house-door-fill"> </i><span><b>${colDireccionHeader}: </b>${row.direccion}</span>
-					</div>
-                </div>
-            </div>`;
-}
-
-//Función para dar formato a los iconos de operación de los registros
-function operateFormatter(value, row, index) {
-    let icons = [];
-    //¿El empleado tiene id de usuario?
-    let hasUserId = (row.usuarioId || "").length >= 1;
-    //El empleado si tiene usuario, pero ¿ese usuario es válido?
-    let hasUsuarioValido = parseInt((row.usuarioValido || "0")) >= 1;
-    //Si el empleado no tiene id de usuario o tiene un usuario inválido, entonces se habilita la opción invitar.
-    let canInvite = !hasUserId || !hasUsuarioValido;
-
-    //Icono Ver
-    icons.push(`<li><a class="dropdown-item see" href="#" title="${btnVerTitle}"><i class="bi bi-search"></i> ${btnVerTitle}</a></li>`);
-    //Icono Editar
-    icons.push(`<li><a class="dropdown-item edit" href="#" title="${btnEditarTitle}"><i class="bi bi-pencil-fill"></i> ${btnEditarTitle}</a></li>`);
-
-    if (canInvite) {
-        //Icono Invitar
-        icons.push(`<li><a class="dropdown-item invite" href="#" title="${btnInvitarTitle}"><i class="bi bi-person-fill-add"></i> ${btnInvitarTitle}</a></li>`);
-    }
-
-    return `<div class="dropdown">
-              <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-three-dots-vertical success"></i>
-              </button>
-              <ul class="dropdown-menu">${icons.join("")}</ul>
-            </div>`;
-}
 
 //Eventos de los iconos de operación
 window.operateEvents = {
@@ -141,7 +91,7 @@ function initTable() {
         },
         {
             title: colDiaHeader,
-            field: "Día",
+            field: "Dia",
             align: "center",
             valign: "middle",
             sortable: true
@@ -155,7 +105,7 @@ function initTable() {
         },
         {
             title: colResultadoEHeader,
-            field: "Resultado",
+            field: "ResultadoE",
             align: "center",
             valign: "middle",
             sortable: true
@@ -169,11 +119,11 @@ function initTable() {
         },
         {
             title: colResultadoSHeader,
-            field: "Resultado",
+            field: "ResultadoS",
             align: "center",
             valign: "middle",
             sortable: true
-        }
+         }
         ]
     });
 }
