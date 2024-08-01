@@ -1,52 +1,40 @@
 using ERPSEI.Data;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.SAT.Catalogos;
-using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empresas;
-using ERPSEI.Data.Managers.Usuarios;
+using ERPSEI.Pages.Shared;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
 using ExcelDataReader;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Net.Mime;
-using System.Text;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-    [Authorize(Policy = "AccessPolicy")]
-	public class EmpresasModel : PageModel
+	[Authorize(Policy = "AccessPolicy")]
+	public class EmpresasModel(
+			IEmpresaManager _empresaManager,
+			IBancoEmpresaManager _bancoEmpresaManager,
+			IArchivoEmpresaManager _archivoEmpresaManager,
+			IRWCatalogoManager<Perfil> _perfilManager,
+			IRWCatalogoManager<Origen> _origenManager,
+			IRWCatalogoManager<Nivel> _nivelManager,
+			IActividadEconomicaEmpresaManager _actividadesEconomicasEmpresaManager,
+			IRWCatalogoManager<ActividadEconomica> _actividadEconomicaManager,
+			IStringLocalizer<EmpresasModel> _strLocalizer,
+			ILogger<EmpresasModel> _logger,
+			ApplicationDbContext _db
+		) : ERPPageModel
 	{
-		private readonly IAccesoModuloManager _accesosModuloManager;
-		private readonly AppUserManager _usuariosManager;
-		private readonly AppRoleManager _rolesManager;
-		private readonly IEmpresaManager _empresaManager;
-		private readonly IBancoEmpresaManager _bancoEmpresaManager;
-		private readonly IArchivoEmpresaManager _archivoEmpresaManager;
-		private readonly IRWCatalogoManager<Perfil> _perfilManager;
-        private readonly IRWCatalogoManager<Origen> _origenManager;
-        private readonly IRWCatalogoManager<Nivel> _nivelManager;
-		private readonly IActividadEconomicaEmpresaManager _actividadesEconomicasEmpresaManager;
-		private readonly IRWCatalogoManager<ActividadEconomica> _actividadEconomicaManager;
-        private readonly IStringLocalizer<EmpresasModel> _strLocalizer;
-		private readonly ILogger<EmpresasModel> _logger;
-		private readonly ApplicationDbContext _db;
-
-		private bool PuedeTodo { get; set; }
-		private bool PuedeConsultar { get; set; }
-		private bool PuedeEditar { get; set; }
-		private bool PuedeEliminar { get; set; }
-		private bool PuedeAutorizar { get; set; }
 
 		[BindProperty]
-		public FiltroModel InputFiltro { get; set; }
+		public FiltroModel InputFiltro { get; set; } = new FiltroModel();
 
 		public class FiltroModel
 		{
@@ -64,7 +52,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
         }
 
 		[BindProperty]
-		public EmpresaModel InputEmpresa { get; set; }
+		public EmpresaModel InputEmpresa { get; set; } = new EmpresaModel();
 
 		public class EmpresaModel
 		{
@@ -186,65 +174,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 
 		[BindProperty]
-		public ImportarModel InputImportar { get; set; }
+		public ImportarModel InputImportar { get; set; } = new ImportarModel();
 		public class ImportarModel
 		{
 			[Required(ErrorMessage = "Required")]
 			public IFormFile? Plantilla { get; set; }
-		}
-
-		public EmpresasModel(
-			IAccesoModuloManager accesosModuloManager,
-			AppUserManager usuariosManager,
-			AppRoleManager rolesManager,
-			IEmpresaManager empresaManager,
-			IBancoEmpresaManager bancoEmpresaManager,
-			IArchivoEmpresaManager archivoEmpresaManager,
-            IRWCatalogoManager<Perfil> perfilManager,
-            IRWCatalogoManager<Origen> origenManager,
-			IRWCatalogoManager<Nivel> nivelManager,
-			IActividadEconomicaEmpresaManager actividadesEconomicasEmpresaManager,
-			IRWCatalogoManager<ActividadEconomica> actividadEconomicaManager,
-			IStringLocalizer<EmpresasModel> stringLocalizer,
-			ILogger<EmpresasModel> logger,
-			ApplicationDbContext db
-		)
-		{
-			_accesosModuloManager = accesosModuloManager;
-			_usuariosManager = usuariosManager;
-			_rolesManager = rolesManager;
-			_empresaManager = empresaManager;
-			_bancoEmpresaManager = bancoEmpresaManager;
-			_archivoEmpresaManager = archivoEmpresaManager;
-			_perfilManager = perfilManager;
-			_origenManager = origenManager;
-			_nivelManager = nivelManager;
-			_actividadesEconomicasEmpresaManager = actividadesEconomicasEmpresaManager;
-			_actividadEconomicaManager = actividadEconomicaManager;
-			_strLocalizer = stringLocalizer;
-			_logger = logger;
-			_db = db;
-
-			InputFiltro = new FiltroModel();
-			InputEmpresa = new EmpresaModel();
-			InputImportar = new ImportarModel();
-		}
-
-		private async Task ConsultarPermisosUsuario()
-		{
-			AppUser? usr = await _usuariosManager.GetUserAsync(User);
-			IList<string> rolesUsuario = usr != null ? await _usuariosManager.GetRolesAsync(usr) : [];
-			List<AccesoModulo> accesos = [];
-			foreach (string rol in rolesUsuario)
-			{
-				AppRole? foundRole = await _rolesManager.GetByNameAsync(rol);
-				accesos.AddRange(await _accesosModuloManager.GetByRolIdAsync(foundRole?.Id ?? string.Empty));
-			}
-			PuedeTodo = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeTodo == 1)).FirstOrDefault()?.PuedeTodo == 1;
-			PuedeConsultar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeConsultar == 1)).FirstOrDefault()?.PuedeConsultar == 1;
-			PuedeEditar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeEditar == 1)).FirstOrDefault()?.PuedeEditar == 1;
-			PuedeEliminar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeEliminar == 1)).FirstOrDefault()?.PuedeEliminar == 1;
-			PuedeAutorizar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "empresas" && a.PuedeAutorizar == 1)).FirstOrDefault()?.PuedeAutorizar == 1;
 		}
 
         private async Task<string> GetDatosAdicionalesEmpresa(int idEmpresa)
@@ -470,10 +404,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			return jsonArchivos;
 		}
 
-		public async Task<ActionResult> OnGetDownloadPlantilla()
+		public ActionResult OnGetDownloadPlantilla()
 		{
-			await ConsultarPermisosUsuario();
-
 			if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
 			{
 				return File("/templates/PlantillaEmpresas.xlsx", MediaTypeNames.Application.Octet, "PlantillaEmpresas.xlsx");
@@ -489,8 +421,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
             ServerResponse resp = new(true, _strLocalizer["EmpresaConsultadaUnsuccessfully"]);
 			try
 			{
-				await ConsultarPermisosUsuario();
-
 				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
 				{
 					resp.Datos = await GetDatosAdicionalesEmpresa(idEmpresa);
@@ -514,8 +444,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			ServerResponse resp = new(true, _strLocalizer["EmpresasFiltradasUnsuccessfully"]);
 			try
 			{
-				await ConsultarPermisosUsuario();
-
 				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
 				{
 					resp.Datos = await GetListaEmpresas(InputFiltro);
@@ -541,8 +469,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			await _db.Database.BeginTransactionAsync();
 			try
 			{
-				await ConsultarPermisosUsuario();
-
 				if (PuedeTodo || PuedeEliminar) 
 				{
 					foreach (string id in ids)
@@ -573,8 +499,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		public async Task<JsonResult> OnPostSaveEmpresa()
 		{
 			ServerResponse resp = new(true, _strLocalizer["EmpresaSavedUnsuccessfully"]);
-
-			await ConsultarPermisosUsuario();
 
 			if (PuedeTodo || PuedeEditar)
 			{
@@ -762,8 +686,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			ServerResponse resp = new(true, _strLocalizer["EmpresasImportadasUnsuccessfully"]);
 			try
 			{
-				await ConsultarPermisosUsuario();
-
 				if (PuedeTodo || PuedeEditar) { 
 					if (Request.Form.Files.Count >= 1)
 					{
@@ -909,8 +831,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			ServerResponse resp = new(true, _strLocalizer["ConsultadoUnsuccessfully"]);
 			try
 			{
-				await ConsultarPermisosUsuario();
-
 				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
 				{
 					resp.Datos = await GetActividadesEconomicasSuggestion(texto);
