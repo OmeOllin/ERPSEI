@@ -142,6 +142,10 @@ function onBuscarClick() {
         fechaIngresoFin: fechaFinField
     };
 
+    //Resetea el valor de los filtros.
+    document.querySelectorAll("#filtros .form-control").forEach(function (e) { e.value = ""; });
+    document.querySelectorAll("#filtros .form-select").forEach(function (e) { e.value = 0; });
+
     doAjax(
         "/Reportes/Asistencia/FiltrarAsistencia",
         oParams,
@@ -159,8 +163,7 @@ function onBuscarClick() {
             }
 
             table.bootstrapTable('load', responseHandler(resp.datos));
-        },
-        function (error) {
+        }, function (error) {
             showError("Error", error);
         },
         postOptions

@@ -64,6 +64,8 @@ namespace ERPSEI
             ConfigureDIEmpresas(_builder);
 
             ConfigureDIEmpleados(_builder);
+
+            ConfigureDIAsistencias(_builder);
 		}
 
         private static void ConfigureDIAsistencias(WebApplicationBuilder _builder) 
