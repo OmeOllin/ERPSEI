@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     btnBuscar.addEventListener("click", onBuscarClick);
 });
 
+
 function responseHandler(res) {
     if (typeof res === "string" && res.length >= 1) {
         res = JSON.parse(res);
@@ -44,6 +45,13 @@ window.operateEvents = {
     'click .invite': function (e, value, row, index) {
         invitarEmpleado(row.id);
     }
+}
+
+//Función para obtener los identificadores de los registros seleccionados
+function getIdSelections() {
+    return $.map(table.bootstrapTable('getSelections'), function (row) {
+        return row.id
+    })
 }
 //Función para añadir botones a la cinta de botones de la tabla
 function additionalButtons() {
@@ -137,9 +145,9 @@ function onBuscarClick() {
     summaryContainer.innerHTML = "";
 
     let oParams = {
-        nombreEmpleado: nombreField,
-        fechaIngresoInicio: fechaInicioField,
-        fechaIngresoFin: fechaFinField
+        nombreEmpleado: nombreField.length <= 0 ? null : nombreField,
+        fechaIngresoInicio: fechaInicioField.length <= 0 ? null : fechaInicioField,
+        fechaIngresoFin: fechaFinField.length <= 0 ? null : fechaFinField
     };
 
     //Resetea el valor de los filtros.
@@ -169,6 +177,7 @@ function onBuscarClick() {
         postOptions
     );
 }
+
 
 //Función para obtener el archivo de un input
 function getFile(inputId) {
@@ -254,6 +263,24 @@ function onImportarClick() {
         extendedOptions
     );
 }
+
+function doAjax(url, data, successCallback, errorCallback, options) {
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        headers: options.headers,
+        success: function (response) {
+            if (successCallback) successCallback(response);
+        },
+        error: function (xhr, status, error) {
+            console.error("AJAX Error:", error);
+            if (errorCallback) errorCallback(error);
+        }
+    });
+}
+
 //Función para el cierre del cuadro de diálogo
 function onCerrarImportarClick() {
     let fileField = document.getElementById("excelFile");

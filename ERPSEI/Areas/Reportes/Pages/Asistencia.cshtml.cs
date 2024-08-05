@@ -77,9 +77,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		public async Task<JsonResult> OnGetAsistenciasList()
 		{
 			List<string> jsonAsistencias = new List<string>();
-			List<Data.Entities.Reportes.Asistencia> asistencias = await _asistenciaManager.GetAllAsync();
+			List<Asistencia> asistencias = await _asistenciaManager.GetAllAsync();
 
-			foreach (Data.Entities.Reportes.Asistencia asis in asistencias)
+			foreach (Asistencia asis in asistencias)
 			{
 				jsonAsistencias.Add("{" +
 					$"\"Horario\": \"{asis.Horario?.NombreHorario}\", " +
@@ -97,7 +97,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			return new JsonResult(jsonResponse);
 		}
 
-		public async Task<JsonResult> OnPostFiltrarAsistencia([FromBody]FiltroModel inputFiltro)
+		public async Task<JsonResult> OnPostFiltrarAsistencia([FromBody] FiltroModel inputFiltro)
 		{
 			ServerResponse resp = new ServerResponse(true, _stringLocalizer["AsistenciasFiltradosUnsuccessfully"]);
 
@@ -107,7 +107,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				return new JsonResult(resp);
 			}
 
-			ServerResponse responseServ = new(true, _stringLocalizer["AsistenciasFiltradosUnsuccessfully"]);
 			try
 			{
 				// Obtener todas las asistencias
@@ -145,11 +144,11 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					jsonAsistencias.Add("{" +
 					$"\"Horario\": \"{asis.Horario?.NombreHorario}\", " +
 					$"\"NombreEmpleado\": \"{asis.Empleado?.NombreCompleto}\", " +
-					$"\"Fecha\": \"{asis.Fecha:yyyy-MM-dd}\", " + // Asumiendo que Fecha es DateTime
+					$"\"Fecha\": \"{asis.Fecha:yyyy-MM-dd}\", " +
 					$"\"Dia\": \"{asis.Dia}\", " +
 					$"\"Entrada\": \"{asis.Entrada}\", " +
 					$"\"ResultadoE\": \"{asis.ResultadoE}\", " +
-					$"\"Salida\": \"{asis.Salida}\", " + // Añadida coma después de "Salida"
+					$"\"Salida\": \"{asis.Salida}\", " +
 					$"\"ResultadoS\": \"{asis.ResultadoS}\" " +
 					"}");
 				}
@@ -167,6 +166,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resp);
 		}
+
 
 		public async Task<JsonResult> OnPostImportarAsistencia()
 		{
