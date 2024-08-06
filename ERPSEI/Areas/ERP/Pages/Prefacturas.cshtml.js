@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initTable();
 
     let btnBuscar = document.getElementById("btnBuscar");
-    btnBuscar.click();
+    if (btnBuscar) { btnBuscar.click(); }
 
     autoCompletar("#inpEmisor", {
         select: function (element, item) { toggleEmisorInfo(item); },
@@ -131,16 +131,22 @@ function operateFormatter(value, row, index) {
     let icons = [];
     
     //Icono Ver
-    icons.push(`<li><a class="dropdown-item see" href="#" title="${btnVerTitle}"><i class="bi bi-search"></i> ${btnVerTitle}</a></li>`);
+    if (puedeTodo || puedeConsultar || puedeEditar || puedeEliminar) { icons.push(`<li><a class="dropdown-item see" href="#" title="${btnVerTitle}"><i class="bi bi-search"></i> ${btnVerTitle}</a></li>`); }
     //Icono PDF
-    icons.push(`<li><a class="dropdown-item pdf" href="#" title="${btnPDFTitle}"><i class="bi bi-file-pdf"></i> ${btnPDFTitle}</a></li>`);
+    if (puedeTodo || puedeConsultar || puedeEditar || puedeEliminar) { icons.push(`<li><a class="dropdown-item pdf" href="#" title="${btnPDFTitle}"><i class="bi bi-file-pdf"></i> ${btnPDFTitle}</a></li>`); }
 
-    return `<div class="dropdown">
-              <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-three-dots-vertical success"></i>
-              </button>
-              <ul class="dropdown-menu">${icons.join("")}</ul>
-            </div>`;
+    if (icons.length >= 1) {
+
+        return `<div class="dropdown">
+                  <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-three-dots-vertical success"></i>
+                  </button>
+                  <ul class="dropdown-menu">${icons.join("")}</ul>
+                </div>`;
+    }
+    else {
+        return '';
+    }
 }
 //Eventos de los iconos de operación
 window.operateEvents = {
@@ -177,7 +183,7 @@ function onExportarCFDIClick(ids = null) {
             if (ids != null) {
                 ids = [];
                 selections = null;
-                buttonExport.prop('disabled', true);
+                if (buttonExport) { buttonExport.prop('disabled', true); }
                 table.bootstrapTable('uncheckAll');
             }
 
@@ -272,13 +278,13 @@ function initTable() {
         ]
     })
     table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
-        buttonExport.prop('disabled', !table.bootstrapTable('getSelections').length)
+        if (buttonExport) { buttonExport.prop('disabled', !table.bootstrapTable('getSelections').length) }
 
         // save your data, here just save the current page
         selections = getIdSelections()
         // push or splice the selections if you want to save all data selections
     });
-    buttonExport.click(function () { onExportarCFDIClick(selections); });
+    if (buttonExport) { buttonExport.click(function () { onExportarCFDIClick(selections); }); }
 }
 //Función para capturar el click de los botones para dar de baja cfdis. Ejecuta una llamada ajax para dar de baja cfdis.
 function onDeleteCFDIClick(ids = null) {
@@ -683,14 +689,19 @@ function numericFormatter(value, row, index) {
 
 //Función para dar formato a los iconos de operación de los registros de productos y servicios
 function operateFormatterProdServ(value, row, index) {
-    switch (dialogMode) {
-        case NUEVO:
-        case EDITAR:
-            return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton"></i></a>`;
-            break;
-        default:
-            return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton disabled"></i></a>`;
-            break;
+    if (puedeTodo || puedeEliminar) {
+        switch (dialogMode) {
+            case NUEVO:
+            case EDITAR:
+                return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton"></i></a>`;
+                break;
+            default:
+                return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton disabled"></i></a>`;
+                break;
+        }
+    }
+    else {
+        return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton disabled"></i></a>`;
     }
 }
 
@@ -804,21 +815,24 @@ function initTableProdServ(data = null) {
         ]
     });
     tableProdServ.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
-        $("#removeProdServ").prop('disabled', !tableProdServ.bootstrapTable('getSelections').length)
+        if ($("#removeProdServ")) { $("#removeProdServ").prop('disabled', !tableProdServ.bootstrapTable('getSelections').length) }
     });
-    $("#removeProdServ").click(function () {
-        askConfirmation(btnEliminarTitle, dlgDeleteElementQuestion, function () {
-            let elements = tableProdServ.bootstrapTable('getSelections');
-            let data = tableProdServ.bootstrapTable('getData');
-            let newData = [];
-            data.forEach(function (d) {
-                let foundElement = elements.find(f => f.id == d.id);
-                if (!foundElement) { newData.push(d); }
+    if ($("#removeProdServ")) {
+
+        $("#removeProdServ").click(function () {
+            askConfirmation(btnEliminarTitle, dlgDeleteElementQuestion, function () {
+                let elements = tableProdServ.bootstrapTable('getSelections');
+                let data = tableProdServ.bootstrapTable('getData');
+                let newData = [];
+                data.forEach(function (d) {
+                    let foundElement = elements.find(f => f.id == d.id);
+                    if (!foundElement) { newData.push(d); }
+                });
+                initTableProdServ(newData);
+                $("#removeProdServ").prop('disabled', true);
             });
-            initTableProdServ(newData);
-            $("#removeProdServ").prop('disabled', true);
         });
-    });
+    }
 }
 
 //Función para mostrar u ocultar la información del emisor. Si se establece el parámetro item, se muestra. De lo contrario, se oculta.

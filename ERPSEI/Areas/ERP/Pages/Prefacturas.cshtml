@@ -44,19 +44,11 @@
 	List<UsoCFDI> usosCFDI = await UsoCFDIManager.GetAllAsync();
 	List<Exportacion> exportaciones = await ExportacionManager.GetAllAsync();
 
-	AppUser? usr = await UsuariosManager.GetUserAsync(User);
-	IList<string> rolesUsuario = usr != null ? await UsuariosManager.GetRolesAsync(usr) : new List<string>();
-	List<AccesoModulo> accesos = new List<AccesoModulo>();
-	foreach (string rol in rolesUsuario)
-	{
-		AppRole? foundRole = await RolesManager.GetByNameAsync(rol);
-		accesos.AddRange(await AccesosModulosManager.GetByRolIdAsync(foundRole?.Id ?? string.Empty));
-	}
-	bool puedeTodo = accesos.Where(a => (a.Modulo?.NombreNormalizado == "prefacturas" && a.PuedeTodo == 1)).FirstOrDefault()?.PuedeTodo == 1;
-	bool puedeConsultar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "prefacturas" && a.PuedeConsultar == 1)).FirstOrDefault()?.PuedeConsultar == 1;
-	bool puedeEditar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "prefacturas" && a.PuedeEditar == 1)).FirstOrDefault()?.PuedeEditar == 1;
-	bool puedeEliminar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "prefacturas" && a.PuedeEliminar == 1)).FirstOrDefault()?.PuedeEliminar == 1;
-	bool puedeAutorizar = accesos.Where(a => (a.Modulo?.NombreNormalizado == "prefacturas" && a.PuedeAutorizar == 1)).FirstOrDefault()?.PuedeAutorizar == 1;
+	bool puedeTodo = User.Claims.Where(c => c.Type.Equals("PuedeTodo", StringComparison.OrdinalIgnoreCase)).FirstOrDefault()?.Value == "1";
+	bool puedeConsultar = User.Claims.Where(c => c.Type.Equals("PuedeConsultar", StringComparison.OrdinalIgnoreCase)).FirstOrDefault()?.Value == "1";
+	bool puedeEditar = User.Claims.Where(c => c.Type.Equals("PuedeEditar", StringComparison.OrdinalIgnoreCase)).FirstOrDefault()?.Value == "1";
+	bool puedeEliminar = User.Claims.Where(c => c.Type.Equals("PuedeEliminar", StringComparison.OrdinalIgnoreCase)).FirstOrDefault()?.Value == "1";
+	bool puedeAutorizar = User.Claims.Where(c => c.Type.Equals("PuedeAutorizar", StringComparison.OrdinalIgnoreCase)).FirstOrDefault()?.Value == "1";
 }
 <h3 class="title mb-3">@ViewData["Title"]</h3>
 
@@ -149,13 +141,16 @@
 						</div>
 					</div>
 				</form>
-				<div class="row text-end">
-					<div class="col-12">
-						<button id="btnBuscar" class="btn btn-primary" onclick="onBuscarClick();">
-							<i class="bi bi-search"></i> @Localizer["SearchButton"]
-						</button>
+				@if (puedeTodo || puedeConsultar || puedeEditar || puedeEliminar)
+				{
+					<div class="row text-end">
+						<div class="col-12">
+							<button id="btnBuscar" class="btn btn-primary" onclick="onBuscarClick();">
+								<i class="bi bi-search"></i> @Localizer["SearchButton"]
+							</button>
+						</div>
 					</div>
-				</div>
+				}
 			</div>
 		</div>
 	</div>
@@ -166,13 +161,19 @@
 <!-- --------------------------- -->
 <!-- Sección tabla de resultados -->
 <div id="toolbar" class="col-xl-12">
-	<button id="btnAgregar" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dlgCFDI" onclick="onAgregarClick();">
-		<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
-	</button>
-	<button id="btnExportar" class="btn btn-primary" disabled>
-		<i class="bi bi-file-earmark-spreadsheet"></i> <span class="d-none d-sm-inline">@Localizer["ExportButton"]</span>
-	</button>
-	<a hidden id="downloadFileLink" href="@Url.Page("Prefacturas", "DownloadExcel")" class="btn btn-primary"></a>
+	@if (puedeTodo || puedeEditar)
+	{
+		<button id="btnAgregar" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dlgCFDI" onclick="onAgregarClick();">
+			<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
+		</button>
+	}
+	@if (puedeTodo || puedeConsultar)
+	{
+		<button id="btnExportar" class="btn btn-primary" disabled>
+			<i class="bi bi-file-earmark-spreadsheet"></i> <span class="d-none d-sm-inline">@Localizer["ExportButton"]</span>
+		</button>
+		<a hidden id="downloadFileLink" href="@Url.Page("Prefacturas", "DownloadExcel")" class="btn btn-primary"></a>
+	}
 </div>
 <table id="table" class="table-sm"
 	   data-unique-id="id"
@@ -392,12 +393,18 @@
 							<div class="tab-pane fade" id="infoConceptos" role="tabpanel" aria-labelledby="tabConceptos" tabindex="0">
 								<div class="row mb-3">
 									<div id="toolbarProdServ" class="col-xl-12">
-										<button type="button" id="btnAgregarProdServ" class="btn btn-primary formButton" data-bs-toggle="modal" data-bs-target="#dlgProdServ" onclick="initDialogProdServ();">
-											<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
-										</button>
-										<button type="button" id="removeProdServ" class="btn btn-danger formButton" disabled>
-											<i class="bi bi-trash"></i> <span class="d-none d-sm-inline">@Localizer["DeleteButton"]</span>
-										</button>
+										@if (puedeTodo || puedeEditar)
+										{
+											<button type="button" id="btnAgregarProdServ" class="btn btn-primary formButton" data-bs-toggle="modal" data-bs-target="#dlgProdServ" onclick="initDialogProdServ();">
+												<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
+											</button>
+										}
+										@if (puedeTodo || puedeEliminar)
+										{
+											<button type="button" id="removeProdServ" class="btn btn-danger formButton" disabled>
+												<i class="bi bi-trash"></i> <span class="d-none d-sm-inline">@Localizer["DeleteButton"]</span>
+											</button>
+										}
 									</div>
 									<table id="tableProductosServicios" class="table-sm"
 										data-unique-id="id"
@@ -432,9 +439,12 @@
 							<button id="btnLimpiar" type="button" class="btn btn-secondary" onclick="onLimpiarClick();">
 								<i class="bi bi-eraser-fill"></i> @Localizer["Limpiar"]
 							</button>
-							<button id="dlgCFDIBtnGuardar" type="button" class="btn btn-primary formButton" onclick="onGuardarClick();">
-								<i class="bi bi-floppy"></i> @Localizer["SaveButtonTitle"]
-							</button>
+							@if (puedeTodo || puedeEditar)
+							{
+								<button id="dlgCFDIBtnGuardar" type="button" class="btn btn-primary formButton" onclick="onGuardarClick();">
+									<i class="bi bi-floppy"></i> @Localizer["SaveButtonTitle"]
+								</button>
+							}
 						</div>
 					</div>
 				</div>
@@ -612,9 +622,12 @@
 					<button id="dlgBtnCancelar" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
 						<i class="bi bi-x-lg"></i> @Localizer["CloseButtonTitle"]
 					</button>
-					<button id="dlgBtnAgregar" type="button" class="btn btn-primary formButton" onclick="onAgregarProductoServicioClick();">
-						<i class="bi bi-plus-lg"></i> @Localizer["AddButton"]
-					</button>
+					@if (puedeTodo || puedeEditar)
+					{
+						<button id="dlgBtnAgregar" type="button" class="btn btn-primary formButton" onclick="onAgregarProductoServicioClick();">
+							<i class="bi bi-plus-lg"></i> @Localizer["AddButton"]
+						</button>
+					}
 				</div>
 			</div>
 		</div>
@@ -925,6 +938,12 @@
 		var colTrasladoHeader = '@Localizer["ColTrasladoHeader"]';
 		var colRetencionHeader = '@Localizer["ColRetencionHeader"]';
 		var colTotalHeader = '@Localizer["ColTotalHeader"]';
+
+		var puedeTodo = '@puedeTodo' == 'True';
+		var puedeConsultar = '@puedeConsultar' == 'True';
+		var puedeEditar = '@puedeEditar' == 'True';
+		var puedeEliminar = '@puedeEliminar' == 'True';
+		var puedeAutorizar = '@puedeAutorizar' == 'True';
 	</script>
 
 	<partial name="_ValidationScriptsPartial" />

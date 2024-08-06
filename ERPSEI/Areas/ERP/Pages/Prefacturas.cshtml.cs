@@ -6,12 +6,12 @@ using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Data.Managers.SAT;
+using ERPSEI.Pages.Shared;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
@@ -34,7 +34,7 @@ namespace ERPSEI.Areas.ERP.Pages
 			ITasaOCuotaManager tasaOCuotaManager,
 			IStringLocalizer<PrefacturasModel> stringLocalizer,
 			ILogger<PrefacturasModel> logger
-		) : PageModel
+		) : ERPPageModel
 	{
 
 		[BindProperty]
@@ -206,9 +206,16 @@ namespace ERPSEI.Areas.ERP.Pages
 			ServerResponse resp = new(true, stringLocalizer["ConsultadoUnsuccessfully"]);
 			try
 			{
-				resp.Datos = await GetDatosAdicionales(idPrefactura);
-				resp.TieneError = false;
-				resp.Mensaje = stringLocalizer["ConsultadoSuccessfully"];
+				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
+				{
+					resp.Datos = await GetDatosAdicionales(idPrefactura);
+					resp.TieneError = false;
+					resp.Mensaje = stringLocalizer["ConsultadoSuccessfully"];
+				}
+				else
+				{
+					resp.Mensaje = stringLocalizer["AccesoDenegado"];
+				}
 			}
 			catch (Exception ex)
 			{
@@ -222,9 +229,16 @@ namespace ERPSEI.Areas.ERP.Pages
 			ServerResponse resp = new(true, stringLocalizer["ConsultadoUnsuccessfully"]);
 			try
 			{
-				resp.Datos = await GetPrefacturasList(InputFiltro);
-				resp.TieneError = false;
-				resp.Mensaje = stringLocalizer["ConsultadoSuccessfully"];
+				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
+				{
+					resp.Datos = await GetPrefacturasList(InputFiltro);
+					resp.TieneError = false;
+					resp.Mensaje = stringLocalizer["ConsultadoSuccessfully"];
+				}
+				else
+				{
+					resp.Mensaje = stringLocalizer["AccesoDenegado"];
+				}
 			}
 			catch (Exception ex)
 			{
@@ -383,32 +397,39 @@ namespace ERPSEI.Areas.ERP.Pages
 		{
 			ServerResponse resp = new(true, stringLocalizer["PrefacturaSavedUnsuccessfully"]);
 
-			if (!ModelState.IsValid)
+			if (PuedeTodo || PuedeEditar)
 			{
-				resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k]?.Errors ?? []).Select(m => m.ErrorMessage).ToArray();
-				return new JsonResult(resp);
-			}
-			try
-			{
-				string validacion = await ValidarSerieFolio(InputCFDI);
-
-				//Si la longitud del mensaje de respuesta es menor o igual a cero, se considera que no hubo errores anteriores.
-				if ((validacion ?? string.Empty).Length <= 0)
+				if (!ModelState.IsValid)
 				{
-					//Procede a crear o actualizar la prefactura.
-					await CreateOrUpdatePrefactura(InputCFDI);
-
-					resp.TieneError = false;
-					resp.Mensaje = stringLocalizer["PrefacturaSavedSuccessfully"];
+					resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k]?.Errors ?? []).Select(m => m.ErrorMessage).ToArray();
+					return new JsonResult(resp);
 				}
-				else
+				try
 				{
-					resp.Mensaje = validacion;
+					string validacion = await ValidarSerieFolio(InputCFDI);
+
+					//Si la longitud del mensaje de respuesta es menor o igual a cero, se considera que no hubo errores anteriores.
+					if ((validacion ?? string.Empty).Length <= 0)
+					{
+						//Procede a crear o actualizar la prefactura.
+						await CreateOrUpdatePrefactura(InputCFDI);
+
+						resp.TieneError = false;
+						resp.Mensaje = stringLocalizer["PrefacturaSavedSuccessfully"];
+					}
+					else
+					{
+						resp.Mensaje = validacion;
+					}
+				}
+				catch (Exception ex)
+				{
+					logger.LogError(message: ex.Message);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				logger.LogError(message: ex.Message);
+				resp.Mensaje = stringLocalizer["AccesoDenegado"];
 			}
 
 			return new JsonResult(resp);
@@ -530,12 +551,18 @@ namespace ERPSEI.Areas.ERP.Pages
 			ServerResponse resp = new(true, stringLocalizer["ConsultadoUnsuccessfully"]);
 			try
 			{
+				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
+				{
+					if (!int.TryParse(idempresa, out int idEmp)) { idEmp = 0; }
 
-				if (!int.TryParse(idempresa, out int idEmp)) { idEmp = 0; }
-
-				resp.Datos = await GetEmpresasSuggestion(texto, idEmp);
-				resp.TieneError = false;
-				resp.Mensaje = stringLocalizer["ConsultadoSuccessfully"];
+					resp.Datos = await GetEmpresasSuggestion(texto, idEmp);
+					resp.TieneError = false;
+					resp.Mensaje = stringLocalizer["ConsultadoSuccessfully"];
+				}
+				else
+				{
+					resp.Mensaje = stringLocalizer["AccesoDenegado"];
+				}
 			}
 			catch (Exception ex)
 			{
@@ -652,9 +679,16 @@ namespace ERPSEI.Areas.ERP.Pages
 			ServerResponse resp = new(true, stringLocalizer["ConsultadoUnsuccessfully"]);
 			try
 			{
-				resp.Datos = await GetProductosServiciosSuggestion(texto);
-				resp.TieneError = false;
-				resp.Mensaje = stringLocalizer["ConsultadoSuccessfully"];
+				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
+				{
+					resp.Datos = await GetProductosServiciosSuggestion(texto);
+					resp.TieneError = false;
+					resp.Mensaje = stringLocalizer["ConsultadoSuccessfully"];
+				}
+				else
+				{
+					resp.Mensaje = stringLocalizer["AccesoDenegado"];
+				}
 			}
 			catch (Exception ex)
 			{
@@ -694,9 +728,16 @@ namespace ERPSEI.Areas.ERP.Pages
 			ServerResponse resp = new(true, stringLocalizer["ConsultadoUnsuccessfully"]);
 			try
 			{
-				resp.Datos = await GetUnidadesSuggestion(texto);
-				resp.TieneError = false;
-				resp.Mensaje = stringLocalizer["ConsultadoSuccessfully"];
+				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
+				{
+					resp.Datos = await GetUnidadesSuggestion(texto);
+					resp.TieneError = false;
+					resp.Mensaje = stringLocalizer["ConsultadoSuccessfully"];
+				}
+				else
+				{
+					resp.Mensaje = stringLocalizer["AccesoDenegado"];
+				}
 			}
 			catch (Exception ex)
 			{
@@ -743,121 +784,129 @@ namespace ERPSEI.Areas.ERP.Pages
 		public async Task<JsonResult> OnPostExportExcel(string[] ids)
 		{
 			ServerResponse resp = new(true, stringLocalizer["PrefacturasExportedUnsuccessfully"]);
-			try
+
+			if (PuedeTodo || PuedeConsultar)
 			{
-				await db.Database.BeginTransactionAsync();
-
-				//El llenado de datos comienza en la fila 1 del archivo ya que la fila 0 es el encabezado que se crea junto con el excel.
-				int rowIndex = 1;
-				List<TasaOCuota> impuestos = await tasaOCuotaManager.GetAllAsync();
-				List<TasaOCuota> impuestosIEPS = impuestos.Where(t => t.ImpuestoId == 3).ToList();
-				List<TasaOCuota> impuestosIVA = impuestos.Where(t => t.ImpuestoId == 2).ToList();
-
-				//Crea el archivo Excel
-				using (HSSFWorkbook wb = await CreateExcel())
+				try
 				{
-					//Obtiene la primer hoja del archivo
-					ISheet sheet = wb.GetSheetAt(0);
-					//Crea el estilo de las celdas.
-					HSSFCellStyle cellStyle = (HSSFCellStyle)wb.CreateCellStyle();
+					await db.Database.BeginTransactionAsync();
 
-					foreach (string id in ids)
-					{
-						int intId = Convert.ToInt32(id);
-						Prefactura? p = await prefacturaManager.GetByIdAsync(intId);
-						if(p != null)
+						//El llenado de datos comienza en la fila 1 del archivo ya que la fila 0 es el encabezado que se crea junto con el excel.
+						int rowIndex = 1;
+						List<TasaOCuota> impuestos = await tasaOCuotaManager.GetAllAsync();
+						List<TasaOCuota> impuestosIEPS = impuestos.Where(t => t.ImpuestoId == 3).ToList();
+						List<TasaOCuota> impuestosIVA = impuestos.Where(t => t.ImpuestoId == 2).ToList();
+
+						//Crea el archivo Excel
+						using (HSSFWorkbook wb = await CreateExcel())
 						{
-							string clave = p.Serie + p.Folio.PadLeft(6, '0');
-							foreach (Concepto c in p.Conceptos)
-                            {
-								IRow row = sheet.CreateRow(rowIndex);
-								//Clave
-								CreateCell(row, 0, clave, cellStyle);
-								//Cliente
-								CreateCell(row, 1, p.ReceptorId.ToString(), cellStyle);
-								//Fecha de elaboración
-								CreateCell(row, 2, p.Fecha.ToString("dd/mm/yyyy"), cellStyle);
-								//Su pedido
-								CreateCell(row, 3, string.Empty, cellStyle);
-								//Clave del artículo
-								CreateCell(row, 4, c.ProductoServicio?.Clave ?? string.Empty, cellStyle);
-								//Cantidad
-								CreateCell(row, 5, c.Cantidad.ToString(), cellStyle);
-								//Precio
-								CreateCell(row, 6, c.PrecioUnitario.ToString(), cellStyle);
-								//Desc. 1
-								CreateCell(row, 7, string.Empty, cellStyle);
-								//Desc. 2
-								CreateCell(row, 8, string.Empty, cellStyle);
-								//Desc. 3
-								CreateCell(row, 9, string.Empty, cellStyle);
-								//Clave de vendedor
-								CreateCell(row, 10, string.Empty, cellStyle);
-								//Comisión
-								CreateCell(row, 11, string.Empty, cellStyle);
-								//Clave de esquema de impuestos
-								CreateCell(row, 12, string.Empty, cellStyle);
-								//I.E.P.S.
-								CreateCell(row, 13, GetIEPSConcepto(c, impuestosIEPS).ToString(), cellStyle);
-								//Impuesto 2
-								CreateCell(row, 14, string.Empty, cellStyle);
-								//Impuesto 3
-								CreateCell(row, 15, string.Empty, cellStyle);
-								//I.V.A.
-								CreateCell(row, 16, GetIVAConcepto(c, impuestosIVA).ToString(), cellStyle);
-								//Impuesto 5
-								CreateCell(row, 17, string.Empty, cellStyle);
-								//Impuesto 6
-								CreateCell(row, 18, string.Empty, cellStyle);
-								//Impuesto 7
-								CreateCell(row, 19, string.Empty, cellStyle);
-								//Impuesto 8
-								CreateCell(row, 20, string.Empty, cellStyle);
-								//Método de pago
-								CreateCell(row, 21, p.MetodoPago?.Clave ?? string.Empty, cellStyle);
-								//Forma de Pago SAT
-								CreateCell(row, 22, p.FormaPago?.Clave ?? string.Empty, cellStyle);
-								//Uso CFDI
-								CreateCell(row, 23, p.UsoCFDI?.Clave ?? string.Empty, cellStyle);
-								//Clave SAT
-								CreateCell(row, 24, c.ProductoServicio?.Clave ?? string.Empty, cellStyle);
-								//Unidad SAT
-								CreateCell(row, 25, c.UnidadMedida?.Clave ?? string.Empty, cellStyle);
-								//Observaciones
-								CreateCell(row, 26, c.Descripcion ?? string.Empty, cellStyle);
-								//Observaciones de partida
-								CreateCell(row, 27, string.Empty, cellStyle);
-								//Fecha de entrega
-								CreateCell(row, 28, string.Empty, cellStyle);
-								//Fecha de vencimiento
-								CreateCell(row, 29, string.Empty, cellStyle);
-								//Descripcion
-								CreateCell(row, 30, c.Descripcion ?? string.Empty, cellStyle);
+							//Obtiene la primer hoja del archivo
+							ISheet sheet = wb.GetSheetAt(0);
+							//Crea el estilo de las celdas.
+							HSSFCellStyle cellStyle = (HSSFCellStyle)wb.CreateCellStyle();
 
-								rowIndex++;
+							foreach (string id in ids)
+							{
+								int intId = Convert.ToInt32(id);
+								Prefactura? p = await prefacturaManager.GetByIdAsync(intId);
+								if (p != null)
+								{
+									string clave = p.Serie + p.Folio.PadLeft(6, '0');
+									foreach (Concepto c in p.Conceptos)
+									{
+										IRow row = sheet.CreateRow(rowIndex);
+										//Clave
+										CreateCell(row, 0, clave, cellStyle);
+										//Cliente
+										CreateCell(row, 1, p.ReceptorId.ToString(), cellStyle);
+										//Fecha de elaboración
+										CreateCell(row, 2, p.Fecha.ToString("dd/mm/yyyy"), cellStyle);
+										//Su pedido
+										CreateCell(row, 3, string.Empty, cellStyle);
+										//Clave del artículo
+										CreateCell(row, 4, c.ProductoServicio?.Clave ?? string.Empty, cellStyle);
+										//Cantidad
+										CreateCell(row, 5, c.Cantidad.ToString(), cellStyle);
+										//Precio
+										CreateCell(row, 6, c.PrecioUnitario.ToString(), cellStyle);
+										//Desc. 1
+										CreateCell(row, 7, string.Empty, cellStyle);
+										//Desc. 2
+										CreateCell(row, 8, string.Empty, cellStyle);
+										//Desc. 3
+										CreateCell(row, 9, string.Empty, cellStyle);
+										//Clave de vendedor
+										CreateCell(row, 10, string.Empty, cellStyle);
+										//Comisión
+										CreateCell(row, 11, string.Empty, cellStyle);
+										//Clave de esquema de impuestos
+										CreateCell(row, 12, string.Empty, cellStyle);
+										//I.E.P.S.
+										CreateCell(row, 13, GetIEPSConcepto(c, impuestosIEPS).ToString(), cellStyle);
+										//Impuesto 2
+										CreateCell(row, 14, string.Empty, cellStyle);
+										//Impuesto 3
+										CreateCell(row, 15, string.Empty, cellStyle);
+										//I.V.A.
+										CreateCell(row, 16, GetIVAConcepto(c, impuestosIVA).ToString(), cellStyle);
+										//Impuesto 5
+										CreateCell(row, 17, string.Empty, cellStyle);
+										//Impuesto 6
+										CreateCell(row, 18, string.Empty, cellStyle);
+										//Impuesto 7
+										CreateCell(row, 19, string.Empty, cellStyle);
+										//Impuesto 8
+										CreateCell(row, 20, string.Empty, cellStyle);
+										//Método de pago
+										CreateCell(row, 21, p.MetodoPago?.Clave ?? string.Empty, cellStyle);
+										//Forma de Pago SAT
+										CreateCell(row, 22, p.FormaPago?.Clave ?? string.Empty, cellStyle);
+										//Uso CFDI
+										CreateCell(row, 23, p.UsoCFDI?.Clave ?? string.Empty, cellStyle);
+										//Clave SAT
+										CreateCell(row, 24, c.ProductoServicio?.Clave ?? string.Empty, cellStyle);
+										//Unidad SAT
+										CreateCell(row, 25, c.UnidadMedida?.Clave ?? string.Empty, cellStyle);
+										//Observaciones
+										CreateCell(row, 26, c.Descripcion ?? string.Empty, cellStyle);
+										//Observaciones de partida
+										CreateCell(row, 27, string.Empty, cellStyle);
+										//Fecha de entrega
+										CreateCell(row, 28, string.Empty, cellStyle);
+										//Fecha de vencimiento
+										CreateCell(row, 29, string.Empty, cellStyle);
+										//Descripcion
+										CreateCell(row, 30, c.Descripcion ?? string.Empty, cellStyle);
+
+										rowIndex++;
+									}
+								}
 							}
+
+							//Crea el archivo excel y lo exporta al usuario.
+							using (var fileData = new FileStream("wwwroot/templates/Prefacturas.xls", FileMode.OpenOrCreate))
+							{
+								wb.Write(fileData);
+							}
+
+							wb.Close();
 						}
-					}
 
-					//Crea el archivo excel y lo exporta al usuario.
-					using (var fileData = new FileStream("wwwroot/templates/Prefacturas.xls", FileMode.OpenOrCreate))
-					{
-						wb.Write(fileData);
-					}
+						await db.Database.CommitTransactionAsync();
 
-					wb.Close();
+						resp.TieneError = false;
+						resp.Mensaje = stringLocalizer["PrefacturasExportedSuccessfully"];
 				}
-
-				await db.Database.CommitTransactionAsync();
-
-				resp.TieneError = false;
-				resp.Mensaje = stringLocalizer["PrefacturasExportedSuccessfully"];
+				catch (Exception ex)
+				{
+					logger.LogError(message: ex.Message);
+					resp.Mensaje = ex.Message;
+					await db.Database.RollbackTransactionAsync();
+				}
 			}
-			catch (Exception ex)
+			else
 			{
-				logger.LogError(message: ex.Message);
-				resp.Mensaje = ex.Message;
-				await db.Database.RollbackTransactionAsync();
+				resp.Mensaje = stringLocalizer["AccesoDenegado"];
 			}
 
 			return new JsonResult(resp);
@@ -990,7 +1039,14 @@ namespace ERPSEI.Areas.ERP.Pages
 
 		public ActionResult OnGetDownloadExcel()
 		{
-			return File("/templates/Prefacturas.xls", MediaTypeNames.Application.Octet, "Prefacturas.xls");
+			if (PuedeTodo || PuedeConsultar)
+			{
+				return File("/templates/Prefacturas.xls", MediaTypeNames.Application.Octet, "Prefacturas.xls");
+			}
+			else
+			{
+				return new EmptyResult();
+			}
 		}
 	}
 }
