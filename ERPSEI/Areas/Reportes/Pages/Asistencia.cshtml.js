@@ -23,36 +23,18 @@ document.addEventListener("DOMContentLoaded", function (event) {
     btnBuscar.addEventListener("click", onBuscarClick);
 });
 
-
+//Función para procesar la respuesta del servidor al consultar datos
 function responseHandler(res) {
-    if (typeof res === "string" && res.length >= 1) {
+    if (typeof res == "string" && res.length >= 1) {
         res = JSON.parse(res);
     }
     $.each(res, function (i, row) {
-        row.state = $.inArray(row.id, selections) !== -1;
+        row.state = $.inArray(row.id, selections) !== -1
     });
-    return res;
+
+    return res
 }
 
-//Eventos de los iconos de operación
-window.operateEvents = {
-    'click .see': function (e, value, row, index) {
-        initEmpleadoDialog(VER, row);
-    },
-    'click .edit': function (e, value, row, index) {
-        initEmpleadoDialog(EDITAR, row);
-    },
-    'click .invite': function (e, value, row, index) {
-        invitarEmpleado(row.id);
-    }
-}
-
-//Función para obtener los identificadores de los registros seleccionados
-function getIdSelections() {
-    return $.map(table.bootstrapTable('getSelections'), function (row) {
-        return row.id
-    })
-}
 //Función para añadir botones a la cinta de botones de la tabla
 function additionalButtons() {
     return {
@@ -210,6 +192,7 @@ function getFile(inputId) {
 
     return null;
 }
+//Función para el importado del archivo con información de empresas
 function onImportarClick() {
     //Ejecuta la validación
     $("#importForm").validate();
@@ -236,7 +219,7 @@ function onImportarClick() {
     }
 
     doAjax(
-        "/Reportes/Asistencia/ImportarAsistencia",
+        "/Reportes/Asistencia/ImportarAsistencias",
         {},
         function (resp) {
             if (resp.tieneError) {
@@ -263,24 +246,6 @@ function onImportarClick() {
         extendedOptions
     );
 }
-
-function doAjax(url, data, successCallback, errorCallback, options) {
-    $.ajax({
-        type: "POST",
-        url: url,
-        data: JSON.stringify(data),
-        contentType: "application/json",
-        headers: options.headers,
-        success: function (response) {
-            if (successCallback) successCallback(response);
-        },
-        error: function (xhr, status, error) {
-            console.error("AJAX Error:", error);
-            if (errorCallback) errorCallback(error);
-        }
-    });
-}
-
 //Función para el cierre del cuadro de diálogo
 function onCerrarImportarClick() {
     let fileField = document.getElementById("excelFile");

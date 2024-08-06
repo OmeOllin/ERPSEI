@@ -129,6 +129,12 @@
   <data name="AddButton" xml:space="preserve">
     <value>Agregar</value>
   </data>
+  <data name="AsistenciasImportadosSuccessfully" xml:space="preserve">
+    <value>¡Asistencias importadas satisfactoriamente!</value>
+  </data>
+  <data name="AsistenciasImportadosUnsuccessfully" xml:space="preserve">
+    <value>Error al importar las asistencias</value>
+  </data>
   <data name="CancelButtonTitle" xml:space="preserve">
     <value>Cancelar</value>
   </data>

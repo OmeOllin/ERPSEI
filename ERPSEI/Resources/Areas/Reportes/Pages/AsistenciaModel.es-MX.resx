@@ -117,4 +117,52 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AccesoDenegado" xml:space="preserve">
+    <value>Acceso denegado</value>
+  </data>
+  <data name="AsistenciaDeletedSuccessfully" xml:space="preserve">
+    <value>¡Registros eliminados satisfactoriamente!</value>
+  </data>
+  <data name="AsistenciaSavedSuccessfully" xml:space="preserve">
+    <value>¡Asistencia guardada satisfactoriamente!</value>
+  </data>
+  <data name="AsistenciaSavedUnsuccessfully" xml:space="preserve">
+    <value>Error al guardar la asistencia</value>
+  </data>
+  <data name="AsistenciasFiltradasSuccessfully" xml:space="preserve">
+    <value>¡Asistencias filtradas satisfactoriamente!</value>
+  </data>
+  <data name="AsistenciasFiltradasUnsuccessfully" xml:space="preserve">
+    <value>Error al filtrar las asistencias</value>
+  </data>
+  <data name="AsistenciasImportadasSuccessfully" xml:space="preserve">
+    <value>¡Asistencias importadas satisfactoriamente!</value>
+  </data>
+  <data name="AsistenciasImportadasUnsuccessfully" xml:space="preserve">
+    <value>Error al importar las asistencias</value>
+  </data>
+  <data name="AsistenciasImportadosSuccessfully" xml:space="preserve">
+    <value>¡Asistencias importadas satisfactoriamente!</value>
+  </data>
+  <data name="AsistenciasImportadosUnsuccessfully" xml:space="preserve">
+    <value>Error al importar las asistencias</value>
+  </data>
+  <data name="ConsultadoSuccessfully" xml:space="preserve">
+    <value>¡Consulta de información satisfactoria!</value>
+  </data>
+  <data name="ConsultadoUnsuccessfully" xml:space="preserve">
+    <value>Error al consultar la información</value>
+  </data>
+  <data name="ErrorAsistenciaExistenteA" xml:space="preserve">
+    <value>Ya existe una asistencia registrada con</value>
+  </data>
+  <data name="ErrorAsistenciaExistenteB" xml:space="preserve">
+    <value>Por favor verifique la información</value>
+  </data>
+  <data name="RazonSocial" xml:space="preserve">
+    <value>Razón Social</value>
+  </data>
+  <data name="RFC" xml:space="preserve">
+    <value>RFC</value>
+  </data>
 </root>
