@@ -4,15 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERPSEI.Data.Managers.Reportes
 {
-    public class HorariosManager : IHorariosManager
+    public class HorariosManager(ApplicationDbContext db) : IHorariosManager
 	{
-		ApplicationDbContext db { get; set; }
-
-		public HorariosManager(ApplicationDbContext _db)
-		{
-			db = _db;
-		}
-
 		private async Task<int> GetNextId()
 		{
 			List<Horarios> registros = await db.Horarios.ToListAsync();

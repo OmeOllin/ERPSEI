@@ -1,8 +1,9 @@
 ﻿var table;
 var buttonRemove;
+var tableActividad;
 var selections = [];
-var dlgEmpleado = null;
-var dlgEmpleadoModal = null;
+var dlgAsistencia = null;
+var dlgAsistenciaModal = null;
 
 const NUEVO = 0;
 const EDITAR = 1;
@@ -18,6 +19,19 @@ const postOptions = {
 document.addEventListener("DOMContentLoaded", function (event) {
     table = $("#table");
     initTable();
+    buttonRemove = $("#remove");
+
+    dlgAsistencia = document.getElementById('dlgAsistencia');
+    dlgAsistenciaModal = new bootstrap.Modal(dlgAsistencia, null);
+    //Función para limpiar el cuadro de diálogo cuando es cerrado
+    dlgAsistencia.addEventListener('hidden.bs.modal', function (event) {
+        onCerrarClick();
+    });
+    //Función para ejecutar acciones posteriores al mostrado del diálogo.
+    dlgAsistencia.addEventListener('shown.bs.modal', function (e) {
+        //Este evento es necesario para poder mostrar el text area ajustado al tamaño del contenido, basado en el tamaño del scroll.
+        calculateTextAreaHeight(document.querySelectorAll("textarea"));
+    })
 
     let btnBuscar = document.getElementById("btnBuscar");
     btnBuscar.addEventListener("click", onBuscarClick);

@@ -1,7 +1,10 @@
 ﻿@page "{handler?}"
 @using ERPSEI.Areas.Catalogos.Pages;
+@using ERPSEI.Data.Managers;
 @using Microsoft.AspNetCore.Localization;
 @using Microsoft.AspNetCore.Mvc.Localization;
+@using ERPSEI.Data.Entities.Empleados;
+@using ERPSEI.Data.Managers.Empleados;
 @model AsistenciaModel
 @inject IViewLocalizer Localizer;
 @{
@@ -68,8 +71,6 @@
 	</div>
 </div>
 
-<!-- --------------------------- -->
-
 <table id="table" class="table-sm"
 	   data-unique-id="id"
 	   data-toolbar="#toolbar"
@@ -97,18 +98,16 @@
 	</thead>
 </table>
 
-
 <!-- Sección Nuevo/Editar/Ver Registro --- -->
-<!--Verificar el theForm-->
-<form id="theForm" method="post">
-	<div id="dlgAsistencia" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 id="dlgAsistenciaTitle" class="modal-title"></h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-				</div>
-				<div class="modal-body align-items-center">
+<div id="dlgAsistencia" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-xl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 id="dlgAsistenciaTitle" class="modal-title"></h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body align-items-center">
+					<form id="theForm" method="post">
 					<div class="container-fluid">
 						<div id="saveValidationSummary" class="text-danger mb-3" role="alert"></div>
 						<div class="row">
@@ -184,20 +183,12 @@
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="modal-footer">
-					<button id="dlgAsistenciaBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarClick();" data-bs-dismiss="modal">
-						<i class="bi bi-x-lg"></i> @Localizer["CancelButton"]
-					</button>
-					<button id="dlgAsistenciaBtnGuardar" type="button" class="btn btn-primary" onclick="onGuardarClick();">
-						<i class="bi bi-floppy"></i> @Localizer["SaveButton"]
-					</button>
-				</div>
+					</form>
 			</div>
 		</div>
 	</div>
-</form>
-
+</div>
+	
 <!-- --------------------------- -->
 <!-- Sección Importar Excel ---- -->
 <div id="dlgImportarExcel" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
@@ -215,7 +206,7 @@
 				<div class="container">
 					<div class="row">
 						<div class="col-12 text-center mb-3">
-							<a id="dlgExcelBtnPlantilla" href="@Url.Page("Asistencia", "DownloadPlantillaA")" class="btn btn-primary">
+							<a id="dlgExcelBtnPlantilla" href="@Url.Page("Asistencia", "DownloadPlantilla")" class="btn btn-primary">
 								<i class="bi bi-file-earmark-ruled"></i> @Localizer["PlantillaButtonTitle"]
 							</a>
 						</div>
@@ -242,9 +233,9 @@
 				</button>
 				@if (puedeTodo || puedeEditar)
 				{
-					<button id="dlgExcelBtnImportar" type="button" class="btn btn-primary" onclick="onImportarClick();">
-						<i class="bi bi-upload"></i> @Localizer["ImportButtonText"]
-					</button>
+				<button id="dlgExcelBtnImportar" type="button" class="btn btn-primary" onclick="onImportarClick();">
+					<i class="bi bi-upload"></i> @Localizer["ImportButtonText"]
+				</button>
 				}
 			</div>
 		</div>

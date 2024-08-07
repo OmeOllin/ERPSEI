@@ -5,7 +5,6 @@ using ERPSEI.Requests;
 using ExcelDataReader;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
@@ -14,8 +13,6 @@ using System.Net.Mime;
 using ERPSEI.Pages.Shared;
 using ERPSEI.Data.Entities.Reportes;
 using ERPSEI.Data.Managers.Reportes;
-using ERPSEI.Data.Entities.Usuarios;
-using Microsoft.AspNetCore.Identity;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
@@ -173,7 +170,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			return new JsonResult(resp);
 		}
 
-		public ActionResult OnGetDownloadPlantillaA()
+		public ActionResult OnGetDownloadPlantilla()
 		{
 			if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
 			{
@@ -184,44 +181,50 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				return new EmptyResult();
 			}
 		}
-
+		
 		public async Task<JsonResult> OnPostImportarAsistencias()
 		{
-			var resp = new ServerResponse(true, stringLocalizer["AsistenciasImportadosUnsuccessfully"]);
+			ServerResponse resp = new(true, stringLocalizer["AsistenciasImportadasUnsuccessfully"]);
 			try
 			{
-				if (Request.Form.Files.Count >= 1)
-				{
-					using var s = Request.Form.Files[0].OpenReadStream();
-					using var reader = ExcelReaderFactory.CreateReader(s);
-					var result = reader.AsDataSet(new ExcelDataSetConfiguration
+				if (PuedeTodo || PuedeEditar){
+					if (Request.Form.Files.Count >= 1)
 					{
-						FilterSheet = (tableReader, sheetIndex) => sheetIndex == 0
-					});
+						//Se procesa el archivo excel.
+						using Stream s = Request.Form.Files[0].OpenReadStream();
+						using var reader = ExcelReaderFactory.CreateReader(s);
+						DataSet result = reader.AsDataSet(new ExcelDataSetConfiguration() { FilterSheet = (tableReader, sheetIndex) => sheetIndex == 0 });
 
-					foreach (DataRow row in result.Tables[0].Rows)
-					{
-						if (result.Tables[0].Rows.IndexOf(row) == 0)
+						foreach (DataRow row in result.Tables[0].Rows)
 						{
-							resp.TieneError = false;
-							resp.Mensaje = stringLocalizer["AsistenciasImportadasSuccessfully"];
-							continue;
-						}
+							//Omite el procesamiento del row de encabezado
+							if (result.Tables[0].Rows.IndexOf(row) == 0)
+							{
+								resp.TieneError = false;
+								resp.Mensaje = stringLocalizer["AsistenciasImportadasSuccessfully"];
+								continue;
+							}
 
-						var vmsg = await CreateAsistenciaFromExcelRow(row);
+							string vmsg = await CreateAsistenciaFromExcelRow(row);
 
-						if (!string.IsNullOrEmpty(vmsg))
-						{
-							resp.TieneError = true;
-							resp.Mensaje = vmsg;
-							break;
-						}
-						else
-						{
-							resp.TieneError = false;
-							resp.Mensaje = stringLocalizer["AsistenciasImportadasSuccessfully"];
+							//Si la longitud del mensaje de respuesta es mayor o igual a uno, se considera que hubo errores.
+							if ((vmsg ?? "").Length >= 1)
+							{
+								resp.TieneError = true;
+								resp.Mensaje = vmsg;
+								break;
+							}
+							else
+							{
+								resp.TieneError = false;
+								resp.Mensaje = stringLocalizer["AsistenciasImportadasSuccessfully"];
+							}
 						}
 					}
+				}
+				else
+				{
+					resp.Mensaje = stringLocalizer["AccesoDenegado"];
 				}
 			}
 			catch (Exception ex)

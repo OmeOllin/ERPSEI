@@ -4,15 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERPSEI.Data.Managers.Reportes
 {
-    public class AsistenciaManager : IAsistenciaManager
+    public class AsistenciaManager(ApplicationDbContext db) : IAsistenciaManager
 	{
-		ApplicationDbContext db { get; set; }
-
-		public AsistenciaManager(ApplicationDbContext _db)
-		{
-			db = _db;
-		}
-
 		private async Task<int> GetNextId()
 		{
 			List<Asistencia> registros = await db.Asistencias.ToListAsync();
