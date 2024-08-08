@@ -1,4 +1,5 @@
 ﻿using ERPSEI.Data.Entities.Empleados;
+using ERPSEI.Data.Entities.Reportes;
 using ERPSEI.Data.Entities.Usuarios;
 using Microsoft.EntityFrameworkCore;
 
@@ -198,12 +199,16 @@ namespace ERPSEI.Data.Managers.Empleados
             return await _db.Empleados.Where(e => e.Deshabilitado == 0 && e.CURP == curp).FirstOrDefaultAsync();
         }
 
-        public async Task<Empleado?> GetByNameAsync(string name)
+        /*public async Task<Empleado?> GetByNameAsync(string name)
         {
             return await _db.Empleados.Where(e => e.Deshabilitado == 0 && e.NombreCompleto.Equals(name, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefaultAsync();
-        }
+        }*/
+		public async Task<Empleado?> GetByNameAsync(string name)
+		{
+			return await _db.Empleados.Where(a => a.NombreCompleto.ToLower() == name.ToLower()).FirstOrDefaultAsync();
+		}
 
-        public async Task<Empleado?> GetByEmailAsync(string email)
+		public async Task<Empleado?> GetByEmailAsync(string email)
         {
             return await _db.Empleados.Where(e => e.Deshabilitado == 0 && e.Email.Equals(email, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefaultAsync();
         }

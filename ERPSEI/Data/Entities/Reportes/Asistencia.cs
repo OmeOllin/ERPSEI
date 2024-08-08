@@ -12,12 +12,12 @@ namespace ERPSEI.Data.Entities.Reportes
 		public int? HorarioId { get; set; }
 		public Empleado? Empleado { get; set; }
         public int? EmpleadoId { get; set; }
-        public DateOnly Fecha { get; set; }
-        public string Dia { get; set; } = string.Empty;
+        public DateOnly? Fecha { get; set; }
+        public string? Dia { get; set; }
         public TimeSpan Entrada { get; set; }
-        public string ResultadoE { get; set; } = string.Empty;
-        public TimeSpan Salida { get; set; }
-        public string ResultadoS { get; set; } = string.Empty;
+        public string? ResultadoE { get; set; }
+        public TimeSpan? Salida { get; set; }
+        public string? ResultadoS { get; set; }
 
 	}
 }

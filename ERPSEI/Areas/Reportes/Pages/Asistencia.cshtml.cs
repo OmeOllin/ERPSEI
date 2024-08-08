@@ -98,69 +98,31 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		{
 			ServerResponse resp = new ServerResponse(true, stringLocalizer["AsistenciasFiltradosUnsuccessfully"]);
 
-			if (inputFiltro == null)
-			{
-				resp.Mensaje = stringLocalizer["Favor de seleccionar rango de fechas"];
-				return new JsonResult(resp);
-			}
-
 			try
 			{
-				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
+				// Obtener todas las asistencias
+				List<Asistencia> asistencias = await asistenciaManager.GetAllAsync();
+				List<string> jsonAsistencias = new List<string>();
+				foreach (var asis in asistencias)
 				{
-					// Obtener todas las asistencias
-					List<Asistencia> asistencias = await asistenciaManager.GetAllAsync();
-
-					// Aplicar filtros secuencialmente
-					if (!string.IsNullOrEmpty(inputFiltro.NombreEmpleado))
-					{
-						asistencias = asistencias.Where(a => a.Empleado != null && a.Empleado.NombreCompleto.Contains(inputFiltro.NombreEmpleado, StringComparison.OrdinalIgnoreCase)).ToList();
-					}
-
-					if (inputFiltro.FechaIngresoInicio.HasValue)
-					{
-						DateOnly fechaInicio = DateOnly.FromDateTime(inputFiltro.FechaIngresoInicio.Value);
-						asistencias = asistencias.Where(a => a.Fecha >= fechaInicio).ToList();
-					}
-
-					if (inputFiltro.FechaIngresoFin.HasValue)
-					{
-						DateOnly fechaFin = DateOnly.FromDateTime(inputFiltro.FechaIngresoFin.Value);
-						asistencias = asistencias.Where(a => a.Fecha <= fechaFin).ToList();
-					}
-
-					// Verificar si se encontraron resultados
-					if (asistencias.Count == 0)
-					{
-						resp.Mensaje = stringLocalizer["Registro(s) no encontrado(s)"];
-						return new JsonResult(resp);
-					}
-
-					// Construir la respuesta JSON
-					List<string> jsonAsistencias = new List<string>();
-					foreach (var asis in asistencias)
-					{
-						jsonAsistencias.Add("{" +
-						$"\"Horario\": \"{asis.Horario?.NombreHorario}\", " +
-						$"\"NombreEmpleado\": \"{asis.Empleado?.NombreCompleto}\", " +
-						$"\"Fecha\": \"{asis.Fecha:yyyy-MM-dd}\", " +
-						$"\"Dia\": \"{asis.Dia}\", " +
-						$"\"Entrada\": \"{asis.Entrada}\", " +
-						$"\"ResultadoE\": \"{asis.ResultadoE}\", " +
-						$"\"Salida\": \"{asis.Salida}\", " +
-						$"\"ResultadoS\": \"{asis.ResultadoS}\" " +
-						"}");
-					}
-
-					string jsonResponse = $"[{string.Join(",", jsonAsistencias)}]";
-					resp.Datos = jsonResponse;
-					resp.TieneError = false;
-					resp.Mensaje = stringLocalizer["AsistenciasFiltradosSuccessfully"];
+					jsonAsistencias.Add("{" +
+					$"\"Horario\": \"{asis.Horario?.NombreHorario}\", " +
+					$"\"NombreEmpleado\": \"{asis.Empleado?.NombreCompleto}\", " +
+					$"\"Fecha\": \"{asis.Fecha}\", " +
+					$"\"Dia\": \"{asis.Dia}\", " +
+					$"\"Entrada\": \"{asis.Entrada}\", " +
+					$"\"ResultadoE\": \"{asis.ResultadoE}\", " +
+					$"\"Salida\": \"{asis.Salida}\", " +
+					$"\"ResultadoS\": \"{asis.ResultadoS}\" " +
+					"}");
 				}
-				else 
-				{
-					resp.Mensaje = stringLocalizer["AccesoDenegado"];
-				}
+
+				string jsonResponse = $"[{string.Join(",", jsonAsistencias)}]";
+				resp.Datos = jsonResponse;
+				resp.TieneError = false;
+				resp.Mensaje = stringLocalizer["AsistenciasFiltradosSuccessfully"];
+				resp.TieneError = false;
+				resp.Mensaje = stringLocalizer["EmpleadosFiltradosSuccessfully"];
 			}
 			catch (Exception ex)
 			{
@@ -169,6 +131,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resp);
 		}
+
 
 		public ActionResult OnGetDownloadPlantilla()
 		{
@@ -242,24 +205,57 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			Horarios? horario = await horariosManager.GetByNameAsync(row[0].ToString()?.Trim() ?? string.Empty);
 			Empleado? empleado = await empleadoManager.GetByNameAsync(row[1].ToString()?.Trim() ?? string.Empty);
 
-			DateOnly fecha;
-			TimeSpan horaE;
-			TimeSpan horaS;
+			//DateOnly.TryParse(row[2].ToString(), out DateOnly fecha);
+			DateOnly fechaOnly;
+			TimeSpan.TryParse(row[4].ToString()?.Trim(), out TimeSpan horaE);
+			//TimeSpan.TryParse(row[6].ToString()?.Trim(), out TimeSpan horaS);
 
-			DateOnly.TryParse(row[2].ToString()?.Trim(), out fecha);
-			TimeSpan.TryParse(row[4].ToString()?.Trim(), out horaE);
-			TimeSpan.TryParse(row[6].ToString()?.Trim(), out horaS);
+			// Obtener y convertir la fecha
+			string fechaStr = row[2].ToString();
+			if (DateTime.TryParse(fechaStr, out DateTime fechaDateTime))
+			{
+				fechaOnly = DateOnly.FromDateTime(fechaDateTime);
+			}
+			else
+			{
+				fechaOnly = default; // O algún valor predeterminado
+			}
+
+			// Inicializar el resultado por defecto
+			string resultadoE = row[5].ToString()?.Trim() ?? string.Empty;
+
+			// Verificar si la hora está dentro del rango permitido
+			if (horario != null)
+			{
+				TimeSpan entrada = horario.Entrada;
+				TimeSpan toleranciaEntrada = horario.ToleranciaEntrada;
+				TimeSpan toleranciaFalta = horario.ToleranciaFalta;
+
+				// Verificar si la hora de entrada es mayor que la tolerancia
+				if (horaE > toleranciaEntrada)
+				{
+					resultadoE = "RETARDO";
+				}
+				if (horaE < entrada && horaE <= toleranciaEntrada)
+				{
+					resultadoE = "NORMAL";
+				}
+				if (horaE > toleranciaFalta)
+				{
+					resultadoE = "OMISIÓN/FALTA";
+				}
+			}
 
 			Asistencia asistencia = new Asistencia()
 			{
 				HorarioId = horario?.Id,
 				EmpleadoId = empleado?.Id,
-				Fecha = fecha,
-				Dia = row[3].ToString()?.Trim() ?? string.Empty,
+				Fecha = fechaOnly,
+				Dia = row[5].ToString()?.Trim() ?? string.Empty,
 				Entrada = horaE,
-				ResultadoE = row[5].ToString()?.Trim() ?? string.Empty,
-				Salida = horaS,
-				ResultadoS = row[7].ToString()?.Trim() ?? string.Empty,
+				ResultadoE = resultadoE,
+				Salida = horario?.Salida,
+				ResultadoS = resultadoE,
 			};
 
 			await asistenciaManager.CreateAsync(asistencia);

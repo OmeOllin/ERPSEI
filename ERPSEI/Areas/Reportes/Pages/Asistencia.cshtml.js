@@ -280,7 +280,7 @@ function onExcelSelectorChanged(input) {
     }
 }
 // Función para realizar la llamada AJAX
-function doAjax(url, data, successCallback, errorCallback, options) {
+/*function doAjax(url, data, successCallback, errorCallback, options) {
     $.ajax({
         type: "POST",
         url: url,
@@ -295,4 +295,4 @@ function doAjax(url, data, successCallback, errorCallback, options) {
             if (errorCallback) errorCallback(error);
         }
     });
-}
+}*/
