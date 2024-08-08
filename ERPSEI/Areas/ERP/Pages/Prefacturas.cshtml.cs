@@ -333,11 +333,11 @@ namespace ERPSEI.Areas.ERP.Pages
 						$"\"exportacionId\": {p.ExportacionId}, " +
 						$"\"numeroOperacion\": \"{p.NumeroOperacion}\", " +
 						$"\"usuarioCreadorId\": \"{p.UsuarioCreadorId}\", " +
-						$"\"usuarioFinalizadorId\": \"{p.UsuarioTimbradorId}\", " +
+						$"\"usuarioTimbradorId\": \"{p.UsuarioTimbradorId}\", " +
 						$"\"requiereAutorizacion\": \"{p.RequiereAutorizacion}\", " +
 						$"\"estatus\": \"{p.Estatus?.Descripcion}\", " +
 						$"\"estatusId\": \"{p.Estatus?.Id}\", " +
-						$"\"autorizaciones\": [{string.Join(",", listaAuth)}] " +
+						$"\"autorizaciones\": [{string.Join(",", listaAuth)}], " +
 						$"\"conceptos\": [] " +
 					"}"
 				);

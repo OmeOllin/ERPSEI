@@ -138,8 +138,9 @@ function operateFormatter(value, row, index) {
     //Icono PDF
     if (puedeTodo || puedeConsultar || puedeEditar || puedeEliminar) { icons.push(`<li><a class="dropdown-item pdf" href="#" title="${btnPDFTitle}"><i class="bi bi-file-pdf"></i> ${btnPDFTitle}</a></li>`); }
     //Icono Autorizar
-    if ((puedeTodo || puedeAutorizar) && row.estatusId == ESTATUS_SOLICITADA) {
-        //Si el usuario tiene permisos para autorizar y la prefactura está en estatus solicitada, busca al usuario por Id en la lista de autorizaciones del elemento.
+    if ((puedeTodo || puedeAutorizar) && row.estatusId == ESTATUS_SOLICITADA && row.requiereAutorizacion == "True") {
+        //Si el usuario tiene permisos para autorizar y además la prefactura está en estatus solicitada y además requiere autorización... 
+        //Busca al usuario por Id en la lista de autorizaciones del elemento.
         let foundUserAuth = row.autorizaciones.find(a => a.userId == window.userId);
 
         if (foundUserAuth == undefined) {
@@ -147,8 +148,12 @@ function operateFormatter(value, row, index) {
             foundUserAuth = window.authUsers.find(u => u == window.userId);
 
             //Si se encontró al usuario en la lista, entonces agrega icono para autorizar.
-            if (foundUserAuth != undefined) { icons.push(`<li><a class=7"dropdown-item pdf" href="#" title="${btnAutorizarTitle}"><i class="bi bi-patch-check"></i> ${btnAutorizarTitle}</a></li>`); }
+            if (foundUserAuth != undefined) { icons.push(`<li><a class="dropdown-item auth" href="#" title="${btnAutorizarTitle}"><i class="bi bi-patch-check"></i> ${btnAutorizarTitle}</a></li>`); }
         }
+    }
+    //Icono Timbrar
+    if ((puedeTodo || puedeEditar) && (row.estatusId == ESTATUS_AUTORIZADA || row.estatusId == ESTATUS_SOLICITADA)) {
+        icons.push(`<li><a class="dropdown-item stamp" href="#" title="${btnTimbrarTitle}"><i class="bi bi-postage"></i> ${btnTimbrarTitle}</a></li>`);
     }
 
     if (icons.length >= 1) {
@@ -172,6 +177,12 @@ window.operateEvents = {
     },
     'click .pdf': function (e, value, row, index) {
         showPDF(row.id);
+    },
+    'click .auth': function (e, value, row, index) {
+        authPrefactura(row.id);
+    },
+    'click .stamp': function (e, value, row, index) {
+        stampPrefactura(row.id);
     }
 }
 //Función para agregar cfdis
@@ -406,6 +417,64 @@ function onBuscarClick() {
 ////////////////////////////////
 //Funcionalidad Diálogo CFDI
 ////////////////////////////////
+//Función para autorizar una prefactura
+function authPrefactura(idPrefactura) {
+    let oParams = { id: idPrefactura }
+
+    doAjax(
+        "/ERP/Prefacturas/Autorizar",
+        oParams,
+        function (resp) {
+            if (resp.tieneError) {
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    let summary = ``;
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                }
+                showError(dlgTitle.innerHTML, resp.mensaje);
+                return;
+            }
+
+            onBuscarClick();
+
+            showSuccess(dlgTitle.innerHTML, resp.mensaje);
+        }, function (error) {
+            showError("Error", error);
+        },
+        postOptions
+    );
+}
+//Función para timbrar una prefactura
+function stampPrefactura(idPrefactura) {
+    let oParams = { id: idPrefactura }
+
+    doAjax(
+        "/ERP/Prefacturas/Timbrar",
+        oParams,
+        function (resp) {
+            if (resp.tieneError) {
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    let summary = ``;
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                }
+                showError(dlgTitle.innerHTML, resp.mensaje);
+                return;
+            }
+
+            onBuscarClick();
+
+            showSuccess(dlgTitle.innerHTML, resp.mensaje);
+        }, function (error) {
+            showError("Error", error);
+        },
+        postOptions
+    );
+}
 //Función para mostrar una prefactura como PDF
 function showPDF(idPrefactura) {
     window.open(`/FileViewer?id=${idPrefactura}&module=prefacturas`, "_blank");
