@@ -118,6 +118,7 @@ function getIdSelections() {
         return row.id
     })
 }
+
 //Función para procesar la respuesta del servidor al consultar datos
 function responseHandler(res) {
     if (typeof res == "string" && res.length >= 1) {
@@ -129,6 +130,7 @@ function responseHandler(res) {
 
     return res
 }
+
 //Función para dar formato a los iconos de operación de los registros
 function operateFormatter(value, row, index) {
     let icons = [];
@@ -169,6 +171,7 @@ function operateFormatter(value, row, index) {
         return '';
     }
 }
+
 //Eventos de los iconos de operación
 window.operateEvents = {
     'click .see': function (e, value, row, index) {
@@ -176,21 +179,23 @@ window.operateEvents = {
         dlgCFDIModal.toggle();
     },
     'click .pdf': function (e, value, row, index) {
-        showPDF(row.id);
+        onShowPDF(row.id);
     },
     'click .auth': function (e, value, row, index) {
-        authPrefactura(row.id);
+        onAuthPrefactura(row.id);
     },
     'click .stamp': function (e, value, row, index) {
-        stampPrefactura(row.id);
+        onStampPrefactura(row.id);
     }
 }
+
 //Función para agregar cfdis
 function onAgregarClick() {
     let oCFDINuevo = createNewCFDI();
     initCFDIDialog(NUEVO, oCFDINuevo);
     dlgCFDIModal.toggle();
 }
+
 //Función para exportar cfdis
 function onExportarCFDIClick(ids = null) {
     let oParams = {};
@@ -224,6 +229,7 @@ function onExportarCFDIClick(ids = null) {
         postOptions
     );
 }
+
 //Función para inicializar la tabla
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
@@ -320,6 +326,7 @@ function initTable() {
     });
     if (buttonExport) { buttonExport.click(function () { onExportarCFDIClick(selections); }); }
 }
+
 //Función para capturar el click de los botones para dar de baja cfdis. Ejecuta una llamada ajax para dar de baja cfdis.
 function onDeleteCFDIClick(ids = null) {
     askConfirmation(dlgDeleteTitle, dlgDeleteQuestion, function () {
@@ -358,6 +365,71 @@ function onDeleteCFDIClick(ids = null) {
         );
 
     });
+}
+
+//Función para autorizar una prefactura
+function onAuthPrefactura(idPrefactura) {
+    let oParams = { id: idPrefactura }
+
+    doAjax(
+        "/ERP/Prefacturas/Autorizar",
+        oParams,
+        function (resp) {
+            if (resp.tieneError) {
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    let summary = ``;
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                }
+                showError(dlgTitle.innerHTML, resp.mensaje);
+                return;
+            }
+
+            onBuscarClick();
+
+            showSuccess(dlgTitle.innerHTML, resp.mensaje);
+        }, function (error) {
+            showError("Error", error);
+        },
+        postOptions
+    );
+}
+
+//Función para timbrar una prefactura
+function onStampPrefactura(idPrefactura) {
+    let oParams = { id: idPrefactura }
+
+    doAjax(
+        "/ERP/Prefacturas/Timbrar",
+        oParams,
+        function (resp) {
+            if (resp.tieneError) {
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    let summary = ``;
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                }
+                showError(dlgTitle.innerHTML, resp.mensaje);
+                return;
+            }
+
+            onBuscarClick();
+
+            showSuccess(dlgTitle.innerHTML, resp.mensaje);
+        }, function (error) {
+            showError("Error", error);
+        },
+        postOptions
+    );
+}
+
+//Función para mostrar una prefactura como PDF
+function onShowPDF(idPrefactura) {
+    window.open(`/FileViewer?id=${idPrefactura}&module=prefacturas`, "_blank");
 }
 ////////////////////////////////
 
@@ -417,69 +489,6 @@ function onBuscarClick() {
 ////////////////////////////////
 //Funcionalidad Diálogo CFDI
 ////////////////////////////////
-//Función para autorizar una prefactura
-function authPrefactura(idPrefactura) {
-    let oParams = { id: idPrefactura }
-
-    doAjax(
-        "/ERP/Prefacturas/Autorizar",
-        oParams,
-        function (resp) {
-            if (resp.tieneError) {
-                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
-                    let summary = ``;
-                    resp.errores.forEach(function (error) {
-                        summary += `<li>${error}</li>`;
-                    });
-                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
-                }
-                showError(dlgTitle.innerHTML, resp.mensaje);
-                return;
-            }
-
-            onBuscarClick();
-
-            showSuccess(dlgTitle.innerHTML, resp.mensaje);
-        }, function (error) {
-            showError("Error", error);
-        },
-        postOptions
-    );
-}
-//Función para timbrar una prefactura
-function stampPrefactura(idPrefactura) {
-    let oParams = { id: idPrefactura }
-
-    doAjax(
-        "/ERP/Prefacturas/Timbrar",
-        oParams,
-        function (resp) {
-            if (resp.tieneError) {
-                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
-                    let summary = ``;
-                    resp.errores.forEach(function (error) {
-                        summary += `<li>${error}</li>`;
-                    });
-                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
-                }
-                showError(dlgTitle.innerHTML, resp.mensaje);
-                return;
-            }
-
-            onBuscarClick();
-
-            showSuccess(dlgTitle.innerHTML, resp.mensaje);
-        }, function (error) {
-            showError("Error", error);
-        },
-        postOptions
-    );
-}
-//Función para mostrar una prefactura como PDF
-function showPDF(idPrefactura) {
-    window.open(`/FileViewer?id=${idPrefactura}&module=prefacturas`, "_blank");
-}
-
 //Función para crear un nuevo objeto CFDI
 function createNewCFDI() {
     let curDate = new Date();
