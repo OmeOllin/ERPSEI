@@ -478,8 +478,6 @@ namespace ERPSEI.Areas.ERP.Pages
 
 				int idPrefactura = 0;
 				int idEstatusSolicitada = 1;
-				int idEstatusAutorizada = 2;
-				int idEstatusFinalizada = 3;
 
 				//Se busca prefactura por id
 				Prefactura? prefactura = await prefacturaManager.GetByIdAsync(prefacturaModel.Id);
