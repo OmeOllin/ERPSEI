@@ -132,6 +132,12 @@
   <data name="ErrorPrefacturaExistenteB" xml:space="preserve">
     <value>Please verify</value>
   </data>
+  <data name="PrefacturaAuthorizedSuccessfully" xml:space="preserve">
+    <value>Prebill authorized successfully!</value>
+  </data>
+  <data name="PrefacturaAuthorizedUnsuccessfully" xml:space="preserve">
+    <value>Error authorizing prebill</value>
+  </data>
   <data name="PrefacturaSavedSuccessfully" xml:space="preserve">
     <value>Prebill saved successfully!</value>
   </data>
@@ -143,5 +149,11 @@
   </data>
   <data name="PrefacturasExportedUnsuccessfully" xml:space="preserve">
     <value>Error exporting records</value>
+  </data>
+  <data name="PrefacturaStampedSuccessfully" xml:space="preserve">
+    <value>Prebill stamped successfully!</value>
+  </data>
+  <data name="PrefacturaStampedUnsuccessfully" xml:space="preserve">
+    <value>Error stamping prebill</value>
   </data>
 </root>
