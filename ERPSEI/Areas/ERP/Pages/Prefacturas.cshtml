@@ -49,6 +49,13 @@
 	bool puedeEditar = User.Claims.Where(c => c.Type.Equals("PuedeEditar", StringComparison.OrdinalIgnoreCase)).FirstOrDefault()?.Value == "1";
 	bool puedeEliminar = User.Claims.Where(c => c.Type.Equals("PuedeEliminar", StringComparison.OrdinalIgnoreCase)).FirstOrDefault()?.Value == "1";
 	bool puedeAutorizar = User.Claims.Where(c => c.Type.Equals("PuedeAutorizar", StringComparison.OrdinalIgnoreCase)).FirstOrDefault()?.Value == "1";
+
+	AppUser? user = await UsuariosManager.GetUserAsync(User);
+	string userId = user?.Id ?? string.Empty;
+
+	IConfigurationSection autorizadoresSection = ERPSEI.ServicesConfiguration.Configuration.GetSection("AutorizadoresPrefacturas");
+
+	string authUsers = string.Join(",", (from e in autorizadoresSection.AsEnumerable() select e.Value));
 }
 <h3 class="title mb-3">@ViewData["Title"]</h3>
 
@@ -908,6 +915,7 @@
 		var btnEditarTitle = '@Localizer["EditButtonTitle"]';
 		var btnPDFTitle = '@Localizer["PDFButtonTitle"]';
 		var btnEliminarTitle = '@Localizer["DeleteButton"]';
+		var btnAutorizarTitle = '@Localizer["AuthorizeButton"]';
 
 		var dlgEditarTitle = '@Localizer["EditDialogTitle"]';
 		var dlgVerTitle = '@Localizer["SeeDialogTitle"]';
@@ -926,6 +934,7 @@
 		var colFormaPagoHeader = '@Localizer["ColFormaPagoHeader"]';
 		var colMetodoPagoHeader = '@Localizer["ColMetodoPagoHeader"]';
 		var colUsoCFDIHeader = '@Localizer["ColUsoCFDIHeader"]';
+		var colEstatusHeader = '@Localizer["ColEstatusHeader"]';
 		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
 
 		var colCantidadHeader = '@Localizer["ColCantidadHeader"]';
@@ -944,6 +953,9 @@
 		var puedeEditar = '@puedeEditar' == 'True';
 		var puedeEliminar = '@puedeEliminar' == 'True';
 		var puedeAutorizar = '@puedeAutorizar' == 'True';
+		var userId = '@userId';
+		var authUsers = '@authUsers';
+		authUsers = authUsers.split(",");
 	</script>
 
 	<partial name="_ValidationScriptsPartial" />

@@ -5,6 +5,9 @@ var selections = [];
 var dlgProdServ = null;
 var dlgCFDI = null;
 var dlgCFDIModal = null;
+const ESTATUS_SOLICITADA = 1;
+const ESTATUS_AUTORIZADA = 2;
+const ESTATUS_FINALIZADA = 3;
 
 var numFormatter = null;
 var dialogMode = null;
@@ -134,6 +137,19 @@ function operateFormatter(value, row, index) {
     if (puedeTodo || puedeConsultar || puedeEditar || puedeEliminar) { icons.push(`<li><a class="dropdown-item see" href="#" title="${btnVerTitle}"><i class="bi bi-search"></i> ${btnVerTitle}</a></li>`); }
     //Icono PDF
     if (puedeTodo || puedeConsultar || puedeEditar || puedeEliminar) { icons.push(`<li><a class="dropdown-item pdf" href="#" title="${btnPDFTitle}"><i class="bi bi-file-pdf"></i> ${btnPDFTitle}</a></li>`); }
+    //Icono Autorizar
+    if ((puedeTodo || puedeAutorizar) && row.estatusId == ESTATUS_SOLICITADA) {
+        //Si el usuario tiene permisos para autorizar y la prefactura está en estatus solicitada, busca al usuario por Id en la lista de autorizaciones del elemento.
+        let foundUserAuth = row.autorizaciones.find(a => a.userId == window.userId);
+
+        if (foundUserAuth == undefined) {
+            //Si no se encontró la autorización del usuario en la lista, entonces todavía no ha autorizado el elemento, por lo tanto, busca si el usuario puede autorizar prefacturas.
+            foundUserAuth = window.authUsers.find(u => u == window.userId);
+
+            //Si se encontró al usuario en la lista, entonces agrega icono para autorizar.
+            if (foundUserAuth != undefined) { icons.push(`<li><a class=7"dropdown-item pdf" href="#" title="${btnAutorizarTitle}"><i class="bi bi-patch-check"></i> ${btnAutorizarTitle}</a></li>`); }
+        }
+    }
 
     if (icons.length >= 1) {
 
@@ -262,6 +278,13 @@ function initTable() {
             {
                 title: colUsoCFDIHeader,
                 field: "usoCFDI",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colEstatusHeader,
+                field: "estatus",
                 align: "center",
                 valign: "middle",
                 sortable: true
@@ -630,6 +653,12 @@ function onGuardarClick() {
         
     summaryContainer.innerHTML = "";
 
+    let aConceptos = tableProdServ.bootstrapTable("getData");
+
+    let total = 0.0,
+        limite = 2000000.00; //Dos millones
+
+    aConceptos.forEach(function (c) { total += parseFloat(c.totalCalculado); });
 
     let oParams = {
         id: idField.value == nuevoRegistro ? 0 : idField.value,
@@ -646,7 +675,8 @@ function onGuardarClick() {
         usoCFDIId: usoField.value,
         exportacionId: exportacionField.value,
         numeroOperacion: operacionField.value,
-        conceptos: tableProdServ.bootstrapTable("getData")
+        requiereAutorizacion: total >= limite,
+        conceptos: aConceptos
     }
 
     doAjax(

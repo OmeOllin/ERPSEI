@@ -126,6 +126,9 @@
   <data name="AlmenosUnProductoServicioNecesario" xml:space="preserve">
     <value>Se requiere al menos un producto o servicio agregado en los conceptos para facturar</value>
   </data>
+  <data name="AuthorizeButton" xml:space="preserve">
+    <value>Autorizar</value>
+  </data>
   <data name="CancelButtonTitle" xml:space="preserve">
     <value>Cancelar</value>
   </data>
@@ -146,6 +149,9 @@
   </data>
   <data name="ColDescuentoHeader" xml:space="preserve">
     <value>Descuento</value>
+  </data>
+  <data name="ColEstatusHeader" xml:space="preserve">
+    <value>Estatus</value>
   </data>
   <data name="ColFechaHeader" xml:space="preserve">
     <value>Fecha</value>

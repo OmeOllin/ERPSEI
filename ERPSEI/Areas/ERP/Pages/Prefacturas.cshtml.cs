@@ -194,6 +194,8 @@ namespace ERPSEI.Areas.ERP.Pages
 			[RegularExpression(RegularExpressions.NumericFirstDigitNonZero, ErrorMessage = "Numeric")]
 			public int? NumeroOperacion { get; set; }
 
+			public bool RequiereAutorizacion { get; set; }
+
 			public ConceptoModel?[] Conceptos { get; set; } = [];
 		}
 
@@ -303,6 +305,8 @@ namespace ERPSEI.Areas.ERP.Pages
 
 				DateTime? fecha = p.Fecha == DateTime.MinValue ? null : p.Fecha;
 
+				List<string> listaAuth = GetListJsonAutorizaciones(p.Autorizaciones);
+
 				jsonPrefacturas.Add(
 					"{" +
 						$"\"id\": {p.Id}," +
@@ -329,8 +333,11 @@ namespace ERPSEI.Areas.ERP.Pages
 						$"\"exportacionId\": {p.ExportacionId}, " +
 						$"\"numeroOperacion\": \"{p.NumeroOperacion}\", " +
 						$"\"usuarioCreadorId\": \"{p.UsuarioCreadorId}\", " +
-						$"\"usuarioAutorizadorId\": \"{p.UsuarioAutorizadorId}\", " +
-						$"\"usuarioFinalizadorId\": \"{p.UsuarioFinalizadorId}\", " +
+						$"\"usuarioFinalizadorId\": \"{p.UsuarioTimbradorId}\", " +
+						$"\"requiereAutorizacion\": \"{p.RequiereAutorizacion}\", " +
+						$"\"estatus\": \"{p.Estatus?.Descripcion}\", " +
+						$"\"estatusId\": \"{p.Estatus?.Id}\", " +
+						$"\"autorizaciones\": [{string.Join(",", listaAuth)}] " +
 						$"\"conceptos\": [] " +
 					"}"
 				);
@@ -339,6 +346,21 @@ namespace ERPSEI.Areas.ERP.Pages
 			jsonResponse = $"[{string.Join(",", jsonPrefacturas)}]";
 
 			return jsonResponse;
+		}
+		private static List<string> GetListJsonAutorizaciones(ICollection<AutorizacionesPrefactura>? autorizacionesPrefacturas)
+		{
+			List<string> jsonAuth = [];
+			if (autorizacionesPrefacturas != null)
+			{
+				foreach(AutorizacionesPrefactura aut in autorizacionesPrefacturas)
+				{
+					jsonAuth.Add($"{{" +
+									$"\"id\": {aut.Id}, " +
+									$"\"usuarioId\": {aut.UsuarioId} " +
+								 $"}}");
+				}
+			}
+			return jsonAuth;
 		}
 		private static List<string> GetListJsonConceptos(ICollection<Concepto>? conceptos)
 		{
@@ -455,7 +477,9 @@ namespace ERPSEI.Areas.ERP.Pages
 				await db.Database.BeginTransactionAsync();
 
 				int idPrefactura = 0;
-				int idEstatusCreada = 1;
+				int idEstatusSolicitada = 1;
+				int idEstatusAutorizada = 2;
+				int idEstatusFinalizada = 3;
 
 				//Se busca prefactura por id
 				Prefactura? prefactura = await prefacturaManager.GetByIdAsync(prefacturaModel.Id);
@@ -478,6 +502,7 @@ namespace ERPSEI.Areas.ERP.Pages
 				prefactura.NumeroOperacion = prefacturaModel.NumeroOperacion;
 				prefactura.TipoCambio = prefacturaModel.TipoCambio;
 				prefactura.TipoComprobanteId = prefacturaModel.TipoComprobanteId;
+				prefactura.RequiereAutorizacion = prefacturaModel.RequiereAutorizacion;
 
 				if (idPrefactura >= 1)
 				{
@@ -496,8 +521,8 @@ namespace ERPSEI.Areas.ERP.Pages
 
 					//Se establece al usuario que creó la prefactura.
 					prefactura.UsuarioCreadorId = u?.Id;
-					//Se establece el estatus de la prefactura en Creada
-					prefactura.EstatusId = idEstatusCreada;
+					//Se establece el estatus de la prefactura en Solicitada
+					prefactura.EstatusId = idEstatusSolicitada;
 
 					//Crea al empleado y obtiene su id.
 					idPrefactura = await prefacturaManager.CreateAsync(prefactura);
@@ -1016,26 +1041,6 @@ namespace ERPSEI.Areas.ERP.Pages
 			}
 			return total;
 		}
-		//private decimal getTotalIEPS(ICollection<Concepto> conceptos, List<TasaOCuota> impuestos)
-		//{
-		//	decimal total = 0;
-		//	foreach (Concepto c in conceptos)
-		//	{
-		//		total += GetIEPSConcepto(c, impuestos);
-		//	}
-
-		//	return total;
-		//}
-		//private decimal getTotalIVA(ICollection<Concepto> conceptos, List<TasaOCuota> impuestos)
-		//{
-		//	decimal total = 0;
-		//	foreach (Concepto c in conceptos)
-		//	{
-		//		total += GetIVAConcepto(c, impuestos);
-		//	}
-
-		//	return total;
-		//}
 
 		public ActionResult OnGetDownloadExcel()
 		{

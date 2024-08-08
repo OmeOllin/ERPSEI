@@ -33,6 +33,8 @@ namespace ERPSEI
         public static string MasterPassword { get; set; } = string.Empty;
         public static AppUser MasterUser { get; } = new AppUser() { EmailConfirmed = true, IsPreregisterAuthorized = true, PasswordResetNeeded = false, IsMaster = true };
 
+        public static IConfiguration Configuration { get; set; }
+
         public static void ConfigureEmail(WebApplicationBuilder _builder)
         {
             //Obtiene la configuración del enviador de correos.

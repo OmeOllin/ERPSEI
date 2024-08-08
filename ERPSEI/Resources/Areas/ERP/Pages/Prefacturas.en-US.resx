@@ -126,6 +126,9 @@
   <data name="AlmenosUnProductoServicioNecesario" xml:space="preserve">
     <value>At least one product or service added to the items is required to bill</value>
   </data>
+  <data name="AuthorizeButton" xml:space="preserve">
+    <value>Authorize</value>
+  </data>
   <data name="CancelButtonTitle" xml:space="preserve">
     <value>Cancel</value>
   </data>
@@ -146,6 +149,9 @@
   </data>
   <data name="ColDescuentoHeader" xml:space="preserve">
     <value>Discount</value>
+  </data>
+  <data name="ColEstatusHeader" xml:space="preserve">
+    <value>Status</value>
   </data>
   <data name="ColFechaHeader" xml:space="preserve">
     <value>Date</value>
