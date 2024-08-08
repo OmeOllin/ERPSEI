@@ -9,6 +9,7 @@ using ERPSEI.Data.Managers.Empleados;
 using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Data.Managers.Reportes;
 using ERPSEI.Data.Managers.SAT;
+using ERPSEI.Data.Managers.SAT.Catalogos;
 using ERPSEI.Data.Managers.Usuarios;
 using ERPSEI.Email;
 using ERPSEI.Resources;
@@ -21,7 +22,7 @@ using System.Reflection;
 
 namespace ERPSEI
 {
-	public static class ServicesConfiguration
+    public static class ServicesConfiguration
     {
         public const string RolMaster = "Master";
         public const string RolAdministrador = "Administrador";
@@ -78,6 +79,7 @@ namespace ERPSEI
         private static void ConfigureDIFacturacion(WebApplicationBuilder _builder)
         {
             //Catálogos SAT
+            _builder.Services.AddScoped<IAutorizacionesPrefactura, AutorizacionesPrefacturaManager>();
 			_builder.Services.AddScoped<IExportacionManager, ExportacionManager>();
 			_builder.Services.AddScoped<IFormaPagoManager, FormaPagoManager>();
 			_builder.Services.AddScoped<IImpuestoManager, ImpuestoManager>();

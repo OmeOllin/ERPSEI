@@ -6,6 +6,7 @@ using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Data.Managers.SAT;
+using ERPSEI.Data.Managers.SAT.Catalogos;
 using ERPSEI.Pages.Shared;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NPOI.HSSF.UserModel;
+using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -21,9 +23,10 @@ using System.Net.Mime;
 
 namespace ERPSEI.Areas.ERP.Pages
 {
-	[Authorize(Policy = "AccessPolicy")]
+    [Authorize(Policy = "AccessPolicy")]
 	public class PrefacturasModel(
 			ApplicationDbContext db,
+			IAutorizacionesPrefactura autorizacionesPrefacturaManager,
 			UserManager<AppUser> userManager,
 			IRWCatalogoManager<Perfil> perfilManager,
 			IUnidadMedidaManager unidadMedidaManager,
@@ -1050,6 +1053,95 @@ namespace ERPSEI.Areas.ERP.Pages
 			{
 				return new EmptyResult();
 			}
+		}
+
+		public async Task<JsonResult> OnPostAutorizar(int idPrefactura)
+		{
+			ServerResponse resp = new(true, stringLocalizer["PrefacturaAuthorizedUnsuccessfully"]);
+
+			try
+			{
+				if (PuedeTodo || PuedeAutorizar)
+				{
+					//Si el usuario tiene permisos de autorización...
+
+					//Obtiene los datos de la prefactura
+					Prefactura? p = await prefacturaManager.GetByIdAsync(idPrefactura);
+
+
+					int idEstatusSolicitada = 1;
+					if(p != null && p.EstatusId == idEstatusSolicitada && p.RequiereAutorizacion)
+					{
+						//Si la prefactura existe y además el estatus de la prefactura es "Solicitada" y además requiere autorización...
+
+						//Obtiene la información del usuario logueado.
+						AppUser? user = await userManager.GetUserAsync(User);
+
+						//Verifica si el usuario ya autorizó esta prefactura.
+						bool foundUser = p.Autorizaciones?.Any(a => a.UsuarioId == user?.Id) ?? false;
+
+						if (!foundUser) {
+							//Si el usuario no ha autorizado...
+
+							//Verifica si el usuario está permitido para autorizar prefacturas
+							IConfigurationSection autorizadoresSection = ERPSEI.ServicesConfiguration.Configuration.GetSection("AutorizadoresPrefacturas");
+							foundUser = autorizadoresSection.AsEnumerable().Any(a => a.Value == user?.Id);
+
+							if (foundUser)
+							{
+								//Si el usuario está permitido para autorizar prefacturas, agrega su autorización a la base de datos.
+								await autorizacionesPrefacturaManager.CreateAsync(new()
+								{
+									PrefacturaId = idPrefactura,
+									UsuarioId = user?.Id ?? string.Empty,
+									FechaHoraAutorizacion = DateTime.Now
+								});
+
+								resp.TieneError = false;
+								resp.Mensaje = stringLocalizer["PrefacturaAuthorizedSuccessfully"];
+							}
+						}
+					}
+				}
+				else
+				{
+					resp.Mensaje = stringLocalizer["AccesoDenegado"];
+				}
+			}
+			catch (Exception ex)
+			{
+
+				logger.LogError(message: ex.Message);
+			}
+
+			return new JsonResult(resp);
+		}
+
+		public async Task<JsonResult> OnPostTimbrar()
+		{
+			ServerResponse resp = new(true, stringLocalizer["PrefacturaStampedUnsuccessfully"]);
+
+			try
+			{
+				if(PuedeTodo || PuedeEditar)
+				{
+
+
+					resp.TieneError = false;
+					resp.Mensaje = stringLocalizer["PrefacturaStampedSuccessfully"];
+				}
+				else
+				{
+					resp.Mensaje = stringLocalizer["AccesoDenegado"];
+				}
+			}
+			catch (Exception ex)
+			{
+
+				logger.LogError(message: ex.Message);
+			}
+
+			return new JsonResult(resp);
 		}
 	}
 }

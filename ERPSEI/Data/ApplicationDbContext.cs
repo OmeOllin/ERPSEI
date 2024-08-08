@@ -45,6 +45,7 @@ namespace ERPSEI.Data
 		public DbSet<ActividadEconomica> ActividadesEconomicas { get; set; }
 
 		//Tablas de trabajo SAT
+		public DbSet<AutorizacionesPrefactura> AutorizacionesPrefacturas { get; set; }
 		public DbSet<Prefactura> Prefacturas { get; set; }
 		public DbSet<Concepto> Conceptos { get; set; }
 		//public DbSet<ComprobanteAddenda> ComprobantesAddendas { get; set; }
