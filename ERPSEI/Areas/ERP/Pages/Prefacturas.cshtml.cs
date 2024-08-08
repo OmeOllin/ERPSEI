@@ -2,6 +2,7 @@ using ERPSEI.Data;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.SAT;
 using ERPSEI.Data.Entities.SAT.Catalogos;
+using ERPSEI.Data.Entities.SAT.cfdiv40;
 using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empresas;
@@ -20,6 +21,8 @@ using NPOI.SS.UserModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace ERPSEI.Areas.ERP.Pages
 {
@@ -1068,8 +1071,7 @@ namespace ERPSEI.Areas.ERP.Pages
 					//Obtiene los datos de la prefactura
 					Prefactura? p = await prefacturaManager.GetByIdAsync(idPrefactura);
 
-
-					int idEstatusSolicitada = 1;
+                    int idEstatusSolicitada = 1;
 					if(p != null && p.EstatusId == idEstatusSolicitada && p.RequiereAutorizacion)
 					{
 						//Si la prefactura existe y además el estatus de la prefactura es "Solicitada" y además requiere autorización...
@@ -1117,7 +1119,7 @@ namespace ERPSEI.Areas.ERP.Pages
 			return new JsonResult(resp);
 		}
 
-		public async Task<JsonResult> OnPostTimbrar()
+		public async Task<JsonResult> OnPostTimbrar(int idPrefactura)
 		{
 			ServerResponse resp = new(true, stringLocalizer["PrefacturaStampedUnsuccessfully"]);
 
@@ -1125,10 +1127,113 @@ namespace ERPSEI.Areas.ERP.Pages
 			{
 				if(PuedeTodo || PuedeEditar)
 				{
+					//Obtiene los datos de la prefactura
+					Prefactura? p = await prefacturaManager.GetByIdAsync(idPrefactura);
 
+					if (p != null) 
+					{
+						//Obtiene los datos de los conceptos
+						List<ComprobanteConcepto> lc = [];
 
-					resp.TieneError = false;
-					resp.Mensaje = stringLocalizer["PrefacturaStampedSuccessfully"];
+						foreach (Concepto c in p?.Conceptos ?? [])
+						{
+							lc.Add(new ComprobanteConcepto()
+							{
+								Id = 0,
+								Impuestos = new()
+								{
+									Id = 0,
+									Traslados = [],
+									Retenciones = []
+								},
+								ClaveProdServ = c.ProductoServicio?.Clave ?? string.Empty,
+								NoIdentificacion = string.Empty,
+								Cantidad = c.Cantidad,
+								ClaveUnidad = c.UnidadMedida?.Clave ?? string.Empty,
+								Unidad = c.UnidadMedida?.Descripcion ?? string.Empty,
+								Descripcion = c.Descripcion ?? string.Empty,
+								ValorUnitario = c.PrecioUnitario,
+								Importe = c.Cantidad * c.PrecioUnitario,
+								Descuento = c.Descuento,
+								DescuentoSpecified = true,
+								ObjetoImp = c.ObjetoImpuesto?.Clave ?? string.Empty
+							});
+						}
+
+						Comprobante cfdi = new()
+						{
+							Id = 0,
+							Emisor = new()
+							{
+								Id = 0,
+								Rfc = p?.Emisor?.RFC ?? string.Empty,
+								Nombre = p?.Emisor?.RazonSocial ?? string.Empty,
+								RegimenFiscal = p?.Emisor?.RegimenFiscal?.Clave ?? string.Empty
+							},
+							Receptor = new()
+							{
+								Id = 0,
+								Rfc = p?.Receptor?.RFC ?? string.Empty,
+								Nombre = p?.Receptor?.RazonSocial ?? string.Empty,
+								DomicilioFiscalReceptor = p?.Receptor?.DomicilioFiscal ?? string.Empty,
+								RegimenFiscalReceptor = p?.Receptor?.RegimenFiscal?.Clave ?? string.Empty,
+								UsoCFDI = p?.UsoCFDI?.Clave ?? string.Empty
+							},
+							Conceptos = [..lc],
+							Impuestos = new() { 
+								Id = 0,
+								Retenciones = [],
+								Traslados = [],
+								TotalImpuestosRetenidos = 0,
+								TotalImpuestosRetenidosSpecified = true,
+								TotalImpuestosTrasladados = 0,
+								TotalImpuestosTrasladadosSpecified = true
+							},
+							Version = "4.0",
+							Serie = p?.Serie ?? string.Empty,
+							Folio = p?.Folio ?? string.Empty,
+							Fecha = DateTime.Now,
+							Sello = string.Empty,
+							FormaPago = p?.FormaPago?.Clave ?? string.Empty,
+							FormaPagoSpecified = true,
+							NoCertificado = string.Empty,
+							Certificado = string.Empty,
+							CondicionesDePago = string.Empty,
+							SubTotal = 0,
+							Descuento = 0,
+							DescuentoSpecified = true,
+							Moneda = p?.Moneda?.Clave ?? string.Empty,
+							TipoCambio = p?.TipoCambio ?? 1,
+							TipoCambioSpecified = true,
+							Total = 0,
+							TipoDeComprobante = p?.TipoComprobante?.Clave ?? string.Empty,
+							Exportacion = p?.Exportacion?.Clave ?? string.Empty,
+							MetodoPago = p?.MetodoPago?.Clave ?? string.Empty,
+							MetodoPagoSpecified = true,
+							LugarExpedicion = string.Empty,
+							Confirmacion = string.Empty
+						};
+
+						string pathXML = $"/cfdiv40/xml/{Guid.NewGuid()}.xml";
+
+						XmlSerializer xmlSerializer = new(typeof(Comprobante));
+
+						string xml = string.Empty;
+
+						using (StringWriter sw = new())
+						{
+							using(XmlWriter xmlw = XmlWriter.Create(sw))
+							{
+								xmlSerializer.Serialize(xmlw, cfdi);
+								xml = sw.ToString();
+							}
+						}
+
+						System.IO.File.WriteAllText(pathXML, xml);
+
+						resp.TieneError = false;
+						resp.Mensaje = stringLocalizer["PrefacturaStampedSuccessfully"];
+					}
 				}
 				else
 				{
