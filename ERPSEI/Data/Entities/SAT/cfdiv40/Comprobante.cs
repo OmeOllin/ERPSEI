@@ -41,9 +41,9 @@
 		[System.Xml.Serialization.XmlAttributeAttribute()]
 		public string Folio { get; set; } = string.Empty;
 
-		
+
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public System.DateTime Fecha { get; set; }
+		public string Fecha { get; set; } = string.Empty;
 
 		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
