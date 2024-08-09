@@ -1139,10 +1139,8 @@ namespace ERPSEI.Areas.ERP.Pages
 						{
 							lc.Add(new ComprobanteConcepto()
 							{
-								Id = 0,
 								Impuestos = new()
 								{
-									Id = 0,
 									Traslados = [],
 									Retenciones = []
 								},
@@ -1162,17 +1160,14 @@ namespace ERPSEI.Areas.ERP.Pages
 
 						Comprobante cfdi = new()
 						{
-							Id = 0,
 							Emisor = new()
 							{
-								Id = 0,
 								Rfc = p?.Emisor?.RFC ?? string.Empty,
 								Nombre = p?.Emisor?.RazonSocial ?? string.Empty,
 								RegimenFiscal = p?.Emisor?.RegimenFiscal?.Clave ?? string.Empty
 							},
 							Receptor = new()
 							{
-								Id = 0,
 								Rfc = p?.Receptor?.RFC ?? string.Empty,
 								Nombre = p?.Receptor?.RazonSocial ?? string.Empty,
 								DomicilioFiscalReceptor = p?.Receptor?.DomicilioFiscal ?? string.Empty,
@@ -1181,7 +1176,6 @@ namespace ERPSEI.Areas.ERP.Pages
 							},
 							Conceptos = [..lc],
 							Impuestos = new() { 
-								Id = 0,
 								Retenciones = [],
 								Traslados = [],
 								TotalImpuestosRetenidos = 0,
@@ -1214,7 +1208,7 @@ namespace ERPSEI.Areas.ERP.Pages
 							Confirmacion = string.Empty
 						};
 
-						string pathXML = $"/cfdiv40/xml/{Guid.NewGuid()}.xml";
+						string pathXML = $"wwwroot/cfdiv40/xml/{Guid.NewGuid()}.xml";
 
 						XmlSerializer xmlSerializer = new(typeof(Comprobante));
 

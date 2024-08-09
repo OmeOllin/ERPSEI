@@ -369,7 +369,7 @@ function onDeleteCFDIClick(ids = null) {
 
 //Función para autorizar una prefactura
 function onAuthPrefactura(idPrefactura) {
-    let oParams = { id: idPrefactura }
+    let oParams = { idPrefactura: idPrefactura }
 
     doAjax(
         "/ERP/Prefacturas/Autorizar",
@@ -399,7 +399,7 @@ function onAuthPrefactura(idPrefactura) {
 
 //Función para timbrar una prefactura
 function onStampPrefactura(idPrefactura) {
-    let oParams = { id: idPrefactura }
+    let oParams = { idPrefactura: idPrefactura }
 
     doAjax(
         "/ERP/Prefacturas/Timbrar",

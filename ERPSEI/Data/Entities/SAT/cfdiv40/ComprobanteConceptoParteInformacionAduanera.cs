@@ -6,6 +6,7 @@
 	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.sat.gob.mx/cfd/4")]
 	public partial class ComprobanteConceptoParteInformacionAduanera
 	{
+		[System.Xml.Serialization.XmlIgnore]
 		public int Id { get; set; }
 
 		[System.Xml.Serialization.XmlAttributeAttribute()]

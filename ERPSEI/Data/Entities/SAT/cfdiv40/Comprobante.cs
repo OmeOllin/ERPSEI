@@ -7,6 +7,7 @@
 	[System.Xml.Serialization.XmlRootAttribute(Namespace = "http://www.sat.gob.mx/cfd/4", IsNullable = false)]
 	public partial class Comprobante
 	{
+		[System.Xml.Serialization.XmlIgnore]
 		public int Id { get; set; }
 
 		public ComprobanteInformacionGlobal? InformacionGlobal{ get; set; }
