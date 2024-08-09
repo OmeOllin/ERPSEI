@@ -11,6 +11,7 @@ using ERPSEI.Data.Managers.SAT.Catalogos;
 using ERPSEI.Pages.Shared;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
+using ERPSEI.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
 using System.Xml;
 using System.Xml.Serialization;
+using XSDToXML.Utils;
 
 namespace ERPSEI.Areas.ERP.Pages
 {
@@ -1130,8 +1132,16 @@ namespace ERPSEI.Areas.ERP.Pages
 					//Obtiene los datos de la prefactura
 					Prefactura? p = await prefacturaManager.GetByIdAsync(idPrefactura);
 
-					if (p != null) 
+					if (p != null)
 					{
+						//Obtiene el número de certificado
+						string pathCER = "Utils/cacx7605101p8.cer";
+						string pathKEY = "Utils/Claveprivada_FIEL_CACX7605101P8_20230509_114423.key";
+						string clavePrivada = "12345678a";
+
+						string noCertificado, x, y, z;
+						SelloDigital.leerCER(pathCER, out x, out y, out z, out noCertificado);
+
 						//Obtiene los datos de los conceptos
 						List<ComprobanteConcepto> lc = [];
 
@@ -1186,17 +1196,17 @@ namespace ERPSEI.Areas.ERP.Pages
 							Version = "4.0",
 							Serie = p?.Serie ?? string.Empty,
 							Folio = p?.Folio ?? string.Empty,
-							Fecha = DateTime.Now,
+							Fecha = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss"),
 							Sello = string.Empty,
 							FormaPago = p?.FormaPago?.Clave ?? string.Empty,
 							FormaPagoSpecified = true,
-							NoCertificado = string.Empty,
+							NoCertificado = noCertificado,
 							Certificado = string.Empty,
 							CondicionesDePago = string.Empty,
 							SubTotal = 0,
 							Descuento = 0,
 							DescuentoSpecified = true,
-							Moneda = p?.Moneda?.Clave ?? string.Empty,
+							Moneda = p?.Moneda?.Clave ?? "MXN",
 							TipoCambio = p?.TipoCambio ?? 1,
 							TipoCambioSpecified = true,
 							Total = 0,
@@ -1214,9 +1224,9 @@ namespace ERPSEI.Areas.ERP.Pages
 
 						string xml = string.Empty;
 
-						using (StringWriter sw = new())
+						using (StringWriterCustomEncoding sw = new(System.Text.Encoding.UTF8))
 						{
-							using(XmlWriter xmlw = XmlWriter.Create(sw))
+							using (XmlWriter xmlw = XmlWriter.Create(sw))
 							{
 								xmlSerializer.Serialize(xmlw, cfdi);
 								xml = sw.ToString();
