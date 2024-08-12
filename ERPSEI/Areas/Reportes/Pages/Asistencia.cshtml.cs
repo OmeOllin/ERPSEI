@@ -189,7 +189,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 							if (result.Tables[0].Rows.IndexOf(row) == 0)
 							{
 								resp.TieneError = false;
-								resp.Mensaje = stringLocalizer["AsistenciasImportadasSuccessfully"];
+								resp.Mensaje = stringLocalizer["¡Asistencias importadas satisfactoriamente!"];
 								continue;
 							}
 
@@ -213,7 +213,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 								else
 								{
 									resp.TieneError = false;
-									resp.Mensaje = stringLocalizer["AsistenciasImportadasSuccessfully"];
+									resp.Mensaje = stringLocalizer["¡Asistencias importadas satisfactoriamente!"];
 								}
 
 								// Reiniciamos firstRow para el siguiente par
@@ -243,7 +243,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			{
 				logger.LogError(ex.Message);
 				resp.TieneError = true;
-				resp.Mensaje = stringLocalizer["AsistenciasImportadosUnsuccessfully"];
+				resp.Mensaje = stringLocalizer["Error al importar las asistencias"];
 			}
 
 			return new JsonResult(resp);
