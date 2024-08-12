@@ -15,7 +15,6 @@ const postOptions = {
         "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
     }
 };
-
 document.addEventListener("DOMContentLoaded", function (event) {
     table = $("#table");
     initTable();
@@ -34,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     })
 
     let btnBuscar = document.getElementById("btnBuscar");
-    btnBuscar.addEventListener("click", onBuscarClick);
+    btnBuscar.click();
 });
 
 //Función para procesar la respuesta del servidor al consultar datos
@@ -174,7 +173,6 @@ function onBuscarClick() {
     );
 }
 
-
 //Función para obtener el archivo de un input
 function getFile(inputId) {
     let fileField = document.getElementById(inputId),
@@ -279,20 +277,3 @@ function onExcelSelectorChanged(input) {
         }
     }
 }
-// Función para realizar la llamada AJAX
-/*function doAjax(url, data, successCallback, errorCallback, options) {
-    $.ajax({
-        type: "POST",
-        url: url,
-        data: JSON.stringify(data),
-        contentType: "application/json",
-        headers: options.headers,
-        success: function (response) {
-            if (successCallback) successCallback(response);
-        },
-        error: function (xhr, status, error) {
-            console.error("AJAX Error:", error);
-            if (errorCallback) errorCallback(error);
-        }
-    });
-}*/

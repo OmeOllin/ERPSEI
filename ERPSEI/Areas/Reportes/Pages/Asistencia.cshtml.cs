@@ -13,6 +13,9 @@ using System.Net.Mime;
 using ERPSEI.Pages.Shared;
 using ERPSEI.Data.Entities.Reportes;
 using ERPSEI.Data.Managers.Reportes;
+using Microsoft.DotNet.MSIdentity.Shared;
+using ERPSEI.Data.Entities.Empresas;
+using ERPSEI.Data.Managers;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
@@ -94,35 +97,21 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			return new JsonResult(jsonResponse);
 		}
 
-		public async Task<JsonResult> OnPostFiltrarAsistencia([FromBody] FiltroModel inputFiltro)
+		public async Task<JsonResult> OnPostFiltrarAsistencia()
 		{
-			ServerResponse resp = new ServerResponse(true, stringLocalizer["AsistenciasFiltradosUnsuccessfully"]);
-
+			ServerResponse resp = new(true, stringLocalizer["AsistenciasFiltradasUnsuccessfully"]);
 			try
 			{
-				// Obtener todas las asistencias
-				List<Asistencia> asistencias = await asistenciaManager.GetAllAsync();
-				List<string> jsonAsistencias = new List<string>();
-				foreach (var asis in asistencias)
+				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
 				{
-					jsonAsistencias.Add("{" +
-					$"\"Horario\": \"{asis.Horario?.NombreHorario}\", " +
-					$"\"NombreEmpleado\": \"{asis.Empleado?.NombreCompleto}\", " +
-					$"\"Fecha\": \"{asis.Fecha}\", " +
-					$"\"Dia\": \"{asis.Dia}\", " +
-					$"\"Entrada\": \"{asis.Entrada}\", " +
-					$"\"ResultadoE\": \"{asis.ResultadoE}\", " +
-					$"\"Salida\": \"{asis.Salida}\", " +
-					$"\"ResultadoS\": \"{asis.ResultadoS}\" " +
-					"}");
+					resp.Datos = await GetListaAsistencias(InputFiltro);
+					resp.TieneError = false;
+					resp.Mensaje = stringLocalizer["AsistenciasFiltradasSuccessfully"];
 				}
-
-				string jsonResponse = $"[{string.Join(",", jsonAsistencias)}]";
-				resp.Datos = jsonResponse;
-				resp.TieneError = false;
-				resp.Mensaje = stringLocalizer["AsistenciasFiltradosSuccessfully"];
-				resp.TieneError = false;
-				resp.Mensaje = stringLocalizer["EmpleadosFiltradosSuccessfully"];
+				else
+				{
+					resp.Mensaje = stringLocalizer["AccesoDenegado"];
+				}
 			}
 			catch (Exception ex)
 			{
@@ -131,8 +120,41 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resp);
 		}
+		private async Task<string> GetListaAsistencias(FiltroModel? filtro = null)
+		{
+			string jsonResponse;
+			List<string> jsonAsistencias = [];
+			List<Asistencia> asistencias = [];
 
+			if (filtro != null)
+			{
+				asistencias = await asistenciaManager.GetAllAsync(
+					filtro.NombreEmpleado,
+					filtro.FechaIngresoInicio,
+					filtro.FechaIngresoFin);
+			}
+			else
+			{
+				asistencias = await asistenciaManager.GetAllAsync();
+			}
 
+			foreach (var asis in asistencias)
+			{
+				jsonAsistencias.Add("{" +
+				$"\"Horario\": \"{asis.Horario?.NombreHorario}\", " +
+				$"\"NombreEmpleado\": \"{asis.Empleado?.NombreCompleto}\", " +
+				$"\"Fecha\": \"{asis.Fecha}\", " +
+				$"\"Dia\": \"{asis.Dia}\", " +
+				$"\"Entrada\": \"{asis.Entrada}\", " +
+				$"\"ResultadoE\": \"{asis.ResultadoE}\", " +
+				$"\"Salida\": \"{asis.Salida}\", " +
+				$"\"ResultadoS\": \"{asis.ResultadoS}\" " +
+				"}");
+			}
+			jsonResponse = $"[{string.Join(",", jsonAsistencias)}]";
+			return jsonResponse;
+		}
+		
 		public ActionResult OnGetDownloadPlantilla()
 		{
 			if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)

@@ -86,6 +86,18 @@ namespace ERPSEI.Data.Managers.Reportes
 		{
 			return await db.Asistencias.Include(h => h.Horario).Include(e => e.Empleado).ToListAsync();
 		}
+		public async Task<List<Asistencia>> GetAllAsync(string? nombreEmpleado = null, DateTime? fechaIngresoInicio = null, DateTime? fechaIngresoFin = null)
+		{
+			DateOnly? fechaInicio = fechaIngresoInicio.HasValue ? DateOnly.FromDateTime(fechaIngresoInicio.Value) : (DateOnly?)null;
+			DateOnly? fechaFin = fechaIngresoFin.HasValue ? DateOnly.FromDateTime(fechaIngresoFin.Value) : (DateOnly?)null;
+
+			return await db.Asistencias
+				.Include(e => e.Horario)
+				.Include(e => e.Empleado)
+				.Where(e => nombreEmpleado == null || e.Empleado.NombreCompleto == nombreEmpleado)
+				.Where(e => !fechaInicio.HasValue || (fechaFin.HasValue ? e.Fecha >= fechaInicio.Value && e.Fecha <= fechaFin.Value : e.Fecha == fechaInicio.Value))
+				.ToListAsync();
+		}
 
 		public async Task<Asistencia?> GetByIdAsync(int id)
 		{
