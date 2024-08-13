@@ -1,4 +1,5 @@
 using ERPSEI.Data;
+using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.SAT;
 using ERPSEI.Data.Entities.SAT.Catalogos;
@@ -1130,34 +1131,11 @@ namespace ERPSEI.Areas.ERP.Pages
 			{
 				if(PuedeTodo || PuedeEditar)
 				{
-					//Obtiene los datos de la prefactura
-					Prefactura? p = await prefacturaManager.GetByIdAsync(idPrefactura);
+					//Se timbra la prefactura
+					await TimbrarPrefactura(idPrefactura);
 
-					if (p != null)
-					{
-						string pathXSLT = "Utils/cadenaoriginal_4_0.xslt";
-						string pathCER = "Utils/cacx7605101p8.cer";
-						string pathKEY = "Utils/Claveprivada_FIEL_CACX7605101P8_20230509_114423.key";
-						string clavePrivada = "12345678a";
-
-						Comprobante cfdi = CrearCFDIFromPrefactura(p);
-						cfdi.NoCertificado = ObtenerNumeroCertificado(pathCER);
-
-						string pathXML = $"wwwroot/cfdiv40/xml/{Guid.NewGuid()}.xml";
-						CrearXMLFromCFDI(cfdi, pathXML);
-						 
-						string cadenaOriginal = ObtenerCadenaOriginal(pathXSLT, pathXML);
-
-						SelloDigital sello = new();
-						cfdi.Certificado = sello.Certificado(pathCER);
-						cfdi.Sello = sello.Sellar(cadenaOriginal, pathKEY, clavePrivada);
-
-						//Se vuelve a crear el XML sellado y se sobreescribe en el archivo original.
-						CrearXMLFromCFDI(cfdi, pathXML);
-
-						resp.TieneError = false;
-						resp.Mensaje = stringLocalizer["PrefacturaStampedSuccessfully"];
-					}
+					resp.TieneError = false;
+					resp.Mensaje = stringLocalizer["PrefacturaStampedSuccessfully"];
 				}
 				else
 				{
@@ -1166,11 +1144,69 @@ namespace ERPSEI.Areas.ERP.Pages
 			}
 			catch (Exception ex)
 			{
-
 				logger.LogError(message: ex.Message);
 			}
 
 			return new JsonResult(resp);
+		}
+		private async Task TimbrarPrefactura(int idPrefactura)
+		{
+			//Obtiene los datos de la prefactura
+			Prefactura? p = await prefacturaManager.GetByIdAsync(idPrefactura);
+
+			if (p != null)
+			{
+				string pathXML = $"wwwroot/cfdiv40/xml/{Guid.NewGuid()}.xml",
+					   pathXSLT = "Utils/cadenaoriginal_4_0.xslt",
+					   cadenaOriginal = string.Empty;
+
+				SelloDigital sello = new();
+				Comprobante cfdi;
+
+				//TODO: Modificar este proceso para que el archivo CER, el archivo KEY y la clave privada los obtenga de la base de datos de la empresa que factura.
+				string pathCER = "Utils/cacx7605101p8.cer",
+					   pathKEY = "Utils/Claveprivada_FIEL_CACX7605101P8_20230509_114423.key",
+					   clavePrivada = "12345678a";
+
+				//Se obtienen los archivos del Emisor
+				byte[]? fileCER = p.Emisor?.ArchivosEmpresa?.Where(a => a.TipoArchivo?.Id == (int)Data.Entities.Empresas.FileTypes.Otro).First().Archivo, 
+					    fileKEY = p.Emisor?.ArchivosEmpresa?.Where(a => a.TipoArchivo?.Id == (int)Data.Entities.Empresas.FileTypes.Otro).First().Archivo;
+
+				//TODO: Los dos siguientes USING tendrán que eliminarse ya que la información de los archivos ya viene en byte array de la base de datos.
+				using (FileStream f = new FileStream(pathCER, FileMode.Open)){ 
+					fileCER = new byte[f.Length];
+					f.Read(fileCER); 
+				}
+				using (FileStream f = new FileStream(pathKEY, FileMode.Open)) { 
+					fileKEY = new byte[f.Length];
+					f.Read(fileKEY); 
+				}
+
+				if (fileCER == null || fileCER.Length <= 0) { throw new Exception("No se encontró el archivo CER del emisor."); }
+				if (fileKEY == null || fileKEY.Length <= 0) { throw new Exception("No se encontró el archivo KEY del emisor."); }
+
+				//Crea el CFDI a partir de los datos de la prefactura.
+				cfdi = CrearCFDIFromPrefactura(p);
+
+				//Establece el número del certificado, obtenido a partir del archivo CER
+				cfdi.NoCertificado = ObtenerNumeroCertificado(fileCER);
+
+				//Crea el XML a partir del CFDI creado y lo guarda en una ruta física del servidor.
+				CrearXMLFromCFDI(cfdi, pathXML);
+
+				//Se obtiene la cadena original a partir del xml creado y usando el archivo xslt del sat.
+				cadenaOriginal = ObtenerCadenaOriginal(pathXSLT, pathXML);
+
+				//Se obtiene el certificado a partir del archivo CER
+				cfdi.Certificado = sello.Certificado(fileCER);
+
+				//Se obtiene el sello a partir del archivo KEY usando la cadena original y la clave privada
+				cfdi.Sello = sello.Sellar(cadenaOriginal, fileKEY, clavePrivada);
+
+				//Se vuelve a crear el XML sellado y se sobreescribe en el archivo original.
+				CrearXMLFromCFDI(cfdi, pathXML);
+
+			}
 		}
 		private void CrearXMLFromCFDI(Comprobante cfdi, string pathXML)
 		{
@@ -1212,11 +1248,11 @@ namespace ERPSEI.Areas.ERP.Pages
 
 			return cadenaOriginal;
 		}
-		private string ObtenerNumeroCertificado(string pathCER)
+		private string ObtenerNumeroCertificado(byte[] fileCER)
 		{
 			//Obtiene el número de certificado
 			string noCertificado, x, y, z;
-			SelloDigital.leerCER(pathCER, out x, out y, out z, out noCertificado);
+			SelloDigital.leerCER(fileCER, out x, out y, out z, out noCertificado);
 
 			return noCertificado;
 		}
