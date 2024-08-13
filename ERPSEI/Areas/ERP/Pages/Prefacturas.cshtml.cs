@@ -24,6 +24,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Xml.Xsl;
 using XSDToXML.Utils;
 
 namespace ERPSEI.Areas.ERP.Pages
@@ -1134,106 +1135,25 @@ namespace ERPSEI.Areas.ERP.Pages
 
 					if (p != null)
 					{
-						//Obtiene el número de certificado
+						string pathXSLT = "Utils/cadenaoriginal_4_0.xslt";
 						string pathCER = "Utils/cacx7605101p8.cer";
 						string pathKEY = "Utils/Claveprivada_FIEL_CACX7605101P8_20230509_114423.key";
 						string clavePrivada = "12345678a";
 
-						string noCertificado, x, y, z;
-						SelloDigital.leerCER(pathCER, out x, out y, out z, out noCertificado);
-
-						//Obtiene los datos de los conceptos
-						List<ComprobanteConcepto> lc = [];
-
-						foreach (Concepto c in p?.Conceptos ?? [])
-						{
-							lc.Add(new ComprobanteConcepto()
-							{
-								Impuestos = new()
-								{
-									Traslados = [],
-									Retenciones = []
-								},
-								ClaveProdServ = c.ProductoServicio?.Clave ?? string.Empty,
-								NoIdentificacion = string.Empty,
-								Cantidad = c.Cantidad,
-								ClaveUnidad = c.UnidadMedida?.Clave ?? string.Empty,
-								Unidad = c.UnidadMedida?.Descripcion ?? string.Empty,
-								Descripcion = c.Descripcion ?? string.Empty,
-								ValorUnitario = c.PrecioUnitario,
-								Importe = c.Cantidad * c.PrecioUnitario,
-								Descuento = c.Descuento,
-								DescuentoSpecified = true,
-								ObjetoImp = c.ObjetoImpuesto?.Clave ?? string.Empty
-							});
-						}
-
-						Comprobante cfdi = new()
-						{
-							Emisor = new()
-							{
-								Rfc = p?.Emisor?.RFC ?? string.Empty,
-								Nombre = p?.Emisor?.RazonSocial ?? string.Empty,
-								RegimenFiscal = p?.Emisor?.RegimenFiscal?.Clave ?? string.Empty
-							},
-							Receptor = new()
-							{
-								Rfc = p?.Receptor?.RFC ?? string.Empty,
-								Nombre = p?.Receptor?.RazonSocial ?? string.Empty,
-								DomicilioFiscalReceptor = p?.Receptor?.DomicilioFiscal ?? string.Empty,
-								RegimenFiscalReceptor = p?.Receptor?.RegimenFiscal?.Clave ?? string.Empty,
-								UsoCFDI = p?.UsoCFDI?.Clave ?? string.Empty
-							},
-							Conceptos = [..lc],
-							Impuestos = new() { 
-								Retenciones = [],
-								Traslados = [],
-								TotalImpuestosRetenidos = 0,
-								TotalImpuestosRetenidosSpecified = true,
-								TotalImpuestosTrasladados = 0,
-								TotalImpuestosTrasladadosSpecified = true
-							},
-							Version = "4.0",
-							Serie = p?.Serie ?? string.Empty,
-							Folio = p?.Folio ?? string.Empty,
-							Fecha = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss"),
-							Sello = string.Empty,
-							FormaPago = p?.FormaPago?.Clave ?? string.Empty,
-							FormaPagoSpecified = true,
-							NoCertificado = noCertificado,
-							Certificado = string.Empty,
-							CondicionesDePago = string.Empty,
-							SubTotal = 0,
-							Descuento = 0,
-							DescuentoSpecified = true,
-							Moneda = p?.Moneda?.Clave ?? "MXN",
-							TipoCambio = p?.TipoCambio ?? 1,
-							TipoCambioSpecified = true,
-							Total = 0,
-							TipoDeComprobante = p?.TipoComprobante?.Clave ?? string.Empty,
-							Exportacion = p?.Exportacion?.Clave ?? string.Empty,
-							MetodoPago = p?.MetodoPago?.Clave ?? string.Empty,
-							MetodoPagoSpecified = true,
-							LugarExpedicion = string.Empty,
-							Confirmacion = string.Empty
-						};
+						Comprobante cfdi = CrearCFDIFromPrefactura(p);
+						cfdi.NoCertificado = ObtenerNumeroCertificado(pathCER);
 
 						string pathXML = $"wwwroot/cfdiv40/xml/{Guid.NewGuid()}.xml";
+						CrearXMLFromCFDI(cfdi, pathXML);
+						 
+						string cadenaOriginal = ObtenerCadenaOriginal(pathXSLT, pathXML);
 
-						XmlSerializer xmlSerializer = new(typeof(Comprobante));
+						SelloDigital sello = new();
+						cfdi.Certificado = sello.Certificado(pathCER);
+						cfdi.Sello = sello.Sellar(cadenaOriginal, pathKEY, clavePrivada);
 
-						string xml = string.Empty;
-
-						using (StringWriterCustomEncoding sw = new(System.Text.Encoding.UTF8))
-						{
-							using (XmlWriter xmlw = XmlWriter.Create(sw))
-							{
-								xmlSerializer.Serialize(xmlw, cfdi);
-								xml = sw.ToString();
-							}
-						}
-
-						System.IO.File.WriteAllText(pathXML, xml);
+						//Se vuelve a crear el XML sellado y se sobreescribe en el archivo original.
+						CrearXMLFromCFDI(cfdi, pathXML);
 
 						resp.TieneError = false;
 						resp.Mensaje = stringLocalizer["PrefacturaStampedSuccessfully"];
@@ -1251,6 +1171,139 @@ namespace ERPSEI.Areas.ERP.Pages
 			}
 
 			return new JsonResult(resp);
+		}
+		private void CrearXMLFromCFDI(Comprobante cfdi, string pathXML)
+		{
+
+			XmlSerializerNamespaces xmlsn = new();
+			xmlsn.Add("cfdi", "http://www.sat.gob.mx/cfd/4");
+			xmlsn.Add("tfd", "http://www.sat.gob.mx/TimbreFiscalDigital");
+			xmlsn.Add("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+
+			XmlSerializer xmlSerializer = new(typeof(Comprobante));
+
+			string xml = string.Empty;
+
+			using (StringWriterCustomEncoding sw = new(System.Text.Encoding.UTF8))
+			{
+				using (XmlWriter xmlw = XmlWriter.Create(sw))
+				{
+					xmlSerializer.Serialize(xmlw, cfdi, xmlsn);
+					xml = sw.ToString();
+				}
+			}
+
+			System.IO.File.WriteAllText(pathXML, xml);
+		}
+		private string ObtenerCadenaOriginal(string pathXSLT, string pathXML)
+		{
+			string cadenaOriginal = string.Empty;
+			XslCompiledTransform transformador = new();
+			XsltSettings settings = new(true, true);
+			XmlUrlResolver resolver = new();
+			transformador.Load(pathXSLT, settings, resolver);
+
+			using (StringWriter sw = new())
+			using (XmlWriter xmlw = XmlWriter.Create(sw, transformador.OutputSettings))
+			{
+				transformador.Transform(pathXML, xmlw);
+				cadenaOriginal = sw.ToString();
+			}
+
+			return cadenaOriginal;
+		}
+		private string ObtenerNumeroCertificado(string pathCER)
+		{
+			//Obtiene el número de certificado
+			string noCertificado, x, y, z;
+			SelloDigital.leerCER(pathCER, out x, out y, out z, out noCertificado);
+
+			return noCertificado;
+		}
+		private List<ComprobanteConcepto> CrearConceptosFromPrefactura(ICollection<Concepto> conceptos)
+		{
+			List<ComprobanteConcepto> lc = [];
+
+			foreach (Concepto c in conceptos ?? [])
+			{
+				lc.Add(new ComprobanteConcepto()
+				{
+					Impuestos = new()
+					{
+						Traslados = [],
+						Retenciones = []
+					},
+					ClaveProdServ = c.ProductoServicio?.Clave ?? string.Empty,
+					NoIdentificacion = string.Empty,
+					Cantidad = c.Cantidad,
+					ClaveUnidad = c.UnidadMedida?.Clave ?? string.Empty,
+					Unidad = c.UnidadMedida?.Descripcion ?? string.Empty,
+					Descripcion = c.Descripcion ?? string.Empty,
+					ValorUnitario = c.PrecioUnitario,
+					Importe = c.Cantidad * c.PrecioUnitario,
+					Descuento = c.Descuento,
+					DescuentoSpecified = true,
+					ObjetoImp = c.ObjetoImpuesto?.Clave ?? string.Empty
+				});
+			}
+
+			return lc;
+		}
+		private Comprobante CrearCFDIFromPrefactura(Prefactura p)
+		{
+			//Obtiene los datos de los conceptos
+			List<ComprobanteConcepto> lc = CrearConceptosFromPrefactura(p.Conceptos);
+
+			return new()
+			{
+				Emisor = new()
+				{
+					Rfc = p.Emisor?.RFC ?? string.Empty,
+					Nombre = p.Emisor?.RazonSocial ?? string.Empty,
+					RegimenFiscal = p.Emisor?.RegimenFiscal?.Clave ?? string.Empty
+				},
+				Receptor = new()
+				{
+					Rfc = p.Receptor?.RFC ?? string.Empty,
+					Nombre = p.Receptor?.RazonSocial ?? string.Empty,
+					DomicilioFiscalReceptor = p.Receptor?.DomicilioFiscal ?? string.Empty,
+					RegimenFiscalReceptor = p.Receptor?.RegimenFiscal?.Clave ?? string.Empty,
+					UsoCFDI = p.UsoCFDI?.Clave ?? string.Empty
+				},
+				Conceptos = [.. lc],
+				Impuestos = new()
+				{
+					Retenciones = [],
+					Traslados = [],
+					TotalImpuestosRetenidos = 0,
+					TotalImpuestosRetenidosSpecified = true,
+					TotalImpuestosTrasladados = 0,
+					TotalImpuestosTrasladadosSpecified = true
+				},
+				Version = "4.0",
+				Serie = p.Serie ?? string.Empty,
+				Folio = p.Folio ?? string.Empty,
+				Fecha = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss"),
+				Sello = string.Empty,
+				FormaPago = p.FormaPago?.Clave ?? string.Empty,
+				FormaPagoSpecified = true,
+				NoCertificado = string.Empty,
+				Certificado = string.Empty,
+				CondicionesDePago = string.Empty,
+				SubTotal = 0,
+				Descuento = 0,
+				DescuentoSpecified = true,
+				Moneda = p.Moneda?.Clave ?? "MXN",
+				TipoCambio = p.TipoCambio,
+				TipoCambioSpecified = true,
+				Total = 0,
+				TipoDeComprobante = p.TipoComprobante?.Clave ?? string.Empty,
+				Exportacion = p.Exportacion?.Clave ?? string.Empty,
+				MetodoPago = p.MetodoPago?.Clave ?? string.Empty,
+				MetodoPagoSpecified = true,
+				LugarExpedicion = string.Empty,
+				Confirmacion = string.Empty
+			};
 		}
 	}
 }

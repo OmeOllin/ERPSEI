@@ -1,4 +1,7 @@
-﻿namespace ERPSEI.Data.Entities.SAT.cfdiv40
+﻿using System.Xml.Schema;
+using System.Xml.Serialization;
+
+namespace ERPSEI.Data.Entities.SAT.cfdiv40
 {
 	[System.SerializableAttribute()]
 	[System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -117,6 +120,8 @@
 		[System.Xml.Serialization.XmlAttributeAttribute()]
 		public string LugarExpedicion { get; set; } = string.Empty;
 
+		[XmlAttribute("schemaLocation", Namespace = XmlSchema.InstanceNamespace)]
+		public string xsiSchemaLocation = "http://www.sat.gob.mx/sitio_internet/cfd/4/cfdv40.xsd";
 		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
 		public string Confirmacion { get; set; } = string.Empty;
