@@ -101,6 +101,9 @@ namespace ERPSEI
             //Prefacturas
 			_builder.Services.AddScoped<IConceptoManager, ConceptoManager>();
 			_builder.Services.AddScoped<IPrefacturaManager, PrefacturaManager>();
+
+            //Web Service EDICOM
+            _builder.Services.AddSingleton<ServicioEDICOM.CFDi, ServicioEDICOM.CFDiClient>();
 		}
         private static void ConfigureDIEmpresas(WebApplicationBuilder _builder)
         {

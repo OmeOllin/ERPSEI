@@ -1,5 +1,4 @@
 using ERPSEI.Data;
-using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.SAT;
 using ERPSEI.Data.Entities.SAT.Catalogos;
@@ -18,11 +17,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NPOI.HSSF.UserModel;
-using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
+using ServicioEDICOM;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
+using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.Xsl;
@@ -30,8 +30,9 @@ using XSDToXML.Utils;
 
 namespace ERPSEI.Areas.ERP.Pages
 {
-    [Authorize(Policy = "AccessPolicy")]
+	[Authorize(Policy = "AccessPolicy")]
 	public class PrefacturasModel(
+			CFDi clienteEDICOM,
 			ApplicationDbContext db,
 			IAutorizacionesPrefactura autorizacionesPrefacturaManager,
 			UserManager<AppUser> userManager,
@@ -1126,16 +1127,12 @@ namespace ERPSEI.Areas.ERP.Pages
 		public async Task<JsonResult> OnPostTimbrar(int idPrefactura)
 		{
 			ServerResponse resp = new(true, stringLocalizer["PrefacturaStampedUnsuccessfully"]);
-
 			try
 			{
 				if(PuedeTodo || PuedeEditar)
 				{
 					//Se timbra la prefactura
-					await TimbrarPrefactura(idPrefactura);
-
-					resp.TieneError = false;
-					resp.Mensaje = stringLocalizer["PrefacturaStampedSuccessfully"];
+					resp = await TimbrarPrefactura(idPrefactura);
 				}
 				else
 				{
@@ -1144,73 +1141,152 @@ namespace ERPSEI.Areas.ERP.Pages
 			}
 			catch (Exception ex)
 			{
-				logger.LogError(message: ex.Message);
+				string message = ex.Message;
+				logger.LogError("{message}", message);
 			}
 
 			return new JsonResult(resp);
 		}
-		private async Task TimbrarPrefactura(int idPrefactura)
+		private async Task<ServerResponse> TimbrarPrefactura(int idPrefactura)
 		{
-			//Obtiene los datos de la prefactura
-			Prefactura? p = await prefacturaManager.GetByIdAsync(idPrefactura);
-
-			if (p != null)
+			ServerResponse resp = new(true, stringLocalizer["PrefacturaStampedUnsuccessfully"]);
+			try
 			{
-				string pathXML = $"wwwroot/cfdiv40/xml/{Guid.NewGuid()}.xml",
-					   pathXSLT = "Utils/cadenaoriginal_4_0.xslt",
-					   cadenaOriginal = string.Empty;
+				//Obtiene los datos de la prefactura
+				Prefactura? p = await prefacturaManager.GetByIdAsync(idPrefactura);
 
-				SelloDigital sello = new();
-				Comprobante cfdi;
+				if (p != null)
+				{
+					int anio = DateTime.Now.Year;
+					int mes = DateTime.Now.Month;
+					int dia = DateTime.Now.Day;
+					string guid = $"pref_{idPrefactura}{DateTime.Now:yyyyMMddHHmmssfffffff}";
 
-				//TODO: Modificar este proceso para que el archivo CER, el archivo KEY y la clave privada los obtenga de la base de datos de la empresa que factura.
-				string pathCER = "Utils/cacx7605101p8.cer",
-					   pathKEY = "Utils/Claveprivada_FIEL_CACX7605101P8_20230509_114423.key",
-					   clavePrivada = "12345678a";
+					string pathXML = $"wwwroot/cfdiv40/xml/{anio}/{mes}/{dia}/sin_timbre/{guid}.xml",
+						pathZip = $"wwwroot/cfdiv40/xml/{anio}/{mes}/{dia}/con_timbre/{guid}.zip",
+						pathXSLT = "Utils/cadenaoriginal_4_0.xslt",
+						cadenaOriginal = string.Empty;
 
-				//Se obtienen los archivos del Emisor
-				byte[]? fileCER = p.Emisor?.ArchivosEmpresa?.Where(a => a.TipoArchivo?.Id == (int)Data.Entities.Empresas.FileTypes.Otro).First().Archivo, 
-					    fileKEY = p.Emisor?.ArchivosEmpresa?.Where(a => a.TipoArchivo?.Id == (int)Data.Entities.Empresas.FileTypes.Otro).First().Archivo;
+					SelloDigital sello = new();
+					Comprobante cfdi;
 
-				//TODO: Los dos siguientes USING tendrán que eliminarse ya que la información de los archivos ya viene en byte array de la base de datos.
-				using (FileStream f = new FileStream(pathCER, FileMode.Open)){ 
-					fileCER = new byte[f.Length];
-					f.Read(fileCER); 
+					//TODO: Modificar este proceso para que el archivo CER, el archivo KEY y la clave privada los obtenga de la base de datos de la empresa que factura.
+					string pathCER = "Utils/cacx7605101p8.cer",
+						pathKEY = "Utils/Claveprivada_FIEL_CACX7605101P8_20230509_114423.key",
+						clavePrivada = "12345678a";
+
+					//Se obtienen los archivos del Emisor
+					byte[]? fileCER = p.Emisor?.ArchivosEmpresa?.Where(a => a.TipoArchivo?.Id == (int)Data.Entities.Empresas.FileTypes.Otro).First().Archivo,
+							fileKEY = p.Emisor?.ArchivosEmpresa?.Where(a => a.TipoArchivo?.Id == (int)Data.Entities.Empresas.FileTypes.Otro).First().Archivo;
+
+					//TODO: Los dos siguientes USING tendrán que eliminarse ya que la información de los archivos ya viene en byte array de la base de datos.
+					using (FileStream f = new(pathCER, FileMode.Open))
+					{
+						fileCER = new byte[f.Length];
+						f.Read(fileCER);
+					}
+					using (FileStream f = new(pathKEY, FileMode.Open))
+					{
+						fileKEY = new byte[f.Length];
+						f.Read(fileKEY);
+					}
+
+					if (fileCER == null || fileCER.Length <= 0) { throw new Exception("No se encontró el archivo CER del emisor."); }
+					if (fileKEY == null || fileKEY.Length <= 0) { throw new Exception("No se encontró el archivo KEY del emisor."); }
+
+					//Crea el CFDI a partir de los datos de la prefactura.
+					cfdi = CrearCFDIFromPrefactura(p);
+					if(cfdi == null) { throw new Exception("No se pudo crear la estructura del comprobante con la prefactura."); }
+
+					//Establece el número del certificado, obtenido a partir del archivo CER
+					cfdi.NoCertificado = ObtenerNumeroCertificado(fileCER);
+					if (cfdi.NoCertificado.Length <= 0) { throw new Exception("No se pudo obtener el número de certificado con el archivo CER del emisor."); }
+
+					//Crea el XML a partir del CFDI creado y lo guarda en una ruta física del servidor.
+					await CrearXMLFromCFDIAsync(cfdi, pathXML);
+					if (!System.IO.File.Exists(pathXML)) { throw new Exception("No se pudo crear el archivo XML del comprobante sin sellar."); }
+
+					//Se obtiene la cadena original a partir del xml creado y usando el archivo xslt del sat.
+					cadenaOriginal = ObtenerCadenaOriginal(pathXSLT, pathXML);
+					if (cadenaOriginal.Length <= 0) { throw new Exception("No se pudo obtener la cadena original del comprobante."); }
+
+					//Se elimina el archivo XML sin sellar
+					System.IO.File.Delete(pathXML);
+
+					//Se obtiene el certificado a partir del archivo CER
+					cfdi.Certificado = sello.Certificado(fileCER);
+					if (cfdi.Certificado.Length <= 0) { throw new Exception("No se pudo generar el certificado del comprobante con el archivo CER del emisor."); }
+
+					//Se obtiene el sello a partir del archivo KEY usando la cadena original y la clave privada
+					cfdi.Sello = sello.Sellar(cadenaOriginal, fileKEY, clavePrivada);
+					if (cfdi.Sello.Length <= 0) { throw new Exception("No se pudo generar el sello del comprobante con la cadena original, archivo KEY y clave privada del emisor."); }
+
+					//Se vuelve a crear el XML sellado.
+					await CrearXMLFromCFDIAsync(cfdi, pathXML);
+					if (!System.IO.File.Exists(pathXML)) { throw new Exception("No se pudo crear el archivo XML del comprobante sellado."); }
+
+					//Se obtienen los bytes de la cadena base64 generada a partir del XML
+					byte[] fileCFDI = await CrearBytesBase64XMLAsync(pathXML);
+					if (fileCFDI == null || fileCFDI.Length <= 0) { throw new Exception("No se pudo generar el archivo del comprobante para envío de timbrado al PAC."); }
+
+					//Se realiza el timbrado del comprobante
+					byte[] zipComprobanteTimbrado = await TimbrarComprobanteEnEDICOMAsync("ABCDEFGHIJ", "KLMNOPQRSTUVWXYZ", fileCFDI);
+					if (zipComprobanteTimbrado == null || zipComprobanteTimbrado.Length <= 0) { throw new Exception("No se pudo timbrar el comprobante. El PAC devolvió un archivo vacío."); }
+
+					//Se guarda el comprobante timbrado
+					await GuardarZipComprobante(pathZip, zipComprobanteTimbrado);
+					if (!System.IO.File.Exists(pathZip)) { throw new Exception("No se pudo guardar el archivo devuelto por el PAC."); }
+
+					//Devuelve mensaje correcto de timbrado.
+					resp.TieneError = false;
+					resp.Errores = [];
+					resp.Mensaje = stringLocalizer["PrefacturaStampedSuccessfully"];
 				}
-				using (FileStream f = new FileStream(pathKEY, FileMode.Open)) { 
-					fileKEY = new byte[f.Length];
-					f.Read(fileKEY); 
-				}
+			}
+			catch (Exception ex)
+			{
+				//Devuelve el error en el timbrado.
+				resp.Errores = [..resp.Errores.Append(ex.Message)];
+			}
 
-				if (fileCER == null || fileCER.Length <= 0) { throw new Exception("No se encontró el archivo CER del emisor."); }
-				if (fileKEY == null || fileKEY.Length <= 0) { throw new Exception("No se encontró el archivo KEY del emisor."); }
-
-				//Crea el CFDI a partir de los datos de la prefactura.
-				cfdi = CrearCFDIFromPrefactura(p);
-
-				//Establece el número del certificado, obtenido a partir del archivo CER
-				cfdi.NoCertificado = ObtenerNumeroCertificado(fileCER);
-
-				//Crea el XML a partir del CFDI creado y lo guarda en una ruta física del servidor.
-				CrearXMLFromCFDI(cfdi, pathXML);
-
-				//Se obtiene la cadena original a partir del xml creado y usando el archivo xslt del sat.
-				cadenaOriginal = ObtenerCadenaOriginal(pathXSLT, pathXML);
-
-				//Se obtiene el certificado a partir del archivo CER
-				cfdi.Certificado = sello.Certificado(fileCER);
-
-				//Se obtiene el sello a partir del archivo KEY usando la cadena original y la clave privada
-				cfdi.Sello = sello.Sellar(cadenaOriginal, fileKEY, clavePrivada);
-
-				//Se vuelve a crear el XML sellado y se sobreescribe en el archivo original.
-				CrearXMLFromCFDI(cfdi, pathXML);
-
+			return resp;
+		}
+		private async Task GuardarZipComprobante(string pathZip, byte[] zipComprobanteTimbrado)
+		{
+			string b64Zip = Encoding.UTF8.GetString(zipComprobanteTimbrado);
+			byte[] zip = Convert.FromBase64String(b64Zip);
+			using (FileStream f = new(pathZip, FileMode.OpenOrCreate))
+			{
+				await f.WriteAsync(zip);
+				System.IO.Compression.ZipFile.ExtractToDirectory(f, Path.GetDirectoryName(pathZip) ?? string.Empty);
 			}
 		}
-		private void CrearXMLFromCFDI(Comprobante cfdi, string pathXML)
+		private async Task<byte[]> TimbrarComprobanteEnEDICOMAsync(string user, string password, byte[] fileB64)
 		{
+			byte[] zipComprobanteTimbrado;
 
+			getCfdiResponse resp = new();
+			getCfdiRequest req = new() { user = user, password = password, file = fileB64 };
+			resp = await clienteEDICOM.getCfdiAsync(req);
+			zipComprobanteTimbrado = resp.getCfdiReturn;
+
+			return zipComprobanteTimbrado;
+		}
+		private async Task<byte[]> CrearBytesBase64XMLAsync(string pathXML)
+		{
+			byte[] fileCFDI;
+			string b64File;
+			using (FileStream f = new(pathXML, FileMode.Open))
+			{
+				fileCFDI = new byte[f.Length];
+				await f.ReadAsync(fileCFDI);
+			}
+			b64File = Convert.ToBase64String(fileCFDI);
+
+			return Encoding.UTF8.GetBytes(b64File);
+		}
+		private async Task CrearXMLFromCFDIAsync(Comprobante cfdi, string pathXML)
+		{
 			XmlSerializerNamespaces xmlsn = new();
 			xmlsn.Add("cfdi", "http://www.sat.gob.mx/cfd/4");
 			xmlsn.Add("tfd", "http://www.sat.gob.mx/TimbreFiscalDigital");
@@ -1220,7 +1296,7 @@ namespace ERPSEI.Areas.ERP.Pages
 
 			string xml = string.Empty;
 
-			using (StringWriterCustomEncoding sw = new(System.Text.Encoding.UTF8))
+			using (StringWriterCustomEncoding sw = new(Encoding.UTF8))
 			{
 				using (XmlWriter xmlw = XmlWriter.Create(sw))
 				{
@@ -1229,7 +1305,7 @@ namespace ERPSEI.Areas.ERP.Pages
 				}
 			}
 
-			System.IO.File.WriteAllText(pathXML, xml);
+			await System.IO.File.WriteAllTextAsync(pathXML, xml);
 		}
 		private string ObtenerCadenaOriginal(string pathXSLT, string pathXML)
 		{
