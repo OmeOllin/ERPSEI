@@ -2,7 +2,7 @@ using ERPSEI.Data;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empresas;
-using ERPSEI.Data.Managers.SAT;
+using ERPSEI.Data.Managers.SAT.Catalogos;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +13,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
-	[Authorize(Policy = "AccessPolicy")]
+    [Authorize(Policy = "AccessPolicy")]
 	public class PerfilesModel : PageModel
     {
 		private readonly IProductoServicioManager _productosServiciosManager;

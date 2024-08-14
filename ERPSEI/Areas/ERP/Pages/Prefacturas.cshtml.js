@@ -5,6 +5,9 @@ var selections = [];
 var dlgProdServ = null;
 var dlgCFDI = null;
 var dlgCFDIModal = null;
+const ESTATUS_SOLICITADA = 1;
+const ESTATUS_AUTORIZADA = 2;
+const ESTATUS_FINALIZADA = 3;
 
 var numFormatter = null;
 var dialogMode = null;
@@ -35,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initTable();
 
     let btnBuscar = document.getElementById("btnBuscar");
-    btnBuscar.click();
+    if (btnBuscar) { btnBuscar.click(); }
 
     autoCompletar("#inpEmisor", {
         select: function (element, item) { toggleEmisorInfo(item); },
@@ -115,6 +118,7 @@ function getIdSelections() {
         return row.id
     })
 }
+
 //Función para procesar la respuesta del servidor al consultar datos
 function responseHandler(res) {
     if (typeof res == "string" && res.length >= 1) {
@@ -126,22 +130,48 @@ function responseHandler(res) {
 
     return res
 }
+
 //Función para dar formato a los iconos de operación de los registros
 function operateFormatter(value, row, index) {
     let icons = [];
     
     //Icono Ver
-    icons.push(`<li><a class="dropdown-item see" href="#" title="${btnVerTitle}"><i class="bi bi-search"></i> ${btnVerTitle}</a></li>`);
+    if (puedeTodo || puedeConsultar || puedeEditar || puedeEliminar) { icons.push(`<li><a class="dropdown-item see" href="#" title="${btnVerTitle}"><i class="bi bi-search"></i> ${btnVerTitle}</a></li>`); }
     //Icono PDF
-    icons.push(`<li><a class="dropdown-item pdf" href="#" title="${btnPDFTitle}"><i class="bi bi-file-pdf"></i> ${btnPDFTitle}</a></li>`);
+    if (puedeTodo || puedeConsultar || puedeEditar || puedeEliminar) { icons.push(`<li><a class="dropdown-item pdf" href="#" title="${btnPDFTitle}"><i class="bi bi-file-pdf"></i> ${btnPDFTitle}</a></li>`); }
+    //Icono Autorizar
+    if ((puedeTodo || puedeAutorizar) && row.estatusId == ESTATUS_SOLICITADA && row.requiereAutorizacion == "True") {
+        //Si el usuario tiene permisos para autorizar y además la prefactura está en estatus solicitada y además requiere autorización... 
+        //Busca al usuario por Id en la lista de autorizaciones del elemento.
+        let foundUserAuth = row.autorizaciones.find(a => a.userId == window.userId);
 
-    return `<div class="dropdown">
-              <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-three-dots-vertical success"></i>
-              </button>
-              <ul class="dropdown-menu">${icons.join("")}</ul>
-            </div>`;
+        if (foundUserAuth == undefined) {
+            //Si no se encontró la autorización del usuario en la lista, entonces todavía no ha autorizado el elemento, por lo tanto, busca si el usuario puede autorizar prefacturas.
+            foundUserAuth = window.authUsers.find(u => u == window.userId);
+
+            //Si se encontró al usuario en la lista, entonces agrega icono para autorizar.
+            if (foundUserAuth != undefined) { icons.push(`<li><a class="dropdown-item auth" href="#" title="${btnAutorizarTitle}"><i class="bi bi-patch-check"></i> ${btnAutorizarTitle}</a></li>`); }
+        }
+    }
+    //Icono Timbrar
+    if ((puedeTodo || puedeEditar) && (row.estatusId == ESTATUS_AUTORIZADA || row.estatusId == ESTATUS_SOLICITADA)) {
+        icons.push(`<li><a class="dropdown-item stamp" href="#" title="${btnTimbrarTitle}"><i class="bi bi-postage"></i> ${btnTimbrarTitle}</a></li>`);
+    }
+
+    if (icons.length >= 1) {
+
+        return `<div class="dropdown">
+                  <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-three-dots-vertical success"></i>
+                  </button>
+                  <ul class="dropdown-menu">${icons.join("")}</ul>
+                </div>`;
+    }
+    else {
+        return '';
+    }
 }
+
 //Eventos de los iconos de operación
 window.operateEvents = {
     'click .see': function (e, value, row, index) {
@@ -149,15 +179,23 @@ window.operateEvents = {
         dlgCFDIModal.toggle();
     },
     'click .pdf': function (e, value, row, index) {
-        showPDF(row.id);
+        onShowPDF(row.id);
+    },
+    'click .auth': function (e, value, row, index) {
+        onAuthPrefactura(row.id);
+    },
+    'click .stamp': function (e, value, row, index) {
+        onStampPrefactura(row.id);
     }
 }
+
 //Función para agregar cfdis
 function onAgregarClick() {
     let oCFDINuevo = createNewCFDI();
     initCFDIDialog(NUEVO, oCFDINuevo);
     dlgCFDIModal.toggle();
 }
+
 //Función para exportar cfdis
 function onExportarCFDIClick(ids = null) {
     let oParams = {};
@@ -177,7 +215,7 @@ function onExportarCFDIClick(ids = null) {
             if (ids != null) {
                 ids = [];
                 selections = null;
-                buttonExport.prop('disabled', true);
+                if (buttonExport) { buttonExport.prop('disabled', true); }
                 table.bootstrapTable('uncheckAll');
             }
 
@@ -191,6 +229,7 @@ function onExportarCFDIClick(ids = null) {
         postOptions
     );
 }
+
 //Función para inicializar la tabla
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
@@ -261,6 +300,13 @@ function initTable() {
                 sortable: true
             },
             {
+                title: colEstatusHeader,
+                field: "estatus",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
                 title: colAccionesHeader,
                 field: "operate",
                 align: "center",
@@ -272,14 +318,15 @@ function initTable() {
         ]
     })
     table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
-        buttonExport.prop('disabled', !table.bootstrapTable('getSelections').length)
+        if (buttonExport) { buttonExport.prop('disabled', !table.bootstrapTable('getSelections').length) }
 
         // save your data, here just save the current page
         selections = getIdSelections()
         // push or splice the selections if you want to save all data selections
     });
-    buttonExport.click(function () { onExportarCFDIClick(selections); });
+    if (buttonExport) { buttonExport.click(function () { onExportarCFDIClick(selections); }); }
 }
+
 //Función para capturar el click de los botones para dar de baja cfdis. Ejecuta una llamada ajax para dar de baja cfdis.
 function onDeleteCFDIClick(ids = null) {
     askConfirmation(dlgDeleteTitle, dlgDeleteQuestion, function () {
@@ -318,6 +365,71 @@ function onDeleteCFDIClick(ids = null) {
         );
 
     });
+}
+
+//Función para autorizar una prefactura
+function onAuthPrefactura(idPrefactura) {
+    let oParams = { idPrefactura: idPrefactura }
+
+    doAjax(
+        "/ERP/Prefacturas/Autorizar",
+        oParams,
+        function (resp) {
+            if (resp.tieneError) {
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    let summary = ``;
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                }
+                showError(dlgTitle.innerHTML, resp.mensaje);
+                return;
+            }
+
+            onBuscarClick();
+
+            showSuccess(dlgTitle.innerHTML, resp.mensaje);
+        }, function (error) {
+            showError("Error", error);
+        },
+        postOptions
+    );
+}
+
+//Función para timbrar una prefactura
+function onStampPrefactura(idPrefactura) {
+    let oParams = { idPrefactura: idPrefactura }
+
+    doAjax(
+        "/ERP/Prefacturas/Timbrar",
+        oParams,
+        function (resp) {
+            if (resp.tieneError) {
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    let summary = ``;
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                }
+                showError(dlgTitle.innerHTML, resp.mensaje);
+                return;
+            }
+
+            onBuscarClick();
+
+            showSuccess(dlgTitle.innerHTML, resp.mensaje);
+        }, function (error) {
+            showError("Error", error);
+        },
+        postOptions
+    );
+}
+
+//Función para mostrar una prefactura como PDF
+function onShowPDF(idPrefactura) {
+    window.open(`/FileViewer?id=${idPrefactura}&module=prefacturas`, "_blank");
 }
 ////////////////////////////////
 
@@ -377,11 +489,6 @@ function onBuscarClick() {
 ////////////////////////////////
 //Funcionalidad Diálogo CFDI
 ////////////////////////////////
-//Función para mostrar una prefactura como PDF
-function showPDF(idPrefactura) {
-    window.open(`/FileViewer?id=${idPrefactura}&module=prefacturas`, "_blank");
-}
-
 //Función para crear un nuevo objeto CFDI
 function createNewCFDI() {
     let curDate = new Date();
@@ -624,6 +731,12 @@ function onGuardarClick() {
         
     summaryContainer.innerHTML = "";
 
+    let aConceptos = tableProdServ.bootstrapTable("getData");
+
+    let total = 0.0,
+        limite = 2000000.00; //Dos millones
+
+    aConceptos.forEach(function (c) { total += parseFloat(c.totalCalculado); });
 
     let oParams = {
         id: idField.value == nuevoRegistro ? 0 : idField.value,
@@ -640,7 +753,8 @@ function onGuardarClick() {
         usoCFDIId: usoField.value,
         exportacionId: exportacionField.value,
         numeroOperacion: operacionField.value,
-        conceptos: tableProdServ.bootstrapTable("getData")
+        requiereAutorizacion: total >= limite,
+        conceptos: aConceptos
     }
 
     doAjax(
@@ -683,14 +797,19 @@ function numericFormatter(value, row, index) {
 
 //Función para dar formato a los iconos de operación de los registros de productos y servicios
 function operateFormatterProdServ(value, row, index) {
-    switch (dialogMode) {
-        case NUEVO:
-        case EDITAR:
-            return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton"></i></a>`;
-            break;
-        default:
-            return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton disabled"></i></a>`;
-            break;
+    if (puedeTodo || puedeEliminar) {
+        switch (dialogMode) {
+            case NUEVO:
+            case EDITAR:
+                return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton"></i></a>`;
+                break;
+            default:
+                return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton disabled"></i></a>`;
+                break;
+        }
+    }
+    else {
+        return `<a class="delete" href="#" title="${btnEliminarTitle}"><i class="bi bi-x btn-close formButton disabled"></i></a>`;
     }
 }
 
@@ -804,21 +923,24 @@ function initTableProdServ(data = null) {
         ]
     });
     tableProdServ.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
-        $("#removeProdServ").prop('disabled', !tableProdServ.bootstrapTable('getSelections').length)
+        if ($("#removeProdServ")) { $("#removeProdServ").prop('disabled', !tableProdServ.bootstrapTable('getSelections').length) }
     });
-    $("#removeProdServ").click(function () {
-        askConfirmation(btnEliminarTitle, dlgDeleteElementQuestion, function () {
-            let elements = tableProdServ.bootstrapTable('getSelections');
-            let data = tableProdServ.bootstrapTable('getData');
-            let newData = [];
-            data.forEach(function (d) {
-                let foundElement = elements.find(f => f.id == d.id);
-                if (!foundElement) { newData.push(d); }
+    if ($("#removeProdServ")) {
+
+        $("#removeProdServ").click(function () {
+            askConfirmation(btnEliminarTitle, dlgDeleteElementQuestion, function () {
+                let elements = tableProdServ.bootstrapTable('getSelections');
+                let data = tableProdServ.bootstrapTable('getData');
+                let newData = [];
+                data.forEach(function (d) {
+                    let foundElement = elements.find(f => f.id == d.id);
+                    if (!foundElement) { newData.push(d); }
+                });
+                initTableProdServ(newData);
+                $("#removeProdServ").prop('disabled', true);
             });
-            initTableProdServ(newData);
-            $("#removeProdServ").prop('disabled', true);
         });
-    });
+    }
 }
 
 //Función para mostrar u ocultar la información del emisor. Si se establece el parámetro item, se muestra. De lo contrario, se oculta.

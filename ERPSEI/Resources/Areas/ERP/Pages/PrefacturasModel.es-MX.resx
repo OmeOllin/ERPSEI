@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AccesoDenegado" xml:space="preserve">
+    <value>Acceso denegado</value>
+  </data>
   <data name="ConsultadoSuccessfully" xml:space="preserve">
     <value>¡Consulta de información satisfactoria!</value>
   </data>
@@ -129,6 +132,12 @@
   <data name="ErrorPrefacturaExistenteB" xml:space="preserve">
     <value>Por favor verifique</value>
   </data>
+  <data name="PrefacturaAuthorizedSuccessfully" xml:space="preserve">
+    <value>¡Prefactura autorizada satisfactoriamente!</value>
+  </data>
+  <data name="PrefacturaAuthorizedUnsuccessfully" xml:space="preserve">
+    <value>Error al autorizar la prefactura</value>
+  </data>
   <data name="PrefacturaSavedSuccessfully" xml:space="preserve">
     <value>¡Prefactura guardada satisfactoriamente!</value>
   </data>
@@ -140,5 +149,11 @@
   </data>
   <data name="PrefacturasExportedUnsuccessfully" xml:space="preserve">
     <value>Error al exportar los registros</value>
+  </data>
+  <data name="PrefacturaStampedSuccessfully" xml:space="preserve">
+    <value>¡Prefactura timbrada satisfactoriamente!</value>
+  </data>
+  <data name="PrefacturaStampedUnsuccessfully" xml:space="preserve">
+    <value>Error al timbrar la prefactura</value>
   </data>
 </root>

@@ -9,6 +9,7 @@ using ERPSEI.Data.Managers.Empleados;
 using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Data.Managers.Reportes;
 using ERPSEI.Data.Managers.SAT;
+using ERPSEI.Data.Managers.SAT.Catalogos;
 using ERPSEI.Data.Managers.Usuarios;
 using ERPSEI.Email;
 using ERPSEI.Resources;
@@ -21,7 +22,7 @@ using System.Reflection;
 
 namespace ERPSEI
 {
-	public static class ServicesConfiguration
+    public static class ServicesConfiguration
     {
         public const string RolMaster = "Master";
         public const string RolAdministrador = "Administrador";
@@ -32,6 +33,8 @@ namespace ERPSEI
 
         public static string MasterPassword { get; set; } = string.Empty;
         public static AppUser MasterUser { get; } = new AppUser() { EmailConfirmed = true, IsPreregisterAuthorized = true, PasswordResetNeeded = false, IsMaster = true };
+
+        public static IConfiguration Configuration { get; set; }
 
         public static void ConfigureEmail(WebApplicationBuilder _builder)
         {
@@ -78,6 +81,7 @@ namespace ERPSEI
         private static void ConfigureDIFacturacion(WebApplicationBuilder _builder)
         {
             //Catálogos SAT
+            _builder.Services.AddScoped<IAutorizacionesPrefactura, AutorizacionesPrefacturaManager>();
 			_builder.Services.AddScoped<IExportacionManager, ExportacionManager>();
 			_builder.Services.AddScoped<IFormaPagoManager, FormaPagoManager>();
 			_builder.Services.AddScoped<IImpuestoManager, ImpuestoManager>();
@@ -99,6 +103,9 @@ namespace ERPSEI
             //Prefacturas
 			_builder.Services.AddScoped<IConceptoManager, ConceptoManager>();
 			_builder.Services.AddScoped<IPrefacturaManager, PrefacturaManager>();
+
+            //Web Service EDICOM
+            _builder.Services.AddSingleton<ServicioEDICOM.CFDi, ServicioEDICOM.CFDiClient>();
 		}
         private static void ConfigureDIEmpresas(WebApplicationBuilder _builder)
         {

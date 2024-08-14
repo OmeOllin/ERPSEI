@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+ServicesConfiguration.Configuration = builder.Configuration;
+
 //Email configuration
 ServicesConfiguration.ConfigureEmail(builder);
 

@@ -360,7 +360,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 
             //Actualiza información principal del empleado.
             emp.Nombre = Input.FirstName.Trim();
-            emp.NombrePreferido = Input.NombrePreferido.Trim() ?? "";
+            emp.NombrePreferido = (Input.NombrePreferido ?? "").Trim();
             emp.ApellidoPaterno = Input.FathersLastName.Trim();
             emp.ApellidoMaterno = Input.MothersLastName.Trim();
             emp.NombreCompleto = $"{Input.FirstName.Trim()} {Input.FathersLastName.Trim()} {Input.MothersLastName.Trim()}";

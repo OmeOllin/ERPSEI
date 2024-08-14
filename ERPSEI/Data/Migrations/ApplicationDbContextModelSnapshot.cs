@@ -1030,6 +1030,30 @@ namespace ERPSEI.Data.Migrations
                     b.ToTable("Horarios");
                 });
 
+            modelBuilder.Entity("ERPSEI.Data.Entities.SAT.AutorizacionesPrefactura", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("FechaHoraAutorizacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PrefacturaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UsuarioId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PrefacturaId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("AutorizacionesPrefacturas");
+                });
+
             modelBuilder.Entity("ERPSEI.Data.Entities.SAT.Catalogos.ActividadEconomica", b =>
                 {
                     b.Property<int>("Id")
@@ -1600,7 +1624,7 @@ namespace ERPSEI.Data.Migrations
                         new
                         {
                             Id = 3,
-                            Descripcion = "Finalizada",
+                            Descripcion = "Timbrada",
                             Deshabilitado = 0
                         });
                 });
@@ -1625,6 +1649,12 @@ namespace ERPSEI.Data.Migrations
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("FechaHoraCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaHoraTimbrado")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Folio")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1644,6 +1674,9 @@ namespace ERPSEI.Data.Migrations
                     b.Property<int>("ReceptorId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("RequiereAutorizacion")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Serie")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1658,13 +1691,10 @@ namespace ERPSEI.Data.Migrations
                     b.Property<int>("UsoCFDIId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UsuarioAutorizadorId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("UsuarioCreadorId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("UsuarioFinalizadorId")
+                    b.Property<string>("UsuarioTimbradorId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -1687,11 +1717,9 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasIndex("UsoCFDIId");
 
-                    b.HasIndex("UsuarioAutorizadorId");
-
                     b.HasIndex("UsuarioCreadorId");
 
-                    b.HasIndex("UsuarioFinalizadorId");
+                    b.HasIndex("UsuarioTimbradorId");
 
                     b.ToTable("Prefacturas");
                 });
@@ -2981,6 +3009,25 @@ namespace ERPSEI.Data.Migrations
                     b.Navigation("Horario");
                 });
 
+            modelBuilder.Entity("ERPSEI.Data.Entities.SAT.AutorizacionesPrefactura", b =>
+                {
+                    b.HasOne("ERPSEI.Data.Entities.SAT.Prefactura", "Prefactura")
+                        .WithMany("Autorizaciones")
+                        .HasForeignKey("PrefacturaId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ERPSEI.Data.Entities.Usuarios.AppUser", "Usuario")
+                        .WithMany("AutorizacionesPrefacturas")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Prefactura");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("ERPSEI.Data.Entities.SAT.Catalogos.TasaOCuota", b =>
                 {
                     b.HasOne("ERPSEI.Data.Entities.SAT.Catalogos.TipoFactor", "Factor")
@@ -3088,19 +3135,14 @@ namespace ERPSEI.Data.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("ERPSEI.Data.Entities.Usuarios.AppUser", "UsuarioAutorizador")
-                        .WithMany("PrefacturasAutorizadas")
-                        .HasForeignKey("UsuarioAutorizadorId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("ERPSEI.Data.Entities.Usuarios.AppUser", "UsuarioCreador")
                         .WithMany("PrefacturasCreadas")
                         .HasForeignKey("UsuarioCreadorId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("ERPSEI.Data.Entities.Usuarios.AppUser", "UsuarioFinalizador")
-                        .WithMany("PrefacturasFinalizadas")
-                        .HasForeignKey("UsuarioFinalizadorId")
+                    b.HasOne("ERPSEI.Data.Entities.Usuarios.AppUser", "UsuarioTimbrador")
+                        .WithMany("PrefacturasTimbradas")
+                        .HasForeignKey("UsuarioTimbradorId")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Emisor");
@@ -3121,11 +3163,9 @@ namespace ERPSEI.Data.Migrations
 
                     b.Navigation("UsoCFDI");
 
-                    b.Navigation("UsuarioAutorizador");
-
                     b.Navigation("UsuarioCreador");
 
-                    b.Navigation("UsuarioFinalizador");
+                    b.Navigation("UsuarioTimbrador");
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.SAT.cfdiv40.Comprobante", b =>
@@ -3479,6 +3519,8 @@ namespace ERPSEI.Data.Migrations
 
             modelBuilder.Entity("ERPSEI.Data.Entities.SAT.Prefactura", b =>
                 {
+                    b.Navigation("Autorizaciones");
+
                     b.Navigation("Conceptos");
                 });
 
@@ -3529,11 +3571,11 @@ namespace ERPSEI.Data.Migrations
 
             modelBuilder.Entity("ERPSEI.Data.Entities.Usuarios.AppUser", b =>
                 {
-                    b.Navigation("PrefacturasAutorizadas");
+                    b.Navigation("AutorizacionesPrefacturas");
 
                     b.Navigation("PrefacturasCreadas");
 
-                    b.Navigation("PrefacturasFinalizadas");
+                    b.Navigation("PrefacturasTimbradas");
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.Usuarios.Modulo", b =>

@@ -40,10 +40,11 @@ namespace ERPSEI.Data.Managers.SAT
 				n.NumeroOperacion = p.NumeroOperacion;
 				n.TipoComprobanteId = p.TipoComprobanteId;
 				n.UsuarioCreadorId = p.UsuarioCreadorId;
-                n.UsuarioAutorizadorId = p.UsuarioAutorizadorId;
-                n.UsuarioFinalizadorId = p.UsuarioFinalizadorId;
+                n.UsuarioTimbradorId = p.UsuarioTimbradorId;
+				n.EstatusId = p.EstatusId;
+				n.RequiereAutorizacion = p.RequiereAutorizacion;
 
-                await _db.SaveChangesAsync();
+				await _db.SaveChangesAsync();
 			}
 		}
 
@@ -122,6 +123,8 @@ namespace ERPSEI.Data.Managers.SAT
 				.Include(e => e.MetodoPago)
 				.Include(e => e.UsoCFDI)
 				.Include(e => e.Exportacion)
+				.Include(e => e.Estatus)
+				.Include(e => e.Autorizaciones)
 				.ToListAsync();
 		}
 

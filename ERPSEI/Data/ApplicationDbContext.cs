@@ -45,6 +45,7 @@ namespace ERPSEI.Data
 		public DbSet<ActividadEconomica> ActividadesEconomicas { get; set; }
 
 		//Tablas de trabajo SAT
+		public DbSet<AutorizacionesPrefactura> AutorizacionesPrefacturas { get; set; }
 		public DbSet<Prefactura> Prefacturas { get; set; }
 		public DbSet<Concepto> Conceptos { get; set; }
 		//public DbSet<ComprobanteAddenda> ComprobantesAddendas { get; set; }
@@ -317,8 +318,7 @@ namespace ERPSEI.Data
 			b.Entity<Prefactura>().HasOne(p => p.UsoCFDI).WithMany(e => e.Prefacturas).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Prefactura>().HasOne(p => p.Exportacion).WithMany(e => e.Prefacturas).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Prefactura>().HasOne(p => p.UsuarioCreador).WithMany(e => e.PrefacturasCreadas).OnDelete(DeleteBehavior.NoAction);
-            b.Entity<Prefactura>().HasOne(p => p.UsuarioAutorizador).WithMany(e => e.PrefacturasAutorizadas).OnDelete(DeleteBehavior.NoAction);
-            b.Entity<Prefactura>().HasOne(p => p.UsuarioFinalizador).WithMany(e => e.PrefacturasFinalizadas).OnDelete(DeleteBehavior.NoAction);
+            b.Entity<Prefactura>().HasOne(p => p.UsuarioTimbrador).WithMany(e => e.PrefacturasTimbradas).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Prefactura>().HasOne(p => p.Estatus).WithMany(e => e.Prefacturas).OnDelete(DeleteBehavior.NoAction);
             b.Entity<Prefactura>().Property(c => c.TipoCambio).HasPrecision(18, 6);
 
@@ -331,11 +331,14 @@ namespace ERPSEI.Data
             b.Entity<Concepto>().Property(c => c.Traslado).HasPrecision(18, 6);
 			b.Entity<Concepto>().Property(c => c.Retencion).HasPrecision(18, 6);
 
+			b.Entity<AutorizacionesPrefactura>().HasOne(ap => ap.Prefactura).WithMany(p => p.Autorizaciones).OnDelete(DeleteBehavior.NoAction);
+			b.Entity<AutorizacionesPrefactura>().HasOne(ap => ap.Usuario).WithMany(p => p.AutorizacionesPrefacturas).OnDelete(DeleteBehavior.NoAction);
+
             b.Entity<EstatusPrefactura>()
                 .HasData(
                     new EstatusPrefactura() { Id = 1, Descripcion = "Solicitada" },
                     new EstatusPrefactura() { Id = 2, Descripcion = "Autorizada" },
-                    new EstatusPrefactura() { Id = 3, Descripcion = "Finalizada" }
+                    new EstatusPrefactura() { Id = 3, Descripcion = "Timbrada" }
                 );
 
 			b.Entity<Comprobante>().Property(c => c.Descuento).HasPrecision(18, 6);

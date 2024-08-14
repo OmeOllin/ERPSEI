@@ -53,11 +53,14 @@ namespace ERPSEI.Data.Entities.SAT
 
 		public AppUser? UsuarioCreador { get; set; }
 		public string? UsuarioCreadorId { get; set; }
+		public DateTime? FechaHoraCreacion { get; set; }
 
-        public AppUser? UsuarioAutorizador { get; set; }
-        public string? UsuarioAutorizadorId { get; set; }
+        public AppUser? UsuarioTimbrador { get; set; }
+		public string? UsuarioTimbradorId { get; set; }
+		public DateTime? FechaHoraTimbrado { get; set; }
 
-        public AppUser? UsuarioFinalizador { get; set; }
-		public string? UsuarioFinalizadorId { get; set; }
+		public bool RequiereAutorizacion { get; set; }
+
+		public ICollection<AutorizacionesPrefactura>? Autorizaciones { get; set; }
 	}
 }

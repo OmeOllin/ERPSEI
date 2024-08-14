@@ -126,6 +126,9 @@
   <data name="AlmenosUnProductoServicioNecesario" xml:space="preserve">
     <value>At least one product or service added to the items is required to bill</value>
   </data>
+  <data name="AuthorizeButtonTitle" xml:space="preserve">
+    <value>Authorize</value>
+  </data>
   <data name="CancelButtonTitle" xml:space="preserve">
     <value>Cancel</value>
   </data>
@@ -146,6 +149,9 @@
   </data>
   <data name="ColDescuentoHeader" xml:space="preserve">
     <value>Discount</value>
+  </data>
+  <data name="ColEstatusHeader" xml:space="preserve">
+    <value>Status</value>
   </data>
   <data name="ColFechaHeader" xml:space="preserve">
     <value>Date</value>
@@ -201,7 +207,7 @@
   <data name="DeactivateButton" xml:space="preserve">
     <value>Disable</value>
   </data>
-  <data name="DeleteButton" xml:space="preserve">
+  <data name="DeleteButtonTitle" xml:space="preserve">
     <value>Delete</value>
   </data>
   <data name="DeleteCFDIDialogQuestion" xml:space="preserve">
@@ -350,6 +356,9 @@
   </data>
   <data name="SinProductosServiciosNoPuedeFacturar" xml:space="preserve">
     <value>The company profile does not have products or services allowed for billing. Please choose another company.</value>
+  </data>
+  <data name="StampButtonTitle" xml:space="preserve">
+    <value>Stamp</value>
   </data>
   <data name="TipoCambioPlaceholder" xml:space="preserve">
     <value>Exchange Rate</value>
