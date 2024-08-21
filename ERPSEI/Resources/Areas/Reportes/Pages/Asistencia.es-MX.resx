@@ -129,6 +129,9 @@
   <data name="AsistenciasImportadosUnsuccessfully" xml:space="preserve">
     <value>Error al importar las asistencias</value>
   </data>
+  <data name="Calculateattendance" xml:space="preserve">
+    <value>Calcular Asistencia</value>
+  </data>
   <data name="CancelButtonTitle" xml:space="preserve">
     <value>Cancelar</value>
   </data>

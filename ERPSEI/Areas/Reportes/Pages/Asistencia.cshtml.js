@@ -63,6 +63,8 @@ function additionalButtons() {
         }
     }
 }
+
+
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
         height: 550,

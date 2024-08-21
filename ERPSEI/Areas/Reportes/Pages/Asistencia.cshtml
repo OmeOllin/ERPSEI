@@ -74,6 +74,74 @@
 	</div>
 </div>
 
+<div id="dlgAsistencia" class="modal fade" tabindex="-1" aria-labelledby="dlgAsistenciaLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="dlgAsistenciaLabel">Calcular Asistencia</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<!-- Botón de exportación dentro del modal -->
+				<div id="toolbarModal" class="mb-3">
+					<button class="btn btn-success" onclick="$('#jtableContainer table').bootstrapTable('togglePagination').bootstrapTable('export', { type: 'excel', escape: false });">
+						Exportar a Excel
+					</button>
+				</div>
+				<!-- Contenedor de la tabla -->
+				<div id="jtableContainer">
+					<!-- Tabla con 3 registros de ejemplo -->
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Nombre</th>
+								<th>Retardos</th>
+								<th>Omisión/Falta</th>
+								<th>AcumuladoRet</th>
+								<th>Total Faltas</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>JORGE ALBERTO</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+							</tr>
+							<tr>
+								<td>JORGE CRUZ</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+							</tr>
+							<tr>
+								<td>ALBERTO PERCASTEGUI</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Sección tabla de resultados -->
+<div id="toolbar" class="col-xl-12">
+	<button id="btnCalcularAsistencia" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dlgAsistencia" onclick="onAgregarClick();">
+		<span class="d-none d-sm-inline">@Localizer["Calculateattendance"]</span>
+	</button>
+</div>
+
+
 <table id="table" class="table-sm"
 	   data-unique-id="id"
 	   data-toolbar="#toolbar"
@@ -83,7 +151,6 @@
 	   data-show-fullscreen="true"
 	   data-show-columns="true"
 	   data-show-columns-toggle-all="true"
-	   data-show-export="true"
 	   data-click-to-select="true"
 	   data-minimum-count-columns="2"
 	   data-show-pagination-switch="true"
