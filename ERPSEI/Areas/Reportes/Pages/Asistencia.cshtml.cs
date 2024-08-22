@@ -74,6 +74,28 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			InputImportar = new ImportarModel();
 		}
 
+		public async Task<JsonResult> OnGetAsistenciasCalculo()
+		{
+			var asistencias = await asistenciaManager.GetAllAsync();
+
+			var resumenAsistencias = asistencias
+				.GroupBy(a => a.Empleado.NombreCompleto)
+				.Select(g => new
+				{
+					nombre = g.Key,
+					retardos = g.Count(a => a.ResultadoE == "RETARDO"),
+					omisionesFaltas = g.Count(a => a.ResultadoE == "OMISIÓN/FALTA"),
+					acumuladoRet = g.Count(a => a.ResultadoE == "RETARDO"),
+					totalFaltas = g.Count(a => a.ResultadoE == "OMISIÓN/FALTA") + (g.Count(a => a.ResultadoE == "RETARDO") / 2)
+				})
+				.ToList();
+
+			return new JsonResult(resumenAsistencias);
+		}
+
+
+
+
 		public async Task<JsonResult> OnGetAsistenciasList()
 		{
 			List<string> jsonAsistencias = new List<string>();

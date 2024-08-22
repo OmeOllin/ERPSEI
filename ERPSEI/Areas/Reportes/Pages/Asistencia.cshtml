@@ -74,7 +74,7 @@
 	</div>
 </div>
 
-<div id="dlgAsistencia" class="modal fade" tabindex="-1" aria-labelledby="dlgAsistenciaLabel" aria-hidden="true">
+<div id="dlgAsistenciaModal" class="modal fade" tabindex="-1" aria-labelledby="dlgAsistenciaLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -89,43 +89,7 @@
 					</button>
 				</div>
 				<!-- Contenedor de la tabla -->
-				<div id="jtableContainer">
-					<!-- Tabla con 3 registros de ejemplo -->
-					<table class="table table-striped">
-						<thead>
-							<tr>
-								<th>Nombre</th>
-								<th>Retardos</th>
-								<th>Omisión/Falta</th>
-								<th>AcumuladoRet</th>
-								<th>Total Faltas</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>JORGE ALBERTO</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-							</tr>
-							<tr>
-								<td>JORGE CRUZ</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-							</tr>
-							<tr>
-								<td>ALBERTO PERCASTEGUI</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
+				<div id="jtableContainer"></div>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -136,7 +100,7 @@
 
 <!-- Sección tabla de resultados -->
 <div id="toolbar" class="col-xl-12">
-	<button id="btnCalcularAsistencia" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dlgAsistencia" onclick="onAgregarClick();">
+	<button id="btnCalcularAsistencia" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dlgAsistenciaModal">
 		<span class="d-none d-sm-inline">@Localizer["Calculateattendance"]</span>
 	</button>
 </div>
@@ -151,6 +115,7 @@
 	   data-show-fullscreen="true"
 	   data-show-columns="true"
 	   data-show-columns-toggle-all="true"
+	   data-show-export="false"
 	   data-click-to-select="true"
 	   data-minimum-count-columns="2"
 	   data-show-pagination-switch="true"
@@ -160,7 +125,8 @@
 	   data-show-footer="false"
 	   data-side-pagination="client"
 	   data-response-handler="responseHandler"
-	   data-buttons-class="primary">
+	   data-buttons-class="primary"
+	   data-url="/Catalogos/Areas/AreasList">
 	<thead>
 		<tr align="center" valign="middle" class="bg-primary bg-opacity-10">
 		</tr>

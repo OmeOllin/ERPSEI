@@ -18,6 +18,7 @@ const postOptions = {
 document.addEventListener("DOMContentLoaded", function (event) {
     table = $("#table");
     initTable();
+
     buttonRemove = $("#remove");
 
     dlgAsistencia = document.getElementById('dlgAsistencia');
@@ -64,6 +65,42 @@ function additionalButtons() {
     }
 }
 
+$(document).ready(function () {
+    $('#btnCalcularAsistencia').on('click', function () {
+        $('#dlgAsistenciaModal').modal('show');
+
+        $.ajax({
+            url: '/Reportes/Asistencia/AsistenciasCalculo',
+            type: 'GET',
+            success: function (data) {
+                console.log('Datos recibidos:', data);
+
+                let jsonData = data;
+
+                let tableHtml = '<table class="table table-striped">';
+                tableHtml += '<thead><tr><th>Nombre</th><th>Retardos</th><th>Omisión/Falta</th><th>Acumulado Ret</th><th>Total Faltas</th></tr></thead>';
+                tableHtml += '<tbody>';
+
+                jsonData.forEach(function (item) {
+                    tableHtml += `<tr>
+                        <td>${item.nombre}</td>
+                        <td>${item.retardos}</td>
+                        <td>${item.omisionesFaltas}</td>
+                        <td>${item.acumuladoRet}</td>
+                        <td>${item.totalFaltas}</td>
+                    </tr>`;
+                });
+
+                tableHtml += '</tbody></table>';
+
+                $('#jtableContainer').html(tableHtml);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error fetching data:', error);
+            }
+        });
+    });
+});
 
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
@@ -73,7 +110,8 @@ function initTable() {
         exportTypes: ['excel'],
         toolbar: '#toolbar', // Asegúrate de que este ID coincida con el elemento HTML donde quieres que aparezcan los botones
         buttons: additionalButtons, // Asegúrate de que `additionalButtons` esté siendo llamado correctamente aquí
-        columns: [{
+        columns: [
+        {
             title: colHorarioHeader,
             field: "Horario",
             align: "center",
