@@ -94,6 +94,59 @@ $(document).ready(function () {
                 tableHtml += '</tbody></table>';
 
                 $('#jtableContainer').html(tableHtml);
+
+                $('#btnExportExcel').on('click', function () {
+                    // Crear un nuevo workbook y worksheet
+                    var workbook = new ExcelJS.Workbook();
+                    var worksheet = workbook.addWorksheet('Asistencias');
+
+                    // Establecer las columnas
+                    worksheet.columns = [
+                        { header: 'Nombre', key: 'nombre', width: 30 },
+                        { header: 'Retardos', key: 'retardos', width: 15 },
+                        { header: 'Omisión/Falta', key: 'omisionesFaltas', width: 20 },
+                        { header: 'Acumulado Ret', key: 'acumuladoRet', width: 20 },
+                        { header: 'Total Faltas', key: 'totalFaltas', width: 20 }
+                    ];
+
+                    // Establecer estilos para el encabezado
+                    worksheet.getRow(1).eachCell(function (cell) {
+                        cell.font = { bold: true };
+                        cell.alignment = { vertical: 'middle', horizontal: 'center' };
+                        cell.fill = {
+                            type: 'pattern',
+                            pattern: 'solid',
+                            fgColor: { argb: '5ba9f2' }
+                        };
+                    });
+
+                    // Agregar los datos
+                    jsonData.forEach(function (item) {
+                        worksheet.addRow({
+                            nombre: item.nombre,
+                            retardos: item.retardos,
+                            omisionesFaltas: item.omisionesFaltas,
+                            acumuladoRet: item.acumuladoRet,
+                            totalFaltas: item.totalFaltas
+                        });
+                    });
+
+                    // Establecer alineación de datos
+                    worksheet.eachRow({ includeEmpty: false }, function (row, rowNumber) {
+                        row.eachCell({ includeEmpty: false }, function (cell, colNumber) {
+                            cell.alignment = { vertical: 'middle', horizontal: 'center' };
+                        });
+                    });
+
+                    // Obtener la fecha actual en formato YYYY-MM-DD
+                    var currentDate = new Date();
+                    var formattedDate = currentDate.toISOString().split('T')[0];
+
+                    // Exportar el archivo Excel
+                    workbook.xlsx.writeBuffer().then(function (buffer) {
+                        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), `Asistencias_${formattedDate}.xlsx`);
+                    });
+                });
             },
             error: function (xhr, status, error) {
                 console.error('Error fetching data:', error);
@@ -101,6 +154,7 @@ $(document).ready(function () {
         });
     });
 });
+
 
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({

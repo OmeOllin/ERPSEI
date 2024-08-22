@@ -13,9 +13,6 @@ using System.Net.Mime;
 using ERPSEI.Pages.Shared;
 using ERPSEI.Data.Entities.Reportes;
 using ERPSEI.Data.Managers.Reportes;
-using Microsoft.DotNet.MSIdentity.Shared;
-using ERPSEI.Data.Entities.Empresas;
-using ERPSEI.Data.Managers;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
@@ -79,7 +76,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			var asistencias = await asistenciaManager.GetAllAsync();
 
 			var resumenAsistencias = asistencias
-				.GroupBy(a => a.Empleado.NombreCompleto)
+				.GroupBy(a => a.Empleado?.NombreCompleto)
 				.Select(g => new
 				{
 					nombre = g.Key,
@@ -92,9 +89,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resumenAsistencias);
 		}
-
-
-
 
 		public async Task<JsonResult> OnGetAsistenciasList()
 		{

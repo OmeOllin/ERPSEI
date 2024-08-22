@@ -84,7 +84,7 @@
 			<div class="modal-body">
 				<!-- Botón de exportación dentro del modal -->
 				<div id="toolbarModal" class="mb-3">
-					<button class="btn btn-success" onclick="$('#jtableContainer table').bootstrapTable('togglePagination').bootstrapTable('export', { type: 'excel', escape: false });">
+					<button class="btn btn-success" id="btnExportExcel" onclick="$('#jtableContainer table').bootstrapTable('togglePagination').bootstrapTable('export', { type: 'excel', escape: false });">
 						Exportar a Excel
 					</button>
 				</div>
@@ -290,6 +290,9 @@
 	<script src="~/lib/bootstrap-table/locale/bootstrap-table-es-MX.min.js"></script>
 	<script src="~/lib/bootstrap-table/locale/bootstrap-table-en-US.min.js"></script>
 	<script src="~/lib/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
+	<script src="~/lib/bootstrap-table/extensions/export/xlsx.full.min.js"></script>
+	<script src="~/lib/bootstrap-table/extensions/export/exceljs.min.js"></script>
+	<script src="~/lib/bootstrap-table/extensions/export/FileSaver.min.js"></script>
 
 	<link rel="stylesheet" href="~/css/Asistencia.css" />
 	<script src="~/../Areas/Reportes/Pages/Asistencia.cshtml.js"></script>
