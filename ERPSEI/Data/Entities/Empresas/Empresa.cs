@@ -62,5 +62,6 @@ namespace ERPSEI.Data.Entities.Empresas
 		public ICollection<Prefactura>? PrefacturasEmitidas { get; set; }
 		public ICollection<Prefactura>? PrefacturasRecibidas { get; set; }
 
+		public string? PFESAT { get; set; }
 	}
 }
