@@ -14,6 +14,7 @@ using ERPSEI.Data.Managers.Usuarios;
 using ERPSEI.Email;
 using ERPSEI.Resources;
 using ERPSEI.TokenProviders;
+using ERPSEI.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -33,8 +34,6 @@ namespace ERPSEI
 
         public static string MasterPassword { get; set; } = string.Empty;
         public static AppUser MasterUser { get; } = new AppUser() { EmailConfirmed = true, IsPreregisterAuthorized = true, PasswordResetNeeded = false, IsMaster = true };
-
-        public static IConfiguration Configuration { get; set; }
 
         public static void ConfigureEmail(WebApplicationBuilder _builder)
         {
@@ -61,23 +60,26 @@ namespace ERPSEI
             {
                 _builder.Services.AddDatabaseDeveloperPageExceptionFilter();
             }
-
-            ConfigureDIFacturacion(_builder);
-
-            ConfigureDIEmpresas(_builder);
-
-            ConfigureDIEmpleados(_builder);
-
-            ConfigureDIAsistencias(_builder);
 		}
 
+        public static void ConfigureDependencyInjection(WebApplicationBuilder _builder)
+        {
+            ConfigureDIUtils(_builder);
+
+			ConfigureDIFacturacion(_builder);
+
+			ConfigureDIEmpresas(_builder);
+
+			ConfigureDIEmpleados(_builder);
+
+			ConfigureDIAsistencias(_builder);
+		}
         private static void ConfigureDIAsistencias(WebApplicationBuilder _builder) 
         {
 			//Asistencias
 			_builder.Services.AddScoped<IAsistenciaManager, AsistenciaManager>();
 			_builder.Services.AddScoped<IHorariosManager, HorariosManager>();
 		}
-
         private static void ConfigureDIFacturacion(WebApplicationBuilder _builder)
         {
             //Catálogos SAT
@@ -139,6 +141,10 @@ namespace ERPSEI
 
             
 		}    
+        private static void ConfigureDIUtils(WebApplicationBuilder _builder)
+        {
+            _builder.Services.AddSingleton<IEncriptacionAES, EncriptacionAES>();
+        }
 
 		public static void ConfigureIdentity(WebApplicationBuilder _builder)
         {

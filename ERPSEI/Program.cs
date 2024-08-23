@@ -7,8 +7,6 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-ServicesConfiguration.Configuration = builder.Configuration;
-
 //Email configuration
 ServicesConfiguration.ConfigureEmail(builder);
 
@@ -23,6 +21,9 @@ ServicesConfiguration.ConfigurePagesAndLocalization(builder);
 
 //Authorization configuration
 ServicesConfiguration.ConfigureAuthorization(builder);
+
+//Dependency injection configuration
+ServicesConfiguration.ConfigureDependencyInjection(builder);
 
 //Build and run application
 WebApplication app = builder.Build();
