@@ -141,11 +141,17 @@
   <data name="AgregarBancoButtonText" xml:space="preserve">
     <value>Agregar Banco</value>
   </data>
+  <data name="ArchivosSATPasswordPlaceholder" xml:space="preserve">
+    <value>Contraseña</value>
+  </data>
   <data name="BancoNombrePlaceholder" xml:space="preserve">
     <value>Banco</value>
   </data>
   <data name="CancelButtonTitle" xml:space="preserve">
     <value>Cancelar</value>
+  </data>
+  <data name="CER" xml:space="preserve">
+    <value>CER</value>
   </data>
   <data name="CloseButtonTitle" xml:space="preserve">
     <value>Cerrar</value>
@@ -234,6 +240,9 @@
   <data name="EmpresaBancoTitle" xml:space="preserve">
     <value>Banco</value>
   </data>
+  <data name="EmpresaCuartaSeccionTitle" xml:space="preserve">
+    <value>Firma Electrónica</value>
+  </data>
   <data name="EmpresaPrimerSeccionTitle" xml:space="preserve">
     <value>Información Empresarial</value>
   </data>
@@ -287,6 +296,9 @@
   </data>
   <data name="InvalidFormatTitle" xml:space="preserve">
     <value>Formato de archivo inválido</value>
+  </data>
+  <data name="KEY" xml:space="preserve">
+    <value>KEY</value>
   </data>
   <data name="MaxBancosAllowed" xml:space="preserve">
     <value>No es posible agregar más bancos.</value>
