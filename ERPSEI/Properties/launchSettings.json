@@ -4,7 +4,11 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ERPSEI_ALPHA": "C&[ClTX~~8BL9wn!,{_;{T+Mq-a=(nm+qcOsH}8ztXg^=iQJKv",
+        "ERPSEI_BRAVO": "p@ucM+6G(F%Dmpvwl(@#;CdHenn0Q5+23q+xY(VzQ7i'l}h5Yf",
+        "ERPSEI_EDICOM_USR": "RMA9509272C6",
+        "ERPSEI_EDICOM_PWD": "n84kjdgudg"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5128"
@@ -13,14 +17,22 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ERPSEI_ALPHA": "C&[ClTX~~8BL9wn!,{_;{T+Mq-a=(nm+qcOsH}8ztXg^=iQJKv",
+        "ERPSEI_BRAVO": "p@ucM+6G(F%Dmpvwl(@#;CdHenn0Q5+23q+xY(VzQ7i'l}h5Yf",
+        "ERPSEI_EDICOM_USR": "RMA9509272C6",
+        "ERPSEI_EDICOM_PWD": "n84kjdgudg"
       }
     },
     "httpsDev": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ERPSEI_ALPHA": "C&[ClTX~~8BL9wn!,{_;{T+Mq-a=(nm+qcOsH}8ztXg^=iQJKv",
+        "ERPSEI_BRAVO": "p@ucM+6G(F%Dmpvwl(@#;CdHenn0Q5+23q+xY(VzQ7i'l}h5Yf",
+        "ERPSEI_EDICOM_USR": "RMA9509272C6",
+        "ERPSEI_EDICOM_PWD": "n84kjdgudg"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7106;http://localhost:5128"
@@ -29,10 +41,14 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Production"
+        "ASPNETCORE_ENVIRONMENT": "Production",
+        "ERPSEI_ALPHA": "6=BP;87nPagsk'z-eNiaQFHd!KL$Ljb!a#xL_tX72,fkGisO&D",
+        "ERPSEI_BRAVO": "Ci]Bk[!$_c(ts;XBgBzm%1VfD3P8y;Z4K~R;%FtO~c1CZ{F$1b",
+        "ERPSEI_EDICOM_USR": "RMA9509272C6",
+        "ERPSEI_EDICOM_PWD": "n84kjdgudg"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://bgrande.ddns.net"
+      "applicationUrl": "https://tiaspel.ddns.net"
     }
   },
   "iisSettings": {
