@@ -162,4 +162,10 @@
   <data name="RFC" xml:space="preserve">
     <value>RFC</value>
   </data>
+	<data name="NuevoPasswordSATNoCoincide" xml:space="preserve">
+    <value>The new password for the company's electronic signature is not the same as the new password confirmation</value>
+  </data>
+		<data name="AnteriorPasswordSATNoCoincide" xml:space="preserve">
+    <value>The previous password for the company's electronic signature does not match the previous password entered by the user</value>
+  </data>
 </root>

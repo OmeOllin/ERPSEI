@@ -618,12 +618,12 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					if (e.ArchivosSATNewPassword != e.ArchivosSATConfirmNewPassword)
 					{
 						//La contraseña nueva de la firma electrónica de la empresa no es igual a la confirmación de contraseña nueva.
-						return _strLocalizer[""];
+						return _strLocalizer["NuevoPasswordSATNoCoincide"];
 					}
 					if (e.ArchivosSATOldPassword != empresa.PFESAT)
 					{
 						//La contraseña anterior de la firma electrónica de la empresa no coincide con la contraseña anterior introducida por el usuario.
-						return _strLocalizer[""];
+						return _strLocalizer["AnteriorPasswordSATNoCoincide"];
 					}
 				}
 
