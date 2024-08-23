@@ -150,6 +150,9 @@
   <data name="Calculateattendance" xml:space="preserve">
     <value>Calcular Asistencia</value>
   </data>
+  <data name="ColActionsHeader" xml:space="preserve">
+    <value>Acciones</value>
+  </data>
   <data name="ConsultadoSuccessfully" xml:space="preserve">
     <value>¡Consulta de información satisfactoria!</value>
   </data>

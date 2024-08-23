@@ -65,6 +65,32 @@ function additionalButtons() {
     }
 }
 
+//Función para dar formato a los iconos de operación de los registros
+function operateFormatter(value, row, index) {
+    let icons = [];
+
+    //Icono Ver
+    //icons.push(`<li><a class="dropdown-item see" href="#" title="${btnVerTitle}"><i class="bi bi-search"></i> ${btnVerTitle}</a></li>`);
+    //Icono Editar
+    icons.push(`<li><a class="dropdown-item edit" href="#" title="${btnEditarTitle}"><i class="bi bi-pencil-fill"></i> ${btnEditarTitle}</a></li>`);
+
+    return `<div class="dropdown">
+              <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical success"></i>
+              </button>
+              <ul class="dropdown-menu">${icons.join("")}</ul>
+            </div>`;
+}
+window.operateEvents = {
+    'click .edit': function (e, value, row, index) {
+        initAsistenciaDialog(EDITAR, row);
+        //table.bootstrapTable('remove', {
+        //    field: 'id',
+        //    values: [row.id]
+        //})
+    }
+}
+
 $(document).ready(function () {
     $('#btnCalcularAsistencia').on('click', function () {
         $('#dlgAsistenciaModal').modal('show');
@@ -155,7 +181,6 @@ $(document).ready(function () {
     });
 });
 
-
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
         height: 550,
@@ -220,10 +245,54 @@ function initTable() {
             align: "center",
             valign: "middle",
             sortable: true
-         }
+            },
+            {
+                title: colAccionesHeader,
+                field: "operate",
+                align: 'center',
+                width: "100px",
+                clickToSelect: false,
+                events: window.operateEvents,
+                formatter: operateFormatter
+            }
         ]
     });
 }
+
+//Funcionalidad Diálogo
+function initAsistenciaDialog(action, row) {
+    // Obtener los elementos del modal
+    let nombreField = document.getElementById("inpAsistenciaNombre");
+    let resultadoEField = document.getElementById("inpAsistenciaResultadoE");
+    let resultadoSField = document.getElementById("inpAsistenciaResultadoS");
+    let btnGuardar = document.getElementById("dlgAsistenciaBtnGuardar");
+    let dlgTitle = document.getElementById("dlgAsistenciaTitle");
+    let summaryContainer = document.getElementById("saveValidationSummary");
+
+    // Limpiar mensajes de error
+    summaryContainer.innerHTML = "";
+
+    // Mostrar título basado en la acción
+    switch (action) {
+        case EDITAR:
+            dlgTitle.innerHTML = dlgEditarTitle;
+
+            // Habilitar campos para edición
+            nombreField.setAttribute("disabled", true);
+            resultadoEField.removeAttribute("disabled");
+            resultadoSField.removeAttribute("disabled");
+            btnGuardar.removeAttribute("disabled");
+    }
+
+    // Establecer los valores de los campos
+    nombreField.value = row.NombreEmpleado;
+    resultadoEField.value = row.ResultadoE;
+    resultadoSField.value = row.ResultadoS;
+
+    // Mostrar el diálogo
+    dlgAsistenciaModal.toggle();
+}
+
 
 // Función para manejar el click en el botón de búsqueda
 function onBuscarClick() {

@@ -148,45 +148,9 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpAsistenciaHorario" asp-for="ListaAsistencia.Horario" type="text" class="form-control" placeholder="@Localizer["HorarioPlaceholder"]" />
-									<label asp-for="ListaAsistencia.Horario" class="form-label required"></label>
-									<span asp-validation-for="ListaAsistencia.Horario" class="text-danger"></span>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-12">
-								<div class="form-floating mb-3">
 									<input id="inpAsistenciaNombre" asp-for="ListaAsistencia.Empleado" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
 									<label asp-for="ListaAsistencia.Empleado" class="form-label required"></label>
 									<span asp-validation-for="ListaAsistencia.Empleado" class="text-danger"></span>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-12">
-								<div class="form-floating mb-3">
-									<input id="inpAsistenciaFecha" asp-for="ListaAsistencia.Fecha" type="text" class="form-control" placeholder="@Localizer["FechaPlaceholder"]" />
-									<label asp-for="ListaAsistencia.Fecha" class="form-label required"></label>
-									<span asp-validation-for="ListaAsistencia.Fecha" class="text-danger"></span>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-12">
-								<div class="form-floating mb-3">
-									<input id="inpAsistenciaDia" asp-for="ListaAsistencia.Dia" type="text" class="form-control" placeholder="@Localizer["DiaPlaceholder"]" />
-									<label asp-for="ListaAsistencia.Dia" class="form-label required"></label>
-									<span asp-validation-for="ListaAsistencia.Dia" class="text-danger"></span>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-12">
-								<div class="form-floating mb-3">
-									<input id="inpAsistenciaEntrada" asp-for="ListaAsistencia.Entrada" type="text" class="form-control" placeholder="@Localizer["EntradaPlaceholder"]" />
-									<label asp-for="ListaAsistencia.Entrada" class="form-label required"></label>
-									<span asp-validation-for="ListaAsistencia.Entrada" class="text-danger"></span>
 								</div>
 							</div>
 						</div>
@@ -202,15 +166,6 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpAsistenciaSalida" asp-for="ListaAsistencia.Salida" type="text" class="form-control" placeholder="@Localizer["SalidaPlaceholder"]" />
-									<label asp-for="ListaAsistencia.Salida" class="form-label required"></label>
-									<span asp-validation-for="ListaAsistencia.Salida" class="text-danger"></span>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-12">
-								<div class="form-floating mb-3">
 									<input id="inpAsistenciaResultadoS" asp-for="ListaAsistencia.ResultadoS" type="text" class="form-control" placeholder="@Localizer["ResultadoSPlaceholder"]" />
 									<label asp-for="ListaAsistencia.ResultadoS" class="form-label required"></label>
 									<span asp-validation-for="ListaAsistencia.ResultadoS" class="text-danger"></span>
@@ -219,6 +174,14 @@
 						</div>
 					</div>
 					</form>
+			</div>
+			<div class="modal-footer">
+				<button id="dlgAsistenciaBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarClick();" data-bs-dismiss="modal">
+					<i class="bi bi-x-lg"></i> @Localizer["CancelButton"]
+				</button>
+				<button id="dlgAsistenciaBtnGuardar" type="button" class="btn btn-primary" onclick="onGuardarClick();">
+					<i class="bi bi-floppy"></i> @Localizer["SaveButton"]
+				</button>
 			</div>
 		</div>
 	</div>
@@ -320,6 +283,7 @@
 		var colResultadoEHeader = '@Localizer["ColResultEntryHeader"]';
 		var colSalidaHeader = '@Localizer["ColExitHeader"]';
 		var colResultadoSHeader = '@Localizer["ColResultExitHeader"]';
+		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
 
 		var invalidFormatTitle = '@Localizer["InvalidFormatTitle"]';
 		var invalidFormatMsg = '@Localizer["InvalidFormatMsg"]';
