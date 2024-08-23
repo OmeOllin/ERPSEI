@@ -109,28 +109,28 @@ namespace ERPSEI.Data
             base.OnModelCreating(modelBuilder);
 
 			//Empresas
-			buildEmpresas(modelBuilder);
+			BuildEmpresas(modelBuilder);
 
 			//Empleados
-			buildEmpleados(modelBuilder);
+			BuildEmpleados(modelBuilder);
 
 			//SAT
-			buildSAT(modelBuilder);
+			BuildSAT(modelBuilder);
 
 			//Accesos
-			buildAccesos(modelBuilder);
+			BuildAccesos(modelBuilder);
 
 			//Asistencias
-			buildAsistencias(modelBuilder);
+			BuildAsistencias(modelBuilder);
 		}
 
-		private static void buildAsistencias(ModelBuilder b) 
+		private static void BuildAsistencias(ModelBuilder b) 
 		{
 			b.Entity<Asistencia>().HasOne(e => e.Empleado).WithMany(a => a.Asistencias).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Asistencia>().HasOne(e => e.Horario).WithMany(a => a.Asistencias).OnDelete(DeleteBehavior.NoAction);
 		}
 
-		private static void buildEmpresas(ModelBuilder b) 
+		private static void BuildEmpresas(ModelBuilder b) 
 		{
 			b.Entity<Empresa>().HasOne(e => e.Perfil).WithMany(p => p.Empresas).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Empresa>().HasOne(e => e.Origen).WithMany(o => o.Empresas).OnDelete(DeleteBehavior.NoAction);
@@ -154,11 +154,14 @@ namespace ERPSEI.Data
 					new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.INE, "INE"),
                     new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.RFC, "RFC"),
                     new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.ComprobanteDomicilio, "ComprobanteDomicilio"),
-                    new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.Otro, "Otro")
-                );
+                    new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.Otro, "Otro"),
+					new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.CER, "CER"),
+					new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.KEY, "KEY"),
+					new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.Logo, "Logo")
+				);
 		}
 
-		private static void buildEmpleados(ModelBuilder b)
+		private static void BuildEmpleados(ModelBuilder b)
 		{
 			b.Entity<ArchivoEmpleado>().HasOne(ae => ae.TipoArchivo).WithMany(ta => ta.ArchivosEmpleado).OnDelete(DeleteBehavior.NoAction);
 
@@ -301,7 +304,7 @@ namespace ERPSEI.Data
 			b.Entity<Oficina>().HasData(dataOficinas);
 		}
 
-		private static void buildSAT(ModelBuilder b)
+		private static void BuildSAT(ModelBuilder b)
 		{
 			b.Entity<TasaOCuota>().HasOne(t => t.Factor).WithMany(f => f.TasasOCuotas).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<TasaOCuota>().HasOne(t => t.Impuesto).WithMany(i => i.TasasOCuotas).OnDelete(DeleteBehavior.NoAction);
@@ -373,7 +376,7 @@ namespace ERPSEI.Data
 			b.Entity<ComprobanteImpuestosTraslado>().Property(c => c.Importe).HasPrecision(18, 6);
 		}
 
-		private static void buildAccesos(ModelBuilder b)
+		private static void BuildAccesos(ModelBuilder b)
 		{
 			b.Entity<AppRole>().HasMany(r => r.Accesos).WithOne(am => am.Rol).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Modulo>().HasMany(m => m.Accesos).WithOne(am => am.Modulo).OnDelete(DeleteBehavior.NoAction);

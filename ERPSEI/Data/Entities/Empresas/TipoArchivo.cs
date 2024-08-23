@@ -6,7 +6,10 @@
         INE,
         RFC,
         ComprobanteDomicilio,
-        Otro
+        Otro,
+        CER,
+        KEY, 
+        Logo
     }
     public class TipoArchivoEmpresa
     {
