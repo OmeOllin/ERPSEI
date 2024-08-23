@@ -398,6 +398,47 @@
 								</div>
 							</div>
 						</div>
+						<div class="accordion shadow-sm mb-5" id="accordionFour">
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="cuartaSeccion">
+									<button class="accordion-button p-2 bg-gradient bg-primary bg-opacity-10 text-black" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSectionFour" aria-expanded="true" aria-controls="collapseSectionFour">
+										<h5>@Localizer["EmpresaCuartaSeccionTitle"]</h5>
+									</button>
+								</h2>
+								<div id="collapseSectionFour" class="accordion-collapse collapse show" aria-labelledby="cuartaSeccion" data-bs-parent="#accordionFour">
+									<div class="accordion-body">
+										<div id="bodyArchivosSAT" class="row mb-2"></div>
+										<div id="divChangePasswordSAT" class="row justify-content-center">
+											<div class="col-sm-12 col-md-12 col-lg-4 col-xl-4">
+												<button class="btn btn-primary formButton" type="button" onclick="onChangePasswordSATClick()">
+													<i class="bi bi-key"></i> @Localizer["ChangePasswordSATButtonTitle"]
+												</button>
+											</div>
+										</div>
+										<div id="divPasswordSAT" class="row justify-content-center">
+											<div class="col-sm-12 col-md-12 col-lg-4 col-xl-4" style="padding-left: 0px">
+												<div class="form-floating mb-3">
+													<input id="inpEmpresaArchivosSATOldPassword" type="password" asp-for="InputEmpresa.ArchivosSATOldPassword" class="form-control formInput" placeholder="@Localizer["ArchivosSATPasswordPlaceholder"]" />
+													<label for="inpEmpresaArchivosSATOldPassword" asp-for="InputEmpresa.ArchivosSATOldPassword" class="form-label"></label>
+												</div>
+											</div>
+											<div class="col-sm-12 col-md-12 col-lg-4 col-xl-4" style="padding-left: 0px">
+												<div class="form-floating mb-3">
+													<input id="inpEmpresaArchivosSATNewPassword" type="password" asp-for="InputEmpresa.ArchivosSATNewPassword" class="form-control formInput" placeholder="@Localizer["ArchivosSATPasswordPlaceholder"]" />
+													<label for="inpEmpresaArchivosSATNewPassword" asp-for="InputEmpresa.ArchivosSATNewPassword" class="form-label"></label>
+												</div>
+											</div>
+											<div class="col-sm-12 col-md-12 col-lg-4 col-xl-4" style="padding-left: 0px">
+												<div class="form-floating mb-3">
+													<input id="inpEmpresaArchivosSATConfirmNewPassword" type="password" asp-for="InputEmpresa.ArchivosSATConfirmNewPassword" class="form-control formInput" placeholder="@Localizer["ArchivosSATPasswordPlaceholder"]" />
+													<label for="inpEmpresaArchivosSATConfirmNewPassword" asp-for="InputEmpresa.ArchivosSATConfirmNewPassword" class="form-label"></label>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 						<div class="accordion shadow-sm mb-5" id="accordionTwo">
 							<div class="accordion-item">
 								<h2 class="accordion-header" id="segundaSeccion">
@@ -626,7 +667,9 @@
 			"2": '@Localizer["INE"]',
 			"3": '@Localizer["RFC"]',
 			"4": '@Localizer["ComprobanteDomicilio"]',
-			"5": '@Localizer["Otro"]'
+			"5": '@Localizer["Otro"]',
+			"6": '@Localizer["CER"]',
+			"7": '@Localizer["KEY"]'
 		};
 		var invalidFormatTitle = '@Localizer["InvalidFormatTitle"]';
 		var invalidFormatMsg = '@Localizer["InvalidFormatMsg"]';

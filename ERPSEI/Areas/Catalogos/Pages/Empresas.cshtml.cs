@@ -6,6 +6,7 @@ using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Pages.Shared;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
+using ERPSEI.Utils;
 using ExcelDataReader;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			IRWCatalogoManager<ActividadEconomica> _actividadEconomicaManager,
 			IStringLocalizer<EmpresasModel> _strLocalizer,
 			ILogger<EmpresasModel> _logger,
-			ApplicationDbContext _db
+			ApplicationDbContext _db,
+			IEncriptacionAES _encriptacionAES
 		) : ERPPageModel
 	{
 
@@ -155,6 +157,18 @@ namespace ERPSEI.Areas.Catalogos.Pages
             public BancoModel?[] Bancos { get; set; } = [];
 
             public ArchivoModel?[] Archivos { get; set; } = [];
+
+			[DataType(DataType.Password)]
+			[Display(Name = "OldPasswordField")]
+			public string? ArchivosSATOldPassword { get; set; } = string.Empty;
+
+			[DataType(DataType.Password)]
+			[Display(Name = "NewPasswordField")]
+			public string? ArchivosSATNewPassword { get; set; } = string.Empty;
+
+			[DataType(DataType.Password)]
+			[Display(Name = "ConfirmNewPasswordField")]
+			public string? ArchivosSATConfirmNewPassword { get; set; } = string.Empty;
 		}
 
 		public class BancoModel
@@ -267,7 +281,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						$"\"correoFiscal\": \"{e.CorreoFiscal}\", " +
 						$"\"correoFacturacion\": \"{e.CorreoFacturacion}\", " +
 						$"\"telefono\": \"{e.Telefono}\", " +
-						$"\"objetoSocial\": \"{e.ObjetoSocial}\"" +
+						$"\"objetoSocial\": \"{e.ObjetoSocial}\", " +
+						$"\"hasPasswordSAT\": \"{e.PFESAT?.Length >= 1}\"" +
 					"}"
 				);
 			}
@@ -519,10 +534,17 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					if ((validacion ?? string.Empty).Length <= 0)
 					{
 						//Procede a crear o actualizar la empresa.
-						await CreateOrUpdateCompany(InputEmpresa);
+						validacion = await CreateOrUpdateCompany(InputEmpresa);
 
-						resp.TieneError = false;
-						resp.Mensaje = _strLocalizer["EmpresaSavedSuccessfully"];
+						if ((validacion ?? string.Empty).Length <= 0)
+						{
+							resp.TieneError = false;
+							resp.Mensaje = _strLocalizer["EmpresaSavedSuccessfully"];
+						}
+						else
+						{
+							resp.Mensaje = validacion;
+						}
 					}
 					else
 					{
@@ -566,7 +588,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return string.Empty;
 		}
-		private async Task CreateOrUpdateCompany(EmpresaModel e)
+		private async Task<string> CreateOrUpdateCompany(EmpresaModel e)
 		{
 			try
 			{
@@ -590,7 +612,20 @@ namespace ERPSEI.Areas.Catalogos.Pages
 					if (empresa != null) { idEmpresa = empresa.Id; } else { empresa = new Empresa(); }
 				}
 
-				
+				//Se valida el password SAT en caso de venir
+				if (e.ArchivosSATConfirmNewPassword?.Length >= 1 || e.ArchivosSATConfirmNewPassword?.Length >= 1)
+				{
+					if (e.ArchivosSATNewPassword != e.ArchivosSATConfirmNewPassword)
+					{
+						//La contraseña nueva de la firma electrónica de la empresa no es igual a la confirmación de contraseña nueva.
+						return _strLocalizer[""];
+					}
+					if (e.ArchivosSATOldPassword != empresa.PFESAT)
+					{
+						//La contraseña anterior de la firma electrónica de la empresa no coincide con la contraseña anterior introducida por el usuario.
+						return _strLocalizer[""];
+					}
+				}
 
 				//Llena los datos de la empresa.
 				empresa.RazonSocial = e.RazonSocial;
@@ -611,6 +646,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				empresa.CorreoFacturacion = e.CorreoFacturacion;
 				empresa.Telefono = e.Telefono;
 				empresa.ObjetoSocial = e.ObjetoSocial;
+				empresa.PFESAT = _encriptacionAES.EncriptarString(e.ArchivosSATNewPassword ?? string.Empty);
 
                 if (idEmpresa >= 1)
 				{
@@ -679,6 +715,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				await _db.Database.RollbackTransactionAsync();
 				throw;
 			}
+			return string.Empty;
 		}
 
 		public async Task<JsonResult> OnPostImportarEmpresas()

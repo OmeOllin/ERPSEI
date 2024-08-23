@@ -425,6 +425,9 @@ function initEmpresaDialog(action, row) {
     let telefonoField = document.getElementById("inpEmpresaTelefono");
     let objetoSocialField = document.getElementById("txtEmpresaObjetoSocial");
     let perfilField = document.getElementById("selEmpresaPerfil");
+    let oldPasswordField = document.getElementById("inpEmpresaArchivosSATOldPassword");
+    let newPasswordField = document.getElementById("inpEmpresaArchivosSATNewPassword");
+    let confirmNewPasswordField = document.getElementById("inpEmpresaArchivosSATConfirmNewPassword");
 
     summaryContainer.innerHTML = "";
     dialogMode = action;
@@ -448,6 +451,19 @@ function initEmpresaDialog(action, row) {
     telefonoField.value = row.telefono;
     objetoSocialField.value = row.objetoSocial;
     perfilField.value = row.perfilId;
+
+    if (row.hasPasswordSAT||false) {
+        $("#divChangePasswordSAT").show();
+        $("#divPasswordSAT").hide();
+
+        $("#inpEmpresaArchivosSATOldPassword").parent().parent().show();
+    }
+    else {
+        $("#divChangePasswordSAT").hide();
+        $("#divPasswordSAT").show();
+
+        $("#inpEmpresaArchivosSATOldPassword").parent().parent().hide();
+    }
 
     if (action == NUEVO || (row.hasDatosAdicionales || false)) {
         establecerDatosAdicionales(row, action);
@@ -494,6 +510,13 @@ function initEmpresaDialog(action, row) {
         postOptions
     );
 }
+//Función para controlar el clic del botón changePasswordSAT para cambiar el password de la firma electrónica
+function onChangePasswordSATClick() {
+    $("#divChangePasswordSAT").hide();
+    $("#divPasswordSAT").show();
+
+    $("#inpEmpresaArchivosSATOldPassword").show();
+}
 //Función para hablitar / deshabilitar el formulario de empresa
 function prepareForm(action) {
     let btnDesactivar = document.getElementById("dlgEmpresaBtnDesactivar");
@@ -528,6 +551,8 @@ function prepareForm(action) {
 function establecerDatosAdicionales(row, action) {
     
     //Se establecen las actividades económicas
+    let ID_TIPO_ARCHIVO_CER = 6;
+    let ID_TIPO_ARCHIVO_KEY = 7;
     let data = [];
     row.actividadesEconomicas = row.actividadesEconomicas || [];
     row.actividadesEconomicas.forEach(function (p) { data.push(p); });
@@ -539,7 +564,7 @@ function establecerDatosAdicionales(row, action) {
     row.bancos.forEach(function (b) { onAgregarBancoClick(b) });
 
     //Se establecen los archivos.
-    $("#bodyArchivos").html("");
+    $("#bodyArchivos, #bodyArchivosSAT").html("");
     row.archivos = row.archivos || [];
     let i = 1;
     row.archivos.forEach(function (a) {
@@ -553,6 +578,9 @@ function establecerDatosAdicionales(row, action) {
         let itemEliminarHTML = "";
         let menuHTML = "";
         let actualizar = a.actualizar || 0;
+        let containerName;
+        let mimeTypes;
+        let documentChangedEvent;
 
         if (puedeTodo || puedeEditar || puedeEliminar) {
             itemEditarHTML = `<li><a class='dropdown-item edit ${editDisabled}' onclick='onEditDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-pencil-fill'></i> ${btnEditarTitle}</a></li>`;
@@ -585,14 +613,25 @@ function establecerDatosAdicionales(row, action) {
                         </div>`;
         }
 
-        $("#bodyArchivos").append(
+        if (a.tipoArchivoId == ID_TIPO_ARCHIVO_CER || a.tipoArchivoId == ID_TIPO_ARCHIVO_KEY) {
+            documentChangedEvent = "onSpecialDocumentSelectorChanged(this);";
+            mimeTypes = "application/x-x509-ca-cert";
+            containerName = "#bodyArchivosSAT";
+        }
+        else {
+            documentChangedEvent = "onDocumentSelectorChanged(this);";
+            mimeTypes = "image/png, image/jpeg, application/pdf"
+            containerName = "#bodyArchivos";
+        }
+
+        $(containerName).append(
             `<div class="col-12 col-xl-6">
                 <div><b>${arrTiposDocumentos[a.tipoArchivoId]}</b></div>
                 <div id="container${a.tipoArchivoId}" class="alert mb-2 mt-2 ${containerClass} row me-0">
                     <div id="fileIcon${a.tipoArchivoId}" class="align-self-center col-1 ${iconClass} p-0 p-lg-2 p-xl-2"><i class='bi bi-file-image' style='font-size:25px'></i></div>
                     <div id="fileName${a.tipoArchivoId}" class="align-self-center col-10 ${nameClass} p-2" style="display:flex; color:dimgray">${nameHTML}</div>
                     <div class="align-self-center col-1">
-                        <input type="file" actualizar="${actualizar}" id="selector${a.tipoArchivoId}" sourceId="${a.id}" sourceName="${a.nombre}.${a.extension}" sourceLength="${a.fileSize}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                        <input type="file" actualizar="${actualizar}" id="selector${a.tipoArchivoId}" sourceId="${a.id}" sourceName="${a.nombre}.${a.extension}" sourceLength="${a.fileSize}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="${documentChangedEvent}" accept="${mimeTypes}" hidden />
                         ${menuHTML}
                     </div>
                 </div>
@@ -782,6 +821,55 @@ function onDocumentSelectorChanged(input) {
         }
     }
 }
+//Función para mostrar archivos .CER o archivos .KEY
+function onSpecialDocumentSelectorChanged(input) {
+    if (input.files && (input.files.length || 0) >= 1) {
+        let docParts = input.files[0].name.split(".");
+        let fName = docParts.length >= 1 ? docParts.slice(0, -1).join('.') || "" : "";
+        let fExt = docParts.length >= 2 ? docParts[docParts.length - 1] || "" : "";
+
+        let containerName = input.getAttribute("containerName");
+        let fileIconName = input.getAttribute("fileIconName");
+        let fileNameName = input.getAttribute("fileNameName");
+        let container = document.getElementById(containerName);
+        let fileIcon = document.getElementById(fileIconName);
+        let fileName = document.getElementById(fileNameName);
+
+        var reader = new FileReader();
+        reader.onload = function () {
+
+            var arrayBuffer = this.result,
+                binary = '',
+                bytes = new Uint8Array(arrayBuffer),
+                len = bytes.byteLength;
+
+            for (var i = 0; i < len; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            input.setAttribute("b64", window.btoa(binary));
+            input.setAttribute("sourceLength", "0");
+            input.setAttribute("actualizar", "1");
+
+            //Se elimina menú para ver el documento, en caso de haber uno anterior.
+            let inputName = input.getAttribute("id");
+            let menuVer = document.querySelector(`a.dropdown-item.see[inputName='${inputName}']`);
+            if (menuVer != null) { menuVer.parentElement.remove(); }
+
+            initializeDisableableButtons();
+        }
+        reader.readAsArrayBuffer(input.files[0]);
+
+        container.classList.remove("document-container-empty");
+        container.classList.add("document-container-filled");
+
+        fileIcon.classList.remove("opacity-25");
+        fileIcon.classList.add("document-icon-filled");
+
+        fileName.classList.remove("opacity-25");
+        fileName.classList.add("document-name-filled");
+        fileName.innerHTML = `<div class="overflowed-text">${fName}</div>.<div>${fExt}</div>`;
+    }
+}
 //Función para el cierre del cuadro de diálogo
 function onCerrarClick() {
     //Removes validation from input-fields
@@ -826,6 +914,9 @@ function onGuardarClick() {
     let telefonoField = document.getElementById("inpEmpresaTelefono");
     let objetoSocialField = document.getElementById("txtEmpresaObjetoSocial");
     let perfilField = document.getElementById("selEmpresaPerfil");
+    let oldPasswordField = document.getElementById("inpEmpresaArchivosSATOldPassword");
+    let newPasswordField = document.getElementById("inpEmpresaArchivosSATNewPassword");
+    let confirmNewPasswordField = document.getElementById("inpEmpresaArchivosSATConfirmNewPassword");
 
     let dlgTitle = document.getElementById("dlgEmpresaTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
@@ -855,6 +946,11 @@ function onGuardarClick() {
         let file = getFile(id);
         if (file) { files.push(file); }
     });
+    $("#bodyArchivosSAT input").each(function (i, a) {
+        let id = a.getAttribute("id");
+        let file = getFile(id);
+        if (file) { files.push(file); }
+    });
 
     let oParams = {
         id: idField.value == nuevoRegistro ? 0 : idField.value,
@@ -878,6 +974,9 @@ function onGuardarClick() {
         objetoSocial: objetoSocialField.value.trim(),
         perfilId: perfilField.value == 0 ? null : parseInt(perfilField.value),
         bancos: banks,
+        archivosSATOldPassword: oldPasswordField.value,
+        archivosSATNewPassword: newPasswordField.value,
+        archivosSATConfirmNewPassword: confirmNewPasswordField.value,
         archivos: files
     };
 
