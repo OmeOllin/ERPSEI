@@ -13,6 +13,19 @@ using System.Net.Mime;
 using ERPSEI.Pages.Shared;
 using ERPSEI.Data.Entities.Reportes;
 using ERPSEI.Data.Managers.Reportes;
+public static class SessionExtensions
+{
+	public static void SetObjectAsJson(this ISession session, string key, object value)
+	{
+		session.SetString(key, JsonConvert.SerializeObject(value));
+	}
+
+	public static T GetObjectFromJson<T>(this ISession session, string key)
+	{
+		var value = session.GetString(key);
+		return value == null ? default(T?) : JsonConvert.DeserializeObject<T>(value);
+	}
+}
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
@@ -52,6 +65,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Required(ErrorMessage = "Required")]
 			public IFormFile? Plantilla { get; set; }
 		}
+
 		public AsistenciaModel(
 			IHorariosManager _horariosManager,
 			IEmpleadoManager _empleadoManager,
@@ -66,6 +80,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			stringLocalizer = _stringLocalizer;
 			logger = _logger;
 
+			//Input = new InputModel();
 			InputFiltro = new FiltroModel();
 			ListaAsistencia = new Asistencia();
 			InputImportar = new ImportarModel();
@@ -73,8 +88,14 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 		public async Task<JsonResult> OnGetAsistenciasCalculo()
 		{
-			var asistencias = await asistenciaManager.GetAllAsync();
+			// Recuperar el filtro de la sesión
+			var filtro = HttpContext.Session.GetObjectFromJson<FiltroModel>("FiltroAsistencia");
 
+			var asistencias = filtro != null
+				? await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, filtro.FechaIngresoInicio, filtro.FechaIngresoFin)
+				: await asistenciaManager.GetAllAsync();
+
+			// Generar el resumen de asistencias.
 			var resumenAsistencias = asistencias
 				.GroupBy(a => a.Empleado?.NombreCompleto)
 				.Select(g => new
@@ -120,6 +141,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			{
 				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
 				{
+					// Guardar el filtro en la sesión (u otra forma de persistencia).
+					HttpContext.Session.SetObjectAsJson("FiltroAsistencia", InputFiltro);
+
 					resp.Datos = await GetListaAsistencias(InputFiltro);
 					resp.TieneError = false;
 					resp.Mensaje = stringLocalizer["AsistenciasFiltradasSuccessfully"];
@@ -136,6 +160,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resp);
 		}
+
 		private async Task<string> GetListaAsistencias(FiltroModel? filtro = null)
 		{
 			string jsonResponse;
@@ -265,6 +290,57 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			return new JsonResult(resp);
 		}
 
+		/*public async Task<JsonResult> OnPostSaveAsistencia()
+		{
+			ServerResponse resp = new(true, stringLocalizer["AsistenciaSavedUnsuccessfully"]);
+
+			try
+			{
+				if (!ModelState.IsValid)
+				{
+					resp.Errores = ModelState.Keys.SelectMany(k => ModelState[k]?.Errors ?? []).Select(m => m.ErrorMessage).ToArray();
+				}
+				else
+				{
+					Asistencia? asistencia = await asistenciaManager.GetByNameAsync(Input.resultadoE);
+
+					if (asistencia != null && asistencia.Id != Input.Id)
+					{
+						resp.Mensaje = stringLocalizer["ErrorAsistenciaExistente"];
+					}
+					else
+					{
+						int id = 0;
+						asistencia = await asistenciaManager.GetByIdAsync(Input.Id);
+
+						if (asistencia != null) { id = asistencia.Id; } else { asistencia = new Asistencia(); }
+
+						asistencia.ResultadoE = Input.resultadoE;
+						asistencia.ResultadoS = Input.resultadoS;
+
+						if (id >= 1)
+						{
+							await asistenciaManager.UpdateAsync(asistencia);
+						}
+						else
+						{
+							await asistenciaManager.CreateAsync(asistencia);
+						}
+
+						resp.TieneError = false;
+						resp.Mensaje = stringLocalizer["AsistenciaSavedSuccessfully"];
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				logger.LogError(ex.Message);
+			}
+
+			return new JsonResult(resp);
+		}*/
+
+
 		private async Task<string> CreateAsistenciaFromExcelRow(DataRow firstRow, DataRow? secondRow)
 		{
 			Horarios? horario = await horariosManager.GetByNameAsync(firstRow[0].ToString()?.Trim() ?? string.Empty);
@@ -344,7 +420,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				resultadoE = "OMISIÓN/FALTA";
 			}
 
-
 			// Inicializar el resultado por defecto
 			string resultadoS = secondRow?[5].ToString()?.Trim() ?? string.Empty;
 
@@ -370,8 +445,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			{
 				resultadoS = "OMISIÓN/FALTA";
 			}
-
-
 
 			Asistencia asistencia = new Asistencia()
 			{

@@ -84,10 +84,10 @@ function operateFormatter(value, row, index) {
 window.operateEvents = {
     'click .edit': function (e, value, row, index) {
         initAsistenciaDialog(EDITAR, row);
-        //table.bootstrapTable('remove', {
-        //    field: 'id',
-        //    values: [row.id]
-        //})
+        table.bootstrapTable('remove', {
+            field: 'id',
+            values: [row.id]
+        })
     }
 }
 
@@ -120,66 +120,82 @@ $(document).ready(function () {
                 tableHtml += '</tbody></table>';
 
                 $('#jtableContainer').html(tableHtml);
-
-                $('#btnExportExcel').on('click', function () {
-                    // Crear un nuevo workbook y worksheet
-                    var workbook = new ExcelJS.Workbook();
-                    var worksheet = workbook.addWorksheet('Asistencias');
-
-                    // Establecer las columnas
-                    worksheet.columns = [
-                        { header: 'Nombre', key: 'nombre', width: 30 },
-                        { header: 'Retardos', key: 'retardos', width: 15 },
-                        { header: 'Omisión/Falta', key: 'omisionesFaltas', width: 20 },
-                        { header: 'Acumulado Ret', key: 'acumuladoRet', width: 20 },
-                        { header: 'Total Faltas', key: 'totalFaltas', width: 20 }
-                    ];
-
-                    // Establecer estilos para el encabezado
-                    worksheet.getRow(1).eachCell(function (cell) {
-                        cell.font = { bold: true };
-                        cell.alignment = { vertical: 'middle', horizontal: 'center' };
-                        cell.fill = {
-                            type: 'pattern',
-                            pattern: 'solid',
-                            fgColor: { argb: '5ba9f2' }
-                        };
-                    });
-
-                    // Agregar los datos
-                    jsonData.forEach(function (item) {
-                        worksheet.addRow({
-                            nombre: item.nombre,
-                            retardos: item.retardos,
-                            omisionesFaltas: item.omisionesFaltas,
-                            acumuladoRet: item.acumuladoRet,
-                            totalFaltas: item.totalFaltas
-                        });
-                    });
-
-                    // Establecer alineación de datos
-                    worksheet.eachRow({ includeEmpty: false }, function (row, rowNumber) {
-                        row.eachCell({ includeEmpty: false }, function (cell, colNumber) {
-                            cell.alignment = { vertical: 'middle', horizontal: 'center' };
-                        });
-                    });
-
-                    // Obtener la fecha actual en formato YYYY-MM-DD
-                    var currentDate = new Date();
-                    var formattedDate = currentDate.toISOString().split('T')[0];
-
-                    // Exportar el archivo Excel
-                    workbook.xlsx.writeBuffer().then(function (buffer) {
-                        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), `Asistencias_${formattedDate}.xlsx`);
-                    });
-                });
             },
             error: function (xhr, status, error) {
                 console.error('Error fetching data:', error);
             }
         });
     });
+
+    // Mueve el evento del botón de exportación fuera del AJAX
+    $('#btnExportExcel').off('click').on('click', function () {
+        // Asumiendo que jsonData ya está definido en el ámbito general
+        var jsonData = $('#jtableContainer').find('tr').map(function () {
+            return {
+                nombre: $(this).find('td').eq(0).text(),
+                retardos: $(this).find('td').eq(1).text(),
+                omisionesFaltas: $(this).find('td').eq(2).text(),
+                acumuladoRet: $(this).find('td').eq(3).text(),
+                totalFaltas: $(this).find('td').eq(4).text()
+            };
+        }).get();
+
+        // Crear un nuevo workbook y worksheet
+        var workbook = new ExcelJS.Workbook();
+        var worksheet = workbook.addWorksheet('Asistencias');
+
+        // Establecer las columnas
+        worksheet.columns = [
+            { header: 'Nombre', key: 'nombre', width: 30 },
+            { header: 'Retardos', key: 'retardos', width: 15 },
+            { header: 'Omisión/Falta', key: 'omisionesFaltas', width: 20 },
+            { header: 'Acumulado Ret', key: 'acumuladoRet', width: 20 },
+            { header: 'Total Faltas', key: 'totalFaltas', width: 20 }
+        ];
+
+        // Establecer estilos para el encabezado
+        worksheet.getRow(1).eachCell(function (cell) {
+            cell.font = { bold: true };
+            cell.alignment = { vertical: 'middle', horizontal: 'center' };
+            cell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: '5ba9f2' }
+            };
+        });
+
+        // Agregar los datos
+        jsonData.forEach(function (item) {
+            if (item.nombre && item.retardos && item.omisionesFaltas && item.acumuladoRet && item.totalFaltas) {
+                worksheet.addRow({
+                    nombre: item.nombre,
+                    retardos: parseInt(item.retardos,10),
+                    omisionesFaltas: parseInt(item.omisionesFaltas,10),
+                    acumuladoRet: parseInt(item.acumuladoRet,10),
+                    totalFaltas: parseInt(item.totalFaltas,10)
+                });
+            }
+        });
+
+
+        // Establecer alineación de datos
+        worksheet.eachRow({ includeEmpty: false }, function (row, rowNumber) {
+            row.eachCell({ includeEmpty: false }, function (cell, colNumber) {
+                cell.alignment = { vertical: 'middle', horizontal: 'center' };
+            });
+        });
+
+        // Obtener la fecha actual en formato YYYY-MM-DD
+        var currentDate = new Date();
+        var formattedDate = currentDate.toISOString().split('T')[0];
+
+        // Exportar el archivo Excel
+        workbook.xlsx.writeBuffer().then(function (buffer) {
+            saveAs(new Blob([buffer], { type: 'application/octet-stream' }), `Asistencias_${formattedDate}.xlsx`);
+        });
+    });
 });
+
 
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
@@ -245,16 +261,16 @@ function initTable() {
             align: "center",
             valign: "middle",
             sortable: true
-            },
-            {
-                title: colAccionesHeader,
-                field: "operate",
-                align: 'center',
-                width: "100px",
-                clickToSelect: false,
-                events: window.operateEvents,
-                formatter: operateFormatter
-            }
+        },
+        {
+            title: colAccionesHeader,
+            field: "operate",
+            align: 'center',
+            width: "100px",
+            clickToSelect: false,
+            events: window.operateEvents,
+            formatter: operateFormatter
+        }
         ]
     });
 }
@@ -262,6 +278,7 @@ function initTable() {
 //Funcionalidad Diálogo
 function initAsistenciaDialog(action, row) {
     // Obtener los elementos del modal
+    let idField = document.getElementById("inpAsistenciaId");
     let nombreField = document.getElementById("inpAsistenciaNombre");
     let resultadoEField = document.getElementById("inpAsistenciaResultadoE");
     let resultadoSField = document.getElementById("inpAsistenciaResultadoS");
@@ -278,6 +295,8 @@ function initAsistenciaDialog(action, row) {
             dlgTitle.innerHTML = dlgEditarTitle;
 
             // Habilitar campos para edición
+
+            idField.setAttribute("disabled", false);
             nombreField.setAttribute("disabled", true);
             resultadoEField.removeAttribute("disabled");
             resultadoSField.removeAttribute("disabled");
@@ -285,6 +304,7 @@ function initAsistenciaDialog(action, row) {
     }
 
     // Establecer los valores de los campos
+    idField.value = row.id;
     nombreField.value = row.NombreEmpleado;
     resultadoEField.value = row.ResultadoE;
     resultadoSField.value = row.ResultadoS;
@@ -292,7 +312,6 @@ function initAsistenciaDialog(action, row) {
     // Mostrar el diálogo
     dlgAsistenciaModal.toggle();
 }
-
 
 // Función para manejar el click en el botón de búsqueda
 function onBuscarClick() {
@@ -439,4 +458,54 @@ function onExcelSelectorChanged(input) {
             showAlert(invalidFormatTitle, invalidFormatMsg);
         }
     }
+}
+
+function onGuardarClick() {
+    //Ejecuta la validación
+    $("#theForm").validate();
+    //Determina los errores
+    let valid = $("#theForm").valid();
+    //Si la forma no es válida, entonces finaliza.
+    if (!valid) { return; }
+    let idField = document.getElementById("inpAsistenciaId");
+    let btnClose = document.getElementById("dlgSubareaBtnCancelar");
+    let resultadoEField = document.getElementById("inpAsistenciaResultadoE");
+    let resultadoSField = document.getElementById("inpAsistenciaResultadoS");
+    let dlgTitle = document.getElementById("dlgSubareaTitle");
+    let summaryContainer = document.getElementById("saveValidationSummary");
+    summaryContainer.innerHTML = "";
+
+    let oParams = {
+        id: idField.value == "Nuevo" ? 0 : idField.value,
+        resultadoE: resultadoEField.value,
+        resultadoR: resultadoSField.value
+    };
+
+    doAjax(
+        "/Reportes/Asistencia/SaveAsistencia",
+        oParams,
+        function (resp) {
+            if (resp.tieneError) {
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    let summary = ``;
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                }
+                showError(dlgTitle.innerHTML, resp.mensaje);
+                return;
+            }
+
+            btnClose.click();
+
+            let e = document.querySelector("[name='refresh']");
+            e.click();
+
+            showSuccess(dlgTitle.innerHTML, resp.mensaje);
+        }, function (error) {
+            showError("Error", error);
+        },
+        postOptions
+    );
 }

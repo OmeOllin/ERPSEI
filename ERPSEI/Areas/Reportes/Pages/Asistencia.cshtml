@@ -134,17 +134,26 @@
 </table>
 
 <!-- Sección Nuevo/Editar/Ver Registro --- -->
-<div id="dlgAsistencia" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-xl">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 id="dlgAsistenciaTitle" class="modal-title"></h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-			</div>
-			<div class="modal-body align-items-center">
-					<form id="theForm" method="post">
+<form id="theForm" method="post">
+	<div id="dlgAsistencia" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 id="dlgAsistenciaTitle" class="modal-title"></h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body align-items-center">
 					<div class="container-fluid">
 						<div id="saveValidationSummary" class="text-danger mb-3" role="alert"></div>
+						<div class="row">
+							<div class="col-3">
+								<div class="form-floating mb-3">
+									<input id="inpAsistenciaId" asp-for="ListaAsistencia.Id" type="text" class="form-control" placeholder="@Localizer["IdPlaceholder"]" />
+									<label asp-for="ListaAsistencia.Id" class="form-label"></label>
+									<span asp-validation-for="ListaAsistencia.Id" class="text-danger"></span>
+								</div>
+							</div>
+						</div>
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
@@ -173,7 +182,6 @@
 							</div>
 						</div>
 					</div>
-					</form>
 			</div>
 			<div class="modal-footer">
 				<button id="dlgAsistenciaBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarClick();" data-bs-dismiss="modal">
@@ -185,7 +193,7 @@
 			</div>
 		</div>
 	</div>
-</div>
+</form>
 	
 <!-- --------------------------- -->
 <!-- Sección Importar Excel ---- -->
