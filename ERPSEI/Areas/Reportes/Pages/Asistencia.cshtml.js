@@ -306,8 +306,31 @@ function initAsistenciaDialog(action, row) {
     // Establecer los valores de los campos
     idField.value = row.Id;
     nombreField.value = row.NombreEmpleado;
-    resultadoEField.value = row.ResultadoE;
-    resultadoSField.value = row.ResultadoS;
+    //resultadoEField.value = row.ResultadoE;
+    //resultadoSField.value = row.ResultadoS;
+    switch (row.ResultadoE)
+    {
+        case "NORMAL":
+            resultadoEField.value = 0;
+            break;
+        case "RETARDO":
+            resultadoEField.value = 1;
+            break;
+        case "OMISIÓN/FALTA":
+            resultadoEField.value = 2;
+            break;
+    }
+    switch (row.ResultadoS) {
+        case "TEMPRANO":
+            resultadoSField.value = 0;
+            break;
+        case "NORMAL":
+            resultadoSField.value = 1;
+            break;
+        case "OMISIÓN/FALTA":
+            resultadoSField.value = 2;
+            break;
+    }
 
     // Mostrar el diálogo
     dlgAsistenciaModal.toggle();
@@ -478,8 +501,8 @@ function onGuardarClick() {
 
     let oParams = {
         id: idField.value === "Nuevo" ? 0 : parseInt(idField.value, 10),
-        resultadoE: resultadoEField.value,
-        resultadoS: resultadoSField.value // Corregido: debe ser 'resultadoS'
+        resultadoE: $('#inpAsistenciaResultadoE option:selected').text(),
+        resultadoS: $('#inpAsistenciaResultadoS option:selected').text() 
     };
 
     doAjax(

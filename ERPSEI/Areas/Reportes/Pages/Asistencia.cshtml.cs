@@ -90,7 +90,7 @@ namespace ERPSEI.Areas.Reportes.Pages
 			stringLocalizer = _stringLocalizer;
 			logger = _logger;
 
-			//Input = new InputModel();
+			Input = new InputModel();
 			InputFiltro = new FiltroModel();
 			ListaAsistencia = new Asistencia();
 			InputImportar = new ImportarModel();

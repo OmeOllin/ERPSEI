@@ -164,15 +164,25 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpAsistenciaResultadoE" asp-for="ListaAsistencia.ResultadoE" type="text" class="form-control" placeholder="@Localizer["ResultadoEPlaceholder"]" />
-									<label asp-for="ListaAsistencia.ResultadoE" class=""></label>
+									<select id="inpAsistenciaResultadoE" asp-for="ListaAsistencia.ResultadoE" class="form-select" placeholder="@Localizer["ResultadoEPlaceholder"]">
+										
+										<option value="0">NORMAL</option>
+										<option value="1">RETARDO</option>
+										<option value="2">OMISI&Oacute;N/FALTA</option>
+									</select>
+									<label asp-for="ListaAsistencia.ResultadoE" class="form-label"></label>
 								</div>
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpAsistenciaResultadoS" asp-for="ListaAsistencia.ResultadoS" type="text" class="form-control" placeholder="@Localizer["ResultadoSPlaceholder"]" />
+									<select id="inpAsistenciaResultadoS" asp-for="ListaAsistencia.ResultadoS" class="form-select" placeholder="@Localizer["ResultadoSPlaceholder"]">
+
+										<option value="0">TEMPRANO</option>
+										<option value="1">NORMAL</option>
+										<option value="2">OMISI&Oacute;N/FALTA</option>
+									</select>
 									<label asp-for="ListaAsistencia.ResultadoS" class=""></label>
 								</div>
 							</div>
