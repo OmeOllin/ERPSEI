@@ -13,6 +13,7 @@ using System.Net.Mime;
 using ERPSEI.Pages.Shared;
 using ERPSEI.Data.Entities.Reportes;
 using ERPSEI.Data.Managers.Reportes;
+using ERPSEI.Resources;
 public static class SessionExtensions
 {
 	public static void SetObjectAsJson(this ISession session, string key, object value)
@@ -27,7 +28,7 @@ public static class SessionExtensions
 	}
 }
 
-namespace ERPSEI.Areas.Catalogos.Pages
+namespace ERPSEI.Areas.Reportes.Pages
 {
 	[Authorize(Policy = "AccessPolicy")]
 	public class AsistenciaModel : ERPPageModel
@@ -62,8 +63,17 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		public ImportarModel InputImportar { get; set; } = new ImportarModel();
 		public class ImportarModel
 		{
-			[Required(ErrorMessage = "Required")]
 			public IFormFile? Plantilla { get; set; }
+		}
+
+		[BindProperty]
+		public InputModel Input { get; set; }
+		public class InputModel
+		{
+			[Display(Name = "Id")]
+			public int Id { get; set; }
+			public string ResultadoE { get; set; } = string.Empty;
+			public string ResultadoS { get; set; } = string.Empty;
 		}
 
 		public AsistenciaModel(
@@ -292,7 +302,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			return new JsonResult(resp);
 		}
 
-		/*public async Task<JsonResult> OnPostSaveAsistencia()
+		public async Task<JsonResult> OnPostSaveAsistencia()
 		{
 			ServerResponse resp = new(true, stringLocalizer["AsistenciaSavedUnsuccessfully"]);
 
@@ -304,30 +314,21 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				}
 				else
 				{
-					Asistencia? asistencia = await asistenciaManager.GetByNameAsync(Input.resultadoE);
+					// Intenta obtener la asistencia por ID
+					Asistencia? asistencia = await asistenciaManager.GetByIdAsync(Input.Id);
 
-					if (asistencia != null && asistencia.Id != Input.Id)
+					if (asistencia == null)
 					{
-						resp.Mensaje = stringLocalizer["ErrorAsistenciaExistente"];
+						resp.Mensaje = stringLocalizer["ErrorAsistenciaNoEncontrada"];
 					}
 					else
 					{
-						int id = 0;
-						asistencia = await asistenciaManager.GetByIdAsync(Input.Id);
+						// Actualiza solo los campos ResultadoE y ResultadoS
+						asistencia.ResultadoE = Input.ResultadoE;
+						asistencia.ResultadoS = Input.ResultadoS;
 
-						if (asistencia != null) { id = asistencia.Id; } else { asistencia = new Asistencia(); }
-
-						asistencia.ResultadoE = Input.resultadoE;
-						asistencia.ResultadoS = Input.resultadoS;
-
-						if (id >= 1)
-						{
-							await asistenciaManager.UpdateAsync(asistencia);
-						}
-						else
-						{
-							await asistenciaManager.CreateAsync(asistencia);
-						}
+						// Guarda los cambios en la base de datos
+						await asistenciaManager.UpdateAsync(asistencia);
 
 						resp.TieneError = false;
 						resp.Mensaje = stringLocalizer["AsistenciaSavedSuccessfully"];
@@ -340,7 +341,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			}
 
 			return new JsonResult(resp);
-		}*/
+		}
+
 
 
 		private async Task<string> CreateAsistenciaFromExcelRow(DataRow firstRow, DataRow? secondRow)

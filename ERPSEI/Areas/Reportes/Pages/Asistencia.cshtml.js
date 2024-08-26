@@ -84,10 +84,10 @@ function operateFormatter(value, row, index) {
 window.operateEvents = {
     'click .edit': function (e, value, row, index) {
         initAsistenciaDialog(EDITAR, row);
-        table.bootstrapTable('remove', {
+        /*table.bootstrapTable('remove', {
             field: 'id',
             values: [row.id]
-        })
+        })*/
     }
 }
 
@@ -461,12 +461,13 @@ function onExcelSelectorChanged(input) {
 }
 
 function onGuardarClick() {
-    //Ejecuta la validación
+    // Ejecuta la validación
     $("#theForm").validate();
-    //Determina los errores
+    // Determina los errores
     let valid = $("#theForm").valid();
-    //Si la forma no es válida, entonces finaliza.
+    // Si la forma no es válida, entonces finaliza.
     if (!valid) { return; }
+
     let idField = document.getElementById("inpAsistenciaId");
     let btnClose = document.getElementById("dlgAsistenciaBtnCancelar");
     let resultadoEField = document.getElementById("inpAsistenciaResultadoE");
@@ -476,9 +477,9 @@ function onGuardarClick() {
     summaryContainer.innerHTML = "";
 
     let oParams = {
-        id: idField.value == "Nuevo" ? 0 : idField.value,
+        id: idField.value === "Nuevo" ? 0 : parseInt(idField.value, 10),
         resultadoE: resultadoEField.value,
-        resultadoR: resultadoSField.value
+        resultadoS: resultadoSField.value // Corregido: debe ser 'resultadoS'
     };
 
     doAjax(
@@ -509,3 +510,4 @@ function onGuardarClick() {
         postOptions
     );
 }
+

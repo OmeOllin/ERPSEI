@@ -1,5 +1,5 @@
 ﻿@page "{handler?}"
-@using ERPSEI.Areas.Catalogos.Pages;
+@using ERPSEI.Areas.Reportes.Pages;
 @using ERPSEI.Data.Managers;
 @using Microsoft.AspNetCore.Localization;
 @using Microsoft.AspNetCore.Mvc.Localization;
@@ -149,7 +149,7 @@
 							<div class="col-3">
 								<div class="form-floating mb-3">
 									<input id="inpAsistenciaId" asp-for="ListaAsistencia.Id" type="text" class="form-control" placeholder="@Localizer["IdPlaceholder"]" />
-									<label asp-for="ListaAsistencia.Id" class="form-label"></label>
+									<label asp-for="ListaAsistencia.Id" class=""></label>
 								</div>
 							</div>
 						</div>
@@ -157,8 +157,7 @@
 							<div class="col-12">
 								<div class="form-floating mb-3">
 									<input id="inpAsistenciaNombre" asp-for="ListaAsistencia.Empleado" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
-									<label asp-for="ListaAsistencia.Empleado" class="form-label required"></label>
-									<span asp-validation-for="ListaAsistencia.Empleado" class="text-danger"></span>
+									<label asp-for="ListaAsistencia.Empleado" class=""></label>
 								</div>
 							</div>
 						</div>
@@ -166,8 +165,7 @@
 							<div class="col-12">
 								<div class="form-floating mb-3">
 									<input id="inpAsistenciaResultadoE" asp-for="ListaAsistencia.ResultadoE" type="text" class="form-control" placeholder="@Localizer["ResultadoEPlaceholder"]" />
-									<label asp-for="ListaAsistencia.ResultadoE" class="form-label required"></label>
-									<span asp-validation-for="ListaAsistencia.ResultadoE" class="text-danger"></span>
+									<label asp-for="ListaAsistencia.ResultadoE" class=""></label>
 								</div>
 							</div>
 						</div>
@@ -175,8 +173,7 @@
 							<div class="col-12">
 								<div class="form-floating mb-3">
 									<input id="inpAsistenciaResultadoS" asp-for="ListaAsistencia.ResultadoS" type="text" class="form-control" placeholder="@Localizer["ResultadoSPlaceholder"]" />
-									<label asp-for="ListaAsistencia.ResultadoS" class="form-label required"></label>
-									<span asp-validation-for="ListaAsistencia.ResultadoS" class="text-danger"></span>
+									<label asp-for="ListaAsistencia.ResultadoS" class=""></label>
 								</div>
 							</div>
 						</div>

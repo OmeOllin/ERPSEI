@@ -25,8 +25,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		private readonly IHorariosManager horariosManager;
 		private readonly IAsistenciaManager asistenciaManager;
 		private readonly IEmpleadoManager empleadoManager;
-		private readonly IStringLocalizer<AsistenciaModel> stringLocalizer;
-		private readonly ILogger<AsistenciaModel> logger;
+		//private readonly IStringLocalizer<AsistenciaModel> stringLocalizer;
+		//private readonly ILogger<AsistenciaModel> logger;
 
 		[BindProperty]
 		public FiltroModel InputFiltro { get; set; } = new FiltroModel();
@@ -72,16 +72,16 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		public ActivosFijosModel(
 			IHorariosManager _horariosManager,
 			IEmpleadoManager _empleadoManager,
-			IAsistenciaManager _asistenciaManager,
-			IStringLocalizer<AsistenciaModel> _stringLocalizer,
-			ILogger<AsistenciaModel> _logger
+			IAsistenciaManager _asistenciaManager
+			//IStringLocalizer<AsistenciaModel> _stringLocalizer,
+			//ILogger<AsistenciaModel> _logger
 		)
 		{
 			horariosManager = _horariosManager;
 			empleadoManager = _empleadoManager;
 			asistenciaManager = _asistenciaManager;
-			stringLocalizer = _stringLocalizer;
-			logger = _logger;
+			//stringLocalizer = _stringLocalizer;
+			//logger = _logger;
 
 			InputFiltro = new FiltroModel();
 			ListaAsistencia = new Asistencia();
@@ -111,7 +111,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			return new JsonResult(jsonResponse);
 		}
 
-		public async Task<JsonResult> OnPostFiltrarAsistencia()
+		/*public async Task<JsonResult> OnPostFiltrarAsistencia()
 		{
 			ServerResponse resp = new(true, stringLocalizer["AsistenciasFiltradasUnsuccessfully"]);
 			try
@@ -133,7 +133,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			}
 
 			return new JsonResult(resp);
-		}
+		}*/
 		private async Task<string> GetListaAsistencias(FiltroModel? filtro = null)
 		{
 			string jsonResponse;
@@ -181,7 +181,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			}
 		}
 
-		public async Task<JsonResult> OnPostImportarAsistencias()
+		/*public async Task<JsonResult> OnPostImportarAsistencias()
 		{
 			ServerResponse resp = new(true, stringLocalizer["AsistenciasImportadasUnsuccessfully"]);
 			try
@@ -262,7 +262,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			return new JsonResult(resp);
 		}
-
+		*/
 		private async Task<string> CreateAsistenciaFromExcelRow(DataRow firstRow, DataRow? secondRow)
 		{
 			Horarios? horario = await horariosManager.GetByNameAsync(firstRow[0].ToString()?.Trim() ?? string.Empty);
