@@ -406,14 +406,13 @@ function onStampPrefactura(idPrefactura) {
         oParams,
         function (resp) {
             if (resp.tieneError) {
+                let summary = ``;
                 if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
-                    let summary = ``;
                     resp.errores.forEach(function (error) {
                         summary += `<li>${error}</li>`;
                     });
-                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
                 }
-                showError(dlgTitle.innerHTML, resp.mensaje);
+                showError(dlgTitle.innerHTML, `<ul>${summary}</ul>`);
                 return;
             }
 
