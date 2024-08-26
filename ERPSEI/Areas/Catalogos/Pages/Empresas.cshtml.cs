@@ -339,44 +339,46 @@ namespace ERPSEI.Areas.Catalogos.Pages
         private List<string> GetListJsonArchivos(ICollection<SemiArchivoEmpresa>? archivos)
 		{
 			List<string> jsonArchivos = [];
-			if (archivos != null)
-			{
-				//Si la empresa ya tiene archivos, se llena el arreglo de datos a partir de ellos.					
-				List<SemiArchivoEmpresa> empresaFiles = [.. (from empresaFile in archivos
+			string imgSrc = string.Empty;
+			string htmlContainer = string.Empty;
+			SemiArchivoEmpresa? a = null;
+			string id = string.Empty;
+
+			//ordena los archivos de la empresa de menor a mayor por tipoArchivoId
+			List<SemiArchivoEmpresa> empresaFiles = [.. (from empresaFile in archivos
 												   orderby empresaFile.TipoArchivoId ascending
 												   select empresaFile)];
 
-				foreach (SemiArchivoEmpresa a in empresaFiles)
-				{
-					string htmlContainer = string.Empty;
-					string imgSrc = string.Empty;
-					string id = Guid.NewGuid().ToString();
-					//Si el archivo tiene contenido
-					if (a.FileSize >= 1)
-					{
-						//Asigna la información del archivo al arreglo de datos.
-						string b64 = Convert.ToBase64String(a.Archivo);
-						bool isJPG = a.Extension == "jpg" || a.Extension == "jpeg";
-						bool isPNG = a.Extension == "png";
-						bool isPDF = a.Extension == "pdf";
+			//Recorre todos los tipos de archivos.
+			foreach (FileTypes i in Enum.GetValues(typeof(FileTypes)))
+			{
+				id = Guid.NewGuid().ToString();
+				a = empresaFiles.Where(f => f.TipoArchivoId == (int)i).FirstOrDefault();
 
-						if (isPDF)
+				if (a != null)
+				{
+					//Si el tipo de archivo está en la lista de archivos de la empresa, lo usa.
+					string b64 = Convert.ToBase64String(a.Archivo);
+					bool isJPG = a.Extension == "jpg" || a.Extension == "jpeg";
+					bool isPNG = a.Extension == "png";
+					bool isPDF = a.Extension == "pdf";
+
+					if (isPDF)
+					{
+						imgSrc = $"data:application/pdf;base64,{b64}";
+						htmlContainer = $"<canvas id = '{id}' b64 = '{b64}' class = 'canvaspdf'></canvas>";
+					}
+					else if (isJPG || isPNG)
+					{
+						if (isJPG)
 						{
-							imgSrc = $"data:application/pdf;base64,{b64}";
-							htmlContainer = $"<canvas id = '{id}' b64 = '{b64}' class = 'canvaspdf'></canvas>";
+							imgSrc = $"data:image/jpeg;base64,{b64}";
 						}
-						else if (isJPG || isPNG)
+						else if (isPNG)
 						{
-							if (isJPG)
-							{
-								imgSrc = $"data:image/jpeg;base64,{b64}";
-							}
-							else if (isPNG)
-							{
-								imgSrc = $"data:image/png;base64,{b64}";
-							}
-							htmlContainer = $"<img id = '{id}' src = '{imgSrc}' style='max-height: 200px;'/>";
+							imgSrc = $"data:image/png;base64,{b64}";
 						}
+						htmlContainer = $"<img id = '{id}' src = '{imgSrc}' style='max-height: 200px;'/>";
 					}
 
 					jsonArchivos.Add(
@@ -387,33 +389,27 @@ namespace ERPSEI.Areas.Catalogos.Pages
 							$"\"extension\": \"{a.Extension}\"," +
 							$"\"imgSrc\": \"{imgSrc}\"," +
 							$"\"htmlContainer\": \"{htmlContainer}\"," +
-                            $"\"fileSize\": \"{a.FileSize}\"" +
-                        "}"
+							$"\"fileSize\": \"{a.FileSize}\"" +
+						"}"
 					);
 				}
-			}
-			else
-			{
-				//Si la empresa no tiene archivos, se llena el arreglo de datos a partir del enum.
-				foreach (FileTypes i in Enum.GetValues(typeof(FileTypes)))
+				else
 				{
-					string imgSrc = string.Empty;
-					string htmlContainer = string.Empty;
-					//Si el tipo de archivo es Imagen de perfil, entonces agrega valor default.
-					if ((int)i == 0) { imgSrc = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/img/default_profile_pic.png"; }
-					if ((int)i != 0) { htmlContainer = "<i class='bi bi-file-image opacity-50' style='font-size:105px'></i>"; }
+					//De lo contrario, agrega el archivo como vacío para poder ser llenado por el usuario.
+					htmlContainer = "<i class='bi bi-file-image opacity-50' style='font-size:105px'></i>";
 					jsonArchivos.Add(
 						"{" +
-							$"\"id\": \"{Guid.NewGuid()}\"," +
+							$"\"id\": \"{id}\"," +
 							$"\"nombre\": \"\"," +
 							$"\"tipoArchivoId\": {(int)i}," +
 							$"\"extension\": \"\"," +
 							$"\"imgSrc\": \"{imgSrc}\"," +
 							$"\"htmlContainer\": \"{htmlContainer}\"," +
-                            $"\"fileSize\": \"0\"" +
-                        "}"
+							$"\"fileSize\": \"0\"" +
+						"}"
 					);
 				}
+				
 			}
 
 			return jsonArchivos;
@@ -620,7 +616,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						//La contraseña nueva de la firma electrónica de la empresa no es igual a la confirmación de contraseña nueva.
 						return _strLocalizer["NuevoPasswordSATNoCoincide"];
 					}
-					if (e.ArchivosSATOldPassword != empresa.PFESAT)
+					if ((e.ArchivosSATOldPassword ?? string.Empty) != _encriptacionAES.Base64AESToPlainText(empresa.PFESAT ?? string.Empty))
 					{
 						//La contraseña anterior de la firma electrónica de la empresa no coincide con la contraseña anterior introducida por el usuario.
 						return _strLocalizer["AnteriorPasswordSATNoCoincide"];
@@ -646,7 +642,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				empresa.CorreoFacturacion = e.CorreoFacturacion;
 				empresa.Telefono = e.Telefono;
 				empresa.ObjetoSocial = e.ObjetoSocial;
-				empresa.PFESAT = _encriptacionAES.EncriptarString(e.ArchivosSATNewPassword ?? string.Empty);
+				empresa.PFESAT = _encriptacionAES.PlainTextToBase64AES(e.ArchivosSATNewPassword ?? string.Empty);
 
                 if (idEmpresa >= 1)
 				{

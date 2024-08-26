@@ -451,8 +451,11 @@ function initEmpresaDialog(action, row) {
     telefonoField.value = row.telefono;
     objetoSocialField.value = row.objetoSocial;
     perfilField.value = row.perfilId;
+    oldPasswordField.value = "";
+    newPasswordField.value = "";
+    confirmNewPasswordField.value = "";
 
-    if (row.hasPasswordSAT||false) {
+    if (row.hasPasswordSAT == "True") {
         $("#divChangePasswordSAT").show();
         $("#divPasswordSAT").hide();
 
@@ -580,7 +583,7 @@ function establecerDatosAdicionales(row, action) {
         let actualizar = a.actualizar || 0;
         let containerName;
         let mimeTypes;
-        let documentChangedEvent;
+        let allowedExtensions;
 
         if (puedeTodo || puedeEditar || puedeEliminar) {
             itemEditarHTML = `<li><a class='dropdown-item edit ${editDisabled}' onclick='onEditDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-pencil-fill'></i> ${btnEditarTitle}</a></li>`;
@@ -613,15 +616,20 @@ function establecerDatosAdicionales(row, action) {
                         </div>`;
         }
 
-        if (a.tipoArchivoId == ID_TIPO_ARCHIVO_CER || a.tipoArchivoId == ID_TIPO_ARCHIVO_KEY) {
-            documentChangedEvent = "onSpecialDocumentSelectorChanged(this);";
+        if (a.tipoArchivoId == ID_TIPO_ARCHIVO_CER) {
             mimeTypes = "application/x-x509-ca-cert";
             containerName = "#bodyArchivosSAT";
+            allowedExtensions = ".cer";
+        }
+        else if (a.tipoArchivoId == ID_TIPO_ARCHIVO_KEY) {
+            mimeTypes = ".key";
+            containerName = "#bodyArchivosSAT";
+            allowedExtensions = ".key";
         }
         else {
-            documentChangedEvent = "onDocumentSelectorChanged(this);";
             mimeTypes = "image/png, image/jpeg, application/pdf"
             containerName = "#bodyArchivos";
+            allowedExtensions = ".png, .jpg, .jpeg, .pdf";
         }
 
         $(containerName).append(
@@ -631,7 +639,7 @@ function establecerDatosAdicionales(row, action) {
                     <div id="fileIcon${a.tipoArchivoId}" class="align-self-center col-1 ${iconClass} p-0 p-lg-2 p-xl-2"><i class='bi bi-file-image' style='font-size:25px'></i></div>
                     <div id="fileName${a.tipoArchivoId}" class="align-self-center col-10 ${nameClass} p-2" style="display:flex; color:dimgray">${nameHTML}</div>
                     <div class="align-self-center col-1">
-                        <input type="file" actualizar="${actualizar}" id="selector${a.tipoArchivoId}" sourceId="${a.id}" sourceName="${a.nombre}.${a.extension}" sourceLength="${a.fileSize}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="${documentChangedEvent}" accept="${mimeTypes}" hidden />
+                        <input type="file" actualizar="${actualizar}" id="selector${a.tipoArchivoId}" sourceId="${a.id}" sourceName="${a.nombre}.${a.extension}" sourceLength="${a.fileSize}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this, '${allowedExtensions}');" accept="${mimeTypes}" hidden />
                         ${menuHTML}
                     </div>
                 </div>
@@ -758,19 +766,16 @@ function onEliminarBancoClick(button) {
     $(button).closest('.card').remove();
 }
 //Función para mostrar cualquiera de los documentos seleccionados.
-function onDocumentSelectorChanged(input) {
+function onDocumentSelectorChanged(input, allowedExtensions) {
     if (input.files && (input.files.length || 0) >= 1) {
-        if (input.files[0].size >= maxFileSizeInBytes) {
-            input.value = null;
-            showAlert(maxFileSizeTitle, `${maxFileSizeMessage} ${maxFileSizeInBytes / oneMegabyteSizeInBytes}Mb`);
-            return;
-        }
         let docType = input.files[0].type;
         let docParts = input.files[0].name.split(".");
         let fName = docParts.length >= 1 ? docParts.slice(0, -1).join('.') || "" : "";
         let fExt = docParts.length >= 2 ? docParts[docParts.length - 1] || "" : "";
         let isImg = docType == "image/png" || docType == "image/jpg" || docType == "image/jpeg";
         let isPDF = docType == "application/pdf";
+        let isCER = docType == "application/x-x509-ca-cert";
+        let isKEY = fExt == "key";
         let containerName = input.getAttribute("containerName");
         let fileIconName = input.getAttribute("fileIconName");
         let fileNameName = input.getAttribute("fileNameName");
@@ -778,7 +783,12 @@ function onDocumentSelectorChanged(input) {
         let fileIcon = document.getElementById(fileIconName);
         let fileName = document.getElementById(fileNameName);
 
-        if (isImg || isPDF) {
+        if (isImg || isPDF || isCER || isKEY) {
+            if ((isImg || isPDF) && input.files[0].size >= maxFileSizeInBytes) {
+                input.value = null;
+                showAlert(maxFileSizeTitle, `${maxFileSizeMessage} ${maxFileSizeInBytes / oneMegabyteSizeInBytes}Mb`);
+                return;
+            }
             var reader = new FileReader();
             reader.onload = function () {
 
@@ -815,59 +825,10 @@ function onDocumentSelectorChanged(input) {
         }
         else {
             input.value = null;
-            showAlert(fileFormatTitle, fileFormatMessage);
+            showAlert(fileFormatTitle, `${fileFormatMessage} ${allowedExtensions}` );
 
             return;
         }
-    }
-}
-//Función para mostrar archivos .CER o archivos .KEY
-function onSpecialDocumentSelectorChanged(input) {
-    if (input.files && (input.files.length || 0) >= 1) {
-        let docParts = input.files[0].name.split(".");
-        let fName = docParts.length >= 1 ? docParts.slice(0, -1).join('.') || "" : "";
-        let fExt = docParts.length >= 2 ? docParts[docParts.length - 1] || "" : "";
-
-        let containerName = input.getAttribute("containerName");
-        let fileIconName = input.getAttribute("fileIconName");
-        let fileNameName = input.getAttribute("fileNameName");
-        let container = document.getElementById(containerName);
-        let fileIcon = document.getElementById(fileIconName);
-        let fileName = document.getElementById(fileNameName);
-
-        var reader = new FileReader();
-        reader.onload = function () {
-
-            var arrayBuffer = this.result,
-                binary = '',
-                bytes = new Uint8Array(arrayBuffer),
-                len = bytes.byteLength;
-
-            for (var i = 0; i < len; i++) {
-                binary += String.fromCharCode(bytes[i]);
-            }
-            input.setAttribute("b64", window.btoa(binary));
-            input.setAttribute("sourceLength", "0");
-            input.setAttribute("actualizar", "1");
-
-            //Se elimina menú para ver el documento, en caso de haber uno anterior.
-            let inputName = input.getAttribute("id");
-            let menuVer = document.querySelector(`a.dropdown-item.see[inputName='${inputName}']`);
-            if (menuVer != null) { menuVer.parentElement.remove(); }
-
-            initializeDisableableButtons();
-        }
-        reader.readAsArrayBuffer(input.files[0]);
-
-        container.classList.remove("document-container-empty");
-        container.classList.add("document-container-filled");
-
-        fileIcon.classList.remove("opacity-25");
-        fileIcon.classList.add("document-icon-filled");
-
-        fileName.classList.remove("opacity-25");
-        fileName.classList.add("document-name-filled");
-        fileName.innerHTML = `<div class="overflowed-text">${fName}</div>.<div>${fExt}</div>`;
     }
 }
 //Función para el cierre del cuadro de diálogo
