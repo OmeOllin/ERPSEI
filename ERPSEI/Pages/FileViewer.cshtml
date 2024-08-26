@@ -15,22 +15,40 @@
     document.addEventListener("DOMContentLoaded", function (event) {
         let fc = document.getElementById("fileContainer");
 
-        //Antes de mostrar naturalmente el base64 que viene, es necesario pasarlo por la función createObjectURL para que los navegadores basados en chrome puedan cargarlo correctamente.
-
-        //Primero se convierte el string base64 a blob
         let ct = "";
-        if (extension == "pdf") {
-            ct = "application/pdf";
-        } else {
-            ct = `image/${extension}`;
+        switch(extension){
+            case "pdf":
+                ct = "application/pdf";
+                break;
+            case "png":
+            case "jpg":
+            case "jpeg":
+                ct = `image/${extension}`;
+                break;
+            default:
+                ct = "application/octet-stream";
+                break;
+        }  
+        
+        switch (extension){
+            case "pdf":
+            case "png":
+            case "jpg":
+            case "jpeg":
+                //Antes de mostrar naturalmente el base64 que viene, es necesario pasarlo por la función createObjectURL para que los navegadores basados en chrome puedan cargarlo correctamente.
+
+                //Primero se convierte el string base64 a blob
+                let blob = b64toBlob(src, ct);
+                //Después se usa la función createObjectURL
+                src = window.URL.createObjectURL(blob)
+
+                //Por último, se asigna el resultado al source del visor.
+                fc.setAttribute("src", `${src}`);
+                break;
+            default:
+                break;
         }
 
-        let blob = b64toBlob(src, ct);
-        //Después se usa la función createObjectURL
-        src = window.URL.createObjectURL(blob)
-
-        //Por último, se asigna el resultado al source del visor.
-        fc.setAttribute("src", `${src}`);
     });
 
     const b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {

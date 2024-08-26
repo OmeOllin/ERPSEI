@@ -1,3 +1,4 @@
+using ERPSEI.Areas.Catalogos.Pages;
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.SAT;
@@ -8,16 +9,19 @@ using iText.Html2pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Localization;
+using System.Net.Mime;
 
 namespace ERPSEI.Pages
 {
     [Authorize]
-    public class FileViewerModel : PageModel
+    public class FileViewerModel(
+			IPrefacturaManager prefacturaManager,
+            IArchivoEmpleadoManager userFileManager,
+            IArchivoEmpresaManager archivoEmpresaManager,
+            IStringLocalizer<FileViewerModel> localizer
+	) : PageModel
     {
-        private readonly IPrefacturaManager _prefacturaManager;
-        private readonly IArchivoEmpleadoManager _userFileManager;
-        private readonly IArchivoEmpresaManager _archivoEmpresaManager;
-
         public string htmlContainer { get; set; } = string.Empty;
 		public string base64 { get; set; } = string.Empty;
 		public string extension { get; set; } = string.Empty;
@@ -25,20 +29,10 @@ namespace ERPSEI.Pages
         private class FileToRender
         {
             public string src { get; set; } = string.Empty;
+			public string name { get; set; } = string.Empty;
             public string extension { get; set; } = string.Empty;
 
             public FileToRender(){}
-        }
-
-        public FileViewerModel(
-            IPrefacturaManager prefacturaManager,
-            IArchivoEmpleadoManager userFileManager,
-            IArchivoEmpresaManager archivoEmpresaManager
-        ) 
-        { 
-            _prefacturaManager = prefacturaManager;
-            _userFileManager = userFileManager;
-            _archivoEmpresaManager = archivoEmpresaManager;
         }
 
         public async Task<IActionResult> OnGet(string id, string module)
@@ -70,17 +64,29 @@ namespace ERPSEI.Pages
 				if (ftr == null) { return RedirectToPage("/404"); }
 				if (ftr.src.Length <= 0) { return RedirectToPage("/404"); }
 
-				if (ftr.extension == "pdf")
+				switch (ftr.extension)
 				{
-					htmlContainer = $"<iframe id=\"fileContainer\" style=\"position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;\"></iframe>";
+					case "pdf":
+						htmlContainer = $"<iframe id=\"fileContainer\" style=\"position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;\"></iframe>";
+                        base64 = ftr.src;
+                        extension = ftr.extension;
+                        break;
+					case "png":
+					case "jpg":
+					case "jpeg":
+						htmlContainer = $"<img id=\"fileContainer\" style=\"height:100%\" />";
+                        base64 = ftr.src;
+                        extension = ftr.extension;
+                        break;
+					default:
+						//Show page file not viewable
+						htmlContainer = $"<div class=\"container\">" +
+											$"<h1>{localizer["DownloadFileTitle"]}</h1>" +
+											$"<p>{localizer["DownloadFileInstructions"]}</p>" +
+											$"<a id=\"fileContainer\" href=\"{Url.Page("FileViewer", "DownloadFile", new { id, module })}\" download class=\"btn btn-primary\">{localizer["DownloadFileTitle"]}</a>" +
+										$"</div>";
+						break;
 				}
-				else
-				{
-					htmlContainer = $"<img id=\"fileContainer\" style=\"height:100%\" />";
-				}
-
-				base64 = ftr.src;
-				extension = ftr.extension;
 
 				return Page();
 			}
@@ -90,23 +96,42 @@ namespace ERPSEI.Pages
 			}
         }
 
+        public ActionResult OnGetDownloadFile(string id, string module)
+        {
+			FileToRender? ftr = null;
+            switch (module)
+			{
+				case "empresas":
+					ftr = GetArchivoEmpresaB64(id);
+					break;
+				default:
+					break;
+			}
+
+			if(ftr != null){ return File(Convert.FromBase64String(ftr.src), MediaTypeNames.Application.Octet, $"{ftr.name}.{ftr.extension}"); }
+
+			return new EmptyResult();
+        }
+
         private FileToRender? GetArchivoEmpleadoB64(string fileId) 
         {
-            FileToRender ftr = new FileToRender();
-			ArchivoEmpleado? f1 = _userFileManager.GetFileById(fileId);
+            FileToRender ftr = new();
+			ArchivoEmpleado? f1 = userFileManager.GetFileById(fileId);
 			if (f1 == null) { return null; }
 			ftr.src = Convert.ToBase64String(f1.Archivo);
-			ftr.extension = f1.Extension;
+            ftr.name = f1.Nombre;
+            ftr.extension = f1.Extension;
 
             return ftr;
 		}
 
 		private FileToRender? GetArchivoEmpresaB64(string fileId)
 		{
-			FileToRender ftr = new FileToRender();
-			ArchivoEmpresa? f2 = _archivoEmpresaManager.GetFileById(fileId);
+			FileToRender ftr = new();
+			ArchivoEmpresa? f2 = archivoEmpresaManager.GetFileById(fileId);
 			if (f2 == null) { return null; }
 			ftr.src = Convert.ToBase64String(f2.Archivo);
+			ftr.name = f2.Nombre;
 			ftr.extension = f2.Extension;
 
             return ftr;
@@ -114,20 +139,20 @@ namespace ERPSEI.Pages
 
 		private async Task<FileToRender?> GetPrefacturaB64(int idPf) 
         {
-			FileToRender ftr = new FileToRender();
+			FileToRender ftr = new();
 
-			Prefactura? pf = await _prefacturaManager.GetByIdAsync(idPf);
+			Prefactura? pf = await prefacturaManager.GetByIdAsync(idPf);
 			if (pf == null) { return null; }
 
 			string filepath = $"wwwroot/templates/{Guid.NewGuid()}.pdf";
-			HtmlConverter.ConvertToPdf(prefacturaToHTML(pf), new FileStream(filepath, FileMode.Create));
+			HtmlConverter.ConvertToPdf(PrefacturaToHTML(pf), new FileStream(filepath, FileMode.Create));
 
-			ftr.src = await fileToB64(filepath);
+			ftr.src = await FileToB64(filepath);
 			ftr.extension = "pdf";
 
             return ftr;
 		}
-        private static string prefacturaToHTML(Prefactura pf)
+        private static string PrefacturaToHTML(Prefactura pf)
         {
 			decimal subtotalTotal = 0,
 					descuentosTotal = 0,
@@ -135,7 +160,7 @@ namespace ERPSEI.Pages
 					retencionesTotal = 0,
 					totalTotal = 0;
 
-			List<string> htmlConceptos = new List<string>();
+			List<string> htmlConceptos = [];
             foreach (Concepto c in pf.Conceptos)
             {
 				decimal subtotal = c.Cantidad * c.PrecioUnitario,
@@ -249,7 +274,7 @@ namespace ERPSEI.Pages
 
             return html;
 		}
-        private static async Task<string> fileToB64(string filepath)
+        private static async Task<string> FileToB64(string filepath)
         {
 			byte[] buffer;
 			using (FileStream pdf = System.IO.File.OpenRead(filepath))
