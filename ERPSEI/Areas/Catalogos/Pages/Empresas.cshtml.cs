@@ -621,7 +621,13 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						//La contraseña anterior de la firma electrónica de la empresa no coincide con la contraseña anterior introducida por el usuario.
 						return _strLocalizer["AnteriorPasswordSATNoCoincide"];
 					}
-				}
+                    if (e.ArchivosSATNewPassword?.Length >= 1 && e.ArchivosSATConfirmNewPassword?.Length >= 1)
+                    {
+                        empresa.PFESAT = _encriptacionAES.PlainTextToBase64AES(e.ArchivosSATNewPassword ?? string.Empty);
+                    }
+                }
+
+				
 
 				//Llena los datos de la empresa.
 				empresa.RazonSocial = e.RazonSocial;
@@ -642,7 +648,6 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				empresa.CorreoFacturacion = e.CorreoFacturacion;
 				empresa.Telefono = e.Telefono;
 				empresa.ObjetoSocial = e.ObjetoSocial;
-				empresa.PFESAT = _encriptacionAES.PlainTextToBase64AES(e.ArchivosSATNewPassword ?? string.Empty);
 
                 if (idEmpresa >= 1)
 				{
