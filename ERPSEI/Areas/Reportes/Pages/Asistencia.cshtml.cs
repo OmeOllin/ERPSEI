@@ -119,6 +119,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			foreach (Asistencia asis in asistencias)
 			{
 				jsonAsistencias.Add("{" +
+					$"\"Id\": \"{asis.Id}\", " +
 					$"\"Horario\": \"{asis.Horario?.NombreHorario}\", " +
 					$"\"NombreEmpleado\": \"{asis.Empleado?.NombreCompleto}\", " +
 					$"\"Fecha\": \"{asis.Fecha}\", " +
@@ -182,6 +183,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			foreach (var asis in asistencias)
 			{
 				jsonAsistencias.Add("{" +
+				$"\"Id\": \"{asis.Id}\", " +
 				$"\"Horario\": \"{asis.Horario?.NombreHorario}\", " +
 				$"\"NombreEmpleado\": \"{asis.Empleado?.NombreCompleto}\", " +
 				$"\"Fecha\": \"{asis.Fecha}\", " +

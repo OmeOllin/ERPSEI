@@ -126,7 +126,7 @@
 	   data-side-pagination="client"
 	   data-response-handler="responseHandler"
 	   data-buttons-class="primary"
-	   data-url="/Catalogos/Areas/AreasList">
+	   data-url="/Reportes/Asistencia/AsistenciasList">
 	<thead>
 		<tr align="center" valign="middle" class="bg-primary bg-opacity-10">
 		</tr>
@@ -136,7 +136,7 @@
 <!-- Sección Nuevo/Editar/Ver Registro --- -->
 <form id="theForm" method="post">
 	<div id="dlgAsistencia" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered modal-xl">
+		<div class="modal-dialog modal-dialog-centered modal-">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 id="dlgAsistenciaTitle" class="modal-title"></h5>
@@ -150,7 +150,6 @@
 								<div class="form-floating mb-3">
 									<input id="inpAsistenciaId" asp-for="ListaAsistencia.Id" type="text" class="form-control" placeholder="@Localizer["IdPlaceholder"]" />
 									<label asp-for="ListaAsistencia.Id" class="form-label"></label>
-									<span asp-validation-for="ListaAsistencia.Id" class="text-danger"></span>
 								</div>
 							</div>
 						</div>

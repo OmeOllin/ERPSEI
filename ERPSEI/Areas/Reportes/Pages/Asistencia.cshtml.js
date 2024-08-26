@@ -304,7 +304,7 @@ function initAsistenciaDialog(action, row) {
     }
 
     // Establecer los valores de los campos
-    idField.value = row.id;
+    idField.value = row.Id;
     nombreField.value = row.NombreEmpleado;
     resultadoEField.value = row.ResultadoE;
     resultadoSField.value = row.ResultadoS;
@@ -468,10 +468,10 @@ function onGuardarClick() {
     //Si la forma no es válida, entonces finaliza.
     if (!valid) { return; }
     let idField = document.getElementById("inpAsistenciaId");
-    let btnClose = document.getElementById("dlgSubareaBtnCancelar");
+    let btnClose = document.getElementById("dlgAsistenciaBtnCancelar");
     let resultadoEField = document.getElementById("inpAsistenciaResultadoE");
     let resultadoSField = document.getElementById("inpAsistenciaResultadoS");
-    let dlgTitle = document.getElementById("dlgSubareaTitle");
+    let dlgTitle = document.getElementById("dlgAsistenciaTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 
