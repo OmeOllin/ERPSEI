@@ -8,7 +8,7 @@ namespace ERPSEI.Utils
 		private byte[] ERPSEI_ALPHA { get; set; } = Encoding.UTF8.GetBytes(_configuration["ERPSEI_ALPHA"] ?? string.Empty);
 		private byte[] ERPSEI_BRAVO { set; get; } = Encoding.UTF8.GetBytes(_configuration["ERPSEI_BRAVO"] ?? string.Empty);
 
-		public string EncriptarString(string rawString)
+		public string PlainTextToBase64AES(string rawString)
 		{
 			byte[] encrypted;
 			using (Aes aes = Aes.Create())
@@ -25,10 +25,10 @@ namespace ERPSEI.Utils
 				}
 			}
 			// Return encrypted data
-			return Encoding.UTF8.GetString(encrypted);
+			return Convert.ToBase64String(encrypted);
 		}
 
-		public string DesencriptarAES(string encodedString)
+		public string Base64AESToPlainText(string encodedString)
 		{
 			string plaintext;
 			// Create AesManaged
@@ -37,7 +37,7 @@ namespace ERPSEI.Utils
 				// Create a decryptor
 				ICryptoTransform decryptor = aes.CreateDecryptor(ERPSEI_ALPHA, ERPSEI_BRAVO);
 				// Create the streams used for decryption.
-				using (MemoryStream ms = new(Encoding.UTF8.GetBytes(encodedString)))
+				using (MemoryStream ms = new(Convert.FromBase64String(encodedString)))
 				{
 					// Create crypto stream
 					using (CryptoStream cs = new(ms, decryptor, CryptoStreamMode.Read))

@@ -2,8 +2,8 @@
 {
 	public interface IEncriptacionAES
 	{
-		public string EncriptarString(string rawString);
+		public string PlainTextToBase64AES(string rawString);
 
-		public string DesencriptarAES(string encodedString);
+		public string Base64AESToPlainText(string encodedString);
 	}
 }
