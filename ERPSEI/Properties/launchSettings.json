@@ -5,8 +5,8 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ERPSEI_ALPHA": "C&[ClTX~~8BL9wn!,{_;{T+Mq-a=(nm+qcOsH}8ztXg^=iQJKv",
-        "ERPSEI_BRAVO": "p@ucM+6G(F%Dmpvwl(@#;CdHenn0Q5+23q+xY(VzQ7i'l}h5Yf",
+        "ERPSEI_ALPHA": "C&[ClTX~~8BL9wn!,{_;{T+Mq-a=(nm+",
+        "ERPSEI_BRAVO": "p@ucM+6G(F%Dmpvw",
         "ERPSEI_EDICOM_USR": "RMA9509272C6",
         "ERPSEI_EDICOM_PWD": "n84kjdgudg"
       },
@@ -18,8 +18,8 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ERPSEI_ALPHA": "C&[ClTX~~8BL9wn!,{_;{T+Mq-a=(nm+qcOsH}8ztXg^=iQJKv",
-        "ERPSEI_BRAVO": "p@ucM+6G(F%Dmpvwl(@#;CdHenn0Q5+23q+xY(VzQ7i'l}h5Yf",
+        "ERPSEI_ALPHA": "C&[ClTX~~8BL9wn!,{_;{T+Mq-a=(nm+",
+        "ERPSEI_BRAVO": "p@ucM+6G(F%Dmpvw",
         "ERPSEI_EDICOM_USR": "RMA9509272C6",
         "ERPSEI_EDICOM_PWD": "n84kjdgudg"
       }
@@ -29,8 +29,8 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ERPSEI_ALPHA": "C&[ClTX~~8BL9wn!,{_;{T+Mq-a=(nm+qcOsH}8ztXg^=iQJKv",
-        "ERPSEI_BRAVO": "p@ucM+6G(F%Dmpvwl(@#;CdHenn0Q5+23q+xY(VzQ7i'l}h5Yf",
+        "ERPSEI_ALPHA": "C&[ClTX~~8BL9wn!,{_;{T+Mq-a=(nm+",
+        "ERPSEI_BRAVO": "p@ucM+6G(F%Dmpvw",
         "ERPSEI_EDICOM_USR": "RMA9509272C6",
         "ERPSEI_EDICOM_PWD": "n84kjdgudg"
       },
@@ -42,8 +42,8 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Production",
-        "ERPSEI_ALPHA": "6=BP;87nPagsk'z-eNiaQFHd!KL$Ljb!a#xL_tX72,fkGisO&D",
-        "ERPSEI_BRAVO": "Ci]Bk[!$_c(ts;XBgBzm%1VfD3P8y;Z4K~R;%FtO~c1CZ{F$1b",
+        "ERPSEI_ALPHA": "6=BP;87nPagsk'z-eNiaQFHd!KL$Ljb!",
+        "ERPSEI_BRAVO": "Ci]Bk[!$_c(ts;XB",
         "ERPSEI_EDICOM_USR": "RMA9509272C6",
         "ERPSEI_EDICOM_PWD": "n84kjdgudg"
       },
