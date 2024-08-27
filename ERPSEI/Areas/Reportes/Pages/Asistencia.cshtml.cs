@@ -102,35 +102,20 @@ namespace ERPSEI.Areas.Reportes.Pages
 			var filtro = HttpContext.Session.GetObjectFromJson<FiltroModel>("FiltroAsistencia");
 			List<Asistencia> asistencias;
 
-			// Si no hay filtros o si no hay un rango específico, aplicar lógica de quincenas
-			if (filtro != null && (!filtro.FechaIngresoInicio.HasValue || !filtro.FechaIngresoFin.HasValue))
+			// Si no hay filtros de fecha, obtener las asistencias de la fecha actual
+			if (filtro == null || !filtro.FechaIngresoInicio.HasValue)
 			{
-				// Obtener el mes y año de la fecha de referencia
-				DateTime fechaReferencia = filtro?.FechaIngresoInicio ?? DateTime.Now;
-				int year = fechaReferencia.Year;
-				int month = fechaReferencia.Month;
-
-				// Definir fechas de quincenas
-				DateOnly fechaInicio1 = new DateOnly(year, month, 25).AddMonths(-1);
-				DateOnly fechaFin1 = new DateOnly(year, month, 10);
-				DateOnly fechaInicio2 = new DateOnly(year, month, 10);
-				DateOnly fechaFin2 = new DateOnly(year, month, 25);
-
-				// Obtener todas las asistencias y luego filtrar por quincena
+				DateOnly fechaActual = DateOnly.FromDateTime(DateTime.Now);
 				asistencias = await asistenciaManager.GetAllAsync();
-				asistencias = asistencias.Where(asis =>
-					(asis.Fecha >= fechaInicio1 && asis.Fecha <= fechaFin1) ||
-					(asis.Fecha >= fechaInicio2 && asis.Fecha <= fechaFin2)).ToList();
+				asistencias = asistencias.Where(asis => asis.Fecha == fechaActual).ToList();
 			}
 			else
 			{
 				// Si hay filtros de rango de fechas, obtener asistencias dentro del rango
-				asistencias = filtro != null
-					? await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, filtro.FechaIngresoInicio, filtro.FechaIngresoFin)
-					: await asistenciaManager.GetAllAsync();
+				asistencias = await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, filtro.FechaIngresoInicio, filtro.FechaIngresoFin);
 			}
 
-			// Generar el resumen de asistencias.
+			// Generar el resumen de asistencias
 			var resumenAsistencias = asistencias
 				.GroupBy(a => a.Empleado?.NombreCompleto)
 				.Select(g => new
@@ -145,6 +130,7 @@ namespace ERPSEI.Areas.Reportes.Pages
 
 			return new JsonResult(resumenAsistencias);
 		}
+
 
 
 		public async Task<JsonResult> OnGetAsistenciasList()
@@ -204,10 +190,15 @@ namespace ERPSEI.Areas.Reportes.Pages
 			List<string> jsonAsistencias = new List<string>();
 			List<Asistencia> asistencias = new List<Asistencia>();
 
-			// Verificar si se aplican filtros
-			if (filtro != null && filtro.FechaIngresoInicio.HasValue && filtro.FechaIngresoFin.HasValue)
+			// Verificar si se aplica un filtro por nombre
+			if (filtro != null && !string.IsNullOrEmpty(filtro.NombreEmpleado))
 			{
-				// Si hay filtros, obtener asistencias dentro del rango especificado
+				// Si solo se especifica el nombre, obtener todas las asistencias para ese empleado
+				asistencias = await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, null, null);
+			}
+			else if (filtro != null && filtro.FechaIngresoInicio.HasValue && filtro.FechaIngresoFin.HasValue)
+			{
+				// Si hay filtros de rango de fechas, obtener asistencias dentro del rango especificado
 				asistencias = await asistenciaManager.GetAllAsync(
 					filtro.NombreEmpleado,
 					filtro.FechaIngresoInicio,
@@ -225,24 +216,11 @@ namespace ERPSEI.Areas.Reportes.Pages
 				asistencias = await asistenciaManager.GetAllAsync();
 			}
 
-			// Si se especificaron filtros de fecha pero no hay un rango específico, aplicar lógica de quincenas
-			if (filtro != null && (!filtro.FechaIngresoInicio.HasValue || !filtro.FechaIngresoFin.HasValue))
+			// Si no se especifican filtros de fecha y tampoco hay un filtro por nombre, filtrar por la fecha actual
+			if ((filtro == null || !filtro.FechaIngresoInicio.HasValue) && string.IsNullOrEmpty(filtro?.NombreEmpleado))
 			{
-				// Obtener el mes y año de la fecha de referencia
-				DateTime fechaReferencia = filtro?.FechaIngresoInicio ?? DateTime.Now;
-				int year = fechaReferencia.Year;
-				int month = fechaReferencia.Month;
-
-				// Definir fechas de quincenas
-				DateOnly fechaInicio1 = new DateOnly(year, month, 25).AddMonths(-1);
-				DateOnly fechaFin1 = new DateOnly(year, month, 10);
-				DateOnly fechaInicio2 = new DateOnly(year, month, 10);
-				DateOnly fechaFin2 = new DateOnly(year, month, 25);
-
-				// Filtrar asistencias por quincena
-				asistencias = asistencias.Where(asis =>
-					(asis.Fecha >= fechaInicio1 && asis.Fecha <= fechaFin1) ||
-					(asis.Fecha >= fechaInicio2 && asis.Fecha <= fechaFin2)).ToList();
+				DateOnly fechaActual = DateOnly.FromDateTime(DateTime.Now);
+				asistencias = asistencias.Where(asis => asis.Fecha == fechaActual).ToList();
 			}
 
 			// Convertir asistencias (filtradas o no) a JSON
@@ -264,6 +242,8 @@ namespace ERPSEI.Areas.Reportes.Pages
 			jsonResponse = $"[{string.Join(",", jsonAsistencias)}]";
 			return jsonResponse;
 		}
+
+
 
 		public ActionResult OnGetDownloadPlantilla()
 		{
@@ -399,8 +379,6 @@ namespace ERPSEI.Areas.Reportes.Pages
 
 			return new JsonResult(resp);
 		}
-
-
 
 		private async Task<string> CreateAsistenciaFromExcelRow(DataRow firstRow, DataRow? secondRow)
 		{

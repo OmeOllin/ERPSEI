@@ -529,7 +529,8 @@ function onGuardarClick() {
     let oParams = {
         id: idField.value === "Nuevo" ? 0 : parseInt(idField.value, 10),
         resultadoE: $('#inpAsistenciaResultadoE option:selected').text(),
-        resultadoS: $('#inpAsistenciaResultadoS option:selected').text() 
+
+        resultadoS: $('#inpAsistenciaResultadoS option:selected').text()
     };
 
     doAjax(
@@ -550,8 +551,16 @@ function onGuardarClick() {
 
             btnClose.click();
 
-            let e = document.querySelector("[name='refresh']");
-            e.click();
+            // Actualiza la fila en la tabla con los nuevos valores
+            let asistencia = resp.asistenciaActualizada;
+            if (asistencia) {
+                let row = document.querySelector(`[data-id='${asistencia.id}']`);
+                if (row) {
+                    // Actualiza solo los campos modificados en la fila
+                    row.querySelector('.columnaResultadoE').innerText = asistencia.resultadoE;
+                    row.querySelector('.columnaResultadoS').innerText = asistencia.resultadoS;
+                }
+            }
 
             showSuccess(dlgTitle.innerHTML, resp.mensaje);
         }, function (error) {
@@ -560,4 +569,8 @@ function onGuardarClick() {
         postOptions
     );
 }
+
+
+
+
 
