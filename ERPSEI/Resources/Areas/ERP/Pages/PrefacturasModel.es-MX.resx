@@ -126,11 +126,23 @@
   <data name="ConsultadoUnsuccessfully" xml:space="preserve">
     <value>Error al consultar la información</value>
   </data>
+  <data name="ErrorArchivoCERMissing" xml:space="preserve">
+    <value>No se encontró el archivo CER del emisor</value>
+  </data>
+  <data name="ErrorArchivoKEYMissing" xml:space="preserve">
+    <value>No se encontró el archivo KEY del emisor</value>
+  </data>
+  <data name="ErrorEstructuraCFDI" xml:space="preserve">
+    <value>No se pudo crear la estructura del comprobante con la prefactura</value>
+  </data>
   <data name="ErrorPrefacturaExistenteA" xml:space="preserve">
     <value>Ya existe una prefactura registrada con la serie y folio</value>
   </data>
   <data name="ErrorPrefacturaExistenteB" xml:space="preserve">
     <value>Por favor verifique</value>
+  </data>
+  <data name="ErrorXMLSinSello" xml:space="preserve">
+    <value>No se pudo crear el archivo XML del comprobante sin sellar</value>
   </data>
   <data name="PrefacturaAuthorizedSuccessfully" xml:space="preserve">
     <value>¡Prefactura autorizada satisfactoriamente!</value>
@@ -155,5 +167,29 @@
   </data>
   <data name="PrefacturaStampedUnsuccessfully" xml:space="preserve">
     <value>Error al timbrar la prefactura</value>
+  </data>
+	<data name="ErrorNumeroCertificado" xml:space="preserve">
+    <value>No se pudo obtener el número de certificado</value>
+  </data>
+	<data name="ErrorEstructuraXML" xml:space="preserve">
+    <value>No se pudo crear la estructura XML del comprobante</value>
+  </data>
+	<data name="ErrorCadenaOriginal" xml:space="preserve">
+    <value>No se pudo obtener la cadena original</value>
+  </data>
+	<data name="ErrorCertificado" xml:space="preserve">
+    <value>No se pudo generar el certificado del comprobante con el archivo CER del emisor</value>
+  </data>
+	<data name="ErrorSello" xml:space="preserve">
+    <value>No se pudo generar el sello del comprobante con la cadena original, archivo KEY y clave privada del emisor</value>
+  </data>
+	<data name="ErrorBytesXMLCFDI" xml:space="preserve">
+    <value>No se pudo generar el archivo del comprobante para envío de timbrado al PAC</value>
+  </data>
+	<data name="ErrorTimbradoCFDI" xml:space="preserve">
+    <value>No se pudo timbrar el CFDI</value>
+  </data>
+	<data name="ErrorGuardadoCFDI" xml:space="preserve">
+    <value>No se pudo guardar el archivo devuelto por el PAC</value>
   </data>
 </root>

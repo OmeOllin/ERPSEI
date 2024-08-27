@@ -120,11 +120,20 @@
   <data name="AccesoDenegado" xml:space="preserve">
     <value>Access denied</value>
   </data>
+  <data name="ArchivoCERMissing" xml:space="preserve">
+    <value>Emitter's CER file was not found</value>
+  </data>
+  <data name="ArchivoKEYMissing" xml:space="preserve">
+    <value>Emitter's KEY file was not found</value>
+  </data>
   <data name="ConsultadoSuccessfully" xml:space="preserve">
     <value>Successful information query!</value>
   </data>
   <data name="ConsultadoUnsuccessfully" xml:space="preserve">
     <value>Error querying information</value>
+  </data>
+  <data name="ErrorEstructuraCFDI" xml:space="preserve">
+    <value>Failed to create CFDI structure with pre-invoice</value>
   </data>
   <data name="ErrorPrefacturaExistenteA" xml:space="preserve">
     <value>There is already a prebill registered with the serie and file number</value>
@@ -155,5 +164,29 @@
   </data>
   <data name="PrefacturaStampedUnsuccessfully" xml:space="preserve">
     <value>Error stamping prebill</value>
+  </data>
+		<data name="ErrorNumeroCertificado" xml:space="preserve">
+    <value>Could not get certificate number</value>
+  </data>
+		<data name="ErrorEstructuraXML" xml:space="preserve">
+    <value>Could not create XML structure</value>
+  </data>
+		<data name="ErrorCadenaOriginal" xml:space="preserve">
+    <value>Could not get original string</value>
+  </data>
+		<data name="ErrorCertificado" xml:space="preserve">
+    <value>The voucher certificate could not be generated with the issuer's CER file</value>
+  </data>
+		<data name="ErrorSello" xml:space="preserve">
+    <value>The receipt stamp could not be generated with the original chain, KEY file and private key of the issuer</value>
+  </data>
+		<data name="ErrorBytesXMLCFDI" xml:space="preserve">
+    <value>The receipt file could not be generated to send the stamp to the PAC</value>
+  </data>
+		<data name="ErrorTimbradoCFDI" xml:space="preserve">
+    <value>CFDI could not be stamped</value>
+  </data>
+		<data name="ErrorGuardadoCFDI" xml:space="preserve">
+    <value>Could not save file returned by PAC</value>
   </data>
 </root>
