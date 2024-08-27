@@ -38,23 +38,23 @@ namespace ERPSEI.Data.Entities.SAT.cfdiv40
 
 		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Serie { get; set; } = string.Empty;
+		public string? Serie { get; set; }
 
 		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Folio { get; set; } = string.Empty;
+		public string? Folio { get; set; }
 
 
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Fecha { get; set; } = string.Empty;
+		public string? Fecha { get; set; }
 
 		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Sello { get; set; } = string.Empty;
+		public string? Sello { get; set; }
 
 		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string FormaPago { get; set; } = string.Empty;
+		public string? FormaPago { get; set; }
 
 		
 		[System.Xml.Serialization.XmlIgnoreAttribute()]
@@ -62,15 +62,15 @@ namespace ERPSEI.Data.Entities.SAT.cfdiv40
 
 		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string NoCertificado { get; set; } = string.Empty;
+		public string? NoCertificado { get; set; }
 
 		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Certificado {  get; set; } = string.Empty;
+		public string? Certificado {  get; set; }
 
 		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string CondicionesDePago { get; set; } = string.Empty;
+		public string? CondicionesDePago { get; set; }
 
 		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
@@ -86,7 +86,7 @@ namespace ERPSEI.Data.Entities.SAT.cfdiv40
 
 		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Moneda { get; set; } = string.Empty;
+		public string? Moneda { get; set; }
 
 		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
@@ -102,15 +102,15 @@ namespace ERPSEI.Data.Entities.SAT.cfdiv40
 
 		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string TipoDeComprobante { get; set; } = string.Empty;
+		public string? TipoDeComprobante { get; set; }
 
 		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Exportacion { get; set; } = string.Empty;
+		public string? Exportacion { get; set; }
 
 		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string MetodoPago { get; set; } = string.Empty;
+		public string? MetodoPago { get; set; }
 
 		
 		[System.Xml.Serialization.XmlIgnoreAttribute()]
@@ -118,12 +118,12 @@ namespace ERPSEI.Data.Entities.SAT.cfdiv40
 
 		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string LugarExpedicion { get; set; } = string.Empty;
+		public string? LugarExpedicion { get; set; }
 
 		[XmlAttribute("schemaLocation", Namespace = XmlSchema.InstanceNamespace)]
 		public string xsiSchemaLocation = "http://www.sat.gob.mx/sitio_internet/cfd/4/cfdv40.xsd";
 		
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Confirmacion { get; set; } = string.Empty;
+		public string? Confirmacion { get; set; }
 	}
 }

@@ -45,7 +45,7 @@
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Unidad { get; set; } = string.Empty;
+		public string? Unidad { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]

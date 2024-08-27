@@ -11,19 +11,19 @@
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Rfc { get; set; } = string.Empty;
+		public string? Rfc { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Nombre { get; set; } = string.Empty;
+		public string? Nombre { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string DomicilioFiscalReceptor { get; set; } = string.Empty;
+		public string? DomicilioFiscalReceptor { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string ResidenciaFiscal { get; set; } = string.Empty;
+		public string? ResidenciaFiscal { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlIgnoreAttribute()]
@@ -31,14 +31,14 @@
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string NumRegIdTrib { get; set; } = string.Empty;
+		public string? NumRegIdTrib { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string RegimenFiscalReceptor { get; set; } = string.Empty;
+		public string? RegimenFiscalReceptor { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string UsoCFDI { get; set; } = string.Empty;
+		public string? UsoCFDI { get; set; }
 	}
 }

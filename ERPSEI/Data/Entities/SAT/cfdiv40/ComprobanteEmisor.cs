@@ -11,18 +11,18 @@
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Rfc { get; set; } = string.Empty;
+		public string? Rfc { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string Nombre { get; set; } = string.Empty;
+		public string? Nombre { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string RegimenFiscal { get; set; } = string.Empty;
+		public string? RegimenFiscal { get; set; }
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string FacAtrAdquirente { get; set; } = string.Empty;
+		public string? FacAtrAdquirente { get; set; }
 	}
 }
