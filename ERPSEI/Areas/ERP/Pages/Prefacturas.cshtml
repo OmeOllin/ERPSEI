@@ -22,6 +22,7 @@
 @inject IAccesoModuloManager AccesosModulosManager;
 @inject AppRoleManager RolesManager;
 @inject AppUserManager UsuariosManager;
+@inject IConfiguration Configuration;
 @{
 	ViewData["Title"] = Localizer["Title"];
 
@@ -54,7 +55,7 @@
 	AppUser? user = await UsuariosManager.GetUserAsync(User);
 	string userId = user?.Id ?? string.Empty;
 
-	IConfigurationSection autorizadoresSection = ERPSEI.ServicesConfiguration.Configuration.GetSection("AutorizadoresPrefacturas");
+	IConfigurationSection autorizadoresSection = Configuration.GetSection("AutorizadoresPrefacturas");
 
 	string authUsers = string.Join(",", (from e in autorizadoresSection.AsEnumerable() select e.Value));
 }
