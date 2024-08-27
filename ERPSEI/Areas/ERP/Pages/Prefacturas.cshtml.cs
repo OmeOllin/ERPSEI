@@ -1253,7 +1253,7 @@ namespace ERPSEI.Areas.ERP.Pages
 		}
 		private async Task GuardarZipComprobante(string pathZip, byte[] zipComprobanteTimbrado)
 		{
-			string b64Zip = Encoding.UTF8.GetString(zipComprobanteTimbrado);
+			string b64Zip = Convert.ToBase64String(zipComprobanteTimbrado);
 			byte[] zip = Convert.FromBase64String(b64Zip);
 			using (FileStream f = new(pathZip, FileMode.OpenOrCreate))
 			{
