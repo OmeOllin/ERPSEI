@@ -1386,6 +1386,7 @@ namespace ERPSEI.Areas.ERP.Pages
             decimal totalRetenciones = 0m;
 			decimal totalImportes = 0m;
 			decimal totalDescuentos = 0m;
+			string moneda = p.Moneda?.Clave ?? "MXN";
 
             foreach (ComprobanteConcepto cc in lc)
 			{
@@ -1453,8 +1454,8 @@ namespace ERPSEI.Areas.ERP.Pages
 				SubTotal = Math.Round(totalImportes, p.Moneda?.Decimales ?? 2),
 				Descuento = Math.Round(totalDescuentos, p.Moneda?.Decimales ?? 2),
                 DescuentoSpecified = true,
-				Moneda = p.Moneda?.Clave ?? "MXN",
-				TipoCambio = p.TipoCambio,
+				Moneda = moneda,
+				TipoCambio = moneda == "MXN" ? 1 : p.TipoCambio,
 				TipoCambioSpecified = true,
 				Total = Math.Round(totalImportes - totalDescuentos + totalTraslados - totalRetenciones, p.Moneda?.Decimales ?? 2),
                 TipoDeComprobante = p.TipoComprobante?.Clave ?? string.Empty,
