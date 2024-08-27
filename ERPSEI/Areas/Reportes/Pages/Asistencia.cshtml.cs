@@ -115,6 +115,22 @@ namespace ERPSEI.Areas.Reportes.Pages
 				asistencias = await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, filtro.FechaIngresoInicio, filtro.FechaIngresoFin);
 			}
 
+			// Procesar cada asistencia
+			foreach (var asistencia in asistencias)
+			{
+				// Si no hay entrada, marcar como "OMISIÓN/FALTA"
+				if (asistencia.Entrada == null)
+				{
+					asistencia.ResultadoE = "OMISIÓN/FALTA";
+				}
+
+				// Si hay salida, marcar como "NORMAL"
+				if (asistencia.Salida != null)
+				{
+					asistencia.ResultadoS = "NORMAL";
+				}
+			}
+
 			// Generar el resumen de asistencias
 			var resumenAsistencias = asistencias
 				.GroupBy(a => a.Empleado?.NombreCompleto)
@@ -130,8 +146,6 @@ namespace ERPSEI.Areas.Reportes.Pages
 
 			return new JsonResult(resumenAsistencias);
 		}
-
-
 
 		public async Task<JsonResult> OnGetAsistenciasList()
 		{
@@ -242,8 +256,6 @@ namespace ERPSEI.Areas.Reportes.Pages
 			jsonResponse = $"[{string.Join(",", jsonAsistencias)}]";
 			return jsonResponse;
 		}
-
-
 
 		public ActionResult OnGetDownloadPlantilla()
 		{
@@ -379,6 +391,7 @@ namespace ERPSEI.Areas.Reportes.Pages
 
 			return new JsonResult(resp);
 		}
+
 
 		private async Task<string> CreateAsistenciaFromExcelRow(DataRow firstRow, DataRow? secondRow)
 		{

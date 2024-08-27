@@ -364,8 +364,8 @@ function onBuscarClick() {
     };
 
     //Resetea el valor de los filtros.
-    document.querySelectorAll("#filtros .form-control").forEach(function (e) { e.value = ""; });
-    document.querySelectorAll("#filtros .form-select").forEach(function (e) { e.value = 0; });
+    //document.querySelectorAll("#filtros .form-control").forEach(function (e) { e.value = ""; });
+    //document.querySelectorAll("#filtros .form-select").forEach(function (e) { e.value = 0; });
 
     doAjax(
         "/Reportes/Asistencia/FiltrarAsistencia",
@@ -551,6 +551,8 @@ function onGuardarClick() {
 
             btnClose.click();
 
+            onBuscarClick();
+
             // Actualiza la fila en la tabla con los nuevos valores
             let asistencia = resp.asistenciaActualizada;
             if (asistencia) {
@@ -561,6 +563,7 @@ function onGuardarClick() {
                     row.querySelector('.columnaResultadoS').innerText = asistencia.resultadoS;
                 }
             }
+
 
             showSuccess(dlgTitle.innerHTML, resp.mensaje);
         }, function (error) {
