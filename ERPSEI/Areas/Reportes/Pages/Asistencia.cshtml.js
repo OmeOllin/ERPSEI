@@ -275,7 +275,6 @@ function initTable() {
     });
 }
 
-//Funcionalidad Diálogo
 function initAsistenciaDialog(action, row) {
     // Obtener los elementos del modal
     let idField = document.getElementById("inpAsistenciaId");
@@ -295,7 +294,6 @@ function initAsistenciaDialog(action, row) {
             dlgTitle.innerHTML = dlgEditarTitle;
 
             // Habilitar campos para edición
-
             idField.setAttribute("disabled", false);
             nombreField.setAttribute("disabled", true);
             resultadoEField.removeAttribute("disabled");
@@ -306,35 +304,50 @@ function initAsistenciaDialog(action, row) {
     // Establecer los valores de los campos
     idField.value = row.Id;
     nombreField.value = row.NombreEmpleado;
-    //resultadoEField.value = row.ResultadoE;
-    //resultadoSField.value = row.ResultadoS;
-    switch (row.ResultadoE)
-    {
+
+    // Función para actualizar ResultadoS en función de ResultadoE
+    function actualizarResultadoS() {
+        switch (resultadoEField.value) {
+            case "0": // Normal
+                resultadoSField.value = "1"; // NORMAL
+                break;
+            case "1": // Retardo
+                // Aquí podrías establecer una lógica específica para ResultadoS si es necesario
+                break;
+            case "2": // Omisión/Falta
+                // Aquí podrías establecer una lógica específica para ResultadoS si es necesario
+                break;
+            default:
+                // Manejar casos por defecto
+                resultadoSField.value = ""; // Vacío o valor por defecto
+                break;
+        }
+    }
+
+    // Configurar el valor inicial de ResultadoE y ResultadoS
+    switch (row.ResultadoE) {
         case "NORMAL":
-            resultadoEField.value = 0;
+            resultadoEField.value = "0";
             break;
         case "RETARDO":
-            resultadoEField.value = 1;
+            resultadoEField.value = "1";
             break;
         case "OMISIÓN/FALTA":
-            resultadoEField.value = 2;
+            resultadoEField.value = "2";
             break;
     }
-    switch (row.ResultadoS) {
-        case "TEMPRANO":
-            resultadoSField.value = 0;
-            break;
-        case "NORMAL":
-            resultadoSField.value = 1;
-            break;
-        case "OMISIÓN/FALTA":
-            resultadoSField.value = 2;
-            break;
-    }
+
+    // Inicializar ResultadoS basado en ResultadoE
+    actualizarResultadoS();
+
+    // Agregar manejador de eventos para actualizar ResultadoS cuando ResultadoE cambie
+    resultadoEField.addEventListener('change', actualizarResultadoS);
 
     // Mostrar el diálogo
     dlgAsistenciaModal.toggle();
 }
+
+
 
 // Función para manejar el click en el botón de búsqueda
 function onBuscarClick() {
@@ -481,6 +494,20 @@ function onExcelSelectorChanged(input) {
             showAlert(invalidFormatTitle, invalidFormatMsg);
         }
     }
+}
+
+function onCerrarClick() {
+    //Removes validation from input-fields
+    $('.input-validation-error').addClass('input-validation-valid');
+    $('.input-validation-error').removeClass('input-validation-error');
+    //Removes validation message after input-fields
+    $('.field-validation-error').addClass('field-validation-valid');
+    $('.field-validation-error').removeClass('field-validation-error');
+    //Removes validation summary 
+    $('.validation-summary-errors').addClass('validation-summary-valid');
+    $('.validation-summary-errors').removeClass('validation-summary-errors');
+    //Removes danger text from fields
+    $(".text-danger").children().remove()
 }
 
 function onGuardarClick() {
