@@ -1,10 +1,9 @@
-﻿using ERPSEI.Data.Entities.Empleados;
-using ERPSEI.Data.Entities.Reportes;
+﻿using ERPSEI.Data.Entities.Reportes;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERPSEI.Data.Managers.Reportes
 {
-    public class AsistenciaManager(ApplicationDbContext db) : IAsistenciaManager
+	public class AsistenciaManager(ApplicationDbContext db) : IAsistenciaManager
 	{
 		private async Task<int> GetNextId()
 		{
@@ -33,7 +32,6 @@ namespace ERPSEI.Data.Managers.Reportes
 				a.Entrada = asistencia.Entrada;
 				a.ResultadoE = asistencia.ResultadoE;
 				a.ResultadoS = asistencia.ResultadoS;
-				a.HorarioId = asistencia.HorarioId;
 				a.Dia = asistencia.Dia;
 				a.Fecha = asistencia.Fecha;
 				await db.SaveChangesAsync();
@@ -84,7 +82,7 @@ namespace ERPSEI.Data.Managers.Reportes
 
 		public async Task<List<Asistencia>> GetAllAsync()
 		{
-			return await db.Asistencias.Include(h => h.Horario).Include(e => e.Empleado).ToListAsync();
+			return await db.Asistencias.Include(e => e.Empleado).ToListAsync();
 		}
 		public async Task<List<Asistencia>> GetAllAsync(string? nombreEmpleado = null, DateTime? fechaIngresoInicio = null, DateTime? fechaIngresoFin = null)
 		{
@@ -92,7 +90,6 @@ namespace ERPSEI.Data.Managers.Reportes
 			DateOnly? fechaFin = fechaIngresoFin.HasValue ? DateOnly.FromDateTime(fechaIngresoFin.Value) : (DateOnly?)null;
 
 			return await db.Asistencias
-				.Include(e => e.Horario)
 				.Include(e => e.Empleado)
 				.Where(e => nombreEmpleado == null || e.Empleado.NombreCompleto == nombreEmpleado)
 				.Where(e => !fechaInicio.HasValue || (fechaFin.HasValue ? e.Fecha >= fechaInicio.Value && e.Fecha <= fechaFin.Value : e.Fecha == fechaInicio.Value))

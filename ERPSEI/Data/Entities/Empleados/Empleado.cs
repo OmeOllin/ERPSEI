@@ -68,6 +68,10 @@ namespace ERPSEI.Data.Entities.Empleados
 		//Empleados de los que el empleado es jefe
 		[NotMapped]
 		public List<Empleado>? Empleados { get; set; }
+
 		public ICollection<Asistencia>? Asistencias { get; }
+
+		public int? HorarioId { get; set; }
+		public Horario? Horario { get; set; }
 	}
 }

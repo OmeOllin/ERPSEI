@@ -92,7 +92,7 @@ namespace ERPSEI.Data
 		public DbSet<Asistencia> Asistencias { get; set; }
 
 		//Reporte Horarios
-		public DbSet<Horarios> Horarios { get; set; }
+		public DbSet<Horario> Horarios { get; set; }
 
 		//Catálogos no administrables Usuarios
 		public DbSet<AccesoModulo> AccesosModulos { get; set; }
@@ -127,7 +127,10 @@ namespace ERPSEI.Data
 		private static void BuildAsistencias(ModelBuilder b) 
 		{
 			b.Entity<Asistencia>().HasOne(e => e.Empleado).WithMany(a => a.Asistencias).OnDelete(DeleteBehavior.NoAction);
-			b.Entity<Asistencia>().HasOne(e => e.Horario).WithMany(a => a.Asistencias).OnDelete(DeleteBehavior.NoAction);
+
+			b.Entity<Empleado>().HasOne(e => e.Horario).WithMany(h => h.Empleados).OnDelete(DeleteBehavior.NoAction);
+
+			b.Entity<Horario>().HasMany(h => h.HorarioDetalles).WithOne(hd => hd.Horario).OnDelete(DeleteBehavior.NoAction);
 		}
 
 		private static void BuildEmpresas(ModelBuilder b) 

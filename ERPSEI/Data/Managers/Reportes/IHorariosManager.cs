@@ -2,7 +2,7 @@
 
 namespace ERPSEI.Data.Managers.Reportes
 {
-    public interface IHorariosManager : IRWCatalogoManager<Horarios>
+    public interface IHorariosManager : IRWCatalogoManager<Horario>
     {
     }
 }
