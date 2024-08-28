@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
+using NuGet.Packaging;
 using ServicioEDICOM;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -1127,7 +1128,51 @@ namespace ERPSEI.Areas.ERP.Pages
 
 			return new JsonResult(resp);
 		}
+		
+		public async Task<JsonResult> OnPostTimbrarMultiple(string[] ids)
+		{
+			ServerResponse resp = new(true, localizer["PrefacturasStampedUnsuccessfully"]);
 
+			if (PuedeTodo || PuedeEditar)
+			{
+				try
+				{
+					await db.Database.BeginTransactionAsync();
+
+					foreach (string id in ids)
+					{
+						_ = int.TryParse(id, out int idPrefactura);
+
+						//Se timbra la prefactura
+						ServerResponse respTimbre = new(true, localizer["FailedToStamp"] + $" {idPrefactura}");
+						if (idPrefactura >= 1){ 
+							respTimbre = await TimbrarPrefactura(idPrefactura);
+							if (respTimbre.TieneError) {
+								//TODO: Refactorizar método para que notifique errores por prefactura.
+								resp.Errores.AddRange(respTimbre.Errores);
+							}
+						}
+					}
+
+					await db.Database.CommitTransactionAsync();
+
+					resp.TieneError = false;
+					resp.Mensaje = localizer["PrefacturasExportedSuccessfully"];
+				}
+				catch (Exception ex)
+				{
+					logger.LogError(message: ex.Message);
+					resp.Mensaje = ex.Message;
+					await db.Database.RollbackTransactionAsync();
+				}
+			}
+			else
+			{
+				resp.Mensaje = localizer["AccesoDenegado"];
+			}
+
+			return new JsonResult(resp);
+		}
 		public async Task<JsonResult> OnPostTimbrar(int idPrefactura)
 		{
 			ServerResponse resp = new(true, localizer["PrefacturaStampedUnsuccessfully"]);

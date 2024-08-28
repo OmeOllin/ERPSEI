@@ -1,5 +1,6 @@
 ﻿var table;
 var buttonExport;
+var buttonStamp;
 var tableProdServ;
 var selections = [];
 var dlgProdServ = null;
@@ -21,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     table = $("#table");
     buttonExport = $("#btnExportar");
+    buttonStamp = $("#btnTimbrar");
     tableProdServ = $("#tableProductosServicios");
     dlgCFDI = document.getElementById('dlgCFDI');
     dlgCFDIModal = new bootstrap.Modal(dlgCFDI, null);
@@ -196,6 +198,43 @@ function onAgregarClick() {
     dlgCFDIModal.toggle();
 }
 
+//Función para timbrar cfdis
+function onTimbrarCFDIClick(ids = null) {
+    let oParams = {};
+
+    if (ids != null) { oParams.ids = ids; }
+    else { oParams.ids = [document.getElementById("inpCFDIId").value]; }
+
+    doAjax(
+        "/ERP/Prefacturas/TimbrarMultiple",
+        oParams,
+        function (resp) {
+            if (resp.tieneError) {
+                let summary = ``;
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                }
+                showError(dlgTitle.innerHTML, `<ul>${summary}</ul>`);
+                return;
+            }
+
+            if (ids != null) {
+                ids = [];
+                selections = null;
+                if (buttonStamp) { buttonStamp.prop('disabled', true); }
+                table.bootstrapTable('uncheckAll');
+            }
+
+            showSuccess(dlgExportTitle, resp.mensaje);
+        }, function (error) {
+            showError(dlgExportTitle, error);
+        },
+        postOptions
+    );
+}
+
 //Función para exportar cfdis
 function onExportarCFDIClick(ids = null) {
     let oParams = {};
@@ -319,52 +358,14 @@ function initTable() {
     })
     table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
         if (buttonExport) { buttonExport.prop('disabled', !table.bootstrapTable('getSelections').length) }
+        if (buttonStamp) { buttonStamp.prop('disabled', !table.bootstrapTable('getSelections').length) }
 
         // save your data, here just save the current page
         selections = getIdSelections()
         // push or splice the selections if you want to save all data selections
     });
     if (buttonExport) { buttonExport.click(function () { onExportarCFDIClick(selections); }); }
-}
-
-//Función para capturar el click de los botones para dar de baja cfdis. Ejecuta una llamada ajax para dar de baja cfdis.
-function onDeleteCFDIClick(ids = null) {
-    askConfirmation(dlgDeleteTitle, dlgDeleteQuestion, function () {
-        let oParams = {};
-
-        if (ids != null) { oParams.ids = ids; }
-        else { oParams.ids = [document.getElementById("inpCFDIId").value]; }
-
-        doAjax(
-            "/ERP/Prefacturas/Disable",
-            oParams,
-            function (resp) {
-                if (resp.tieneError) {
-                    showError(dlgDeleteTitle, resp.mensaje);
-                    return;
-                }
-
-                table.bootstrapTable('remove', {
-                    field: 'id',
-                    values: oParams.ids
-                });
-
-                if (ids != null) {
-                    ids = [];
-                    selections = null;
-                    buttonExport.prop('disabled', true);
-                }
-
-                onBuscarClick();
-
-                showSuccess(dlgDeleteTitle, resp.mensaje);
-            }, function (error) {
-                showError(dlgDeleteTitle, error);
-            },
-            postOptions
-        );
-
-    });
+    if (buttonStamp) { buttonStamp.click(function () { onTimbrarCFDIClick(selections); }); }
 }
 
 //Función para autorizar una prefactura
