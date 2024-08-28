@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERPSEI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240828234035_modificacionesHorariosAsistencias")]
+    [Migration("20240828235314_modificacionesHorariosAsistencias")]
     partial class modificacionesHorariosAsistencias
     {
         /// <inheritdoc />
@@ -1063,7 +1063,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasIndex("HorarioId");
 
-                    b.ToTable("HorarioDetalle");
+                    b.ToTable("HorariosDetalles");
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.SAT.AutorizacionesPrefactura", b =>

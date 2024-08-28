@@ -55,7 +55,7 @@ namespace ERPSEI.Data.Migrations
                 nullable: true);
 
             migrationBuilder.CreateTable(
-                name: "HorarioDetalle",
+                name: "HorariosDetalles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
@@ -69,9 +69,9 @@ namespace ERPSEI.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_HorarioDetalle", x => x.Id);
+                    table.PrimaryKey("PK_HorariosDetalles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_HorarioDetalle_Horarios_HorarioId",
+                        name: "FK_HorariosDetalles_Horarios_HorarioId",
                         column: x => x.HorarioId,
                         principalTable: "Horarios",
                         principalColumn: "Id");
@@ -83,8 +83,8 @@ namespace ERPSEI.Data.Migrations
                 column: "HorarioId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HorarioDetalle_HorarioId",
-                table: "HorarioDetalle",
+                name: "IX_HorariosDetalles_HorarioId",
+                table: "HorariosDetalles",
                 column: "HorarioId");
 
             migrationBuilder.AddForeignKey(
@@ -103,7 +103,7 @@ namespace ERPSEI.Data.Migrations
                 table: "Empleados");
 
             migrationBuilder.DropTable(
-                name: "HorarioDetalle");
+                name: "HorariosDetalles");
 
             migrationBuilder.DropIndex(
                 name: "IX_Empleados_HorarioId",

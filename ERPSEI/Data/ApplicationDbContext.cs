@@ -90,9 +90,8 @@ namespace ERPSEI.Data
 
 		//Reporte asistencias
 		public DbSet<Asistencia> Asistencias { get; set; }
-
-		//Reporte Horarios
 		public DbSet<Horario> Horarios { get; set; }
+		public DbSet<HorarioDetalle> HorariosDetalles { get; set; }
 
 		//Catálogos no administrables Usuarios
 		public DbSet<AccesoModulo> AccesosModulos { get; set; }

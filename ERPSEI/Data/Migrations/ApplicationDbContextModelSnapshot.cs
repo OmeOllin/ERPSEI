@@ -1060,7 +1060,7 @@ namespace ERPSEI.Data.Migrations
 
                     b.HasIndex("HorarioId");
 
-                    b.ToTable("HorarioDetalle");
+                    b.ToTable("HorariosDetalles");
                 });
 
             modelBuilder.Entity("ERPSEI.Data.Entities.SAT.AutorizacionesPrefactura", b =>
