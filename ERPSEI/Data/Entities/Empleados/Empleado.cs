@@ -73,5 +73,7 @@ namespace ERPSEI.Data.Entities.Empleados
 
 		public int? HorarioId { get; set; }
 		public Horario? Horario { get; set; }
+
+		public bool? CalcularAsistencia { get; set; } = true;
 	}
 }
