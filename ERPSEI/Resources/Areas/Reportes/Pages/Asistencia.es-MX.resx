@@ -129,11 +129,20 @@
   <data name="AsistenciasImportadosUnsuccessfully" xml:space="preserve">
     <value>Error al importar las asistencias</value>
   </data>
+  <data name="Calculateattendance" xml:space="preserve">
+    <value>Calcular Asistencia</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
   <data name="CancelButtonTitle" xml:space="preserve">
     <value>Cancelar</value>
   </data>
   <data name="ColAbsencesHeader" xml:space="preserve">
     <value>Faltas</value>
+  </data>
+  <data name="ColActionsHeader" xml:space="preserve">
+    <value>Acciones</value>
   </data>
   <data name="ColCardNoHeader" xml:space="preserve">
     <value>NoTarjeta</value>
@@ -225,6 +234,12 @@
   <data name="dlgAsistenciaTitle" xml:space="preserve">
     <value>Nuevo Registro</value>
   </data>
+  <data name="EditButtonTitle" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="EditDialogTitle" xml:space="preserve">
+    <value>Editar Registro</value>
+  </data>
   <data name="EmployeeNameField" xml:space="preserve">
     <value>Nombre</value>
   </data>
@@ -278,6 +293,9 @@
   </data>
   <data name="RetardoPlaceholder" xml:space="preserve">
     <value>Retardo</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Guardar</value>
   </data>
   <data name="SearchButton" xml:space="preserve">
     <value>Buscar</value>

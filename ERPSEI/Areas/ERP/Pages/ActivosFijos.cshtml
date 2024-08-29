@@ -1,11 +1,11 @@
 ﻿@page "{handler?}"
-@using ERPSEI.Areas.Reportes.Pages;
+@using ERPSEI.Areas.Catalogos.Pages;
 @using ERPSEI.Data.Managers;
 @using Microsoft.AspNetCore.Localization;
 @using Microsoft.AspNetCore.Mvc.Localization;
 @using ERPSEI.Data.Entities.Empleados;
 @using ERPSEI.Data.Managers.Empleados;
-@model AsistenciaModel
+@model ActivosFijosModel
 @inject IViewLocalizer Localizer;
 @{
 	ViewData["Title"] = Localizer["Title"];
@@ -41,20 +41,44 @@
 					<div class="row">
 						<div class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<input id="inpFiltroNombreEmpleado" type="text" asp-for="InputFiltro.NombreEmpleado" class="form-control" placeholder="@Localizer["EmployeeNameField"]" />
-								<label for="inpFiltroNombreEmpleado" asp-for="InputFiltro.NombreEmpleado" class="form-label"></label>
+								<input id="inpFiltroFolio" type="text" asp-for="InputFiltro.Folio" class="form-control" placeholder="@Localizer["FolioNameField"]" />
+								<label for="inpFiltroFolio" asp-for="InputFiltro.Folio" class="form-label"></label>
 							</div>
 						</div>
 						<div class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<input id="inpFiltroFechaIngresoInicio" type="date" asp-for="InputFiltro.FechaIngresoInicio" class="form-control" placeholder="@Localizer["FechaInicioField"]" />
-								<label for="inpFiltroFechaIngresoInicio" asp-for="InputFiltro.FechaIngresoInicio" class="form-label"></label>
+								<input id="inpFiltroResponsable" type="text" asp-for="InputFiltro.Responsable" class="form-control" placeholder="@Localizer["ResponsableNameField"]" />
+								<label for="inpFiltroResponsable" asp-for="InputFiltro.Responsable" class="form-label"></label>
 							</div>
 						</div>
 						<div class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<input id="inpFiltroFechaIngresoFin" type="date" asp-for="InputFiltro.FechaIngresoFin" class="form-control" placeholder="@Localizer["FechaFinField"]" />
-								<label for="inpFiltroFechaIngresoFin" asp-for="InputFiltro.FechaIngresoFin" class="form-label"></label>
+								<input id="inpFiltroCategoria" type="text" asp-for="InputFiltro.Categoria" class="form-control" placeholder="@Localizer["CategoriaNameField"]" />
+								<label for="inpFiltroCategoria" asp-for="InputFiltro.Categoria" class="form-label"></label>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<input id="inpFiltroTipo" type="text" asp-for="InputFiltro.Tipo" class="form-control" placeholder="@Localizer["TipoNameField"]" />
+								<label for="inpFiltroTipo" asp-for="InputFiltro.Tipo" class="form-label"></label>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<input id="inpFiltroFechaCompraInicio" type="date" asp-for="InputFiltro.FechaCompraInicio" class="form-control" placeholder="@Localizer["FechaCompraInicioField"]" />
+								<label for="inpFiltroFechaCompraInicio" asp-for="InputFiltro.FechaCompraInicio" class="form-label"></label>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<input id="inpFiltroFechaCompraFin" type="date" asp-for="InputFiltro.FechaCompraFin" class="form-control" placeholder="@Localizer["FechaCompraFinField"]" />
+								<label for="inpFiltroFechaCompraFin" asp-for="InputFiltro.FechaCompraFin" class="form-label"></label>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<input id="inpFiltroEstatus" type="text" asp-for="InputFiltro.Estatus" class="form-control" placeholder="@Localizer["EstatusNameField"]" />
+								<label for="inpFiltroEstatus" asp-for="InputFiltro.Estatus" class="form-label"></label>
 							</div>
 						</div>
 					</div>
@@ -74,37 +98,15 @@
 	</div>
 </div>
 
-<div id="dlgAsistenciaModal" class="modal fade" tabindex="-1" aria-labelledby="dlgAsistenciaLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="dlgAsistenciaLabel">Calcular Asistencia</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<!-- Botón de exportación dentro del modal -->
-				<div id="toolbarModal" class="mb-3">
-					<button class="btn btn-success" id="btnExportExcel" onclick="$('#jtableContainer table').bootstrapTable('togglePagination').bootstrapTable('export', { type: 'excel', escape: false });">
-						Exportar a Excel
-					</button>
-				</div>
-				<!-- Contenedor de la tabla -->
-				<div id="jtableContainer"></div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-			</div>
-		</div>
-	</div>
-</div>
-
 <!-- Sección tabla de resultados -->
 <div id="toolbar" class="col-xl-12">
-	<button id="btnCalcularAsistencia" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dlgAsistenciaModal">
-		<span class="d-none d-sm-inline">@Localizer["Calculateattendance"]</span>
+	<button id="btnAgregar" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dlgArea" onclick="onAgregarClick();">
+		<i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">@Localizer["AddButton"]</span>
+	</button>
+	<button id="remove" class="btn btn-danger" disabled>
+		<i class="bi bi-trash"></i> <span class="d-none d-sm-inline">@Localizer["DeleteButton"]</span>
 	</button>
 </div>
-
 
 <table id="table" class="table-sm"
 	   data-unique-id="id"
@@ -115,7 +117,7 @@
 	   data-show-fullscreen="true"
 	   data-show-columns="true"
 	   data-show-columns-toggle-all="true"
-	   data-show-export="false"
+	   data-show-export="true"
 	   data-click-to-select="true"
 	   data-minimum-count-columns="2"
 	   data-show-pagination-switch="true"
@@ -126,20 +128,22 @@
 	   data-side-pagination="client"
 	   data-response-handler="responseHandler"
 	   data-buttons-class="primary"
-	   data-url="/Reportes/Asistencia/AsistenciasList">
+	   data-url="/Catalogos/Areas/AreasList">
 	<thead>
 		<tr align="center" valign="middle" class="bg-primary bg-opacity-10">
 		</tr>
 	</thead>
 </table>
-
+<!-- --------------------------- -->
+<!-- --------------------------- -->
+<!-- --------------------------- -->
 <!-- Sección Nuevo/Editar/Ver Registro --- -->
 <form id="theForm" method="post">
-	<div id="dlgAsistencia" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered modal-">
+	<div id="dlgArea" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 id="dlgAsistenciaTitle" class="modal-title"></h5>
+					<h5 id="dlgAreaTitle" class="modal-title"></h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 				</div>
 				<div class="modal-body align-items-center">
@@ -148,114 +152,37 @@
 						<div class="row">
 							<div class="col-3">
 								<div class="form-floating mb-3">
-									<input id="inpAsistenciaId" asp-for="ListaAsistencia.Id" type="text" class="form-control" placeholder="@Localizer["IdPlaceholder"]" />
-									<label asp-for="ListaAsistencia.Id" class=""></label>
+									<input id="inpId" asp-for="InputFiltro" type="text" class="form-control" />
+									<label asp-for="InputFiltro" class="form-label"></label>
+									<span asp-validation-for="InputFiltro" class="text-danger"></span>
 								</div>
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-12">
 								<div class="form-floating mb-3">
-									<input id="inpAsistenciaNombre" asp-for="ListaAsistencia.Empleado" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
-									<label asp-for="ListaAsistencia.Empleado" class=""></label>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-12">
-								<div class="form-floating mb-3">
-									<select id="inpAsistenciaResultadoE" asp-for="ListaAsistencia.ResultadoE" class="form-select" placeholder="@Localizer["ResultadoEPlaceholder"]">
-										
-										<option value="0">NORMAL</option>
-										<option value="1">RETARDO</option>
-										<option value="2">OMISI&Oacute;N/FALTA</option>
-									</select>
-									<label asp-for="ListaAsistencia.ResultadoE" class="form-label"></label>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-12">
-								<div class="form-floating mb-3">
-									<select id="inpAsistenciaResultadoS" asp-for="ListaAsistencia.ResultadoS" class="form-select" placeholder="@Localizer["ResultadoSPlaceholder"]">
-
-										<option value="0">TEMPRANO</option>
-										<option value="1">NORMAL</option>
-										<option value="2">OMISI&Oacute;N/FALTA</option>
-									</select>
-									<label asp-for="ListaAsistencia.ResultadoS" class=""></label>
+									<input id="inpAreaNombre" asp-for="InputFiltro" type="text" class="form-control" placeholder="@Localizer["NombrePlaceholder"]" />
+									<label asp-for="InputFiltro" class="form-label required"></label>
+									<span asp-validation-for="InputFiltro" class="text-danger"></span>
 								</div>
 							</div>
 						</div>
 					</div>
-			</div>
-			<div class="modal-footer">
-				<button id="dlgAsistenciaBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarClick();" data-bs-dismiss="modal">
-					<i class="bi bi-x-lg"></i> @Localizer["CancelButton"]
-				</button>
-				<button id="dlgAsistenciaBtnGuardar" type="button" class="btn btn-primary" onclick="onGuardarClick();">
-					<i class="bi bi-floppy"></i> @Localizer["SaveButton"]
-				</button>
+				</div>
+				<div class="modal-footer">
+					<button id="dlgAreaBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarClick();" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i> Cancelar
+					</button>
+					<button id="dlgAreaBtnGuardar" type="button" class="btn btn-primary" onclick="onGuardarClick();">
+						<i class="bi bi-floppy"></i> Guardar
+					</button>
+				</div>
 			</div>
 		</div>
-	</div>
 	</div>
 </form>
-	
 <!-- --------------------------- -->
-<!-- Sección Importar Excel ---- -->
-<div id="dlgImportarExcel" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-md">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 id="dlgExcelTitle" class="modal-title">@Localizer["ImportExcelDialogTitle"]</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-			</div>
-			<div class="modal-body align-items-center">
-				<div class="alert d-flex align-items-center" role="alert">
-					<i class="bi bi-1-circle-fill me-2" style="font-size: x-large"></i>
-					<div>@Localizer["ImportExcelSuggestionA"]</div>
-				</div>
-				<div class="container">
-					<div class="row">
-						<div class="col-12 text-center mb-3">
-							<a id="dlgExcelBtnPlantilla" href="@Url.Page("Asistencia", "DownloadPlantilla")" class="btn btn-primary">
-								<i class="bi bi-file-earmark-ruled"></i> @Localizer["PlantillaButtonTitle"]
-							</a>
-						</div>
-					</div>
-				</div>
-				<div class="alert d-flex align-items-center" role="alert">
-					<i class="bi bi-2-circle-fill me-2" style="font-size: x-large"></i>
-					<div>@Localizer["ImportExcelSuggestionB"]</div>
-				</div>
-				<div class="container">
-					<div class="row">
-						<div class="col-12">
-							<form id="importForm" method="post">
-								<input asp-for="InputImportar.Plantilla" id="excelFile" onchange="onExcelSelectorChanged(this);" class="form-control" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
-								<span asp-validation-for="InputImportar.Plantilla" class="text-danger"></span>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button id="dlgExcelBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarImportarClick();" data-bs-dismiss="modal">
-					<i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
-				</button>
-				@if (puedeTodo || puedeEditar)
-				{
-				<button id="dlgExcelBtnImportar" type="button" class="btn btn-primary" onclick="onImportarClick();">
-					<i class="bi bi-upload"></i> @Localizer["ImportButtonText"]
-				</button>
-				}
-			</div>
-		</div>
-	</div>
-</div>
-
-
+<!-- --------------------------- -->
 
 @section Scripts {
 	<link rel="stylesheet" href="~/lib/bootstrap-table/bootstrap-table.min.css">
@@ -268,9 +195,6 @@
 	<script src="~/lib/bootstrap-table/locale/bootstrap-table-es-MX.min.js"></script>
 	<script src="~/lib/bootstrap-table/locale/bootstrap-table-en-US.min.js"></script>
 	<script src="~/lib/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
-	<script src="~/lib/bootstrap-table/extensions/export/xlsx.full.min.js"></script>
-	<script src="~/lib/bootstrap-table/extensions/export/exceljs.min.js"></script>
-	<script src="~/lib/bootstrap-table/extensions/export/FileSaver.min.js"></script>
 
 	<link rel="stylesheet" href="~/css/Asistencia.css" />
 	<script src="~/../Areas/Reportes/Pages/Asistencia.cshtml.js"></script>
@@ -298,7 +222,6 @@
 		var colResultadoEHeader = '@Localizer["ColResultEntryHeader"]';
 		var colSalidaHeader = '@Localizer["ColExitHeader"]';
 		var colResultadoSHeader = '@Localizer["ColResultExitHeader"]';
-		var colAccionesHeader = '@Localizer["ColActionsHeader"]';
 
 		var invalidFormatTitle = '@Localizer["InvalidFormatTitle"]';
 		var invalidFormatMsg = '@Localizer["InvalidFormatMsg"]';

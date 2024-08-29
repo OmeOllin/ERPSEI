@@ -16,6 +16,7 @@ const postOptions = {
 document.addEventListener("DOMContentLoaded", function (event) {
     table = $("#table");
     initTable();
+
     buttonRemove = $("#remove");
 
     let btnBuscar = document.getElementById("btnBuscar");
@@ -49,6 +50,139 @@ function additionalButtons() {
         }
     }
 }
+
+//Función para dar formato a los iconos de operación de los registros
+function operateFormatter(value, row, index) {
+    let icons = [];
+
+    //Icono Ver
+    //icons.push(`<li><a class="dropdown-item see" href="#" title="${btnVerTitle}"><i class="bi bi-search"></i> ${btnVerTitle}</a></li>`);
+    //Icono Editar
+    icons.push(`<li><a class="dropdown-item edit" href="#" title="${btnEditarTitle}"><i class="bi bi-pencil-fill"></i> ${btnEditarTitle}</a></li>`);
+
+    return `<div class="dropdown">
+              <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical success"></i>
+              </button>
+              <ul class="dropdown-menu">${icons.join("")}</ul>
+            </div>`;
+}
+window.operateEvents = {
+    'click .edit': function (e, value, row, index) {
+        initAsistenciaDialog(EDITAR, row);
+        /*table.bootstrapTable('remove', {
+            field: 'id',
+            values: [row.id]
+        })*/
+    }
+}
+
+$(document).ready(function () {
+    $('#btnCalcularAsistencia').on('click', function () {
+        $('#dlgAsistenciaModal').modal('show');
+
+        $.ajax({
+            url: '/Reportes/Asistencia/AsistenciasCalculo',
+            type: 'GET',
+            success: function (data) {
+                console.log('Datos recibidos:', data);
+
+                let jsonData = data;
+
+                let tableHtml = '<table class="table table-striped">';
+                tableHtml += '<thead><tr><th>Nombre</th><th>Retardos</th><th>Omisión/Falta</th><th>Acumulado Ret</th><th>Total Faltas</th></tr></thead>';
+                tableHtml += '<tbody>';
+
+                jsonData.forEach(function (item) {
+                    tableHtml += `<tr>
+                        <td>${item.nombre}</td>
+                        <td>${item.retardos}</td>
+                        <td>${item.omisionesFaltas}</td>
+                        <td>${item.acumuladoRet}</td>
+                        <td>${item.totalFaltas}</td>
+                    </tr>`;
+                });
+
+                tableHtml += '</tbody></table>';
+
+                $('#jtableContainer').html(tableHtml);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error fetching data:', error);
+            }
+        });
+    });
+
+    // Mueve el evento del botón de exportación fuera del AJAX
+    $('#btnExportExcel').off('click').on('click', function () {
+        // Asumiendo que jsonData ya está definido en el ámbito general
+        var jsonData = $('#jtableContainer').find('tr').map(function () {
+            return {
+                nombre: $(this).find('td').eq(0).text(),
+                retardos: $(this).find('td').eq(1).text(),
+                omisionesFaltas: $(this).find('td').eq(2).text(),
+                acumuladoRet: $(this).find('td').eq(3).text(),
+                totalFaltas: $(this).find('td').eq(4).text()
+            };
+        }).get();
+
+        // Crear un nuevo workbook y worksheet
+        var workbook = new ExcelJS.Workbook();
+        var worksheet = workbook.addWorksheet('Asistencias');
+
+        // Establecer las columnas
+        worksheet.columns = [
+            { header: 'Nombre', key: 'nombre', width: 30 },
+            { header: 'Retardos', key: 'retardos', width: 15 },
+            { header: 'Omisión/Falta', key: 'omisionesFaltas', width: 20 },
+            { header: 'Acumulado Ret', key: 'acumuladoRet', width: 20 },
+            { header: 'Total Faltas', key: 'totalFaltas', width: 20 }
+        ];
+
+        // Establecer estilos para el encabezado
+        worksheet.getRow(1).eachCell(function (cell) {
+            cell.font = { bold: true };
+            cell.alignment = { vertical: 'middle', horizontal: 'center' };
+            cell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: '5ba9f2' }
+            };
+        });
+
+        // Agregar los datos
+        jsonData.forEach(function (item) {
+            if (item.nombre && item.retardos && item.omisionesFaltas && item.acumuladoRet && item.totalFaltas) {
+                worksheet.addRow({
+                    nombre: item.nombre,
+                    retardos: parseInt(item.retardos,10),
+                    omisionesFaltas: parseInt(item.omisionesFaltas,10),
+                    acumuladoRet: parseInt(item.acumuladoRet,10),
+                    totalFaltas: parseInt(item.totalFaltas,10)
+                });
+            }
+        });
+
+
+        // Establecer alineación de datos
+        worksheet.eachRow({ includeEmpty: false }, function (row, rowNumber) {
+            row.eachCell({ includeEmpty: false }, function (cell, colNumber) {
+                cell.alignment = { vertical: 'middle', horizontal: 'center' };
+            });
+        });
+
+        // Obtener la fecha actual en formato YYYY-MM-DD
+        var currentDate = new Date();
+        var formattedDate = currentDate.toISOString().split('T')[0];
+
+        // Exportar el archivo Excel
+        workbook.xlsx.writeBuffer().then(function (buffer) {
+            saveAs(new Blob([buffer], { type: 'application/octet-stream' }), `Asistencias_${formattedDate}.xlsx`);
+        });
+    });
+});
+
+
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
         height: 550,
@@ -57,7 +191,8 @@ function initTable() {
         exportTypes: ['excel'],
         toolbar: '#toolbar', // Asegúrate de que este ID coincida con el elemento HTML donde quieres que aparezcan los botones
         buttons: additionalButtons, // Asegúrate de que `additionalButtons` esté siendo llamado correctamente aquí
-        columns: [{
+        columns: [
+        {
             title: colHorarioHeader,
             field: "Horario",
             align: "center",
@@ -112,10 +247,93 @@ function initTable() {
             align: "center",
             valign: "middle",
             sortable: true
-         }
+        },
+        {
+            title: colAccionesHeader,
+            field: "operate",
+            align: 'center',
+            width: "100px",
+            clickToSelect: false,
+            events: window.operateEvents,
+            formatter: operateFormatter
+        }
         ]
     });
 }
+
+function initAsistenciaDialog(action, row) {
+    // Obtener los elementos del modal
+    let idField = document.getElementById("inpAsistenciaId");
+    let nombreField = document.getElementById("inpAsistenciaNombre");
+    let resultadoEField = document.getElementById("inpAsistenciaResultadoE");
+    let resultadoSField = document.getElementById("inpAsistenciaResultadoS");
+    let btnGuardar = document.getElementById("dlgAsistenciaBtnGuardar");
+    let dlgTitle = document.getElementById("dlgAsistenciaTitle");
+    let summaryContainer = document.getElementById("saveValidationSummary");
+
+    // Limpiar mensajes de error
+    summaryContainer.innerHTML = "";
+
+    // Mostrar título basado en la acción
+    switch (action) {
+        case EDITAR:
+            dlgTitle.innerHTML = dlgEditarTitle;
+
+            // Habilitar campos para edición
+            idField.setAttribute("disabled", false);
+            nombreField.setAttribute("disabled", true);
+            resultadoEField.removeAttribute("disabled");
+            resultadoSField.removeAttribute("disabled");
+            btnGuardar.removeAttribute("disabled");
+    }
+
+    // Establecer los valores de los campos
+    idField.value = row.Id;
+    nombreField.value = row.NombreEmpleado;
+
+    // Función para actualizar ResultadoS en función de ResultadoE
+    function actualizarResultadoS() {
+        switch (resultadoEField.value) {
+            case "0": // Normal
+                resultadoSField.value = "1"; // NORMAL
+                break;
+            case "1": // Retardo
+                // Aquí podrías establecer una lógica específica para ResultadoS si es necesario
+                break;
+            case "2": // Omisión/Falta
+                // Aquí podrías establecer una lógica específica para ResultadoS si es necesario
+                break;
+            default:
+                // Manejar casos por defecto
+                resultadoSField.value = ""; // Vacío o valor por defecto
+                break;
+        }
+    }
+
+    // Configurar el valor inicial de ResultadoE y ResultadoS
+    switch (row.ResultadoE) {
+        case "NORMAL":
+            resultadoEField.value = "0";
+            break;
+        case "RETARDO":
+            resultadoEField.value = "1";
+            break;
+        case "OMISIÓN/FALTA":
+            resultadoEField.value = "2";
+            break;
+    }
+
+    // Inicializar ResultadoS basado en ResultadoE
+    actualizarResultadoS();
+
+    // Agregar manejador de eventos para actualizar ResultadoS cuando ResultadoE cambie
+    resultadoEField.addEventListener('change', actualizarResultadoS);
+
+    // Mostrar el diálogo
+    dlgAsistenciaModal.toggle();
+}
+
+
 
 // Función para manejar el click en el botón de búsqueda
 function onBuscarClick() {
@@ -132,8 +350,8 @@ function onBuscarClick() {
     };
 
     //Resetea el valor de los filtros.
-    document.querySelectorAll("#filtros .form-control").forEach(function (e) { e.value = ""; });
-    document.querySelectorAll("#filtros .form-select").forEach(function (e) { e.value = 0; });
+    //document.querySelectorAll("#filtros .form-control").forEach(function (e) { e.value = ""; });
+    //document.querySelectorAll("#filtros .form-select").forEach(function (e) { e.value = 0; });
 
     doAjax(
         "/Reportes/Asistencia/FiltrarAsistencia",
@@ -263,3 +481,85 @@ function onExcelSelectorChanged(input) {
         }
     }
 }
+
+function onCerrarClick() {
+    //Removes validation from input-fields
+    $('.input-validation-error').addClass('input-validation-valid');
+    $('.input-validation-error').removeClass('input-validation-error');
+    //Removes validation message after input-fields
+    $('.field-validation-error').addClass('field-validation-valid');
+    $('.field-validation-error').removeClass('field-validation-error');
+    //Removes validation summary 
+    $('.validation-summary-errors').addClass('validation-summary-valid');
+    $('.validation-summary-errors').removeClass('validation-summary-errors');
+    //Removes danger text from fields
+    $(".text-danger").children().remove()
+}
+
+function onGuardarClick() {
+    // Ejecuta la validación
+    $("#theForm").validate();
+    // Determina los errores
+    let valid = $("#theForm").valid();
+    // Si la forma no es válida, entonces finaliza.
+    if (!valid) { return; }
+
+    let idField = document.getElementById("inpAsistenciaId");
+    let btnClose = document.getElementById("dlgAsistenciaBtnCancelar");
+    let resultadoEField = document.getElementById("inpAsistenciaResultadoE");
+    let resultadoSField = document.getElementById("inpAsistenciaResultadoS");
+    let dlgTitle = document.getElementById("dlgAsistenciaTitle");
+    let summaryContainer = document.getElementById("saveValidationSummary");
+    summaryContainer.innerHTML = "";
+
+    let oParams = {
+        id: idField.value === "Nuevo" ? 0 : parseInt(idField.value, 10),
+        resultadoE: $('#inpAsistenciaResultadoE option:selected').text(),
+
+        resultadoS: $('#inpAsistenciaResultadoS option:selected').text()
+    };
+
+    doAjax(
+        "/Reportes/Asistencia/SaveAsistencia",
+        oParams,
+        function (resp) {
+            if (resp.tieneError) {
+                if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                    let summary = ``;
+                    resp.errores.forEach(function (error) {
+                        summary += `<li>${error}</li>`;
+                    });
+                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                }
+                showError(dlgTitle.innerHTML, resp.mensaje);
+                return;
+            }
+
+            btnClose.click();
+
+            onBuscarClick();
+
+            // Actualiza la fila en la tabla con los nuevos valores
+            let asistencia = resp.asistenciaActualizada;
+            if (asistencia) {
+                let row = document.querySelector(`[data-id='${asistencia.id}']`);
+                if (row) {
+                    // Actualiza solo los campos modificados en la fila
+                    row.querySelector('.columnaResultadoE').innerText = asistencia.resultadoE;
+                    row.querySelector('.columnaResultadoS').innerText = asistencia.resultadoS;
+                }
+            }
+
+
+            showSuccess(dlgTitle.innerHTML, resp.mensaje);
+        }, function (error) {
+            showError("Error", error);
+        },
+        postOptions
+    );
+}
+
+
+
+
+
