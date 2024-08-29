@@ -12,5 +12,7 @@ namespace ERPSEI.Data.Entities.Reportes
 		public ICollection<HorarioDetalle>? HorarioDetalles { get; }
 
         public ICollection<Empleado>? Empleados { get; }
+
+        public int? Deshabilitado { get; set; } = 0;
 	}
 }

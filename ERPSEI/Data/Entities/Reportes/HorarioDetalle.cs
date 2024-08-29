@@ -16,5 +16,6 @@ namespace ERPSEI.Data.Entities.Reportes
 		public TimeSpan ToleranciaFalta { get; set; }
 		public TimeSpan Salida { get; set; }
 		public TimeSpan ToleranciaSalida { get; set; }
+		public bool Activado { get; set; } = false;
 	}
 }
