@@ -158,7 +158,6 @@ namespace ERPSEI.Areas.Reportes.Pages
 			{
 				jsonAsistencias.Add("{" +
 					$"\"Id\": \"{asis.Id}\", " +
-					$"\"Horario\": \"{asis.Horario?.NombreHorario}\", " +
 					$"\"Horario\": \"{asis.Empleado?.Horario?.Descripcion}\", " +
 					$"\"NombreEmpleado\": \"{asis.Empleado?.NombreCompleto}\", " +
 					$"\"Fecha\": \"{asis.Fecha}\", " +
@@ -270,7 +269,6 @@ namespace ERPSEI.Areas.Reportes.Pages
 							EmpleadoId = e.Id,
 							Entrada = TimeSpan.Zero,
 							Salida = TimeSpan.Zero,
-							HorarioId = 4, // Asegúrate de establecer esto según lo necesario
 							ResultadoE = "OMISIÓN/FALTA",
 							ResultadoS = "OMISIÓN/FALTA"
 						};
@@ -286,7 +284,6 @@ namespace ERPSEI.Areas.Reportes.Pages
 			{
 				jsonAsistencias.Add("{" +
 				$"\"Id\": \"{asis.Id}\", " +
-				$"\"Horario\": \"{asis.Horario?.NombreHorario}\", " +
 				$"\"Horario\": \"{asis.Empleado?.Horario?.Descripcion}\", " +
 				$"\"NombreEmpleado\": \"{asis.Empleado?.NombreCompleto}\", " +
 				$"\"Fecha\": \"{asis.Fecha}\", " +
