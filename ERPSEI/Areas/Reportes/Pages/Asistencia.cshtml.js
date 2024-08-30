@@ -196,7 +196,6 @@ $(document).ready(function () {
     });
 });
 
-
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
         height: 550,
@@ -294,26 +293,16 @@ function initAsistenciaDialog(action, row) {
             dlgTitle.innerHTML = dlgEditarTitle;
 
             // Habilitar campos para edición
-            idField.removeAttribute("disabled");
+            idField.setAttribute("disabled", true);
             nombreField.setAttribute("disabled", true);
             resultadoEField.removeAttribute("disabled");
             resultadoSField.removeAttribute("disabled");
             btnGuardar.removeAttribute("disabled");
-            break;
-        // Agregar otros casos aquí si es necesario
     }
 
     // Establecer los valores de los campos
     idField.value = row.Id;
     nombreField.value = row.NombreEmpleado;
-
-    // Función para actualizar ResultadoS en función de ResultadoE
-    function actualizarResultadoS() {
-        if (resultadoEField.value === "0") { // Normal
-            resultadoSField.value = "1"; // NORMAL
-        }
-        // Si ResultadoE no es "Normal", no cambiar el valor de ResultadoS
-    }
 
     // Configurar el valor inicial de ResultadoE y ResultadoS
     switch (row.ResultadoE) {
@@ -327,9 +316,39 @@ function initAsistenciaDialog(action, row) {
             resultadoEField.value = "2";
             break;
     }
+    
+    switch (row.ResultadoS) {
+        case "TEMPRANO":
+            resultadoSField.value = "0";
+            break;
+        case "NORMAL":
+            resultadoSField.value = "1";
+            break;
+        case "OMISIÓN/FALTA":
+            resultadoSField.value = "2";
+            break;
+    }
+    // Establecer el valor inicial de resultadoSField con el valor del registro
+    //resultadoSField.value = row.ResultadoS;
 
-    // Inicializar ResultadoS basado en ResultadoE solo si es "NORMAL"
-    actualizarResultadoS();
+    // Función para actualizar ResultadoS en función de ResultadoE
+    function actualizarResultadoS() {
+        switch (resultadoEField.value) {
+            case "0": // Normal
+                resultadoSField.value = "1"; // NORMAL
+                break;
+            case "1": // Retardo
+                // Aquí podrías establecer una lógica específica para ResultadoS si es necesario
+                break;
+            case "2": // Omisión/Falta
+                // Aquí podrías establecer una lógica específica para ResultadoS si es necesario
+                break;
+            default:
+                // Manejar casos por defecto
+                resultadoSField.value = row.ResultadoS; // Mantener el valor original
+                break;
+        }
+    }
 
     // Agregar manejador de eventos para actualizar ResultadoS cuando ResultadoE cambie
     resultadoEField.addEventListener('change', actualizarResultadoS);
@@ -337,6 +356,9 @@ function initAsistenciaDialog(action, row) {
     // Mostrar el diálogo
     dlgAsistenciaModal.toggle();
 }
+
+
+
 
 // Función para manejar el click en el botón de búsqueda
 function onBuscarClick() {
@@ -346,13 +368,22 @@ function onBuscarClick() {
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 
+    // Obtener la fecha actual en formato 'YYYY-MM-DD'
+    let fechaActual = new Date().toISOString().split('T')[0];
+
+    // Si el campo fechaInicioField está vacío, asignar la fecha actual
+    if (fechaInicioField.length <= 0) {
+        fechaInicioField = fechaActual;
+        document.getElementById("inpFiltroFechaIngresoInicio").value = fechaActual;
+    }
+
     let oParams = {
         nombreEmpleado: nombreField.length <= 0 ? null : nombreField,
         fechaIngresoInicio: fechaInicioField.length <= 0 ? null : fechaInicioField,
         fechaIngresoFin: fechaFinField.length <= 0 ? null : fechaFinField
     };
 
-    //Resetea el valor de los filtros.
+    // Resetea el valor de los filtros.
     document.querySelectorAll("#filtros .form-control").forEach(function (e) { e.value = ""; });
     document.querySelectorAll("#filtros .form-select").forEach(function (e) { e.value = 0; });
 
@@ -379,6 +410,7 @@ function onBuscarClick() {
         postOptions
     );
 }
+
 
 //Función para obtener el archivo de un input
 function getFile(inputId) {
@@ -550,7 +582,6 @@ function onGuardarClick() {
                     row.querySelector('.columnaResultadoS').innerText = asistencia.resultadoS;
                 }
             }
-
             onBuscarClick();
 
             showSuccess(dlgTitle.innerHTML, resp.mensaje);

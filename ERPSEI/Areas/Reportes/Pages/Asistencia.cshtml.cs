@@ -202,60 +202,74 @@ namespace ERPSEI.Areas.Reportes.Pages
 
 		private async Task<string> GetListaAsistencias(FiltroModel? filtro = null)
 		{
-			string jsonResponse;
-			List<string> jsonAsistencias = new();
-			List<Asistencia> asistencias = new();
-			List<Asistencia> asistenciasFinales = new();
+			List<Asistencia> asistencias = await ObtenerAsistenciasPorFiltro(filtro);
+			(DateOnly fIni, DateOnly fFin) = InicializarFechas(filtro);
 
-			DateOnly fIni = DateOnly.MinValue, fFin = DateOnly.MinValue;
+			List<Empleado> empleadosAsistencias = await ObtenerEmpleadosConAsistencias();
+			List<Asistencia> asistenciasFinales = await CrearAsistenciasFinales(asistencias, empleadosAsistencias, fIni, fFin);
 
-			// Obtener asistencias basadas en los filtros
+			string jsonResponse = GenerarJsonAsistencias(asistenciasFinales);
+			return jsonResponse;
+		}
+
+		private async Task<List<Asistencia>> ObtenerAsistenciasPorFiltro(FiltroModel? filtro)
+		{
 			if (filtro != null && !string.IsNullOrEmpty(filtro.NombreEmpleado))
 			{
-				asistencias = await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, filtro.FechaIngresoInicio, filtro.FechaIngresoFin);
+				return await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, filtro.FechaIngresoInicio, filtro.FechaIngresoFin);
 			}
 			else if (filtro != null && filtro.FechaIngresoInicio.HasValue && filtro.FechaIngresoFin.HasValue)
 			{
-				fIni = DateOnly.FromDateTime(filtro.FechaIngresoInicio.Value);
-				fFin = DateOnly.FromDateTime(filtro.FechaIngresoFin.Value);
-				asistencias = await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, filtro.FechaIngresoInicio, filtro.FechaIngresoFin);
+				return await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, filtro.FechaIngresoInicio, filtro.FechaIngresoFin);
 			}
 			else if (filtro != null && filtro.FechaIngresoInicio.HasValue && !filtro.FechaIngresoFin.HasValue)
 			{
-				fIni = DateOnly.FromDateTime(filtro.FechaIngresoInicio.Value);
-				fFin = DateOnly.FromDateTime(filtro.FechaIngresoInicio.Value);
-				asistencias = await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, filtro.FechaIngresoInicio, filtro.FechaIngresoFin);
+				return await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, filtro.FechaIngresoInicio, filtro.FechaIngresoFin);
 			}
 			else
 			{
-				asistencias = await asistenciaManager.GetAllAsync();
+				return await asistenciaManager.GetAllAsync();
 			}
+		}
 
-			if (fIni == DateOnly.MinValue) { fIni = DateOnly.FromDateTime(DateTime.Now); }
-			if (fFin == DateOnly.MinValue) { fFin = DateOnly.FromDateTime(DateTime.Now); }
+		private (DateOnly, DateOnly) InicializarFechas(FiltroModel? filtro)
+		{
+			DateOnly fIni = filtro?.FechaIngresoInicio.HasValue == true
+				? DateOnly.FromDateTime(filtro.FechaIngresoInicio.Value)
+				: DateOnly.FromDateTime(DateTime.Now);
 
-			// Obtener todos los empleados
+			DateOnly fFin = filtro?.FechaIngresoFin.HasValue == true
+				? DateOnly.FromDateTime(filtro.FechaIngresoFin.Value)
+				: fIni;
+
+			return (fIni, fFin);
+		}
+
+		private async Task<List<Empleado>> ObtenerEmpleadosConAsistencias()
+		{
 			List<Empleado> empleadosAsistencias = await empleadoManager.GetAllAsync();
-			empleadosAsistencias = empleadosAsistencias.Where(e => ((e.HorarioId ?? 0) != 0) && (e.CalcularAsistencia ?? false)).ToList();
+			return empleadosAsistencias.Where(e => (e.HorarioId ?? 0) != 0 && (e.CalcularAsistencia ?? false)).ToList();
+		}
 
-			foreach (Empleado e in empleadosAsistencias)
+		private async Task<List<Asistencia>> CrearAsistenciasFinales(List<Asistencia> asistencias, List<Empleado> empleados, DateOnly fIni, DateOnly fFin)
+		{
+			List<Asistencia> asistenciasFinales = new();
+
+			foreach (Empleado e in empleados)
 			{
 				for (DateOnly f = fIni; f <= fFin; f = f.AddDays(1))
 				{
 					List<int>? diasDescanso = e.Horario?.HorarioDetalles?.Where(hd => !hd.Activado).Select(hd => hd.NumeroDiaSemana).ToList();
 					if (diasDescanso != null && diasDescanso.Contains((int)f.DayOfWeek)) { continue; }
 
-					// Verificar si existen asistencias para este empleado y fecha
-					Asistencia asistenciaExistente = asistencias.FirstOrDefault(a => a.Empleado.Id == e.Id && a.Fecha == f);
+					Asistencia? asistenciaExistente = asistencias.FirstOrDefault(a => a.Empleado.Id == e.Id && a.Fecha == f);
 
 					if (asistenciaExistente != null)
 					{
-						// Si ya existe un registro, agregarlo a la lista final
 						asistenciasFinales.Add(asistenciaExistente);
 					}
 					else
 					{
-						// Si no existe un registro, crear uno vacío
 						Asistencia newA = new()
 						{
 							Dia = f.ToString("dddd"),
@@ -267,9 +281,8 @@ namespace ERPSEI.Areas.Reportes.Pages
 							ResultadoS = "OMISIÓN/FALTA"
 						};
 
-						// Verificar si el registro fue creado exitosamente
 						newA.Id = await asistenciaManager.CreateAsync(newA);
-						if (newA.Id != 0) // Comprobar que la creación fue exitosa
+						if (newA.Id != 0)
 						{
 							newA.Empleado = e;
 							asistenciasFinales.Add(newA);
@@ -278,10 +291,12 @@ namespace ERPSEI.Areas.Reportes.Pages
 				}
 			}
 
-			// Convertir asistencias (filtradas o no) a JSON
-			foreach (var asis in asistenciasFinales)
-			{
-				jsonAsistencias.Add("{" +
+			return asistenciasFinales;
+		}
+
+		private string GenerarJsonAsistencias(List<Asistencia> asistenciasFinales)
+		{
+			List<string> jsonAsistencias = asistenciasFinales.Select(asis => "{" +
 				$"\"Id\": \"{asis.Id}\", " +
 				$"\"Horario\": \"{asis.Empleado?.Horario?.Descripcion}\", " +
 				$"\"NombreEmpleado\": \"{asis.Empleado?.NombreCompleto}\", " +
@@ -291,13 +306,10 @@ namespace ERPSEI.Areas.Reportes.Pages
 				$"\"ResultadoE\": \"{asis.ResultadoE}\", " +
 				$"\"Salida\": \"{asis.Salida}\", " +
 				$"\"ResultadoS\": \"{asis.ResultadoS}\" " +
-				"}");
-			}
+				"}").ToList();
 
-			jsonResponse = $"[{string.Join(",", jsonAsistencias)}]";
-			return jsonResponse;
+			return $"[{string.Join(",", jsonAsistencias)}]";
 		}
-
 
 		public ActionResult OnGetDownloadPlantilla()
 		{
