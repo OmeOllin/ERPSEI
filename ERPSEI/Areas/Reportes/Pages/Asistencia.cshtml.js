@@ -2,6 +2,8 @@
 var buttonRemove;
 var tableActividad;
 var selections = [];
+var dlgAsistencia = null;
+var dlgAsistenciaModal = null;
 
 const NUEVO = 0;
 const EDITAR = 1;
@@ -18,6 +20,18 @@ document.addEventListener("DOMContentLoaded", function (event) {
     initTable();
 
     buttonRemove = $("#remove");
+
+    dlgAsistencia = document.getElementById('dlgAsistencia');
+    dlgAsistenciaModal = new bootstrap.Modal(dlgAsistencia, null);
+    //Función para limpiar el cuadro de diálogo cuando es cerrado
+    dlgAsistencia.addEventListener('hidden.bs.modal', function (event) {
+        onCerrarClick();
+    });
+    //Función para ejecutar acciones posteriores al mostrado del diálogo.
+    dlgAsistencia.addEventListener('shown.bs.modal', function (e) {
+        //Este evento es necesario para poder mostrar el text area ajustado al tamaño del contenido, basado en el tamaño del scroll.
+        calculateTextAreaHeight(document.querySelectorAll("textarea"));
+    })
 
     let btnBuscar = document.getElementById("btnBuscar");
     btnBuscar.click();
@@ -155,10 +169,10 @@ $(document).ready(function () {
             if (item.nombre && item.retardos && item.omisionesFaltas && item.acumuladoRet && item.totalFaltas) {
                 worksheet.addRow({
                     nombre: item.nombre,
-                    retardos: parseInt(item.retardos,10),
-                    omisionesFaltas: parseInt(item.omisionesFaltas,10),
-                    acumuladoRet: parseInt(item.acumuladoRet,10),
-                    totalFaltas: parseInt(item.totalFaltas,10)
+                    retardos: parseInt(item.retardos, 10),
+                    omisionesFaltas: parseInt(item.omisionesFaltas, 10),
+                    acumuladoRet: parseInt(item.acumuladoRet, 10),
+                    totalFaltas: parseInt(item.totalFaltas, 10)
                 });
             }
         });
@@ -192,71 +206,71 @@ function initTable() {
         toolbar: '#toolbar', // Asegúrate de que este ID coincida con el elemento HTML donde quieres que aparezcan los botones
         buttons: additionalButtons, // Asegúrate de que `additionalButtons` esté siendo llamado correctamente aquí
         columns: [
-        {
-            title: colHorarioHeader,
-            field: "Horario",
-            align: "center",
-            valign: "middle",
-            sortable: true
-        },
-        {
-            title: colNombreEmpleadoHeader,
-            field: "NombreEmpleado",
-            align: "center",
-            valign: "middle",
-            sortable: true
-        },
-        {
-            title: colFechaHeader,
-            field: "Fecha",
-            align: "center",
-            valign: "middle",
-            sortable: true
-        },
-        {
-            title: colDiaHeader,
-            field: "Dia",
-            align: "center",
-            valign: "middle",
-            sortable: true
-        },
-        {
-            title: colEntradaHeader,
-            field: "Entrada",
-            align: "center",
-            valign: "middle",
-            sortable: true
-        },
-        {
-            title: colResultadoEHeader,
-            field: "ResultadoE",
-            align: "center",
-            valign: "middle",
-            sortable: true
-        },
-        {
-            title: colSalidaHeader,
-            field: "Salida",
-            align: "center",
-            valign: "middle",
-            sortable: true
-        },
-        {
-            title: colResultadoSHeader,
-            field: "ResultadoS",
-            align: "center",
-            valign: "middle",
-            sortable: true
-        },
-        {
-            title: colAccionesHeader,
-            field: "operate",
-            align: 'center',
-            width: "100px",
-            clickToSelect: false,
-            events: window.operateEvents,
-            formatter: operateFormatter
-        }
+            {
+                title: colHorarioHeader,
+                field: "Horario",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colNombreEmpleadoHeader,
+                field: "NombreEmpleado",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colFechaHeader,
+                field: "Fecha",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colDiaHeader,
+                field: "Dia",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colEntradaHeader,
+                field: "Entrada",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colResultadoEHeader,
+                field: "ResultadoE",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colSalidaHeader,
+                field: "Salida",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colResultadoSHeader,
+                field: "ResultadoS",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colAccionesHeader,
+                field: "operate",
+                align: 'center',
+                width: "100px",
+                clickToSelect: false,
+                events: window.operateEvents,
+                formatter: operateFormatter
+            }
         ]
     });
 }
@@ -280,11 +294,13 @@ function initAsistenciaDialog(action, row) {
             dlgTitle.innerHTML = dlgEditarTitle;
 
             // Habilitar campos para edición
-            idField.setAttribute("disabled", false);
+            idField.removeAttribute("disabled");
             nombreField.setAttribute("disabled", true);
             resultadoEField.removeAttribute("disabled");
             resultadoSField.removeAttribute("disabled");
             btnGuardar.removeAttribute("disabled");
+            break;
+        // Agregar otros casos aquí si es necesario
     }
 
     // Establecer los valores de los campos
@@ -293,21 +309,10 @@ function initAsistenciaDialog(action, row) {
 
     // Función para actualizar ResultadoS en función de ResultadoE
     function actualizarResultadoS() {
-        switch (resultadoEField.value) {
-            case "0": // Normal
-                resultadoSField.value = "1"; // NORMAL
-                break;
-            case "1": // Retardo
-                // Aquí podrías establecer una lógica específica para ResultadoS si es necesario
-                break;
-            case "2": // Omisión/Falta
-                // Aquí podrías establecer una lógica específica para ResultadoS si es necesario
-                break;
-            default:
-                // Manejar casos por defecto
-                resultadoSField.value = ""; // Vacío o valor por defecto
-                break;
+        if (resultadoEField.value === "0") { // Normal
+            resultadoSField.value = "1"; // NORMAL
         }
+        // Si ResultadoE no es "Normal", no cambiar el valor de ResultadoS
     }
 
     // Configurar el valor inicial de ResultadoE y ResultadoS
@@ -323,7 +328,7 @@ function initAsistenciaDialog(action, row) {
             break;
     }
 
-    // Inicializar ResultadoS basado en ResultadoE
+    // Inicializar ResultadoS basado en ResultadoE solo si es "NORMAL"
     actualizarResultadoS();
 
     // Agregar manejador de eventos para actualizar ResultadoS cuando ResultadoE cambie
@@ -332,8 +337,6 @@ function initAsistenciaDialog(action, row) {
     // Mostrar el diálogo
     dlgAsistenciaModal.toggle();
 }
-
-
 
 // Función para manejar el click en el botón de búsqueda
 function onBuscarClick() {
@@ -350,8 +353,8 @@ function onBuscarClick() {
     };
 
     //Resetea el valor de los filtros.
-    //document.querySelectorAll("#filtros .form-control").forEach(function (e) { e.value = ""; });
-    //document.querySelectorAll("#filtros .form-select").forEach(function (e) { e.value = 0; });
+    document.querySelectorAll("#filtros .form-control").forEach(function (e) { e.value = ""; });
+    document.querySelectorAll("#filtros .form-select").forEach(function (e) { e.value = 0; });
 
     doAjax(
         "/Reportes/Asistencia/FiltrarAsistencia",
@@ -537,8 +540,6 @@ function onGuardarClick() {
 
             btnClose.click();
 
-            onBuscarClick();
-
             // Actualiza la fila en la tabla con los nuevos valores
             let asistencia = resp.asistenciaActualizada;
             if (asistencia) {
@@ -550,6 +551,7 @@ function onGuardarClick() {
                 }
             }
 
+            onBuscarClick();
 
             showSuccess(dlgTitle.innerHTML, resp.mensaje);
         }, function (error) {
@@ -558,8 +560,3 @@ function onGuardarClick() {
         postOptions
     );
 }
-
-
-
-
-

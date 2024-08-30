@@ -231,37 +231,31 @@ namespace ERPSEI.Areas.Reportes.Pages
 				asistencias = await asistenciaManager.GetAllAsync();
 			}
 
-			// Filtrar por fecha actual si no se especifican filtros
-			if ((filtro == null || !filtro.FechaIngresoInicio.HasValue) && string.IsNullOrEmpty(filtro?.NombreEmpleado))
-			{
-				DateOnly fechaActual = DateOnly.FromDateTime(DateTime.Now);
-				asistencias = asistencias.Where(asis => asis.Fecha == fechaActual).ToList();
-			}
-
 			if (fIni == DateOnly.MinValue) { fIni = DateOnly.FromDateTime(DateTime.Now); }
 			if (fFin == DateOnly.MinValue) { fFin = DateOnly.FromDateTime(DateTime.Now); }
 
 			// Obtener todos los empleados
 			List<Empleado> empleadosAsistencias = await empleadoManager.GetAllAsync();
+			empleadosAsistencias = empleadosAsistencias.Where(e => ((e.HorarioId ?? 0) != 0) && (e.CalcularAsistencia ?? false)).ToList();
 
-			for (DateOnly f = fIni; f <= fFin; f = f.AddDays(1))
+			foreach (Empleado e in empleadosAsistencias)
 			{
-				// Refactoriza aquí si tienes lógica para días de descanso
-				if (f.DayOfWeek == DayOfWeek.Saturday || f.DayOfWeek == DayOfWeek.Sunday) { continue; }
-
-				foreach (Empleado e in empleadosAsistencias)
+				for (DateOnly f = fIni; f <= fFin; f = f.AddDays(1))
 				{
-					// Verificar si existen asistencias para este empleado y fecha
-					List<Asistencia> asistenciasEmpleadosFound = asistencias.Where(a => a.Empleado == e && a.Fecha == f).ToList();
+					List<int>? diasDescanso = e.Horario?.HorarioDetalles?.Where(hd => !hd.Activado).Select(hd => hd.NumeroDiaSemana).ToList();
+					if (diasDescanso != null && diasDescanso.Contains((int)f.DayOfWeek)) { continue; }
 
-					if (asistenciasEmpleadosFound.Count > 0)
+					// Verificar si existen asistencias para este empleado y fecha
+					Asistencia asistenciaExistente = asistencias.FirstOrDefault(a => a.Empleado.Id == e.Id && a.Fecha == f);
+
+					if (asistenciaExistente != null)
 					{
-						// Si existen registros, añadirlos a la lista final
-						asistenciasFinales.AddRange(asistenciasEmpleadosFound);
+						// Si ya existe un registro, agregarlo a la lista final
+						asistenciasFinales.Add(asistenciaExistente);
 					}
 					else
 					{
-						// Si no existen registros, crear uno vacío
+						// Si no existe un registro, crear uno vacío
 						Asistencia newA = new()
 						{
 							Dia = f.ToString("dddd"),
@@ -273,8 +267,13 @@ namespace ERPSEI.Areas.Reportes.Pages
 							ResultadoS = "OMISIÓN/FALTA"
 						};
 
+						// Verificar si el registro fue creado exitosamente
 						newA.Id = await asistenciaManager.CreateAsync(newA);
-						asistenciasFinales.Add(newA);
+						if (newA.Id != 0) // Comprobar que la creación fue exitosa
+						{
+							newA.Empleado = e;
+							asistenciasFinales.Add(newA);
+						}
 					}
 				}
 			}

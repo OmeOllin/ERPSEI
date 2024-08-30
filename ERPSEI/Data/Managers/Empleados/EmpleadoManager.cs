@@ -125,6 +125,7 @@ namespace ERPSEI.Data.Managers.Empleados
                 .Include(e => e.Subarea)
                 .Include(e => e.Genero)
                 .Include(e => e.EstadoCivil)
+                .Include(e => e.Horario).ThenInclude(h => h.HorarioDetalles)
                 .ToListAsync();
         }
 
