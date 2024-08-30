@@ -261,6 +261,9 @@
   <data name="GeneroPlaceholder" xml:space="preserve">
     <value>Género</value>
   </data>
+  <data name="HorarioPlaceholder" xml:space="preserve">
+    <value>Horario</value>
+  </data>
   <data name="ImportButtonText" xml:space="preserve">
     <value>Importar</value>
   </data>

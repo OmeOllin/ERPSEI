@@ -187,6 +187,7 @@ function onAgregarClick() {
         curp: "",
         rfc: "",
         nss: "",
+        horarioId: 0,
         nombreContacto1: "",
         telefonoContacto1: "",
         nombreContacto2: "",
@@ -462,6 +463,7 @@ function initEmpleadoDialog(action, row) {
     let curpField = document.getElementById("inpEmpleadoCURP");
     let rfcField = document.getElementById("inpEmpleadoRFC");
     let nssField = document.getElementById("inpEmpleadoNSS");
+    let horarioField = document.getElementById("selEmpleadoHorarioId");
 
     let btnDesactivar = document.getElementById("dlgEmpleadoBtnDesactivar");
     let dlgTitle = document.getElementById("dlgEmpleadoTitle");
@@ -516,6 +518,7 @@ function initEmpleadoDialog(action, row) {
     curpField.value = row.curp;
     rfcField.value = row.rfc;
     nssField.value = row.nss;
+    horarioField.value = row.horarioId;
 
     if (action == NUEVO || (row.hasDatosAdicionales||false)) {
         establecerDatosAdicionales(row, action);
@@ -867,6 +870,7 @@ function onGuardarClick() {
     let curpField = document.getElementById("inpEmpleadoCURP");
     let rfcField = document.getElementById("inpEmpleadoRFC");
     let nssField = document.getElementById("inpEmpleadoNSS");
+    let horarioField = document.getElementById("selEmpleadoHorarioId");
     let nombreContacto1Field = document.getElementById("inpEmpleadoNombreContacto1");
     let telefonoContacto1Field = document.getElementById("inpEmpleadoTelefonoContacto1");
     let nombreContacto2Field = document.getElementById("inpEmpleadoNombreContacto2");
@@ -906,6 +910,7 @@ function onGuardarClick() {
         curp: curpField.value.trim(),
         rfc: rfcField.value.trim(),
         nss: nssField.value.trim(),
+        horarioId: parseInt(horarioField.value),
         nombreContacto1: nombreContacto1Field.value.trim(),
         telefonoContacto1: telefonoContacto1Field.value.trim(),
         nombreContacto2: nombreContacto2Field.value.trim(),

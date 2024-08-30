@@ -5,6 +5,8 @@
 @using ERPSEI.Areas.Catalogos.Pages;
 @using ERPSEI.Data.Entities.Empleados;
 @using ERPSEI.Data.Managers.Empleados;
+@using ERPSEI.Data.Managers.Reportes;
+@using ERPSEI.Data.Entities.Reportes;
 @model GestionDeTalentoModel
 @inject IViewLocalizer Localizer;
 @inject IRWCatalogoManager<Puesto> PuestosManager;
@@ -15,6 +17,7 @@
 
 @inject IRCatalogoManager<Genero> GenerosManager;
 @inject IRCatalogoManager<EstadoCivil> EstadosCivilesManager;
+@inject IHorariosManager HorariosManager;
 @{
 	ViewData["Title"] = Localizer["Title"];
 
@@ -32,6 +35,7 @@
 	List<EstadoCivil> estadosCiviles = await EstadosCivilesManager.GetAllAsync();
 	List<Subarea> subareas = await SubareasManager.GetAllAsync();
 	List<Oficina> oficinas = await OficinasManager.GetAllAsync();
+	List<Horario> horarios = await HorariosManager.GetAllAsync();
 }
 <h3 class="title mb-3">@ViewData["Title"]</h3>
 
@@ -417,6 +421,20 @@
 									<input id="inpEmpleadoNSS" asp-for="InputEmpleado.NSS" type="text" class="form-control formInput" placeholder="@Localizer["NSSPlaceholder"]" />
 									<label for="inpEmpleadoNSS" asp-for="InputEmpleado.NSS" class="form-label required"></label>
 									<span asp-validation-for="InputEmpleado.NSS" class="text-danger"></span>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-6 col-lg-3">
+								<div class="form-floating mb-3">
+									<select id="selEmpleadoHorarioId" asp-for="InputEmpleado.HorarioId" class="form-select formSelect" placeholder="@Localizer["HorarioPlaceholder"]">
+										<option value="0">Sin horario</option>
+										@{
+											foreach (Horario h in horarios)
+											{
+												<option value='@h.Id'>@h.Descripcion</option>
+											}
+										}
+									</select>
+									<label for="selEmpleadoHorarioId" asp-for="InputEmpleado.HorarioId" class="form-label"></label>
 								</div>
 							</div>
 						</div>

@@ -261,6 +261,9 @@
   <data name="GeneroField" xml:space="preserve">
     <value>Gender</value>
   </data>
+  <data name="HorarioField" xml:space="preserve">
+    <value>Schedule</value>
+  </data>
   <data name="JefeField" xml:space="preserve">
     <value>Boss</value>
   </data>

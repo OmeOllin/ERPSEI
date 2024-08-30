@@ -11,7 +11,6 @@ using ExcelDataReader;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
@@ -165,6 +164,9 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			[Required(ErrorMessage = "Required")]
 			[Display(Name = "NSSField")]
 			public string NSS { get; set; } = string.Empty;
+
+			[Display(Name = "HorarioField")]
+			public int? HorarioId { get; set; }
 
 			[Display(Name = "GeneroField")]
 			public int? GeneroId { get; set; }
@@ -321,6 +323,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		}
 		private async Task<string> GetTalentList(FiltroModel? filtro = null)
 		{
+			string nombreHorario;
 			string nombreArea;
 			string nombreSubarea;
 			string nombrePuesto;
@@ -351,6 +354,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 
 			foreach (Empleado e in empleados)
 			{
+				nombreHorario = e.Horario != null ? e.Horario.Descripcion : "";
 				nombreArea = e.Area != null ? e.Area.Nombre : "";
 				nombreSubarea = e.Subarea != null ? e.Subarea.Nombre : "";
 				nombrePuesto = e.Puesto != null ? e.Puesto.Nombre : "";
@@ -395,6 +399,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						$"\"curp\": \"{e.CURP}\", " +
 						$"\"rfc\": \"{e.RFC}\", " +
 						$"\"nss\": \"{e.NSS}\", " +
+						$"\"horarioId\": {e.HorarioId ?? 0}, " +
+						$"\"horario\": \"{nombreHorario}\", " +
 						$"\"usuarioId\": \"{e.UserId}\", " +
 						$"\"usuarioValido\": \"{(usuarioConfirmado ? "1" : "0")}\", " +
 						$"\"contactosEmergencia\": [], " +
@@ -708,6 +714,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				empleado.CURP = e.CURP ?? string.Empty;
 				empleado.RFC = e.RFC ?? string.Empty;
 				empleado.NSS = e.NSS ?? string.Empty;
+				empleado.HorarioId = e.HorarioId;
+				empleado.CalcularAsistencia = e.HorarioId >= 1;
 
                 if (idEmpleado >= 1)
 				{
@@ -844,6 +852,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				CURP = row[19].ToString()?.Trim() ?? string.Empty,
 				RFC = row[20].ToString()?.Trim() ?? string.Empty,
 				NSS = row[21].ToString()?.Trim() ?? string.Empty,
+				HorarioId = 1,
 				NombrePreferido = row[22].ToString()?.Trim() ?? string.Empty,
 			};
 
