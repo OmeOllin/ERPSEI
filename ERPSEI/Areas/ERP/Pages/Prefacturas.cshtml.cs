@@ -13,7 +13,6 @@ using ERPSEI.Requests;
 using ERPSEI.Resources;
 using ERPSEI.Utils;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NPOI.HSSF.UserModel;
@@ -29,6 +28,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.Xsl;
 using XSDToXML.Utils;
+using ERPSEI.Data.Managers.Usuarios;
 
 namespace ERPSEI.Areas.ERP.Pages
 {
@@ -37,7 +37,7 @@ namespace ERPSEI.Areas.ERP.Pages
 			CFDi clienteEDICOM,
 			ApplicationDbContext db,
 			IAutorizacionesPrefactura autorizacionesPrefacturaManager,
-			UserManager<AppUser> userManager,
+			AppUserManager userManager,
 			IRWCatalogoManager<Perfil> perfilManager,
 			IUnidadMedidaManager unidadMedidaManager,
 			IProductoServicioManager productosServiciosManager,
@@ -80,6 +80,12 @@ namespace ERPSEI.Areas.ERP.Pages
 
 			[Display(Name = "UsoCFDIField")]
 			public int? UsoCFDIId { get; set; }
+
+			[Display(Name = "UsuarioCreadorField")]
+			public string? UsuarioCreadorId { get; set; }
+
+			[Display(Name = "UsuarioTimbradorField")]
+			public string? UsuarioTimbradorId { get; set; }
 		}
 
 		[BindProperty]
@@ -302,6 +308,8 @@ namespace ERPSEI.Areas.ERP.Pages
 					filtro.FormaPagoId,
 					filtro.MetodoPagoId,
 					filtro.UsoCFDIId,
+					filtro.UsuarioCreadorId,
+					filtro.UsuarioTimbradorId,
 					false
 				);
 			}
@@ -758,6 +766,54 @@ namespace ERPSEI.Areas.ERP.Pages
 			}
 
 			jsonResponse = $"[{string.Join(",", jsons)}]";
+
+			return jsonResponse;
+		}
+
+		public async Task<JsonResult> OnPostGetUsuariosSuggestion(string texto)
+		{
+			ServerResponse resp = new(true, localizer["ConsultadoUnsuccessfully"]);
+			try
+			{
+				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
+				{
+					resp.Datos = await GetUsuariosSuggestion(texto);
+					resp.TieneError = false;
+					resp.Mensaje = localizer["ConsultadoSuccessfully"];
+				}
+				else
+				{
+					resp.Mensaje = localizer["AccesoDenegado"];
+				}
+			}
+			catch (Exception ex)
+			{
+				logger.LogError(ex.Message);
+			}
+
+			return new JsonResult(resp);
+		}
+		private async Task<string> GetUsuariosSuggestion(string texto)
+		{
+			string jsonResponse;
+			List<string> jsonUsuarios = [];
+
+			List<AppUser> usuarios = await userManager.SearchUsuarios(texto);
+
+			if (usuarios != null)
+			{
+				foreach (AppUser u in usuarios)
+				{
+					string desc = u.Empleado?.NombreCompleto.Length >= 1 ? $"{u.Empleado?.NombreCompleto} - {u.UserName}" : $"{u.UserName}";
+					jsonUsuarios.Add($"{{" +
+										$"\"id\": \"{u.Id}\", " +
+										$"\"value\": \"{desc}\", " +
+										$"\"label\": \"{desc}\"" +
+									$"}}");
+				}
+			}
+
+			jsonResponse = $"[{string.Join(",", jsonUsuarios)}]";
 
 			return jsonResponse;
 		}

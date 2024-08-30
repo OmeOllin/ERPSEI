@@ -103,6 +103,8 @@ namespace ERPSEI.Data.Managers.SAT
 			int? formaPagoId = null,
 			int? metodoPagoId = null,
 			int? usoCFDIId = null,
+			string? usuarioCreadorId = null,
+			string? usuarioTimbradorId = null,
 			bool deshabilitado = false
 		)
 		{
@@ -115,6 +117,8 @@ namespace ERPSEI.Data.Managers.SAT
 				.Where(e => formaPagoId == null || e.FormaPagoId == formaPagoId)
 				.Where(e => metodoPagoId == null || e.MetodoPagoId == metodoPagoId)
 				.Where(e => usoCFDIId == null || e.UsoCFDIId == usoCFDIId)
+				.Where(e => usuarioCreadorId == null || e.UsuarioCreadorId == usuarioCreadorId)
+				.Where(e => usuarioTimbradorId == null || e.UsuarioTimbradorId == usuarioTimbradorId)
 				.Include(e => e.Emisor).ThenInclude(e => e.RegimenFiscal)
 				.Include(e => e.Receptor).ThenInclude(r => r.RegimenFiscal)
 				.Include(e => e.TipoComprobante)

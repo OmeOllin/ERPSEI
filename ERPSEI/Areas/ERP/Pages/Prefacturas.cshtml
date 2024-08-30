@@ -148,6 +148,18 @@
 								<label for="selFiltroUsoCFDI" asp-for="InputFiltro.UsoCFDIId" class="form-label"></label>
 							</div>
 						</div>
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<input id="inpFiltroUsuarioCreador" type="search" asp-for="InputFiltro.UsuarioCreadorId" class="form-control" placeholder="@Localizer["UsuarioCreadorPlaceholder"]" idselected='' area="ERP" module="Prefacturas" source="GetUsuariosSuggestion" />
+								<label for="inpFiltroUsuarioCreador" asp-for="InputFiltro.UsuarioCreadorId" class="form-label"></label>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<input id="inpFiltroUsuarioTimbrador" type="search" asp-for="InputFiltro.UsuarioTimbradorId" class="form-control" placeholder="@Localizer["UsuarioTimbradorPlaceholder"]" idselected='' area="ERP" module="Prefacturas" source="GetUsuariosSuggestion" />
+								<label for="inpFiltroUsuarioTimbrador" asp-for="InputFiltro.UsuarioTimbradorId" class="form-label"></label>
+							</div>
+						</div>
 					</div>
 				</form>
 				@if (puedeTodo || puedeConsultar || puedeEditar || puedeEliminar)

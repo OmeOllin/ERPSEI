@@ -399,4 +399,10 @@
   <data name="UsoCFDIField" xml:space="preserve">
     <value>CFDI use</value>
   </data>
+  <data name="UsuarioCreadorField" xml:space="preserve">
+    <value>Creator user</value>
+  </data>
+  <data name="UsuarioTimbradorField" xml:space="preserve">
+    <value>Stamper user</value>
+  </data>
 </root>

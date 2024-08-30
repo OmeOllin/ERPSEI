@@ -98,6 +98,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    autoCompletar("#inpFiltroUsuarioCreador");
+    autoCompletar("#inpFiltroUsuarioTimbrador");
+
     jQuery.validator.setDefaults({
         highlight: function (element, errorClass, validClass) {
             $(element).addClass("is-invalid").removeClass("is-valid");
@@ -446,6 +449,8 @@ function onBuscarClick() {
     let selFormaPago = document.getElementById("selFiltroFormaPago");
     let selMetodoPago = document.getElementById("selFiltroMetodoPago");
     let selUsoCFDI = document.getElementById("selFiltroUsoCFDI");
+    let inpUsuarioCreador = document.getElementById("inpFiltroUsuarioCreador");
+    let inpUsuarioTimbrador = document.getElementById("inpFiltroUsuarioTimbrador");
 
     let oParams = {
         Serie: inpSerie.value,
@@ -454,11 +459,13 @@ function onBuscarClick() {
         MonedaId: selMoneda.value == 0 ? null : parseInt(selMoneda.value),
         FormaPagoId: selFormaPago.value == 0 ? null : parseInt(selFormaPago.value),
         MetodoPagoId: selMetodoPago.value == 0 ? null : parseInt(selMetodoPago.value),
-        UsoCFDIId: selUsoCFDI.value == 0 ? null : parseInt(selUsoCFDI.value)
+        UsoCFDIId: selUsoCFDI.value == 0 ? null : parseInt(selUsoCFDI.value),
+        UsuarioCreadorId: inpUsuarioCreador.getAttribute("idselected"),
+        UsuarioTimbradorId: inpUsuarioTimbrador.getAttribute("idselected")
     };
 
     //Resetea el valor de los filtros.
-    document.querySelectorAll("#filtros .form-control").forEach(function (e) { e.value = ""; });
+    document.querySelectorAll("#filtros .form-control").forEach(function (e) { e.value = ""; if (e.hasAttribute("idselected")) { e.setAttribute("idselected", ""); } });
     document.querySelectorAll("#filtros .form-select").forEach(function (e) { e.value = 0; });
 
     doAjax(

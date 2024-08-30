@@ -1,11 +1,12 @@
 ﻿using ERPSEI.Data.Entities.Usuarios;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Text;
 
 namespace ERPSEI.Data.Managers.Usuarios
 {
-    public class AppUserManager : UserManager<AppUser>
+	public class AppUserManager : UserManager<AppUser>
     {
         public AppUserManager(
             IUserStore<AppUser> store,
@@ -90,7 +91,17 @@ namespace ERPSEI.Data.Managers.Usuarios
             return new string(chars);
         }
 
+		public async Task<List<AppUser>> SearchUsuarios(string texto)
+		{
+			List<AppUser> usuarios = await this.Users
+                .Include(u => u.Empleado)
+				.Where(u => !u.IsBanned)
+				.Where(u => (u.Empleado != null && u.Empleado.NombreCompleto.Contains(texto)) || (u.UserName != null && u.UserName.Contains(texto)))
+				.Take(20)
+				.ToListAsync();
 
+			return usuarios;
+		}
 
-    }
+	}
 }
