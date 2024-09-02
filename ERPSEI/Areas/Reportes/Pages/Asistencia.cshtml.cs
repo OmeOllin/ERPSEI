@@ -102,19 +102,16 @@ namespace ERPSEI.Areas.Reportes.Pages
 		{
 			// Recuperar el filtro de la sesión
 			var filtro = HttpContext.Session.GetObjectFromJson<FiltroModel>("FiltroAsistencia");
-			List<Asistencia> asistencias;
 
-			// Si no hay filtros de fecha, obtener las asistencias de la fecha actual
-			if (filtro == null || !filtro.FechaIngresoInicio.HasValue)
+			// Obtener las asistencias basadas en el filtro
+			List<Asistencia> asistencias = await ObtenerAsistenciasPorFiltro(filtro);
+
+			// Si no se encontraron asistencias y no hay filtro, obtener las asistencias de la fecha actual
+			if (!asistencias.Any() && (filtro == null || !filtro.FechaIngresoInicio.HasValue))
 			{
 				DateOnly fechaActual = DateOnly.FromDateTime(DateTime.Now);
 				asistencias = await asistenciaManager.GetAllAsync();
 				asistencias = asistencias.Where(asis => asis.Fecha == fechaActual).ToList();
-			}
-			else
-			{
-				// Si hay filtros de rango de fechas, obtener asistencias dentro del rango
-				asistencias = await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, filtro.FechaIngresoInicio, filtro.FechaIngresoFin);
 			}
 
 			// Procesar cada asistencia
@@ -158,7 +155,14 @@ namespace ERPSEI.Areas.Reportes.Pages
 			{
 				jsonAsistencias.Add("{" +
 					$"\"Id\": \"{asis.Id}\", " +
-					$"\"Horario\": \"{asis.Empleado?.Horario?.Descripcion}\", " +
+					"\"Horario\": \"" + (
+					asis.Empleado?.HorarioId == 1 ? "General" :
+					asis.Empleado?.HorarioId == 2 ? "General Intendencia" :
+					asis.Empleado?.HorarioId == 3 ? "General Recepción" :
+					asis.Empleado?.HorarioId == 4 ? "Polanco" :
+					asis.Empleado?.HorarioId == 5 ? "Polanco Intendencia" :
+					asis.Empleado?.HorarioId == 6 ? "Polanco Recepción" :
+					asis.Empleado?.Horario?.Descripcion ?? "No Definido") + "\", " +
 					$"\"NombreEmpleado\": \"{asis.Empleado?.NombreCompleto}\", " +
 					$"\"Fecha\": \"{asis.Fecha}\", " +
 					$"\"Dia\": \"{asis.Dia}\", " +
@@ -202,12 +206,25 @@ namespace ERPSEI.Areas.Reportes.Pages
 
 		private async Task<string> GetListaAsistencias(FiltroModel? filtro = null)
 		{
+			// Obtener las asistencias filtradas (si hay filtro) o todas (si no hay filtro)
 			List<Asistencia> asistencias = await ObtenerAsistenciasPorFiltro(filtro);
+
+			// Si se proporciona un filtro y hay resultados, generamos directamente la respuesta JSON
+			if (filtro != null && asistencias.Any())
+			{
+				return GenerarJsonAsistencias(asistencias);
+			}
+
+			// Si no hay filtro o si no se encontraron asistencias con el filtro, procedemos con la lógica completa
 			(DateOnly fIni, DateOnly fFin) = InicializarFechas(filtro);
 
+			// Obtener los empleados que se les calcula asistencia
 			List<Empleado> empleadosAsistencias = await ObtenerEmpleadosConAsistencias();
+
+			// Crear las asistencias finales basadas en los empleados y fechas
 			List<Asistencia> asistenciasFinales = await CrearAsistenciasFinales(asistencias, empleadosAsistencias, fIni, fFin);
 
+			// Generar la respuesta JSON con las asistencias finales
 			string jsonResponse = GenerarJsonAsistencias(asistenciasFinales);
 			return jsonResponse;
 		}
@@ -217,6 +234,11 @@ namespace ERPSEI.Areas.Reportes.Pages
 			if (filtro != null && !string.IsNullOrEmpty(filtro.NombreEmpleado))
 			{
 				return await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, filtro.FechaIngresoInicio, filtro.FechaIngresoFin);
+			}
+			else if (filtro != null && !string.IsNullOrEmpty(filtro.NombreEmpleado))
+			{
+				// Filtrar solo por nombre, sin considerar las fechas
+				return await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, null, null);
 			}
 			else if (filtro != null && filtro.FechaIngresoInicio.HasValue && filtro.FechaIngresoFin.HasValue)
 			{
@@ -293,12 +315,18 @@ namespace ERPSEI.Areas.Reportes.Pages
 
 			return asistenciasFinales;
 		}
-
 		private string GenerarJsonAsistencias(List<Asistencia> asistenciasFinales)
 		{
 			List<string> jsonAsistencias = asistenciasFinales.Select(asis => "{" +
 				$"\"Id\": \"{asis.Id}\", " +
-				$"\"Horario\": \"{asis.Empleado?.Horario?.Descripcion}\", " +
+				"\"Horario\": \"" +(
+				asis.Empleado?.HorarioId == 1 ? "General" :
+				asis.Empleado?.HorarioId == 2 ? "General Intendencia" :
+				asis.Empleado?.HorarioId == 3 ? "General Recepción" :
+				asis.Empleado?.HorarioId == 4 ? "Polanco" :
+				asis.Empleado?.HorarioId == 5 ? "Polanco Intendencia" :
+				asis.Empleado?.HorarioId == 6 ? "Polanco Recepción" :
+				asis.Empleado?.Horario?.Descripcion ?? "No Definido") + "\", " +
 				$"\"NombreEmpleado\": \"{asis.Empleado?.NombreCompleto}\", " +
 				$"\"Fecha\": \"{asis.Fecha}\", " +
 				$"\"Dia\": \"{asis.Dia}\", " +
