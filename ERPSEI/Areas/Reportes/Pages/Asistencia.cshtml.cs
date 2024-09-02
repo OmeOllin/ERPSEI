@@ -98,52 +98,70 @@ namespace ERPSEI.Areas.Reportes.Pages
 			InputImportar = new ImportarModel();
 		}
 
-		public async Task<JsonResult> OnGetAsistenciasCalculo()
+		public async Task<JsonResult> OnPostAsistenciasCalculo()
 		{
-			// Recuperar el filtro de la sesión
-			var filtro = HttpContext.Session.GetObjectFromJson<FiltroModel>("FiltroAsistencia");
-
-			// Obtener las asistencias basadas en el filtro
-			List<Asistencia> asistencias = await ObtenerAsistenciasPorFiltro(filtro);
-
-			// Si no se encontraron asistencias y no hay filtro, obtener las asistencias de la fecha actual
-			if (!asistencias.Any() && (filtro == null || !filtro.FechaIngresoInicio.HasValue))
+			ServerResponse resp = new(true, stringLocalizer["AsistenciasFiltradasUnsuccessfully"]);
+			try
 			{
-				DateOnly fechaActual = DateOnly.FromDateTime(DateTime.Now);
-				asistencias = await asistenciaManager.GetAllAsync();
-				asistencias = asistencias.Where(asis => asis.Fecha == fechaActual).ToList();
+				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
+				{
+					// Recuperar el filtro de la sesión
+					var filtro = HttpContext.Session.GetObjectFromJson<FiltroModel>("FiltroAsistencia");
+					// Obtener las asistencias basadas en el filtro
+					List<Asistencia> asistencias = await ObtenerAsistenciasPorFiltro(filtro);
+
+					// Si no se encontraron asistencias y no hay filtro, obtener las asistencias de la fecha actual
+					if (!asistencias.Any() && (filtro == null || !filtro.FechaIngresoInicio.HasValue))
+					{
+						DateOnly fechaActual = DateOnly.FromDateTime(DateTime.Now);
+						asistencias = await asistenciaManager.GetAllAsync();
+						asistencias = asistencias.Where(asis => asis.Fecha == fechaActual).ToList();
+					}
+
+					// Procesar cada asistencia
+					foreach (var asistencia in asistencias)
+					{
+						// Si no hay entrada, marcar como "OMISIÓN/FALTA"
+						if (asistencia.Entrada == TimeSpan.MinValue)
+						{
+							asistencia.ResultadoE = "OMISIÓN/FALTA";
+						}
+
+						// Si hay salida, marcar como "NORMAL"
+						if (asistencia.Salida != TimeSpan.MinValue)
+						{
+							asistencia.ResultadoS = "NORMAL";
+						}
+					}
+
+					// Generar el resumen de asistencias
+					var resumenAsistencias = asistencias
+						.GroupBy(a => a.Empleado?.NombreCompleto)
+						.Select(g => JsonConvert.SerializeObject(new
+						{
+							nombre = g.Key,
+							retardos = g.Count(a => a.ResultadoE == "RETARDO"),
+							omisionesFaltas = g.Count(a => a.ResultadoE == "OMISIÓN/FALTA"),
+							acumuladoRet = g.Count(a => a.ResultadoE == "RETARDO"),
+							totalFaltas = g.Count(a => a.ResultadoE == "OMISIÓN/FALTA") + (g.Count(a => a.ResultadoE == "RETARDO") / 2)
+						}))
+						.ToList();
+
+					resp.Datos = $"[{string.Join(",", resumenAsistencias)}]";
+					resp.TieneError = false;
+					resp.Mensaje = stringLocalizer["AsistenciasFiltradasSuccessfully"];
+				}
+				else
+				{
+					resp.Mensaje = stringLocalizer["AccesoDenegado"];
+				}
+			}
+			catch (Exception ex)
+			{
+				logger.LogError(ex.Message);
 			}
 
-			// Procesar cada asistencia
-			foreach (var asistencia in asistencias)
-			{
-				// Si no hay entrada, marcar como "OMISIÓN/FALTA"
-				if (asistencia.Entrada == null)
-				{
-					asistencia.ResultadoE = "OMISIÓN/FALTA";
-				}
-
-				// Si hay salida, marcar como "NORMAL"
-				if (asistencia.Salida != null)
-				{
-					asistencia.ResultadoS = "NORMAL";
-				}
-			}
-
-			// Generar el resumen de asistencias
-			var resumenAsistencias = asistencias
-				.GroupBy(a => a.Empleado?.NombreCompleto)
-				.Select(g => new
-				{
-					nombre = g.Key,
-					retardos = g.Count(a => a.ResultadoE == "RETARDO"),
-					omisionesFaltas = g.Count(a => a.ResultadoE == "OMISIÓN/FALTA"),
-					acumuladoRet = g.Count(a => a.ResultadoE == "RETARDO"),
-					totalFaltas = g.Count(a => a.ResultadoE == "OMISIÓN/FALTA") + (g.Count(a => a.ResultadoE == "RETARDO") / 2)
-				})
-				.ToList();
-
-			return new JsonResult(resumenAsistencias);
+			return new JsonResult(resp);
 		}
 
 		public async Task<JsonResult> OnGetAsistenciasList()

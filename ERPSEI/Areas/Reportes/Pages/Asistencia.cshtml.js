@@ -93,15 +93,33 @@ window.operateEvents = {
 
 $(document).ready(function () {
     $('#btnCalcularAsistencia').on('click', function () {
-        $('#dlgAsistenciaModal').modal('show');
 
-        $.ajax({
-            url: '/Reportes/Asistencia/AsistenciasCalculo',
-            type: 'GET',
-            success: function (data) {
-                console.log('Datos recibidos:', data);
+        let oParams = {
+            "NombreEmpleado": $("#inpFiltroNombreEmpleado").val(),
+            "FechaIngresoInicio": $("#inpFiltroFechaIngresoInicio").val(),
+            "FechaIngresoFin": $("#inpFiltroFechaIngresoFin").val()
+        };
 
-                let jsonData = data;
+        doAjax(
+            "/Reportes/Asistencia/AsistenciasCalculo",
+            oParams,
+            function (resp) {
+                if (resp.tieneError) {
+                    if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                        let summary = ``;
+                        resp.errores.forEach(function (error) {
+                            summary += `<li>${error}</li>`;
+                        });
+                        summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                    }
+                    showError(btnBuscar.innerHTML, resp.mensaje);
+                    return;
+                }
+
+                console.log('Datos recibidos:', resp.datos);
+
+                let jsonData = JSON.parse(resp.datos);
+                
 
                 let tableHtml = '<table class="table table-striped">';
                 tableHtml += '<thead><tr><th>Nombre</th><th>Retardos</th><th>Omisión/Falta</th><th>Acumulado Ret</th><th>Total Faltas</th></tr></thead>';
@@ -120,11 +138,13 @@ $(document).ready(function () {
                 tableHtml += '</tbody></table>';
 
                 $('#jtableContainer').html(tableHtml);
+
+                $('#dlgAsistenciaModal').modal('show');
+            }, function (error) {
+                showError("Error", error);
             },
-            error: function (xhr, status, error) {
-                console.error('Error fetching data:', error);
-            }
-        });
+            postOptions
+        );
     });
 
     // Mueve el evento del botón de exportación fuera del AJAX
