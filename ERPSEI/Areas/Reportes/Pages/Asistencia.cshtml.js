@@ -2,6 +2,8 @@
 var buttonRemove;
 var tableActividad;
 var selections = [];
+var dlgAsistencia = null;
+var dlgAsistenciaModal = null;
 
 const NUEVO = 0;
 const EDITAR = 1;
@@ -18,6 +20,18 @@ document.addEventListener("DOMContentLoaded", function (event) {
     initTable();
 
     buttonRemove = $("#remove");
+
+    dlgAsistencia = document.getElementById('dlgAsistencia');
+    dlgAsistenciaModal = new bootstrap.Modal(dlgAsistencia, null);
+    //Función para limpiar el cuadro de diálogo cuando es cerrado
+    dlgAsistencia.addEventListener('hidden.bs.modal', function (event) {
+        onCerrarClick();
+    });
+    //Función para ejecutar acciones posteriores al mostrado del diálogo.
+    dlgAsistencia.addEventListener('shown.bs.modal', function (e) {
+        //Este evento es necesario para poder mostrar el text area ajustado al tamaño del contenido, basado en el tamaño del scroll.
+        calculateTextAreaHeight(document.querySelectorAll("textarea"));
+    })
 
     let btnBuscar = document.getElementById("btnBuscar");
     btnBuscar.click();
@@ -79,15 +93,33 @@ window.operateEvents = {
 
 $(document).ready(function () {
     $('#btnCalcularAsistencia').on('click', function () {
-        $('#dlgAsistenciaModal').modal('show');
 
-        $.ajax({
-            url: '/Reportes/Asistencia/AsistenciasCalculo',
-            type: 'GET',
-            success: function (data) {
-                console.log('Datos recibidos:', data);
+        let oParams = {
+            "NombreEmpleado": $("#inpFiltroNombreEmpleado").val(),
+            "FechaIngresoInicio": $("#inpFiltroFechaIngresoInicio").val(),
+            "FechaIngresoFin": $("#inpFiltroFechaIngresoFin").val()
+        };
 
-                let jsonData = data;
+        doAjax(
+            "/Reportes/Asistencia/AsistenciasCalculo",
+            oParams,
+            function (resp) {
+                if (resp.tieneError) {
+                    if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
+                        let summary = ``;
+                        resp.errores.forEach(function (error) {
+                            summary += `<li>${error}</li>`;
+                        });
+                        summaryContainer.innerHTML += `<ul>${summary}</ul>`;
+                    }
+                    showError(btnBuscar.innerHTML, resp.mensaje);
+                    return;
+                }
+
+                console.log('Datos recibidos:', resp.datos);
+
+                let jsonData = JSON.parse(resp.datos);
+                
 
                 let tableHtml = '<table class="table table-striped">';
                 tableHtml += '<thead><tr><th>Nombre</th><th>Retardos</th><th>Omisión/Falta</th><th>Acumulado Ret</th><th>Total Faltas</th></tr></thead>';
@@ -106,11 +138,13 @@ $(document).ready(function () {
                 tableHtml += '</tbody></table>';
 
                 $('#jtableContainer').html(tableHtml);
+
+                $('#dlgAsistenciaModal').modal('show');
+            }, function (error) {
+                showError("Error", error);
             },
-            error: function (xhr, status, error) {
-                console.error('Error fetching data:', error);
-            }
-        });
+            postOptions
+        );
     });
 
     // Mueve el evento del botón de exportación fuera del AJAX
@@ -155,10 +189,10 @@ $(document).ready(function () {
             if (item.nombre && item.retardos && item.omisionesFaltas && item.acumuladoRet && item.totalFaltas) {
                 worksheet.addRow({
                     nombre: item.nombre,
-                    retardos: parseInt(item.retardos,10),
-                    omisionesFaltas: parseInt(item.omisionesFaltas,10),
-                    acumuladoRet: parseInt(item.acumuladoRet,10),
-                    totalFaltas: parseInt(item.totalFaltas,10)
+                    retardos: parseInt(item.retardos, 10),
+                    omisionesFaltas: parseInt(item.omisionesFaltas, 10),
+                    acumuladoRet: parseInt(item.acumuladoRet, 10),
+                    totalFaltas: parseInt(item.totalFaltas, 10)
                 });
             }
         });
@@ -182,7 +216,6 @@ $(document).ready(function () {
     });
 });
 
-
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
         height: 550,
@@ -192,71 +225,71 @@ function initTable() {
         toolbar: '#toolbar', // Asegúrate de que este ID coincida con el elemento HTML donde quieres que aparezcan los botones
         buttons: additionalButtons, // Asegúrate de que `additionalButtons` esté siendo llamado correctamente aquí
         columns: [
-        {
-            title: colHorarioHeader,
-            field: "Horario",
-            align: "center",
-            valign: "middle",
-            sortable: true
-        },
-        {
-            title: colNombreEmpleadoHeader,
-            field: "NombreEmpleado",
-            align: "center",
-            valign: "middle",
-            sortable: true
-        },
-        {
-            title: colFechaHeader,
-            field: "Fecha",
-            align: "center",
-            valign: "middle",
-            sortable: true
-        },
-        {
-            title: colDiaHeader,
-            field: "Dia",
-            align: "center",
-            valign: "middle",
-            sortable: true
-        },
-        {
-            title: colEntradaHeader,
-            field: "Entrada",
-            align: "center",
-            valign: "middle",
-            sortable: true
-        },
-        {
-            title: colResultadoEHeader,
-            field: "ResultadoE",
-            align: "center",
-            valign: "middle",
-            sortable: true
-        },
-        {
-            title: colSalidaHeader,
-            field: "Salida",
-            align: "center",
-            valign: "middle",
-            sortable: true
-        },
-        {
-            title: colResultadoSHeader,
-            field: "ResultadoS",
-            align: "center",
-            valign: "middle",
-            sortable: true
-        },
-        {
-            title: colAccionesHeader,
-            field: "operate",
-            align: 'center',
-            width: "100px",
-            clickToSelect: false,
-            events: window.operateEvents,
-            formatter: operateFormatter
-        }
+            {
+                title: colHorarioHeader,
+                field: "Horario",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colNombreEmpleadoHeader,
+                field: "NombreEmpleado",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colFechaHeader,
+                field: "Fecha",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colDiaHeader,
+                field: "Dia",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colEntradaHeader,
+                field: "Entrada",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colResultadoEHeader,
+                field: "ResultadoE",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colSalidaHeader,
+                field: "Salida",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colResultadoSHeader,
+                field: "ResultadoS",
+                align: "center",
+                valign: "middle",
+                sortable: true
+            },
+            {
+                title: colAccionesHeader,
+                field: "operate",
+                align: 'center',
+                width: "100px",
+                clickToSelect: false,
+                events: window.operateEvents,
+                formatter: operateFormatter
+            }
         ]
     });
 }
@@ -280,7 +313,7 @@ function initAsistenciaDialog(action, row) {
             dlgTitle.innerHTML = dlgEditarTitle;
 
             // Habilitar campos para edición
-            idField.setAttribute("disabled", false);
+            idField.setAttribute("disabled", true);
             nombreField.setAttribute("disabled", true);
             resultadoEField.removeAttribute("disabled");
             resultadoSField.removeAttribute("disabled");
@@ -290,6 +323,33 @@ function initAsistenciaDialog(action, row) {
     // Establecer los valores de los campos
     idField.value = row.Id;
     nombreField.value = row.NombreEmpleado;
+
+    // Configurar el valor inicial de ResultadoE y ResultadoS
+    switch (row.ResultadoE) {
+        case "NORMAL":
+            resultadoEField.value = "0";
+            break;
+        case "RETARDO":
+            resultadoEField.value = "1";
+            break;
+        case "OMISIÓN/FALTA":
+            resultadoEField.value = "2";
+            break;
+    }
+    
+    switch (row.ResultadoS) {
+        case "TEMPRANO":
+            resultadoSField.value = "0";
+            break;
+        case "NORMAL":
+            resultadoSField.value = "1";
+            break;
+        case "OMISIÓN/FALTA":
+            resultadoSField.value = "2";
+            break;
+    }
+    // Establecer el valor inicial de resultadoSField con el valor del registro
+    //resultadoSField.value = row.ResultadoS;
 
     // Función para actualizar ResultadoS en función de ResultadoE
     function actualizarResultadoS() {
@@ -305,26 +365,10 @@ function initAsistenciaDialog(action, row) {
                 break;
             default:
                 // Manejar casos por defecto
-                resultadoSField.value = ""; // Vacío o valor por defecto
+                resultadoSField.value = row.ResultadoS; // Mantener el valor original
                 break;
         }
     }
-
-    // Configurar el valor inicial de ResultadoE y ResultadoS
-    switch (row.ResultadoE) {
-        case "NORMAL":
-            resultadoEField.value = "0";
-            break;
-        case "RETARDO":
-            resultadoEField.value = "1";
-            break;
-        case "OMISIÓN/FALTA":
-            resultadoEField.value = "2";
-            break;
-    }
-
-    // Inicializar ResultadoS basado en ResultadoE
-    actualizarResultadoS();
 
     // Agregar manejador de eventos para actualizar ResultadoS cuando ResultadoE cambie
     resultadoEField.addEventListener('change', actualizarResultadoS);
@@ -332,6 +376,7 @@ function initAsistenciaDialog(action, row) {
     // Mostrar el diálogo
     dlgAsistenciaModal.toggle();
 }
+
 
 
 
@@ -343,15 +388,24 @@ function onBuscarClick() {
     let summaryContainer = document.getElementById("saveValidationSummary");
     summaryContainer.innerHTML = "";
 
+    // Obtener la fecha actual en formato 'YYYY-MM-DD'
+    let fechaActual = new Date().toISOString().split('T')[0];
+
+    // Si el campo fechaInicioField está vacío, asignar la fecha actual
+    if (fechaInicioField.length <= 0) {
+        fechaInicioField = fechaActual;
+        document.getElementById("inpFiltroFechaIngresoInicio").value = fechaActual;
+    }
+
     let oParams = {
         nombreEmpleado: nombreField.length <= 0 ? null : nombreField,
         fechaIngresoInicio: fechaInicioField.length <= 0 ? null : fechaInicioField,
         fechaIngresoFin: fechaFinField.length <= 0 ? null : fechaFinField
     };
 
-    //Resetea el valor de los filtros.
-    //document.querySelectorAll("#filtros .form-control").forEach(function (e) { e.value = ""; });
-    //document.querySelectorAll("#filtros .form-select").forEach(function (e) { e.value = 0; });
+    // Resetea el valor de los filtros.
+    document.querySelectorAll("#filtros .form-control").forEach(function (e) { e.value = ""; });
+    document.querySelectorAll("#filtros .form-select").forEach(function (e) { e.value = 0; });
 
     doAjax(
         "/Reportes/Asistencia/FiltrarAsistencia",
@@ -376,6 +430,7 @@ function onBuscarClick() {
         postOptions
     );
 }
+
 
 //Función para obtener el archivo de un input
 function getFile(inputId) {
@@ -537,8 +592,6 @@ function onGuardarClick() {
 
             btnClose.click();
 
-            onBuscarClick();
-
             // Actualiza la fila en la tabla con los nuevos valores
             let asistencia = resp.asistenciaActualizada;
             if (asistencia) {
@@ -549,7 +602,7 @@ function onGuardarClick() {
                     row.querySelector('.columnaResultadoS').innerText = asistencia.resultadoS;
                 }
             }
-
+            onBuscarClick();
 
             showSuccess(dlgTitle.innerHTML, resp.mensaje);
         }, function (error) {
@@ -558,8 +611,3 @@ function onGuardarClick() {
         postOptions
     );
 }
-
-
-
-
-

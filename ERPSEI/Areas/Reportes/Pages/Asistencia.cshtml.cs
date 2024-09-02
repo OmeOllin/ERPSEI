@@ -98,55 +98,70 @@ namespace ERPSEI.Areas.Reportes.Pages
 			InputImportar = new ImportarModel();
 		}
 
-		public async Task<JsonResult> OnGetAsistenciasCalculo()
+		public async Task<JsonResult> OnPostAsistenciasCalculo()
 		{
-			// Recuperar el filtro de la sesión
-			var filtro = HttpContext.Session.GetObjectFromJson<FiltroModel>("FiltroAsistencia");
-			List<Asistencia> asistencias;
-
-			// Si no hay filtros de fecha, obtener las asistencias de la fecha actual
-			if (filtro == null || !filtro.FechaIngresoInicio.HasValue)
+			ServerResponse resp = new(true, stringLocalizer["AsistenciasFiltradasUnsuccessfully"]);
+			try
 			{
-				DateOnly fechaActual = DateOnly.FromDateTime(DateTime.Now);
-				asistencias = await asistenciaManager.GetAllAsync();
-				asistencias = asistencias.Where(asis => asis.Fecha == fechaActual).ToList();
-			}
-			else
-			{
-				// Si hay filtros de rango de fechas, obtener asistencias dentro del rango
-				asistencias = await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, filtro.FechaIngresoInicio, filtro.FechaIngresoFin);
-			}
-
-			// Procesar cada asistencia
-			foreach (var asistencia in asistencias)
-			{
-				// Si no hay entrada, marcar como "OMISIÓN/FALTA"
-				if (asistencia.Entrada == null)
+				if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
 				{
-					asistencia.ResultadoE = "OMISIÓN/FALTA";
+					// Recuperar el filtro de la sesión
+					var filtro = HttpContext.Session.GetObjectFromJson<FiltroModel>("FiltroAsistencia");
+					// Obtener las asistencias basadas en el filtro
+					List<Asistencia> asistencias = await ObtenerAsistenciasPorFiltro(filtro);
+
+					// Si no se encontraron asistencias y no hay filtro, obtener las asistencias de la fecha actual
+					if (!asistencias.Any() && (filtro == null || !filtro.FechaIngresoInicio.HasValue))
+					{
+						DateOnly fechaActual = DateOnly.FromDateTime(DateTime.Now);
+						asistencias = await asistenciaManager.GetAllAsync();
+						asistencias = asistencias.Where(asis => asis.Fecha == fechaActual).ToList();
+					}
+
+					// Procesar cada asistencia
+					foreach (var asistencia in asistencias)
+					{
+						// Si no hay entrada, marcar como "OMISIÓN/FALTA"
+						if (asistencia.Entrada == TimeSpan.MinValue)
+						{
+							asistencia.ResultadoE = "OMISIÓN/FALTA";
+						}
+
+						// Si hay salida, marcar como "NORMAL"
+						if (asistencia.Salida != TimeSpan.MinValue)
+						{
+							asistencia.ResultadoS = "NORMAL";
+						}
+					}
+
+					// Generar el resumen de asistencias
+					var resumenAsistencias = asistencias
+						.GroupBy(a => a.Empleado?.NombreCompleto)
+						.Select(g => JsonConvert.SerializeObject(new
+						{
+							nombre = g.Key,
+							retardos = g.Count(a => a.ResultadoE == "RETARDO"),
+							omisionesFaltas = g.Count(a => a.ResultadoE == "OMISIÓN/FALTA"),
+							acumuladoRet = g.Count(a => a.ResultadoE == "RETARDO"),
+							totalFaltas = g.Count(a => a.ResultadoE == "OMISIÓN/FALTA") + (g.Count(a => a.ResultadoE == "RETARDO") / 2)
+						}))
+						.ToList();
+
+					resp.Datos = $"[{string.Join(",", resumenAsistencias)}]";
+					resp.TieneError = false;
+					resp.Mensaje = stringLocalizer["AsistenciasFiltradasSuccessfully"];
 				}
-
-				// Si hay salida, marcar como "NORMAL"
-				if (asistencia.Salida != null)
+				else
 				{
-					asistencia.ResultadoS = "NORMAL";
+					resp.Mensaje = stringLocalizer["AccesoDenegado"];
 				}
 			}
+			catch (Exception ex)
+			{
+				logger.LogError(ex.Message);
+			}
 
-			// Generar el resumen de asistencias
-			var resumenAsistencias = asistencias
-				.GroupBy(a => a.Empleado?.NombreCompleto)
-				.Select(g => new
-				{
-					nombre = g.Key,
-					retardos = g.Count(a => a.ResultadoE == "RETARDO"),
-					omisionesFaltas = g.Count(a => a.ResultadoE == "OMISIÓN/FALTA"),
-					acumuladoRet = g.Count(a => a.ResultadoE == "RETARDO"),
-					totalFaltas = g.Count(a => a.ResultadoE == "OMISIÓN/FALTA") + (g.Count(a => a.ResultadoE == "RETARDO") / 2)
-				})
-				.ToList();
-
-			return new JsonResult(resumenAsistencias);
+			return new JsonResult(resp);
 		}
 
 		public async Task<JsonResult> OnGetAsistenciasList()
@@ -158,7 +173,14 @@ namespace ERPSEI.Areas.Reportes.Pages
 			{
 				jsonAsistencias.Add("{" +
 					$"\"Id\": \"{asis.Id}\", " +
-					$"\"Horario\": \"{asis.Empleado?.Horario?.Descripcion}\", " +
+					"\"Horario\": \"" + (
+					asis.Empleado?.HorarioId == 1 ? "General" :
+					asis.Empleado?.HorarioId == 2 ? "General Intendencia" :
+					asis.Empleado?.HorarioId == 3 ? "General Recepción" :
+					asis.Empleado?.HorarioId == 4 ? "Polanco" :
+					asis.Empleado?.HorarioId == 5 ? "Polanco Intendencia" :
+					asis.Empleado?.HorarioId == 6 ? "Polanco Recepción" :
+					asis.Empleado?.Horario?.Descripcion ?? "No Definido") + "\", " +
 					$"\"NombreEmpleado\": \"{asis.Empleado?.NombreCompleto}\", " +
 					$"\"Fecha\": \"{asis.Fecha}\", " +
 					$"\"Dia\": \"{asis.Dia}\", " +
@@ -202,66 +224,92 @@ namespace ERPSEI.Areas.Reportes.Pages
 
 		private async Task<string> GetListaAsistencias(FiltroModel? filtro = null)
 		{
-			string jsonResponse;
-			List<string> jsonAsistencias = new();
-			List<Asistencia> asistencias = new();
-			List<Asistencia> asistenciasFinales = new();
+			// Obtener las asistencias filtradas (si hay filtro) o todas (si no hay filtro)
+			List<Asistencia> asistencias = await ObtenerAsistenciasPorFiltro(filtro);
 
-			DateOnly fIni = DateOnly.MinValue, fFin = DateOnly.MinValue;
+			// Si se proporciona un filtro y hay resultados, generamos directamente la respuesta JSON
+			if (filtro != null && asistencias.Any())
+			{
+				return GenerarJsonAsistencias(asistencias);
+			}
 
-			// Obtener asistencias basadas en los filtros
+			// Si no hay filtro o si no se encontraron asistencias con el filtro, procedemos con la lógica completa
+			(DateOnly fIni, DateOnly fFin) = InicializarFechas(filtro);
+
+			// Obtener los empleados que se les calcula asistencia
+			List<Empleado> empleadosAsistencias = await ObtenerEmpleadosConAsistencias();
+
+			// Crear las asistencias finales basadas en los empleados y fechas
+			List<Asistencia> asistenciasFinales = await CrearAsistenciasFinales(asistencias, empleadosAsistencias, fIni, fFin);
+
+			// Generar la respuesta JSON con las asistencias finales
+			string jsonResponse = GenerarJsonAsistencias(asistenciasFinales);
+			return jsonResponse;
+		}
+
+		private async Task<List<Asistencia>> ObtenerAsistenciasPorFiltro(FiltroModel? filtro)
+		{
 			if (filtro != null && !string.IsNullOrEmpty(filtro.NombreEmpleado))
 			{
-				asistencias = await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, filtro.FechaIngresoInicio, filtro.FechaIngresoFin);
+				return await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, filtro.FechaIngresoInicio, filtro.FechaIngresoFin);
+			}
+			else if (filtro != null && !string.IsNullOrEmpty(filtro.NombreEmpleado))
+			{
+				// Filtrar solo por nombre, sin considerar las fechas
+				return await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, null, null);
 			}
 			else if (filtro != null && filtro.FechaIngresoInicio.HasValue && filtro.FechaIngresoFin.HasValue)
 			{
-				fIni = DateOnly.FromDateTime(filtro.FechaIngresoInicio.Value);
-				fFin = DateOnly.FromDateTime(filtro.FechaIngresoFin.Value);
-				asistencias = await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, filtro.FechaIngresoInicio, filtro.FechaIngresoFin);
+				return await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, filtro.FechaIngresoInicio, filtro.FechaIngresoFin);
 			}
 			else if (filtro != null && filtro.FechaIngresoInicio.HasValue && !filtro.FechaIngresoFin.HasValue)
 			{
-				fIni = DateOnly.FromDateTime(filtro.FechaIngresoInicio.Value);
-				fFin = DateOnly.FromDateTime(filtro.FechaIngresoInicio.Value);
-				asistencias = await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, filtro.FechaIngresoInicio, filtro.FechaIngresoFin);
+				return await asistenciaManager.GetAllAsync(filtro.NombreEmpleado, filtro.FechaIngresoInicio, filtro.FechaIngresoFin);
 			}
 			else
 			{
-				asistencias = await asistenciaManager.GetAllAsync();
+				return await asistenciaManager.GetAllAsync();
 			}
+		}
 
-			// Filtrar por fecha actual si no se especifican filtros
-			if ((filtro == null || !filtro.FechaIngresoInicio.HasValue) && string.IsNullOrEmpty(filtro?.NombreEmpleado))
-			{
-				DateOnly fechaActual = DateOnly.FromDateTime(DateTime.Now);
-				asistencias = asistencias.Where(asis => asis.Fecha == fechaActual).ToList();
-			}
+		private (DateOnly, DateOnly) InicializarFechas(FiltroModel? filtro)
+		{
+			DateOnly fIni = filtro?.FechaIngresoInicio.HasValue == true
+				? DateOnly.FromDateTime(filtro.FechaIngresoInicio.Value)
+				: DateOnly.FromDateTime(DateTime.Now);
 
-			if (fIni == DateOnly.MinValue) { fIni = DateOnly.FromDateTime(DateTime.Now); }
-			if (fFin == DateOnly.MinValue) { fFin = DateOnly.FromDateTime(DateTime.Now); }
+			DateOnly fFin = filtro?.FechaIngresoFin.HasValue == true
+				? DateOnly.FromDateTime(filtro.FechaIngresoFin.Value)
+				: fIni;
 
-			// Obtener todos los empleados
+			return (fIni, fFin);
+		}
+
+		private async Task<List<Empleado>> ObtenerEmpleadosConAsistencias()
+		{
 			List<Empleado> empleadosAsistencias = await empleadoManager.GetAllAsync();
+			return empleadosAsistencias.Where(e => (e.HorarioId ?? 0) != 0 && (e.CalcularAsistencia ?? false)).ToList();
+		}
 
-			for (DateOnly f = fIni; f <= fFin; f = f.AddDays(1))
+		private async Task<List<Asistencia>> CrearAsistenciasFinales(List<Asistencia> asistencias, List<Empleado> empleados, DateOnly fIni, DateOnly fFin)
+		{
+			List<Asistencia> asistenciasFinales = new();
+
+			foreach (Empleado e in empleados)
 			{
-				// Refactoriza aquí si tienes lógica para días de descanso
-				if (f.DayOfWeek == DayOfWeek.Saturday || f.DayOfWeek == DayOfWeek.Sunday) { continue; }
-
-				foreach (Empleado e in empleadosAsistencias)
+				for (DateOnly f = fIni; f <= fFin; f = f.AddDays(1))
 				{
-					// Verificar si existen asistencias para este empleado y fecha
-					List<Asistencia> asistenciasEmpleadosFound = asistencias.Where(a => a.Empleado == e && a.Fecha == f).ToList();
+					List<int>? diasDescanso = e.Horario?.HorarioDetalles?.Where(hd => !hd.Activado).Select(hd => hd.NumeroDiaSemana).ToList();
+					if (diasDescanso != null && diasDescanso.Contains((int)f.DayOfWeek)) { continue; }
 
-					if (asistenciasEmpleadosFound.Count > 0)
+					Asistencia? asistenciaExistente = asistencias.FirstOrDefault(a => a.Empleado.Id == e.Id && a.Fecha == f);
+
+					if (asistenciaExistente != null)
 					{
-						// Si existen registros, añadirlos a la lista final
-						asistenciasFinales.AddRange(asistenciasEmpleadosFound);
+						asistenciasFinales.Add(asistenciaExistente);
 					}
 					else
 					{
-						// Si no existen registros, crear uno vacío
 						Asistencia newA = new()
 						{
 							Dia = f.ToString("dddd"),
@@ -274,17 +322,29 @@ namespace ERPSEI.Areas.Reportes.Pages
 						};
 
 						newA.Id = await asistenciaManager.CreateAsync(newA);
-						asistenciasFinales.Add(newA);
+						if (newA.Id != 0)
+						{
+							newA.Empleado = e;
+							asistenciasFinales.Add(newA);
+						}
 					}
 				}
 			}
 
-			// Convertir asistencias (filtradas o no) a JSON
-			foreach (var asis in asistenciasFinales)
-			{
-				jsonAsistencias.Add("{" +
+			return asistenciasFinales;
+		}
+		private string GenerarJsonAsistencias(List<Asistencia> asistenciasFinales)
+		{
+			List<string> jsonAsistencias = asistenciasFinales.Select(asis => "{" +
 				$"\"Id\": \"{asis.Id}\", " +
-				$"\"Horario\": \"{asis.Empleado?.Horario?.Descripcion}\", " +
+				"\"Horario\": \"" +(
+				asis.Empleado?.HorarioId == 1 ? "General" :
+				asis.Empleado?.HorarioId == 2 ? "General Intendencia" :
+				asis.Empleado?.HorarioId == 3 ? "General Recepción" :
+				asis.Empleado?.HorarioId == 4 ? "Polanco" :
+				asis.Empleado?.HorarioId == 5 ? "Polanco Intendencia" :
+				asis.Empleado?.HorarioId == 6 ? "Polanco Recepción" :
+				asis.Empleado?.Horario?.Descripcion ?? "No Definido") + "\", " +
 				$"\"NombreEmpleado\": \"{asis.Empleado?.NombreCompleto}\", " +
 				$"\"Fecha\": \"{asis.Fecha}\", " +
 				$"\"Dia\": \"{asis.Dia}\", " +
@@ -292,13 +352,10 @@ namespace ERPSEI.Areas.Reportes.Pages
 				$"\"ResultadoE\": \"{asis.ResultadoE}\", " +
 				$"\"Salida\": \"{asis.Salida}\", " +
 				$"\"ResultadoS\": \"{asis.ResultadoS}\" " +
-				"}");
-			}
+				"}").ToList();
 
-			jsonResponse = $"[{string.Join(",", jsonAsistencias)}]";
-			return jsonResponse;
+			return $"[{string.Join(",", jsonAsistencias)}]";
 		}
-
 
 		public ActionResult OnGetDownloadPlantilla()
 		{

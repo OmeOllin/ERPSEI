@@ -7,10 +7,8 @@ namespace ERPSEI.Data.Entities.Reportes
 	{
 		[DatabaseGenerated(DatabaseGeneratedOption.None)]
 		public int Id { get; set; }
-
 		public Empleado? Empleado { get; set; }
 		public int? EmpleadoId { get; set; }
-
 		public DateOnly? Fecha { get; set; }
 		public string? Dia { get; set; }
 		public TimeSpan Entrada { get; set; }
