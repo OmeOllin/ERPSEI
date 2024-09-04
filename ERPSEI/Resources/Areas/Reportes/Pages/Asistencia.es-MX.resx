@@ -120,6 +120,9 @@
   <data name="AbsencesColumn" xml:space="preserve">
     <value>Faltas</value>
   </data>
+  <data name="AccesoDenegado" xml:space="preserve">
+    <value>Acceso Denegado</value>
+  </data>
   <data name="AddButton" xml:space="preserve">
     <value>Agregar</value>
   </data>
@@ -279,6 +282,9 @@
   <data name="ImportExcelSuggestionB" xml:space="preserve">
     <value>Seleccione el archivo que rellenó con su información e importe los datos.</value>
   </data>
+  <data name="MistakeAsist" xml:space="preserve">
+    <value>Error al importar las asistencias</value>
+  </data>
   <data name="NameColumn" xml:space="preserve">
     <value>Nombre</value>
   </data>
@@ -290,6 +296,9 @@
   </data>
   <data name="PlantillaButtonTitle" xml:space="preserve">
     <value>Descargar plantilla</value>
+  </data>
+  <data name="ProvidedProcessing" xml:space="preserve">
+    <value>No se proporcionaron filas para procesar</value>
   </data>
   <data name="RetardoPlaceholder" xml:space="preserve">
     <value>Retardo</value>
