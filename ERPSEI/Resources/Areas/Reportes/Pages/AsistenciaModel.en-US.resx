@@ -117,7 +117,61 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AccesoDenegado" xml:space="preserve">
+    <value>Access Denied</value>
+  </data>
+  <data name="AsistenciaDeletedSuccessfully" xml:space="preserve">
+    <value>Records successfully deleted!</value>
+  </data>
+  <data name="AsistenciaSavedSuccessfully" xml:space="preserve">
+    <value>Attendance successfully saved!</value>
+  </data>
+  <data name="AsistenciaSavedUnsuccessfully" xml:space="preserve">
+    <value>Error saving attendance</value>
+  </data>
+  <data name="AsistenciasFiltradasSuccessfully" xml:space="preserve">
+    <value>Assists filtered successfully!</value>
+  </data>
+  <data name="AsistenciasFiltradasUnsuccessfully" xml:space="preserve">
+    <value>Error when filtering assists</value>
+  </data>
+  <data name="AsistenciasImportadasSuccessfully" xml:space="preserve">
+    <value>Successfully imported assists!</value>
+  </data>
+  <data name="AsistenciasImportadasUnsuccessfully" xml:space="preserve">
+    <value>Error al importar las asistencias</value>
+  </data>
+  <data name="AsistenciasImportadosSuccessfully" xml:space="preserve">
+    <value>Successfully imported assists!</value>
+  </data>
   <data name="AsistenciasImportadosUnsuccessfully" xml:space="preserve">
     <value>.</value>
+  </data>
+  <data name="Calculateattendance" xml:space="preserve">
+    <value>Calculate Attendance</value>
+  </data>
+  <data name="ColActionsHeader" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="ConsultadoSuccessfully" xml:space="preserve">
+    <value>Satisfactory information query!</value>
+  </data>
+  <data name="ConsultadoUnsuccessfully" xml:space="preserve">
+    <value>Error when querying information</value>
+  </data>
+  <data name="ErrorAsistenciaExistenteA" xml:space="preserve">
+    <value>There is already registered assistance with</value>
+  </data>
+  <data name="ErrorAsistenciaExistenteB" xml:space="preserve">
+    <value>Please verify the information</value>
+  </data>
+  <data name="RazonSocial" xml:space="preserve">
+    <value>Company Name</value>
+  </data>
+  <data name="RFC" xml:space="preserve">
+    <value>RFC</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value>Error importing attendances</value>
   </data>
 </root>

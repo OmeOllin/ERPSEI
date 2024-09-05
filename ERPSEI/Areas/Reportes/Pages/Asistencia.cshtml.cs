@@ -232,10 +232,10 @@ namespace ERPSEI.Areas.Reportes.Pages
 			List<Asistencia> asistencias = await ObtenerAsistenciasPorFiltro(filtro);
 
 			// Si se proporciona un filtro y hay resultados, generamos directamente la respuesta JSON
-			//if (filtro != null && asistencias.Any())
-			//{
-			//	return GenerarJsonAsistencias(asistencias);
-			//}
+			/*if (filtro != null && asistencias.Any())
+			{
+				return GenerarJsonAsistencias(asistencias);
+			}*/
 
 			// Si no hay filtro o si no se encontraron asistencias con el filtro, procedemos con la lógica completa
 			(DateOnly fIni, DateOnly fFin) = InicializarFechas(filtro);
