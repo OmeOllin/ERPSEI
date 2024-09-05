@@ -714,7 +714,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 				empleado.CURP = e.CURP ?? string.Empty;
 				empleado.RFC = e.RFC ?? string.Empty;
 				empleado.NSS = e.NSS ?? string.Empty;
-				empleado.HorarioId = e.HorarioId;
+				empleado.HorarioId = e.HorarioId >= 1 ? e.HorarioId : null;
 				empleado.CalcularAsistencia = e.HorarioId >= 1;
 
                 if (idEmpleado >= 1)
