@@ -232,10 +232,10 @@ namespace ERPSEI.Areas.Reportes.Pages
 			List<Asistencia> asistencias = await ObtenerAsistenciasPorFiltro(filtro);
 
 			// Si se proporciona un filtro y hay resultados, generamos directamente la respuesta JSON
-			if (filtro != null && asistencias.Any())
-			{
-				return GenerarJsonAsistencias(asistencias);
-			}
+			//if (filtro != null && asistencias.Any())
+			//{
+			//	return GenerarJsonAsistencias(asistencias);
+			//}
 
 			// Si no hay filtro o si no se encontraron asistencias con el filtro, procedemos con la lógica completa
 			(DateOnly fIni, DateOnly fFin) = InicializarFechas(filtro);
@@ -388,7 +388,7 @@ namespace ERPSEI.Areas.Reportes.Pages
 						DataSet result = reader.AsDataSet(new ExcelDataSetConfiguration() { FilterSheet = (tableReader, sheetIndex) => sheetIndex == 0 });
 
 						// Diccionario para agrupar filas por nombre y fecha
-						var asistenciasAgrupadas = new Dictionary<(string nombre, DateOnly fecha), List<DataRow>>();
+						var asistenciasAgrupadas = new Dictionary<(int, DateOnly), List<DateTime>>();
 
 						foreach (DataRow row in result.Tables[0].Rows)
 						{
@@ -401,21 +401,20 @@ namespace ERPSEI.Areas.Reportes.Pages
 							}
 
 							// Obtén los valores de las columnas específicas
-							string nombre = row[1]?.ToString();
+							int id = 0;
+							if (!int.TryParse(row[0]?.ToString(), out id)) { id = 0; };
 							string fechaHoraStr = row[2]?.ToString();
 
 							DateTime fechaHora;
 							if (TryParseDate(fechaHoraStr, out fechaHora))
 							{
-								DateOnly fecha = DateOnly.FromDateTime(fechaHora);
-								var key = (nombre, fecha);
-
+								DateOnly onlyFecha = DateOnly.FromDateTime(fechaHora);
+								var key = (id, onlyFecha);
 								if (!asistenciasAgrupadas.ContainsKey(key))
 								{
-									asistenciasAgrupadas[key] = new List<DataRow>();
+									asistenciasAgrupadas[key] = new List<DateTime>();
 								}
-
-								asistenciasAgrupadas[key].Add(row);
+								asistenciasAgrupadas[key].Add(fechaHora);
 							}
 						}
 
@@ -425,7 +424,7 @@ namespace ERPSEI.Areas.Reportes.Pages
 							// Procesar cada grupo de asistencias
 							foreach (var grupo in asistenciasAgrupadas)
 							{
-								string vmsg = await CreateAsistenciaFromExcelRow(grupo.Value);
+								string vmsg = await CreateAsistenciaFromExcelRow(grupo);
 
 								// Si hubo errores, detenemos el proceso
 								if (!string.IsNullOrEmpty(vmsg))
@@ -490,7 +489,6 @@ namespace ERPSEI.Areas.Reportes.Pages
 			return false;
 		}
 
-
 		private static readonly Dictionary<DayOfWeek, string> DiasEnEspanol = new()
 			{
 				{ DayOfWeek.Sunday, "Domingo" },
@@ -501,18 +499,11 @@ namespace ERPSEI.Areas.Reportes.Pages
 				{ DayOfWeek.Friday, "Viernes" },
 				{ DayOfWeek.Saturday, "Sábado" }
 			};
-		private async Task<string> CreateAsistenciaFromExcelRow(List<DataRow> rows)
+		private async Task<string> CreateAsistenciaFromExcelRow(KeyValuePair<(int, DateOnly), List<DateTime>> row)
 		{
-			if (rows == null || rows.Count == 0)
-			{
-				return stringLocalizer["ProvidedProcessing"];
-			}
 
 			// Obtener el nombre del empleado de la primera fila
-			//string nombre = rows[0][1]?.ToString()?.Trim() ?? string.Empty;
-			//Empleado? empleado = await empleadoManager.GetByNameAsync(nombre);
-			int idEmpleado = 0;
-			int.TryParse(rows[0][0]?.ToString()?.Trim(), out idEmpleado);
+			int idEmpleado = row.Key.Item1;
 			Empleado? empleado = await empleadoManager.GetByIdAsync(idEmpleado);
 
 			if (empleado == null)
@@ -524,18 +515,15 @@ namespace ERPSEI.Areas.Reportes.Pages
 			DateTime? primeraFechaHora = null;
 			DateTime? ultimaFechaHora = null;
 
-			foreach (var row in rows)
+			foreach (var fechaHora in row.Value)
 			{
-				if (DateTime.TryParse(row[2]?.ToString()?.Trim(), out DateTime fechaHora))
+				if (primeraFechaHora == null || fechaHora < primeraFechaHora)
 				{
-					if (primeraFechaHora == null || fechaHora < primeraFechaHora)
-					{
-						primeraFechaHora = fechaHora;
-					}
-					if (ultimaFechaHora == null || fechaHora > ultimaFechaHora)
-					{
-						ultimaFechaHora = fechaHora;
-					}
+					primeraFechaHora = fechaHora;
+				}
+				if (ultimaFechaHora == null || fechaHora > ultimaFechaHora)
+				{
+					ultimaFechaHora = fechaHora;
 				}
 			}
 
@@ -598,20 +586,40 @@ namespace ERPSEI.Areas.Reportes.Pages
 				}
 			}
 
-			// Crear la asistencia
-			Asistencia asistencia = new Asistencia()
-			{
-				EmpleadoId = empleado.Id,
-				Fecha = fechaOnly,
-				Dia = DiasEnEspanol[fechaOnly.DayOfWeek],  // Aquí se asigna el día en español
-				Entrada = horaEntrada,
-				ResultadoE = resultadoEntrada,
-				Salida = horaSalida,
-				ResultadoS = resultadoSalida,
-			};
+			DateTime ds = new(primeraFechaHora.Value.Year,primeraFechaHora.Value.Month, primeraFechaHora.Value.Day);
+			List<Asistencia> asistenciasEmpleado = await asistenciaManager.GetAllAsync(empleado.NombreCompleto, ds);
+			Asistencia? asistenciaExistente = asistenciasEmpleado.Where(a => a.Entrada == TimeSpan.Parse("00:00:00") && a.Salida == TimeSpan.Parse("00:00:00")).FirstOrDefault();
 
-			// Guardar la asistencia
-			await asistenciaManager.CreateAsync(asistencia);
+			if (asistenciaExistente != null)
+			{
+				//Actualiza la asistencia si ya existe en la fecha dada.
+
+				asistenciaExistente.Fecha = fechaOnly;
+				asistenciaExistente.Dia = DiasEnEspanol[fechaOnly.DayOfWeek];
+				asistenciaExistente.Entrada = horaEntrada;
+				asistenciaExistente.ResultadoE = resultadoEntrada;
+				asistenciaExistente.Salida = horaSalida;
+				asistenciaExistente.ResultadoS = resultadoSalida;
+
+				await asistenciaManager.UpdateAsync(asistenciaExistente);
+			}
+			else
+			{
+				// Crear la asistencia si no existe
+				Asistencia asistencia = new Asistencia()
+				{
+					EmpleadoId = empleado.Id,
+					Fecha = fechaOnly,
+					Dia = DiasEnEspanol[fechaOnly.DayOfWeek],  // Aquí se asigna el día en español
+					Entrada = horaEntrada,
+					ResultadoE = resultadoEntrada,
+					Salida = horaSalida,
+					ResultadoS = resultadoSalida,
+				};
+
+				// Guardar la asistencia
+				await asistenciaManager.CreateAsync(asistencia);
+			}
 
 			return string.Empty;
 		}
