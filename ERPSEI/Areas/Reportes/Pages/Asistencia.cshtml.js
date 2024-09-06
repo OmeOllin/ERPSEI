@@ -119,7 +119,6 @@ $(document).ready(function () {
                 console.log('Datos recibidos:', resp.datos);
 
                 let jsonData = JSON.parse(resp.datos);
-                
 
                 let tableHtml = '<table class="table table-striped">';
                 tableHtml += '<thead><tr><th>Nombre</th><th>Retardos</th><th>Omisión/Falta</th><th>Acumulado Ret</th><th>Total Faltas</th></tr></thead>';
@@ -140,6 +139,14 @@ $(document).ready(function () {
                 $('#jtableContainer').html(tableHtml);
 
                 $('#dlgAsistenciaModal').modal('show');
+
+                // Filtro de búsqueda por nombre en tiempo real
+                $('#searchByName').on('input', function () {
+                    let nameFilter = $(this).val().toLowerCase();
+                    $('#jtableContainer tbody tr').filter(function () {
+                        $(this).toggle($(this).find('td:first').text().toLowerCase().includes(nameFilter));
+                    });
+                });
             }, function (error) {
                 showError("Error", error);
             },
@@ -149,22 +156,19 @@ $(document).ready(function () {
 
     // Mueve el evento del botón de exportación fuera del AJAX
     $('#btnExportExcel').off('click').on('click', function () {
-        // Asumiendo que jsonData ya está definido en el ámbito general
         var jsonData = $('#jtableContainer').find('tr').map(function () {
             return {
                 nombre: $(this).find('td').eq(0).text(),
-                retardos: $(this).find('td').eq(1).text(),
-                omisionesFaltas: $(this).find('td').eq(2).text(),
-                acumuladoRet: $(this).find('td').eq(3).text(),
-                totalFaltas: $(this).find('td').eq(4).text()
+                retardos: parseInt($(this).find('td').eq(1).text(), 10),
+                omisionesFaltas: parseInt($(this).find('td').eq(2).text(), 10),
+                acumuladoRet: parseInt($(this).find('td').eq(3).text(), 10),
+                totalFaltas: parseInt($(this).find('td').eq(4).text(), 10)
             };
         }).get();
 
-        // Crear un nuevo workbook y worksheet
         var workbook = new ExcelJS.Workbook();
         var worksheet = workbook.addWorksheet('Asistencias');
 
-        // Establecer las columnas
         worksheet.columns = [
             { header: 'Nombre', key: 'nombre', width: 30 },
             { header: 'Retardos', key: 'retardos', width: 15 },
@@ -173,7 +177,6 @@ $(document).ready(function () {
             { header: 'Total Faltas', key: 'totalFaltas', width: 20 }
         ];
 
-        // Establecer estilos para el encabezado
         worksheet.getRow(1).eachCell(function (cell) {
             cell.font = { bold: true };
             cell.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -184,37 +187,34 @@ $(document).ready(function () {
             };
         });
 
-        // Agregar los datos
         jsonData.forEach(function (item) {
-            if (item.nombre && item.retardos && item.omisionesFaltas && item.acumuladoRet && item.totalFaltas) {
+            // Eliminar la fila si todos los valores numéricos son NaN
+            if (!isNaN(item.retardos) && !isNaN(item.omisionesFaltas) && !isNaN(item.acumuladoRet) && !isNaN(item.totalFaltas)) {
                 worksheet.addRow({
                     nombre: item.nombre,
-                    retardos: parseInt(item.retardos, 10),
-                    omisionesFaltas: parseInt(item.omisionesFaltas, 10),
-                    acumuladoRet: parseInt(item.acumuladoRet, 10),
-                    totalFaltas: parseInt(item.totalFaltas, 10)
+                    retardos: item.retardos,
+                    omisionesFaltas: item.omisionesFaltas,
+                    acumuladoRet: item.acumuladoRet,
+                    totalFaltas: item.totalFaltas
                 });
             }
         });
 
-
-        // Establecer alineación de datos
-        worksheet.eachRow({ includeEmpty: false }, function (row, rowNumber) {
-            row.eachCell({ includeEmpty: false }, function (cell, colNumber) {
+        worksheet.eachRow({ includeEmpty: false }, function (row) {
+            row.eachCell({ includeEmpty: false }, function (cell) {
                 cell.alignment = { vertical: 'middle', horizontal: 'center' };
             });
         });
 
-        // Obtener la fecha actual en formato YYYY-MM-DD
         var currentDate = new Date();
         var formattedDate = currentDate.toISOString().split('T')[0];
 
-        // Exportar el archivo Excel
         workbook.xlsx.writeBuffer().then(function (buffer) {
             saveAs(new Blob([buffer], { type: 'application/octet-stream' }), `Asistencias_${formattedDate}.xlsx`);
         });
     });
 });
+
 
 function initTable() {
     table.bootstrapTable('destroy').bootstrapTable({
