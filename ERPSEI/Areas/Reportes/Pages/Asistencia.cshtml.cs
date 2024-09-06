@@ -146,8 +146,8 @@ namespace ERPSEI.Areas.Reportes.Pages
 							nombre = g.Key,
 							retardos = g.Count(a => a.ResultadoE == "RETARDO"),
 							omisionesFaltas = g.Count(a => a.ResultadoE == "OMISIÓN/FALTA"),
-							acumuladoRet = g.Count(a => a.ResultadoE == "RETARDO"),
-							totalFaltas = g.Count(a => a.ResultadoE == "OMISIÓN/FALTA") + (g.Count(a => a.ResultadoE == "RETARDO") / 2)
+							acumuladoRet =(int)(g.Count(a => a.ResultadoE == "RETARDO") / 2),
+							totalFaltas = g.Count(a => a.ResultadoE == "OMISIÓN/FALTA") + ((int)(g.Count(a => a.ResultadoE == "RETARDO") / 2))
 						}))
 						.ToList();
 
