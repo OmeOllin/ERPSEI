@@ -1,22 +1,26 @@
-﻿using System.Xml.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 
 namespace ERPSEI.Data.Entities.SAT.cfdiv40
 {
-	[System.SerializableAttribute()]
-	[System.Diagnostics.DebuggerStepThroughAttribute()]
-	[System.ComponentModel.DesignerCategoryAttribute("code")]
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.sat.gob.mx/cfd/4")]
-	[System.Xml.Serialization.XmlRootAttribute(Namespace = "http://www.sat.gob.mx/cfd/4", IsNullable = false)]
+	[Serializable()]
+	[System.Diagnostics.DebuggerStepThrough()]
+	[System.ComponentModel.DesignerCategory("code")]
+	[XmlType(AnonymousType = true, Namespace = "http://www.sat.gob.mx/cfd/4")]
+	[XmlRoot(Namespace = "http://www.sat.gob.mx/cfd/4", IsNullable = false)]
 	public partial class Comprobante
 	{
-		[System.Xml.Serialization.XmlIgnore]
+		[XmlIgnore]
 		public int Id { get; set; }
+
+		[XmlIgnore]
+		public string? UUID { get; set; }
 
 		public ComprobanteInformacionGlobal? InformacionGlobal{ get; set; }
 
 		
-		[System.Xml.Serialization.XmlElementAttribute("CfdiRelacionados")]
+		[XmlElement("CfdiRelacionados")]
 		public ComprobanteCfdiRelacionados[]? CfdiRelacionados { get; set; }
 
 		
@@ -26,104 +30,108 @@ namespace ERPSEI.Data.Entities.SAT.cfdiv40
 		public ComprobanteReceptor? Receptor { get; set; }
 
 		
-		[System.Xml.Serialization.XmlArrayItemAttribute("Concepto", IsNullable = false)]
+		[XmlArrayItem("Concepto", IsNullable = false)]
 		public ComprobanteConcepto[]? Conceptos { get; set; }
 
 		
 		public ComprobanteImpuestos? Impuestos { get; set; }
 
 		
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[XmlAttribute()]
 		public string Version { get; set; } = "4.0";
 
 		
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[XmlAttribute()]
 		public string? Serie { get; set; }
 
 		
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[XmlAttribute()]
 		public string? Folio { get; set; }
 
 
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[XmlAttribute()]
 		public string? Fecha { get; set; }
 
 		
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[XmlAttribute()]
 		public string? Sello { get; set; }
 
 		
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[XmlAttribute()]
 		public string? FormaPago { get; set; }
 
 		
-		[System.Xml.Serialization.XmlIgnoreAttribute()]
+		[XmlIgnore()]
 		public bool FormaPagoSpecified { get; set; }
 
 		
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[XmlAttribute()]
 		public string? NoCertificado { get; set; }
 
 		
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[XmlAttribute()]
 		public string? Certificado {  get; set; }
 
 		
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[XmlAttribute()]
 		public string? CondicionesDePago { get; set; }
 
 		
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[XmlAttribute()]
 		public decimal SubTotal { get; set; }
 
 		
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[XmlAttribute()]
 		public decimal Descuento { get; set; }
 
 		
-		[System.Xml.Serialization.XmlIgnoreAttribute()]
+		[XmlIgnore()]
 		public bool DescuentoSpecified { get; set; }
 
 		
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[XmlAttribute()]
 		public string? Moneda { get; set; }
 
 		
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[XmlAttribute()]
 		public decimal TipoCambio { get; set; }
 
 		
-		[System.Xml.Serialization.XmlIgnoreAttribute()]
+		[XmlIgnore()]
 		public bool TipoCambioSpecified { get; set; }
 
 		
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[XmlAttribute()]
 		public decimal Total { get; set; }
 
 		
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[XmlAttribute()]
 		public string? TipoDeComprobante { get; set; }
 
 		
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[XmlAttribute()]
 		public string? Exportacion { get; set; }
 
 		
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[XmlAttribute()]
 		public string? MetodoPago { get; set; }
 
 		
-		[System.Xml.Serialization.XmlIgnoreAttribute()]
+		[XmlIgnore()]
 		public bool MetodoPagoSpecified { get; set; }
 
 		
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[XmlAttribute()]
 		public string? LugarExpedicion { get; set; }
 
+		[NotMapped]
 		[XmlAttribute("schemaLocation", Namespace = XmlSchema.InstanceNamespace)]
 		public string xsiSchemaLocation = "http://www.sat.gob.mx/sitio_internet/cfd/4/cfdv40.xsd";
 		
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[XmlAttribute()]
 		public string? Confirmacion { get; set; }
+
+		[XmlIgnore]
+		public bool? Conciliado { get; set; }
 	}
 }
