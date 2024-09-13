@@ -12,10 +12,6 @@ using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Net.Mime;
-using ERPSEI.Pages.Shared;
-using ERPSEI.Data.Entities.Reportes;
-using ERPSEI.Data.Managers.Reportes;
-using ERPSEI.Resources;
 using System.Globalization;
 public static class SessionExtensions
 {

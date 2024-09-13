@@ -15,6 +15,5 @@ namespace ERPSEI.Data.Entities.Reportes
 		public string? ResultadoE { get; set; }
 		public TimeSpan? Salida { get; set; }
 		public string? ResultadoS { get; set; }
-
 	}
 }
