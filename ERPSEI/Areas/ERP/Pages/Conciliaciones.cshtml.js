@@ -246,14 +246,14 @@ function initConciliacionDialog(action, row) {
     // Configuración según la acción
     switch (action) {
         case NUEVO:
-            dlgTitle.innerHTML = "Nuevo/Editar/Consultar registro";
+            dlgTitle.innerHTML = "Nuevo registro";
             descripcionField.removeAttribute("disabled");
             clienteField.removeAttribute("disabled");
             totalField.removeAttribute("disabled");
             btnGuardar.removeAttribute("disabled");
             break;
         case EDITAR:
-            dlgTitle.innerHTML = "Nuevo/Editar/Consultar registro";
+            dlgTitle.innerHTML = "Editar registro";
             descripcionField.removeAttribute("disabled");
             clienteField.removeAttribute("disabled");
             totalField.removeAttribute("disabled");

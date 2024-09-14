@@ -9,10 +9,13 @@ namespace ERPSEI.Data.Entities.Conciliaciones
         public int Id { get; set; }
         public TimeSpan? Fecha { get; set; }
         public string? Descripcion { get; set; }
-        public string? Cliente { get; set; }
         public decimal? Total { get; set; }
-        public string? UsuarioCreador { get; set; }
-        public string? UltimoUsuarioModificador { get; set; }
-
+        public int BancoId { get; set; }
+        public int ClienteId { get; set; }
+        public int EmpresaId { get; set; }
+        public int UsuarioCreadorId { get; set; }
+        public int UsuarioModificadorId { get; set; }
+        public string? DetallesConciliacion { get; set; }
+        public bool Deshabilitado { get; set; }
     }
 }

@@ -1,0 +1,13 @@
+﻿using System.ComponentModel.DataAnnotations.Schema;
+namespace ERPSEI.Data.Entities.Conciliaciones
+{
+    public class MovimientoBancario
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int Id { get; set; }
+        public TimeSpan? Fecha { get; set; }
+        public string? Descripcion { get; set; }
+        public decimal? Importe { get; set; }
+        public decimal? Conciliado { get; set; }
+    }
+}

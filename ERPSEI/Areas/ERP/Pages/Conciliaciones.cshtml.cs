@@ -1,5 +1,5 @@
-using ERPSEI.Data.Entities.Empleados;
-using ERPSEI.Data.Entities.Reportes;
+using ERPSEI.Data.Entities.Conciliaciones;
+using ERPSEI.Resources;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
@@ -11,42 +11,46 @@ namespace ERPSEI.Areas.ERP.Pages
         public class InputFiltroModel
         {
             [Display(Name = "Id")]
-            public int Id { get; set; }
+            [StringLength(10, ErrorMessage = "FieldLength", MinimumLength = 1)]
+            [RegularExpression(RegularExpressions.NumericNoRestriction, ErrorMessage = "PersonName")]
+            public string Id { get; set; } = string.Empty;
 
-            [DataType(DataType.Date)]
-            [Display(Name = "Fecha")]
-            public TimeSpan? Fecha { get; set; }
-
-            [DataType(DataType.Text)]
             [Display(Name = "Cliente")]
-            public string? Cliente { get; set; }
+            [StringLength(50, ErrorMessage = "FieldLength", MinimumLength = 2)]
+            [RegularExpression(RegularExpressions.AlphanumSpaceCommaDotParenthesisAmpersandMiddleDash, ErrorMessage = "PersonName")]
+            public string Cliente { get; set; } = string.Empty;
 
-            [DataType(DataType.Text)]
-            [Display(Name = "Usuario que creó")]
-            public string? UsuarioCreador { get; set; }
+            [Display(Name = "UsuarioCreoField")]
+            [StringLength(50, ErrorMessage = "FieldLength", MinimumLength = 3)]
+            [RegularExpression(RegularExpressions.AlphanumNoSpace, ErrorMessage = "PersonName")]
+            public string UsuarioCreador { get; set; } = string.Empty;
 
-            [DataType(DataType.Text)]
-            [Display(Name = "Usuario que modificó")]
-            public string? UsuarioModificador { get; set; }
+            [Display(Name = "UsuarioModificadorField")]
+            [StringLength(50, ErrorMessage = "FieldLength", MinimumLength = 3)]
+            [RegularExpression(RegularExpressions.AlphanumNoSpace, ErrorMessage = "PersonName")]
+            public string UsuarioModificador { get; set; } = string.Empty;
 
-            [DataType(DataType.Date)]
-            [Display(Name = "Fecha Elaboracion (Inicio)")]
-            public TimeSpan? FechaElaboracionInicio { get; set; }
+            [Display(Name = "FechaElaboracionInicioField)")]
+            [Required(ErrorMessage = "Required")]
+            [DataType(DataType.DateTime)]
+            public DateTime? FechaElaboracionInicio { get; set; }
 
-            [DataType(DataType.Date)]
-            [Display(Name = "Fecha Elaboracion (Fin)")]
-            public TimeSpan? FechaElaboracionFin { get; set; }
+            [Display(Name = "FechaElaboracionFinField")]
+            [Required(ErrorMessage = "Required")]
+            [DataType(DataType.DateTime)]
+            public DateTime? FechaElaboracionFin { get; set; }
         }
 
         [BindProperty]
         public InputFiltroModel? InputFiltro { get; set; }
 
         [BindProperty]
-        public Asistencia ListaConciliaciones { get; set; }
+        public Conciliacion? ConciliacionesList { get; set; }
 
         public void OnGet()
         {
         }
+
         public IActionResult OnPost()
         {
             // Manejar la lógica de los filtros cuando se hace la búsqueda.

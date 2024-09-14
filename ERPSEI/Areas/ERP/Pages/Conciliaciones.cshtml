@@ -1,8 +1,8 @@
 ﻿@page "{handler?}"
-@model ERPSEI.Areas.ERP.Pages.ConciliacionesModel
 @using Microsoft.AspNetCore.Localization;
 @using Microsoft.AspNetCore.Mvc.Localization;
-@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer;
+@model ERPSEI.Areas.ERP.Pages.ConciliacionesModel;
+@inject IViewLocalizer Localizer;
 @{
     ViewData["Title"] = Localizer["Title"];
 
@@ -44,14 +44,14 @@
                         </div>
                         <div class="col-sm-6 col-md-6 col-lg-3">
                             <div class="form-floating mb-3">
-                                <input id="inpFiltroUsuarioCreo" type="text" asp-for="InputFiltro.UsuarioCreador" class="form-control" placeholder="@Localizer["UsuarioCreoField"]" />
-                                <label for="inpFiltroUsuarioCreo" asp-for="InputFiltro.UsuarioCreador" class="form-label"></label>
+                                <input id="inpFiltroUsuarioCreador" type="text" asp-for="InputFiltro.UsuarioCreador" class="form-control" placeholder="@Localizer["UsuarioCreadorField"]" />
+                                <label for="inpFiltroUsuarioCreador" asp-for="InputFiltro.UsuarioCreador" class="form-label"></label>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-6 col-lg-3">
                             <div class="form-floating mb-3">
-                                <input id="inpFiltroUsuarioModifico" type="text" asp-for="InputFiltro.UsuarioModificador" class="form-control" placeholder="@Localizer["UsuarioModificoField"]" />
-                                <label for="inpFiltroUsuarioModifico" asp-for="InputFiltro.UsuarioModificador" class="form-label"></label>
+                                <input id="inpFiltroUsuarioModificador" type="text" asp-for="InputFiltro.UsuarioModificador" class="form-control" placeholder="@Localizer["UsuarioModificadorField"]" />
+                                <label for="inpFiltroUsuarioModificador" asp-for="InputFiltro.UsuarioModificador" class="form-label"></label>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-6 col-lg-3">
@@ -101,7 +101,7 @@
        data-show-columns="true"
        data-show-columns-toggle-all="true"
        data-detail-view="true"
-       data-show-export="false"
+       data-show-export="true"
        data-click-to-select="true"
        data-detail-formatter="detailFormatter"
        data-minimum-count-columns="2"
@@ -113,7 +113,7 @@
        data-side-pagination="client"
        data-response-handler="responseHandler"
        data-buttons-class="primary"
-       data-url="/ERP/Conciliaciones/ConciliacionesList"> <!--Verificar esta linea de codigo-->
+       data-url="/ERP/Conciliaciones/ConciliacionesList">
     <thead>
         <tr align="center" valign="middle" class="bg-primary bg-opacity-10">
         </tr>
@@ -121,7 +121,7 @@
 </table>
 
 <!-- --------------------------- -->
-<!-- Sección Nuevo/Editar/Ver Registro -->
+<!-- Sección Nuevo/Editar/Ver Registro (Agregar)-->
 <div id="dlgConciliacion" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -136,16 +136,56 @@
                         <div class="row">
                             <div class="col-3">
                                 <div class="form-floating mb-3">
-                                    <input id="inpConciliacionId" asp-for="InputFiltro.Id" type="text" class="form-control" placeholder="@Localizer["IdPlaceholder"]" />
-                                    <label asp-for="InputFiltro.Id"></label>
+                                    <input id="inpConciliacionId" asp-for="ConciliacionesList.Id" type="text" class="form-control" placeholder="@Localizer["IdPlaceholder"]" />
+                                    <label asp-for="ConciliacionesList.Id"></label>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-12">
                                 <div class="form-floating mb-3">
-                                    <input id="inpConciliacionFecha" asp-for="InputFiltro.Fecha" type="text" class="form-control" placeholder="@Localizer["ClientePlaceholder"]" />
-                                    <label asp-for="InputFiltro.Cliente"></label>
+                                    <input id="inpConciliacionFecha" asp-for="ConciliacionesList.Fecha" type="date" class="form-control" placeholder="@Localizer["FechaPlaceholder"]" />
+                                    <label asp-for="ConciliacionesList.Fecha"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <input id="inpConciliacionDescripcion" asp-for="ConciliacionesList.Descripcion" type="text" class="form-control" placeholder="@Localizer["DescripcionPlaceholder"]" />
+                                    <label asp-for="ConciliacionesList.Descripcion"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <input id="inpConciliacionCliente" asp-for="ConciliacionesList.ClienteId" type="text" class="form-control" placeholder="@Localizer["ClientePlaceholder"]" />
+                                    <label asp-for="ConciliacionesList.ClienteId"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <input id="inpConciliacionTotal" asp-for="ConciliacionesList.Total" type="text" class="form-control" placeholder="@Localizer["TotalPlaceholder"]" />
+                                    <label asp-for="ConciliacionesList.Total"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <input id="inpConciliacionUsuarioCreadorId" asp-for="ConciliacionesList.UsuarioCreadorId" type="text" class="form-control" placeholder="@Localizer["UsuarioCreadorIdPlaceholder"]" />
+                                    <label asp-for="ConciliacionesList.UsuarioCreadorId"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <input id="inpConciliacionUsuarioModificadorId" asp-for="ConciliacionesList.UsuarioModificadorId" type="text" class="form-control" placeholder="@Localizer["UsuarioModificadorIdPlaceholder"]" />
+                                    <label asp-for="ConciliacionesList.UsuarioModificadorId"></label>
                                 </div>
                             </div>
                         </div>
@@ -186,18 +226,14 @@
         var cultureName = "@cultureName";
         var btnImportarText = '@Localizer["ImportButtonText"]';
         var btnImportarTitle = '@Localizer["ImportButtonTitle"]';
-        var btnInvitarTitle = '@Localizer["InviteButtonTitle"]';
         var btnVerTitle = '@Localizer["SeeButtonTitle"]';
         var btnEditarTitle = '@Localizer["EditButtonTitle"]';
-        var btnEliminarTitle = '@Localizer["DeleteButton"]';
         var dlgEditarTitle = '@Localizer["EditDialogTitle"]';
         var dlgVerTitle = '@Localizer["SeeDialogTitle"]';
         var dlgNuevoTitle = '@Localizer["NewDialogTitle"]';
-        var dlgDeleteTitle = '@Localizer["DeleteEmpleadoDialogTitle"]';
-        var dlgDeleteQuestion = '@Localizer["DeleteEmpleadoDialogQuestion"]';
-        var dlgDeleteTitle = '@Localizer["DeletePositionDialogTitle"]';
-        var dlgDeleteQuestion = '@Localizer["DeletePositionDialogQuestion"]';
-        
+        var dlgDeleteTitle = '@Localizer["DeleteDialogTitle"]';
+        var dlgDeleteQuestion = '@Localizer["DeleteDialogQuestion"]';
+
         /*Tabla de resultados*/
         var colIdHeader = '@Localizer["colIdHeader"]';
         var colFechaHeader = '@Localizer["ColDateHeader"]';
