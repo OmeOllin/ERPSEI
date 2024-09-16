@@ -159,8 +159,14 @@
   <data name="DescripcionPlaceholder" xml:space="preserve">
     <value>Descripción</value>
   </data>
+  <data name="FechaElaboracionFinField" xml:space="preserve">
+    <value>Fecha Elaboración (Fin)</value>
+  </data>
   <data name="FechaElaboracionFinPlaceholder" xml:space="preserve">
     <value>Fecha Elaboración Fin</value>
+  </data>
+  <data name="FechaElaboracionInicioField" xml:space="preserve">
+    <value>Fecha Elaboración (Inicio)</value>
   </data>
   <data name="FechaElaboracionInicioPlaceholder" xml:space="preserve">
     <value>Fecha Elaboración Inicio</value>
@@ -189,8 +195,14 @@
   <data name="TotalPlaceholder" xml:space="preserve">
     <value>Total</value>
   </data>
+  <data name="UsuarioCreadorField" xml:space="preserve">
+    <value>Usuario que creó</value>
+  </data>
   <data name="UsuarioCreadorIdPlaceholder" xml:space="preserve">
     <value>Usuario Creador</value>
+  </data>
+  <data name="UsuarioModificadorField" xml:space="preserve">
+    <value>Usuario que modificó</value>
   </data>
   <data name="UsuarioModificadorIdPlaceholder" xml:space="preserve">
     <value>Usuario Modificador</value>

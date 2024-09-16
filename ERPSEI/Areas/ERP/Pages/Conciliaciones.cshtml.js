@@ -231,13 +231,20 @@ function onCerrarClick() {
 
 //Funcionalidad Diálogo Conciliación
 function initConciliacionDialog(action, row) {
+    // Obtener los campos del formulario
     let idField = document.getElementById("inpConciliacionId");
     let descripcionField = document.getElementById("inpConciliacionDescripcion");
-    let clienteField = document.getElementById("inpConciliacionCliente");
     let totalField = document.getElementById("inpConciliacionTotal");
+    let bancoField = document.getElementById("inpConciliacionBanco");
+    let clienteField = document.getElementById("inpConciliacionCliente");
+    let empresaField = document.getElementById("inpConciliacionEmpresa");
+    let fechaField = document.getElementById("inpConciliacionFecha");
+    let detallesField = document.getElementById("inpConciliacionDetalles");
     let btnGuardar = document.getElementById("dlgConciliacionBtnGuardar");
     let dlgTitle = document.getElementById("dlgConciliacionTitle");
     let summaryContainer = document.getElementById("saveValidationSummary");
+
+    // Limpiar los mensajes de validación
     summaryContainer.innerHTML = "";
 
     // Deshabilitar el campo de ID por defecto
@@ -246,38 +253,53 @@ function initConciliacionDialog(action, row) {
     // Configuración según la acción
     switch (action) {
         case NUEVO:
-            dlgTitle.innerHTML = "Nuevo registro";
+            dlgTitle.innerHTML = "Nueva conciliación";
             descripcionField.removeAttribute("disabled");
-            clienteField.removeAttribute("disabled");
             totalField.removeAttribute("disabled");
+            bancoField.removeAttribute("disabled");
+            clienteField.removeAttribute("disabled");
+            empresaField.removeAttribute("disabled");
+            fechaField.removeAttribute("disabled");
+            detallesField.removeAttribute("disabled");
             btnGuardar.removeAttribute("disabled");
             break;
         case EDITAR:
-            dlgTitle.innerHTML = "Editar registro";
+            dlgTitle.innerHTML = "Editar conciliación";
             descripcionField.removeAttribute("disabled");
-            clienteField.removeAttribute("disabled");
             totalField.removeAttribute("disabled");
+            bancoField.removeAttribute("disabled");
+            clienteField.removeAttribute("disabled");
+            empresaField.removeAttribute("disabled");
+            fechaField.removeAttribute("disabled");
+            detallesField.removeAttribute("disabled");
             btnGuardar.removeAttribute("disabled");
             break;
         default:
-            dlgTitle.innerHTML = "Nuevo/Editar/Consultar registro";
+            dlgTitle.innerHTML = "Consultar conciliación";
             descripcionField.setAttribute("disabled", true);
-            clienteField.setAttribute("disabled", true);
             totalField.setAttribute("disabled", true);
+            bancoField.setAttribute("disabled", true);
+            clienteField.setAttribute("disabled", true);
+            empresaField.setAttribute("disabled", true);
+            fechaField.setAttribute("disabled", true);
+            detallesField.setAttribute("disabled", true);
             btnGuardar.setAttribute("disabled", true);
             break;
     }
 
-    // Asignar valores a los campos del diálogo
+    // Asignar valores a los campos del diálogo usando los valores de la entidad Conciliacion
     idField.value = row.id || "";
     descripcionField.value = row.descripcion || "";
-    clienteField.value = row.cliente || "";
     totalField.value = row.total || "";
+    bancoField.value = row.bancoId || "";
+    clienteField.value = row.clienteId || "";
+    empresaField.value = row.empresaId || "";
+    fechaField.value = row.fecha ? row.fecha.toISOString().split('T')[0] : ""; // Si `Fecha` es una instancia de TimeSpan
+    detallesField.value = row.detallesConciliacion || "";
 
     // Mostrar el modal
     dlgConciliacionModal.toggle();
 }
-
 function onGuardarConciliacionClick() {
     // Ejecuta la validación del formulario con el id "theForm"
     $("#theForm").validate();
@@ -288,7 +310,13 @@ function onGuardarConciliacionClick() {
 
     let btnClose = document.getElementById("dlgConciliacionBtnCancelar");
     let idField = document.getElementById("inpConciliacionId");
-    let nombreField = document.getElementById("inpConciliacionNombre");
+    let descripcionField = document.getElementById("inpConciliacionDescripcion");
+    let totalField = document.getElementById("inpConciliacionTotal");
+    let bancoField = document.getElementById("inpConciliacionBanco");
+    let clienteField = document.getElementById("inpConciliacionCliente");
+    let empresaField = document.getElementById("inpConciliacionEmpresa");
+    let fechaField = document.getElementById("inpConciliacionFecha");
+    let detallesField = document.getElementById("inpConciliacionDetalles");
     let dlgTitle = document.getElementById("dlgConciliacionTitle");
     let summaryContainer = document.getElementById("saveValidationSummaryConciliacion");
     summaryContainer.innerHTML = "";
@@ -296,12 +324,18 @@ function onGuardarConciliacionClick() {
     // Parámetros que se enviarán en la solicitud
     let oParams = {
         id: idField.value == "Nuevo" ? 0 : idField.value,
-        nombre: nombreField.value
+        descripcion: descripcionField.value,
+        total: totalField.value,
+        bancoId: bancoField.value,
+        clienteId: clienteField.value,
+        empresaId: empresaField.value,
+        fecha: fechaField.value,
+        detallesConciliacion: detallesField.value
     };
 
     // Llamada AJAX para guardar los datos
     doAjax(
-        "/ERP/Conciliaciones/SaveConciliacion", // Cambia la ruta según sea necesario
+        "/ERP/Conciliaciones/SaveConciliacion",
         oParams,
         function (resp) {
             if (resp.tieneError) {
@@ -334,5 +368,3 @@ function onGuardarConciliacionClick() {
         postOptions
     );
 }
-
-

@@ -5,8 +5,8 @@ namespace ERPSEI.Data.Entities.Conciliaciones
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
-        public int ConciliacionId { get; set; }
-        public int ComprobanteId { get; set; }
-        public int MovimientoId { get; set; }
+        public int? ConciliacionId { get; set; }
+        public int? ComprobanteId { get; set; }
+        public int? MovimientoId { get; set; }
     }
 }
