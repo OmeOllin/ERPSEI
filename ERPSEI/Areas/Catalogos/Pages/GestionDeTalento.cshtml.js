@@ -636,7 +636,7 @@ function establecerDatosAdicionales(row, action) {
                         <div id="fileIcon${a.tipoArchivoId}" class="align-self-center col-1 ${iconClass} p-0 p-lg-2 p-xl-2"><i class='bi bi-file-image' style='font-size:25px'></i></div>
                         <div id="fileName${a.tipoArchivoId}" class="align-self-center col-10 ${nameClass} p-2" style="display:flex; color:dimgray">${nameHTML}</div>
                         <div class="align-self-center col-1">
-                            <input type="file" actualizar="${actualizar}" id="selector${a.tipoArchivoId}" sourceId="${a.id}" sourceName="${a.nombre}.${a.extension}" sourceLength="${a.fileSize}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                            <input type="file" actualizar="${actualizar}" id="selector${a.tipoArchivoId}" sourceId="${a.id}" safeL="${a.safeL}" sourceName="${a.nombre}.${a.extension}" sourceLength="${a.fileSize}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
                             <div class="dropdown">
                                 <button class="btn p-0 p-lg-2 p-xl-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="bi bi-three-dots-vertical success"></i>
@@ -682,9 +682,9 @@ function initializeDisableableButtons(isConsulta = false) {
 function onVerDocumentClick(button) {
     let inputName = button.getAttribute("inputName");
     let input = document.getElementById(inputName);
-    let oParams = {id: input.getAttribute("sourceId")}
+    let oParams = { safeL: input.getAttribute("safeL") }
 
-    window.open(`/FileViewer?id=${oParams.id}&module=empleados`, "_blank");
+    if (oParams.safeL.length >= 1) { window.open(`/FileViewer?safeL=${encodeURIComponent(oParams.safeL)}`, "_blank"); }
 }
 //Función para capturar el clic en el botón de edición, que dispara la apertura del selector de archivo.
 function onEditDocumentClick(button) {

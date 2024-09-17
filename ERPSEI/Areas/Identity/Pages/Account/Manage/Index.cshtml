@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Mvc.Localization
 @using ERPSEI.Data.Entities.Empleados;
 @using ERPSEI.Data.Managers;
+@using System.Web;
 @inject IViewLocalizer Localizer
 @inject IRCatalogoManager<Genero> GenerosManager;
 @inject IRCatalogoManager<EstadoCivil> EstadosCivilesManager;
@@ -230,7 +231,7 @@
                             <input type="hidden" name="FilesFromGet[@fd.FileId].FileId" value="@fd.FileId" />
                             <input type="hidden" name="FilesFromGet[@fd.FileId].TypeId" value="@fd.TypeId" />
                             <input type="hidden" name="FilesFromGet[@fd.FileId].FileSize" value="@fd.FileSize" />
-                            <input name="FilesFromGet[@fd.FileId].File" type="file" id="selector{@fd.TypeId}" sourceName="@fd.FileId" sourceLength="@fd.FileSize" tipoArchivoId="@fd.TypeId" containerName="container{@fd.TypeId}" fileIconName="fileIcon{@fd.TypeId}" fileNameName="fileName{@fd.TypeId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
+                            <input name="FilesFromGet[@fd.FileId].File" safeL="@fd.SafeL" type="file" id="selector{@fd.TypeId}" sourceName="@fd.FileId" sourceLength="@fd.FileSize" tipoArchivoId="@fd.TypeId" containerName="container{@fd.TypeId}" fileIconName="fileIcon{@fd.TypeId}" fileNameName="fileName{@fd.TypeId}" onchange="onDocumentSelectorChanged(this);" accept="image/png, image/jpeg, application/pdf" hidden />
                             <div class="dropdown">
                                 <button class="btn p-0 p-lg-2 p-xl-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="bi bi-three-dots-vertical success"></i>
@@ -238,7 +239,7 @@
                                 <ul class="dropdown-menu">
                                     @if(fd.FileSize >= 1)
                                     {
-                                        <li><a class='dropdown-item see disableable' asp-page="/FileViewer" asp-route-id="@fd.FileId" asp-route-module="perfil" target="_blank" inputName="selector{@fd.TypeId}"><i class='bi bi-search'></i> @Localizer["BtnVerTitle"]</a></li>
+                                        <li><a class='dropdown-item see disableable' onclick="onVerDocumentClick(this)" inputName="selector{@fd.TypeId}"><i class='bi bi-search'></i> @Localizer["BtnVerTitle"]</a></li>
                                     }
                                     <li><a class='dropdown-item edit' onclick='onEditDocumentClick(this);' inputName="selector{@fd.TypeId}"><i class='bi bi-pencil-fill'></i> @Localizer["BtnEditarTitle"]</a></li>
                                     <li><a class="dropdown-item disableable" inputName="selector{@fd.TypeId}" onclick="onDeleteClick(this);" sourceId="selector{@fd.TypeId}" sourceLength="@fd.FileSize"><i class="bi bi-x-lg"></i> @Localizer["BtnEliminarTitle"]</a></li>

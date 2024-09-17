@@ -29,6 +29,8 @@ using System.Xml.Serialization;
 using System.Xml.Xsl;
 using XSDToXML.Utils;
 using ERPSEI.Data.Managers.Usuarios;
+using Microsoft.AspNetCore.Identity;
+using System.Web;
 
 namespace ERPSEI.Areas.ERP.Pages
 {
@@ -331,9 +333,18 @@ namespace ERPSEI.Areas.ERP.Pages
 
 				List<string> listaAuth = GetListJsonAutorizaciones(p.Autorizaciones);
 
+				AppUser? usr = userManager.GetUserAsync(User).Result;
+				string safeL = string.Empty;
+				if (usr != null)
+				{
+					safeL = $"userId={usr.Id}&id={p.Id}&module=prefacturas";
+					safeL = encriptacionAES.PlainTextToBase64AES(safeL);
+				}
+
 				jsonPrefacturas.Add(
 					"{" +
 						$"\"id\": {p.Id}," +
+						$"\"safeL\": \"{safeL}\"," +
 						$"\"serie\": \"{p.Serie}\", " +
 						$"\"folio\": \"{p.Folio}\", " +
 						$"\"emisor\": \"{p.Emisor?.RazonSocial}\", " +

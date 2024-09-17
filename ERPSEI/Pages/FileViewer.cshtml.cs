@@ -2,15 +2,19 @@ using ERPSEI.Areas.Catalogos.Pages;
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.SAT;
+using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers.Empleados;
 using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Data.Managers.SAT;
+using ERPSEI.Data.Managers.Usuarios;
+using ERPSEI.Utils;
 using iText.Html2pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
 using System.Net.Mime;
+using System.Web;
 
 namespace ERPSEI.Pages
 {
@@ -19,7 +23,9 @@ namespace ERPSEI.Pages
 			IPrefacturaManager prefacturaManager,
             IArchivoEmpleadoManager userFileManager,
             IArchivoEmpresaManager archivoEmpresaManager,
-            IStringLocalizer<FileViewerModel> localizer
+            IStringLocalizer<FileViewerModel> localizer,
+			IEncriptacionAES encriptacionAES,
+			AppUserManager userManager
 	) : PageModel
     {
         public string htmlContainer { get; set; } = string.Empty;
@@ -35,16 +41,38 @@ namespace ERPSEI.Pages
             public FileToRender(){}
         }
 
-        public async Task<IActionResult> OnGet(string id, string module)
-        {
-            try
-            {
+		public async Task<IActionResult> OnGet(string safeL)
+		{
+			try
+			{
+				safeL = encriptacionAES.Base64AESToPlainText(safeL);
+				string[] urlParts = safeL.Split(['&', '='], StringSplitOptions.RemoveEmptyEntries);
+
+				if (urlParts.Length >= 6) {
+					string userId = urlParts[1];
+					AppUser? usr = await userManager.GetUserAsync(User);
+
+					if(usr != null && userId == usr.Id){ return await SearchFile(urlParts[3], urlParts[5]); }
+				}
+			}
+			catch (Exception)
+			{
+				return RedirectToPage("/404");
+			}
+
+			return RedirectToPage("/404");
+		}
+
+		private async Task<IActionResult> SearchFile(string id, string module)
+		{
+			try
+			{
 				if (id == null || module == null) { return RedirectToPage("/404"); }
 
 				FileToRender? ftr = null;
 				switch (module)
 				{
-					case "empleados":
+					case "gestiondetalento":
 					case "perfil":
 						ftr = GetArchivoEmpleadoB64(id);
 						break;
@@ -68,16 +96,16 @@ namespace ERPSEI.Pages
 				{
 					case "pdf":
 						htmlContainer = $"<iframe id=\"fileContainer\" style=\"position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;\"></iframe>";
-                        base64 = ftr.src;
-                        extension = ftr.extension;
-                        break;
+						base64 = ftr.src;
+						extension = ftr.extension;
+						break;
 					case "png":
 					case "jpg":
 					case "jpeg":
 						htmlContainer = $"<img id=\"fileContainer\" style=\"height:100%\" />";
-                        base64 = ftr.src;
-                        extension = ftr.extension;
-                        break;
+						base64 = ftr.src;
+						extension = ftr.extension;
+						break;
 					default:
 						//Show page file not viewable
 						htmlContainer = $"<div class=\"container\">" +
@@ -90,11 +118,11 @@ namespace ERPSEI.Pages
 
 				return Page();
 			}
-            catch (Exception)
-            {
+			catch (Exception)
+			{
 				return RedirectToPage("/404");
 			}
-        }
+		}
 
         public ActionResult OnGetDownloadFile(string id, string module)
         {

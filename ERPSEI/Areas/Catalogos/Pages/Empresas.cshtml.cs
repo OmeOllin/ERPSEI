@@ -1,8 +1,10 @@
 using ERPSEI.Data;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.SAT.Catalogos;
+using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empresas;
+using ERPSEI.Data.Managers.Usuarios;
 using ERPSEI.Pages.Shared;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
@@ -15,6 +17,7 @@ using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Net.Mime;
+using System.Web;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
@@ -31,7 +34,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			IStringLocalizer<EmpresasModel> _strLocalizer,
 			ILogger<EmpresasModel> _logger,
 			ApplicationDbContext _db,
-			IEncriptacionAES _encriptacionAES
+			IEncriptacionAES _encriptacionAES,
+			AppUserManager _userManager
 		) : ERPPageModel
 	{
 
@@ -381,9 +385,17 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						htmlContainer = $"<img id = '{id}' src = '{imgSrc}' style='max-height: 200px;'/>";
 					}
 
+					AppUser? usr = _userManager.GetUserAsync(User).Result;
+					string safeL = string.Empty;
+					if (usr != null) { 
+						safeL = $"userId={usr.Id}&id={a.Id}&module=empresas";
+						safeL = _encriptacionAES.PlainTextToBase64AES(safeL);
+					}
+
 					jsonArchivos.Add(
 						"{" +
 							$"\"id\": \"{a.Id}\"," +
+							$"\"safeL\": \"{safeL}\"," +
 							$"\"nombre\": \"{a.Nombre}\"," +
 							$"\"tipoArchivoId\": {a.TipoArchivoId}," +
 							$"\"extension\": \"{a.Extension}\"," +

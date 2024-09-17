@@ -598,7 +598,7 @@ function establecerDatosAdicionales(row, action) {
             iconClass = "document-icon-filled";
             nameClass = "document-name-filled";
             nameHTML = `<div class="overflowed-text">${a.nombre}</div>.<div>${a.extension}</div>`;
-            if (puedeTodo || puedeConsultar || puedeEditar || puedeEliminar) {
+            if (puedeTodo || puedeEditar) {
                 itemVerHTML = `<li><a class='dropdown-item see' onclick='onVerDocumentClick(this);' inputName="selector${a.tipoArchivoId}"><i class='bi bi-search'></i> ${btnVerTitle}</a></li>`;
             }
         }
@@ -639,7 +639,7 @@ function establecerDatosAdicionales(row, action) {
                     <div id="fileIcon${a.tipoArchivoId}" class="align-self-center col-1 ${iconClass} p-0 p-lg-2 p-xl-2"><i class='bi bi-file-image' style='font-size:25px'></i></div>
                     <div id="fileName${a.tipoArchivoId}" class="align-self-center col-10 ${nameClass} p-2" style="display:flex; color:dimgray">${nameHTML}</div>
                     <div class="align-self-center col-1">
-                        <input type="file" actualizar="${actualizar}" id="selector${a.tipoArchivoId}" sourceId="${a.id}" sourceName="${a.nombre}.${a.extension}" sourceLength="${a.fileSize}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this, '${allowedExtensions}');" accept="${mimeTypes}" hidden />
+                        <input type="file" actualizar="${actualizar}" id="selector${a.tipoArchivoId}" sourceId="${a.id}" safeL="${a.safeL}" sourceName="${a.nombre}.${a.extension}" sourceLength="${a.fileSize}" tipoArchivoId="${a.tipoArchivoId}" containerName="container${a.tipoArchivoId}" fileIconName="fileIcon${a.tipoArchivoId}" fileNameName="fileName${a.tipoArchivoId}" onchange="onDocumentSelectorChanged(this, '${allowedExtensions}');" accept="${mimeTypes}" hidden />
                         ${menuHTML}
                     </div>
                 </div>
@@ -676,9 +676,9 @@ function initializeDisableableButtons(isConsulta = false) {
 function onVerDocumentClick(button) {
     let inputName = button.getAttribute("inputName");
     let input = document.getElementById(inputName);
-    let oParams = {id: input.getAttribute("sourceId")}
+    let oParams = {safeL: input.getAttribute("safeL")}
 
-    window.open(`/FileViewer?id=${oParams.id}&module=empresas`, "_blank");
+    if (oParams.safeL.length >= 1) { window.open(`/FileViewer?safeL=${encodeURIComponent(oParams.safeL)}`, "_blank"); }
 }
 //Función para capturar el clic en el botón de edición, que dispara la apertura del selector de archivo.
 function onEditDocumentClick(button) {

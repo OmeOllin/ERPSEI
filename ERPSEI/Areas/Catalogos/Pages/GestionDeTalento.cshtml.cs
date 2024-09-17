@@ -7,6 +7,7 @@ using ERPSEI.Data.Managers.Usuarios;
 using ERPSEI.Email;
 using ERPSEI.Requests;
 using ERPSEI.Resources;
+using ERPSEI.Utils;
 using ExcelDataReader;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +20,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Net.Mime;
 using System.Text;
+using System.Web;
 
 namespace ERPSEI.Areas.Catalogos.Pages
 {
@@ -41,6 +43,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 		private readonly IStringLocalizer<GestionDeTalentoModel> _strLocalizer;
 		private readonly ILogger<GestionDeTalentoModel> _logger;
 		private readonly ApplicationDbContext _db;
+
+		private readonly IEncriptacionAES _encriptacionAES;
 
 		private readonly IEmailSender _emailSender;
 
@@ -252,7 +256,8 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			IStringLocalizer<GestionDeTalentoModel> stringLocalizer,
 			ILogger<GestionDeTalentoModel> logger,
 			ApplicationDbContext db,
-			IEmailSender emailSender
+			IEmailSender emailSender,
+			IEncriptacionAES encriptacionAES
 		)
 		{
 			_userStore = store;
@@ -271,6 +276,7 @@ namespace ERPSEI.Areas.Catalogos.Pages
 			_logger = logger;
 			_db = db;
 			_emailSender = emailSender;
+			_encriptacionAES = encriptacionAES;
 
 			InputFiltro = new FiltroModel();
 			InputEmpleado = new EmpleadoModel();
@@ -471,9 +477,18 @@ namespace ERPSEI.Areas.Catalogos.Pages
 						}
 					}
 
+					AppUser? usr = _userManager.GetUserAsync(User).Result;
+					string safeL = string.Empty;
+					if (usr != null)
+					{
+						safeL = $"userId={usr.Id}&id={a.Id}&module=gestiondetalento";
+						safeL = _encriptacionAES.PlainTextToBase64AES(safeL);
+					}
+
 					jsonArchivos.Add(
 						"{" +
 							$"\"id\": \"{a.Id}\"," +
+							$"\"safeL\": \"{safeL}\"," +
                             $"\"nombre\": \"{a.Nombre}\"," +
 							$"\"tipoArchivoId\": {a.TipoArchivoId}," +
 							$"\"extension\": \"{a.Extension}\"," +

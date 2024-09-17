@@ -7,6 +7,7 @@ using ERPSEI.Data.Managers.Empleados;
 using ERPSEI.Data.Managers.Usuarios;
 using ERPSEI.Email;
 using ERPSEI.Resources;
+using ERPSEI.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using System.Web;
 
 namespace ERPSEI.Areas.Identity.Pages.Account.Manage
 {
@@ -27,6 +29,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
         private readonly IStringLocalizer<IndexModel> _localizer;
         private readonly IEmailSender _emailSender;
         private readonly ApplicationDbContext _db;
+        private readonly IEncriptacionAES _encriptacionAES;
 
         private readonly long maxFileSizeInBytes = 5242880; //5mb = (5 * 1024) * 1024;
         private readonly long oneMegabyteSizeInBytes = 1048576; // 1mb = (1 * 1024) * 1024
@@ -39,6 +42,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             IArchivoEmpleadoManager userFileManager,
             IStringLocalizer<IndexModel> localizer,
             IEmailSender emailSender,
+            IEncriptacionAES encriptacionAES,
             ApplicationDbContext db)
         {
             _contactoEmergenciaManager = contactoEmergenciaManager;
@@ -49,6 +53,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             _localizer = localizer;
             _emailSender = emailSender;
             _db = db;
+            _encriptacionAES = encriptacionAES;
         }
 
 
@@ -71,6 +76,7 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
             public string Name { get; set; }
             public string Extension { get; set; }
             public string FileId { get; set; }
+            public string SafeL { get; set; }
             public string Src { get; set; }
             public int TypeId { get; set; }
             public long FileSize { get; set; }
@@ -216,9 +222,17 @@ namespace ERPSEI.Areas.Identity.Pages.Account.Manage
                 //Si el usuario ya tiene archivos, se llena el arreglo de datos a partir de ellos.
                 foreach (SemiArchivoEmpleado file in userFiles)
                 {
-                    if(file.TipoArchivoId == (int)FileTypes.ImagenPerfil) { continue; }  
+                    if(file.TipoArchivoId == (int)FileTypes.ImagenPerfil) { continue; }
 
-                    FileFromGet fg = new FileFromGet() { FileId = file.Id, TypeId = file.TipoArchivoId ?? 0, Src = "", Name = file.Nombre, Extension = file.Extension, FileSize = file.FileSize };
+					AppUser? usr = _userManager.GetUserAsync(User).Result;
+					string safeL = string.Empty;
+					if (usr != null)
+					{
+						safeL = $"userId={usr.Id}&id={file.Id}&module=perfil";
+						safeL = _encriptacionAES.PlainTextToBase64AES(safeL);
+					}
+
+					FileFromGet fg = new() { FileId = file.Id, SafeL = safeL, TypeId = file.TipoArchivoId ?? 0, Src = "", Name = file.Nombre, Extension = file.Extension, FileSize = file.FileSize };
 
                     FilesFromGet.Add(fg);
                 }

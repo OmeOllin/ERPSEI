@@ -184,7 +184,7 @@ window.operateEvents = {
         dlgCFDIModal.toggle();
     },
     'click .pdf': function (e, value, row, index) {
-        onShowPDF(row.id);
+        onShowPDF(row.safeL);
     },
     'click .auth': function (e, value, row, index) {
         onAuthPrefactura(row.id);
@@ -431,8 +431,8 @@ function onStampPrefactura(idPrefactura) {
 }
 
 //Función para mostrar una prefactura como PDF
-function onShowPDF(idPrefactura) {
-    window.open(`/FileViewer?id=${idPrefactura}&module=prefacturas`, "_blank");
+function onShowPDF(safeL) {
+    if (safeL.length >= 1) { window.open(`/FileViewer?safeL=${encodeURIComponent(safeL)}`, "_blank"); }
 }
 ////////////////////////////////
 

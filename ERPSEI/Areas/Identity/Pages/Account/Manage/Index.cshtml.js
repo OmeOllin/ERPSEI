@@ -168,3 +168,11 @@ function onDeleteClick(button) {
 
     initializeDisableableButtons();
 }
+//Función para capturar el clic en el botón de ver, que dispara la visualización del archivo.
+function onVerDocumentClick(button) {
+    let inputName = button.getAttribute("inputName");
+    let input = document.getElementById(inputName);
+    let oParams = { safeL: input.getAttribute("safeL") }
+
+    if (oParams.safeL.length >= 1) { window.open(`/FileViewer?safeL=${encodeURIComponent(oParams.safeL)}`, "_blank"); }
+}
