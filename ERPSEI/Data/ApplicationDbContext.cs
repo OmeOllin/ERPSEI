@@ -1,4 +1,5 @@
-﻿using ERPSEI.Data.Entities.Empleados;
+﻿using ERPSEI.Data.Entities.Conciliaciones;
+using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.Reportes;
 using ERPSEI.Data.Entities.SAT;
@@ -93,6 +94,12 @@ namespace ERPSEI.Data
 		public DbSet<Horario> Horarios { get; set; }
 		public DbSet<HorarioDetalle> HorariosDetalles { get; set; }
 
+		//Conciliaciones
+		public DbSet<Conciliacion> Conciliaciones { get; set; }
+		public DbSet<ConciliacionDetalle> ConciliacionesDetalles { get; set; }
+		public DbSet<Banco> Bancos { get; set; }
+		public DbSet<MovimientoBancario> MovimientosBancarios { get; set; }
+
 		//Catálogos no administrables Usuarios
 		public DbSet<AccesoModulo> AccesosModulos { get; set; }
 		public DbSet<Modulo> Modulos { get; set; }
@@ -121,7 +128,10 @@ namespace ERPSEI.Data
 
 			//Asistencias
 			BuildAsistencias(modelBuilder);
-		}
+
+			//Conciliaciones
+            //BuildConciliaciones(modelBuilder);
+        }
 
 		private static void BuildAsistencias(ModelBuilder b) 
 		{
@@ -132,7 +142,20 @@ namespace ERPSEI.Data
 			b.Entity<Horario>().HasMany(h => h.HorarioDetalles).WithOne(hd => hd.Horario).OnDelete(DeleteBehavior.NoAction);
 		}
 
-		private static void BuildEmpresas(ModelBuilder b) 
+		private static void BuildConciliaciones(ModelBuilder b) 
+		{
+			/*b.Entity<Conciliacion>().HasOne(e => e.Banco).WithMany(a => a.Conciliaciones).OnDelete(DeleteBehavior.NoAction);
+            b.Entity<Conciliacion>().HasOne(e => e.AppUserC).WithMany(a => a.ConciliacionesCreadas).OnDelete(DeleteBehavior.NoAction);
+            b.Entity<Conciliacion>().HasOne(e => e.AppUserM).WithMany(a => a.ConciliacionesModificadas).OnDelete(DeleteBehavior.NoAction);
+            b.Entity<Conciliacion>().HasOne(e => e.Empresa).WithMany(a => a.Conciliaciones).OnDelete(DeleteBehavior.NoAction);
+            b.Entity<Conciliacion>().HasMany(e => e.DetallesConciliacion).WithOne(a => a.Conciliacion).OnDelete(DeleteBehavior.NoAction);*/
+            //b.Entity<Conciliacion>().HasOne(e => e.Cliente).WithMany(a => a.Conciliaciones).OnDelete(DeleteBehavior.NoAction);
+            //b.Entity<ConciliacionDetalle>().HasOne(e => e.Comprobante).WithOne(a => a.Conciliacion).OnDelete(DeleteBehavior.NoAction);
+            //b.Entity<ConciliacionDetalle>().HasOne(e => e.MovimientoBancario).WithOne(a => a.Conciliacion).OnDelete(DeleteBehavior.NoAction);
+
+        }
+
+        private static void BuildEmpresas(ModelBuilder b) 
 		{
 			b.Entity<Empresa>().HasOne(e => e.Perfil).WithMany(p => p.Empresas).OnDelete(DeleteBehavior.NoAction);
 			b.Entity<Empresa>().HasOne(e => e.Origen).WithMany(o => o.Empresas).OnDelete(DeleteBehavior.NoAction);

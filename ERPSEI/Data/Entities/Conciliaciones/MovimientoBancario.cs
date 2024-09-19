@@ -8,6 +8,7 @@ namespace ERPSEI.Data.Entities.Conciliaciones
         public TimeSpan? Fecha { get; set; }
         public string? Descripcion { get; set; }
         public decimal? Importe { get; set; }
-        public decimal? Conciliado { get; set; }
+        public bool Conciliado { get; set; }
+        //public Conciliacion? Conciliacion { get; set; }
     }
 }

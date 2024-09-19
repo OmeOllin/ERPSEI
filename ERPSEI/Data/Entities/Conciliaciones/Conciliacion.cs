@@ -1,4 +1,6 @@
 ﻿using ERPSEI.Data.Entities.Empleados;
+using ERPSEI.Data.Entities.Empresas;
+using ERPSEI.Data.Entities.Usuarios;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERPSEI.Data.Entities.Conciliaciones
@@ -11,11 +13,15 @@ namespace ERPSEI.Data.Entities.Conciliaciones
         public string? Descripcion { get; set; }
         public decimal? Total { get; set; }
         public int BancoId { get; set; }
+        public Banco? Banco { get; set; }
         public int ClienteId { get; set; }
         public int EmpresaId { get; set; }
+        public Empresa? Empresa { get; set; }
         public int UsuarioCreadorId { get; set; }
+        //public AppUser? AppUserC { get; set; }
         public int UsuarioModificadorId { get; set; }
-        public string? DetallesConciliacion { get; set; }
+        //public AppUser? AppUserM { get; set; }
+        //public ICollection<ConciliacionDetalle>? DetallesConciliacion { get; set; }
         public bool Deshabilitado { get; set; }
     }
 }

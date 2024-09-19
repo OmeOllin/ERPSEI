@@ -144,6 +144,9 @@
   <data name="CantidadField" xml:space="preserve">
     <value>Cantidad</value>
   </data>
+  <data name="ClienteField" xml:space="preserve">
+    <value>Cliente</value>
+  </data>
   <data name="CompanyName" xml:space="preserve">
     <value>El campo {0} solo permite letras, números, guión bajo, espacios, comas puntos y ampersand.</value>
   </data>
@@ -204,11 +207,20 @@
   <data name="FechaConstitucionField" xml:space="preserve">
     <value>Constitución</value>
   </data>
+  <data name="FechaElaboracionFinField" xml:space="preserve">
+    <value>Fecha Elaboración (Fin)</value>
+  </data>
+  <data name="FechaElaboracionInicioField" xml:space="preserve">
+    <value>Fecha Elaboración (Inicio)</value>
+  </data>
   <data name="FechaField" xml:space="preserve">
     <value>Fecha</value>
   </data>
   <data name="FechaFinField" xml:space="preserve">
     <value>Fecha (Fin)</value>
+  </data>
+  <data name="FechaFinModalDComprobantesField" xml:space="preserve">
+    <value>Fecha Final</value>
   </data>
   <data name="FechaIngresoField" xml:space="preserve">
     <value>Fecha Ingreso</value>
@@ -227,6 +239,9 @@
   </data>
   <data name="FechaInicioField" xml:space="preserve">
     <value>Fecha (Inicio)</value>
+  </data>
+  <data name="FechaInicioModalDComprobantesField" xml:space="preserve">
+    <value>Fecha Inicial</value>
   </data>
   <data name="FechaInicioOperacionField" xml:space="preserve">
     <value>Inicio de operación</value>
@@ -263,6 +278,9 @@
   </data>
   <data name="HorarioField" xml:space="preserve">
     <value>Horario</value>
+  </data>
+  <data name="IdField" xml:space="preserve">
+    <value>Id</value>
   </data>
   <data name="JefeField" xml:space="preserve">
     <value>Jefe</value>
@@ -401,6 +419,9 @@
   </data>
   <data name="UsuarioCreadorField" xml:space="preserve">
     <value>Usuario creador</value>
+  </data>
+  <data name="UsuarioModificadorField" xml:space="preserve">
+    <value>Usuario Modificador</value>
   </data>
   <data name="UsuarioTimbradorField" xml:space="preserve">
     <value>Usuario timbrador</value>

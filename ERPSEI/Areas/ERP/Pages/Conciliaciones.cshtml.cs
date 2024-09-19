@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
+using System.Net.Mime;
 
 namespace ERPSEI.Areas.ERP.Pages
 {
@@ -22,13 +23,13 @@ namespace ERPSEI.Areas.ERP.Pages
         public InputFiltroModel? InputFiltro { get; set; }
         public class InputFiltroModel
         {
-            [Display(Name = "Id")]
+            [Display(Name = "IdField")]
             [StringLength(10, ErrorMessage = "FieldLength", MinimumLength = 1)]
             [RegularExpression(RegularExpressions.NumericNoRestriction, ErrorMessage = "PersonName")]
             public int Id { get; set; }
 
             [DataType(DataType.Text)]
-            [Display(Name = "Cliente")]
+            [Display(Name = "ClienteField")]
             [StringLength(50, ErrorMessage = "FieldLength", MinimumLength = 3)]
             [RegularExpression(RegularExpressions.AlphanumSpaceCommaDotParenthesisAmpersandMiddleDash, ErrorMessage = "PersonName")]
             public string? Cliente { get; set; } = string.Empty;
@@ -57,6 +58,21 @@ namespace ERPSEI.Areas.ERP.Pages
         }
 
         [BindProperty]
+        public InputFiltroModelDComprobantes InputFiltroModalDComprobantes { get; set; }
+        public class InputFiltroModelDComprobantes
+        {
+            [Display(Name = "FechaInicioModalDComprobantesField")]
+            [Required(ErrorMessage = "Required")]
+            [DataType(DataType.Date)]
+            public DateTime? FechaInicioModalDComprobantes { get; set; } = null;
+
+            [Display(Name = "FechaFinModalDComprobantesField")]
+            [Required(ErrorMessage = "Required")]
+            [DataType(DataType.Date)]
+            public DateTime? FechaFinModalDComprobantes { get; set; } = null;
+        }
+
+            [BindProperty]
         public Conciliacion? ConciliacionesList { get; set; }
 
         public ConciliacionesModel(
@@ -78,39 +94,8 @@ namespace ERPSEI.Areas.ERP.Pages
             // Asegúrate de que ServerResponse esté bien definido y se adapte a tus necesidades
             ServerResponse resp = new(true, stringLocalizer["AsistenciaSavedUnsuccessfully"]);
 
-            // Crear una lista manualmente con registros de conciliaciones
-            var conciliaciones = new List<object>
-            {
-                new
-                {
-                    Id = 1,
-                    Fecha = DateTime.Now.AddDays(-1).ToString("yyyy-MM-ddTHH:mm:ss"),
-                    Descripcion = "Conciliación de prueba 1",
-                    Total = 1000.50,
-                    BancoId = 101,
-                    ClienteId = 202,
-                    EmpresaId = 303,
-                    UsuarioCreador = "usuario1",
-                    UsuarioModificador = "usuario2",
-                    DetallesConciliacion = "Detalles adicionales para la conciliación de prueba 1"
-                },
-                new
-                {
-                    Id = 2,
-                    Fecha = DateTime.Now.AddDays(-2).ToString("yyyy-MM-ddTHH:mm:ss"),
-                    Descripcion = "Conciliación de prueba 2",
-                    Total = 2000.75,
-                    BancoId = 104,
-                    ClienteId = 205,
-                    EmpresaId = 306,
-                    UsuarioCreador = "usuario3",
-                    UsuarioModificador = "usuario4",
-                    DetallesConciliacion = "Detalles adicionales para la conciliación de prueba 2"
-                }
-            };
-
             // Retorna los datos en formato JSON
-            return new JsonResult(new { data = conciliaciones });
+            return new JsonResult(resp);
         }
 
         public async Task<JsonResult> OnPostSaveConciliacion()
@@ -118,6 +103,7 @@ namespace ERPSEI.Areas.ERP.Pages
             ServerResponse resp = new(true, stringLocalizer["AsistenciaSavedUnsuccessfully"]);
             try
             {
+
                 // Implementa la lógica para guardar la conciliación
             }
             catch (Exception ex)
@@ -142,6 +128,19 @@ namespace ERPSEI.Areas.ERP.Pages
             }
 
             return new JsonResult(resp);
+        }
+        public ActionResult OnGetDownloadPlantilla()
+        {
+            return File("/templates/PlantillaAsistencia.xlsx", MediaTypeNames.Application.Octet, "PlantillaAsistencia.xlsx");
+
+            /*if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
+            {
+                return File("/templates/PlantillaAsistencia.xlsx", MediaTypeNames.Application.Octet, "PlantillaAsistencia.xlsx");
+            }
+            else
+            {
+                return new EmptyResult();
+            }*/
         }
     }
 }

@@ -144,6 +144,9 @@
   <data name="CantidadField" xml:space="preserve">
     <value>Quantity</value>
   </data>
+  <data name="ClienteField" xml:space="preserve">
+    <value>Customer</value>
+  </data>
   <data name="CompanyName" xml:space="preserve">
     <value>The {0} field only allows letters, numbers, underscores, spaces, commas, periods and ampersand.</value>
   </data>
@@ -204,11 +207,20 @@
   <data name="FechaConstitucionField" xml:space="preserve">
     <value>Constitution</value>
   </data>
+  <data name="FechaElaboracionFinField" xml:space="preserve">
+    <value>Preparation Date (End)</value>
+  </data>
+  <data name="FechaElaboracionInicioField" xml:space="preserve">
+    <value>Preparation Date (Start)</value>
+  </data>
   <data name="FechaField" xml:space="preserve">
     <value>Date</value>
   </data>
   <data name="FechaFinField" xml:space="preserve">
     <value>Date (End)</value>
+  </data>
+  <data name="FechaFinModalDComprobantesField" xml:space="preserve">
+    <value>End Date</value>
   </data>
   <data name="FechaIngresoField" xml:space="preserve">
     <value>Admission date</value>
@@ -227,6 +239,9 @@
   </data>
   <data name="FechaInicioField" xml:space="preserve">
     <value>Date (Start)</value>
+  </data>
+  <data name="FechaInicioModalDComprobantesField" xml:space="preserve">
+    <value>Starting Date</value>
   </data>
   <data name="FechaInicioOperacionField" xml:space="preserve">
     <value>Operation start</value>
@@ -263,6 +278,9 @@
   </data>
   <data name="HorarioField" xml:space="preserve">
     <value>Schedule</value>
+  </data>
+  <data name="IdField" xml:space="preserve">
+    <value>Id</value>
   </data>
   <data name="JefeField" xml:space="preserve">
     <value>Boss</value>
@@ -401,6 +419,9 @@
   </data>
   <data name="UsuarioCreadorField" xml:space="preserve">
     <value>Creator user</value>
+  </data>
+  <data name="UsuarioModificadorField" xml:space="preserve">
+    <value>Modifier User</value>
   </data>
   <data name="UsuarioTimbradorField" xml:space="preserve">
     <value>Stamper user</value>

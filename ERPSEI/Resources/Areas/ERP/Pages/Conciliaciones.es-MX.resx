@@ -123,7 +123,13 @@
   <data name="CancelButton" xml:space="preserve">
     <value>Cancelar</value>
   </data>
+  <data name="CancelButtonTitle" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
   <data name="ClienteField" xml:space="preserve">
+    <value>Cliente</value>
+  </data>
+  <data name="ClienteIdPlaceholder" xml:space="preserve">
     <value>Cliente</value>
   </data>
   <data name="ClientePlaceholder" xml:space="preserve">
@@ -153,8 +159,14 @@
   <data name="ColTotalHeader" xml:space="preserve">
     <value>Total</value>
   </data>
+  <data name="ConsultaDeComprobantesPlaceholder" xml:space="preserve">
+    <value>Consulta de Comprobantes</value>
+  </data>
   <data name="DeactivateButton" xml:space="preserve">
     <value>Dar de baja</value>
+  </data>
+  <data name="DescargarComprobantesPlaceholder" xml:space="preserve">
+    <value>Seleccione la fecha inicial y la fecha final del periodo que desea descargar comprobantes:</value>
   </data>
   <data name="DescripcionPlaceholder" xml:space="preserve">
     <value>Descripción</value>
@@ -171,17 +183,44 @@
   <data name="FechaElaboracionInicioPlaceholder" xml:space="preserve">
     <value>Fecha Elaboración Inicio</value>
   </data>
+  <data name="FechaElaboracionPlaceholder" xml:space="preserve">
+    <value>Fecha Elaboración</value>
+  </data>
+  <data name="FechaFinModalDComprobantesField" xml:space="preserve">
+    <value>Fecha Final</value>
+  </data>
+  <data name="FechaInicioModalDComprobantesField" xml:space="preserve">
+    <value>Fecha Inicial</value>
+  </data>
   <data name="FechaPlaceholder" xml:space="preserve">
     <value>Fecha</value>
   </data>
   <data name="FilterTitle" xml:space="preserve">
     <value>Filtros de búsqueda</value>
   </data>
+  <data name="GetButtonTitle" xml:space="preserve">
+    <value>Consultar</value>
+  </data>
   <data name="IdField" xml:space="preserve">
     <value>Id</value>
   </data>
   <data name="IdPlaceholder" xml:space="preserve">
     <value>Id</value>
+  </data>
+  <data name="ImportarMovimientosModalP1Placeholder" xml:space="preserve">
+    <value>Si desea cargar movimientos en formato excel, puede descargar la siguiente plantilla y llenarla con su información. Si su archivo está en formato PDF, omita este paso.</value>
+  </data>
+  <data name="ImportarMovimientosModalP2Placeholder" xml:space="preserve">
+    <value>A continuación, cargue su archivo en formato Excel o PDF y seleccione el banco.</value>
+  </data>
+  <data name="ImportarMovimientosModalPlaceholder" xml:space="preserve">
+    <value>Importación de Movimientos Bancarios</value>
+  </data>
+  <data name="ImportButtonTitle" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="PlantillaButtonTitle" xml:space="preserve">
+    <value>Descargar Plantilla</value>
   </data>
   <data name="SaveButton" xml:space="preserve">
     <value>Guardar</value>
@@ -191,6 +230,30 @@
   </data>
   <data name="Title" xml:space="preserve">
     <value>Conciliaciones</value>
+  </data>
+  <data name="TitleCMAgregar" xml:space="preserve">
+    <value>Comprobantes y Movimientos</value>
+  </data>
+  <data name="TitleConciliacion" xml:space="preserve">
+    <value>Conciliación</value>
+  </data>
+  <data name="TitleModalAgregar" xml:space="preserve">
+    <value>Información General</value>
+  </data>
+  <data name="TitleModalCComprobantes" xml:space="preserve">
+    <value>Consultar Comprobantes</value>
+  </data>
+  <data name="TitleModalConciliacionAsistida" xml:space="preserve">
+    <value>Conciliación Asistida</value>
+  </data>
+  <data name="TitleModalDerMovimientos" xml:space="preserve">
+    <value>Movimientos</value>
+  </data>
+  <data name="TitleModalIMovimientos" xml:space="preserve">
+    <value>Importar Movimientos</value>
+  </data>
+  <data name="TitleModalIzComprobantes" xml:space="preserve">
+    <value>Comprobantes</value>
   </data>
   <data name="TotalPlaceholder" xml:space="preserve">
     <value>Total</value>

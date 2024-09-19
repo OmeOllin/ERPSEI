@@ -123,7 +123,7 @@
 <!-- --------------------------- -->
 <!-- Sección Nuevo/Editar/Ver Registro (Agregar)-->
 <div id="dlgConciliacion" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 id="dlgConciliacionTitle" class="modal-title"></h5>
@@ -141,54 +141,153 @@
                                 </div>
                             </div>
                         </div>
+                        <h5>@Localizer["TitleModalAgregar"]</h5>
+                        <hr />
                         <div class="row">
-                            <div class="col-12">
-                                <div class="form-floating mb-3">
-                                    <input id="inpConciliacionFecha" asp-for="ConciliacionesList.Fecha" type="date" class="form-control" placeholder="@Localizer["FechaPlaceholder"]" />
-                                    <label asp-for="ConciliacionesList.Fecha"></label>
+                            <div class="col-sm-6 col-md-4 col-lg-4">
+                                <div class="form-floating mb-2">
+                                    <input id="inpConciliacionFecha" asp-for="ConciliacionesList.Fecha" type="date" class="form-control" placeholder="@Localizer["FechaElaboracionPlaceholder"]" />
+                                    <label asp-for="ConciliacionesList.Fecha" class="form-label required"></label>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
+                            <div class="col-sm-6 col-md-4 col-lg-4">
+                                <div class="form-floating mb-3">
+                                    <input id="inpConciliacionClienteId" asp-for="ConciliacionesList.ClienteId" type="text" class="form-control" placeholder="@Localizer["ClienteIdPlaceholder"]" />
+                                    <label asp-for="ConciliacionesList.ClienteId" class="form-label required"></label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-4 col-lg-4">
                                 <div class="form-floating mb-3">
                                     <input id="inpConciliacionDescripcion" asp-for="ConciliacionesList.Descripcion" type="text" class="form-control" placeholder="@Localizer["DescripcionPlaceholder"]" />
-                                    <label asp-for="ConciliacionesList.Descripcion"></label>
+                                    <label asp-for="ConciliacionesList.Descripcion" class="form-label required"></label>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-floating mb-3">
-                                    <input id="inpConciliacionCliente" asp-for="ConciliacionesList.ClienteId" type="text" class="form-control" placeholder="@Localizer["ClientePlaceholder"]" />
-                                    <label asp-for="ConciliacionesList.ClienteId"></label>
+                        <h5>@Localizer["TitleCMAgregar"]</h5>
+                        <hr />
+                        <div class="container mt-4">
+                            <div class="row">
+                                <!-- Botón en el lado izquierdo antes del primer CardView -->
+                                <div class="col-sm-6 col-md-6 col-lg-6 mb-3">
+                                    <a href="#" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#consultarComprobantesModal">
+                                        @Localizer["TitleModalCComprobantes"]
+                                    </a>
+                                </div>
+
+                                <!-- Botón en el lado derecho antes del segundo CardView -->
+                                <div class="col-sm-6 col-md-6 col-lg-6 mb-3">
+                                    <a href="#" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#ImportarMovimientosModal">
+                                        @Localizer["TitleModalIMovimientos"]
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- Card del lado izquierdo -->
+                                <div class="col-sm-6 col-md-6 col-lg-6">
+                                    <h4 class="text-center">@Localizer["TitleModalIzComprobantes"]</h4>
+                                    <table id="table"
+                                           data-toggle="table"
+                                           data-toolbar=".toolbar"
+                                           data-search="true"
+                                           data-height="460"
+                                           data-card-view="true"
+                                           data-pagination="true"
+                                           data-pagination-v-align="top"
+                                           data-page-list="[10, 25, 50, 100]"
+                                           data-show-page-list="true" 
+                                           data-page-size="10"
+                                           data-pagination-parts="['pageList']"
+                                           data-visible-pages="2"
+                                           data-show-search-clear-button="false"
+                                           data-side-pagination="server"
+                                           data-buttons-class="primary"
+                                           data-show-search-button="true"
+                                           data-url="https://examples.wenzhixin.net.cn/examples/bootstrap_table/data">
+                                        <thead>
+                                            <tr>
+                                                <th data-field="id">Folio</th>
+                                                <th data-field="name">Fecha</th>
+                                                <th data-field="price">Desc.</th>
+                                                <th data-field="">Total</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+
+                                    <br />
+                                    Sin conciliar:
+                                    <br />
+                                    Conciliados:
+                                </div>
+                                
+
+                                <!-- Card del lado derecho -->
+                                <div class="col-sm-6 col-md-6 col-lg-6">
+                                    <h4 class="text-center">@Localizer["TitleModalDerMovimientos"]</h4>
+                                    <table id="table"
+                                           data-toggle="table"
+                                           data-toolbar=".toolbar"
+                                           data-search="true"
+                                           data-height="460"
+                                           data-card-view="true"
+                                           data-pagination="true"
+                                           data-pagination-v-align="top"
+                                           data-page-list="[10, 25, 50, 100]"
+                                           data-show-page-list="true"
+                                           data-page-size="10"
+                                           data-pagination-parts="['pageList']"
+                                           data-visible-pages="2"
+                                           data-show-search-clear-button="false"
+                                           data-side-pagination="server"
+                                           data-buttons-class="primary"
+                                           data-show-search-button="true"
+                                           data-url="https://examples.wenzhixin.net.cn/examples/bootstrap_table/data">
+                                        <thead>
+                                            <tr>
+                                                <th data-field="id">Folio</th>
+                                                <th data-field="name">Fecha</th>
+                                                <th data-field="price">Desc.</th>
+                                                <th data-field="">Total</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+
+                                    <br />
+                                    Sin conciliar:
+                                    <br />
+                                    Conciliados:
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-floating mb-3">
-                                    <input id="inpConciliacionTotal" asp-for="ConciliacionesList.Total" type="text" class="form-control" placeholder="@Localizer["TotalPlaceholder"]" />
-                                    <label asp-for="ConciliacionesList.Total"></label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-floating mb-3">
-                                    <input id="inpConciliacionUsuarioCreadorId" asp-for="ConciliacionesList.UsuarioCreadorId" type="text" class="form-control" placeholder="@Localizer["UsuarioCreadorIdPlaceholder"]" />
-                                    <label asp-for="ConciliacionesList.UsuarioCreadorId"></label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-floating mb-3">
-                                    <input id="inpConciliacionUsuarioModificadorId" asp-for="ConciliacionesList.UsuarioModificadorId" type="text" class="form-control" placeholder="@Localizer["UsuarioModificadorIdPlaceholder"]" />
-                                    <label asp-for="ConciliacionesList.UsuarioModificadorId"></label>
-                                </div>
-                            </div>
-                        </div>
+                        <br />
+                        <h5>@Localizer["TitleConciliacion"]</h5>
+                        <hr />
+                        <a href="#" class="btn btn-primary w-20" data-bs-toggle="modal" data-bs-target="#ConciliacionModal">
+                            @Localizer["TitleModalConciliacionAsistida"]
+                        </a>
+                        <table id="table"
+                               data-toggle="table"
+                               data-search="true"
+                               data-height="460"
+                               data-show-search-button="true"
+                               data-card-view="true"
+                               data-pagination="true"
+                               data-pagination-v-align="both"
+                               data-buttons-class="primary"
+                               data-url="json/data1.json">
+                            <thead>
+                                <tr>
+                                    <th data-field="id">ID</th>
+                                    <th data-field="name">Item Name</th>
+                                    <th data-field="price">Item Price</th>
+                                </tr>
+                            </thead>
+                        </table>
+
+
+
+
+
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -204,6 +303,137 @@
     </div>
 </div>
 
+<!-- Modal para consulta por fechas -->
+<div class="modal fade" id="consultarComprobantesModal" tabindex="-1" aria-labelledby="descargarComprobantesLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="descargarComprobantesLabel">@Localizer["ConsultaDeComprobantesPlaceholder"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Contenido del modal -->
+                <h6>@Localizer["DescargarComprobantesPlaceholder"]</h6>
+                <div class="row justify-content-center">
+                    <div class="col-sm-6 col-md-5 col-lg-7">
+                        <div class="form-floating mb-3">
+                            <input id="inpFiltroFechaInicioModalDComprobantes" type="date" asp-for="InputFiltroModalDComprobantes.FechaInicioModalDComprobantes" class="form-control" placeholder="@Localizer["FechaInicioModalDComprobantesField"]" />
+                            <label for="inpFiltroFechaInicioModalDComprobantes" asp-for="InputFiltroModalDComprobantes.FechaInicioModalDComprobantes" class="form-label required"></label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-5 col-lg-7">
+                        <div class="form-floating mb-3">
+                            <input id="inpFiltroFechaFinModalDComprobantes" type="date" asp-for="InputFiltroModalDComprobantes.FechaFinModalDComprobantes" class="form-control" placeholder="@Localizer["FechaFinModalDComprobantesField"]" />
+                            <label for="inpFiltroFechaFinModalDComprobantes" asp-for="InputFiltroModalDComprobantes.FechaFinModalDComprobantes" class="form-label required"></label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <div class="col-7 text-end">
+                    <button id="dlgConsultarBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarClick();" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
+                    </button>
+                    <button id="dlgConsultarBtnGuardar" type="button" class="btn btn-primary formButton" onclick="onConsultarComprobantesClick();">
+                         @Localizer["GetButtonTitle"]
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para descarga por fechas -->
+<div class="modal fade" id="ImportarMovimientosModal" tabindex="-1" aria-labelledby="ImportarMovimientosModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ImportarMovimientosModalLabel">@Localizer["ImportarMovimientosModalPlaceholder"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Contenido del modal -->
+                <center>@Localizer["ImportarMovimientosModalP1Placeholder"]</center>
+                <br />
+                <br />
+                <div class="row justify-content-center">
+                    <div class="col-sm-6 col-md-5 col-lg-7">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-12 text-center mb-3">
+                                    <a id="dlgExcelBtnPlantilla" href="@Url.Page("Conciliaciones", "DownloadPlantilla")" class="btn btn-primary">
+                                        <i class="bi bi-file-earmark-ruled"></i> @Localizer["PlantillaButtonTitle"]
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Contenido del modal -->
+                    <center>@Localizer["ImportarMovimientosModalP2Placeholder"]</center>
+                    <br />
+                    <!-- Formulario para importar archivos -->
+                    <div class="container mt-4">
+                        <form id="importForm" action="@Url.Page("Conciliaciones", "ImportarArchivo")" method="post" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <input type="file" id="fileUpload" name="fileUpload" class="form-control" accept=".xls, .xlsx, .pdf" />
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <br />
+                    <!-- Combobox añadido aquí -->
+                    <div class="container mt-4">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <select id="SeleccionarBancos" class="form-select custom-select-width">
+                                        <option value="" selected>Seleccione...</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <div class="col-7 text-end">
+                    <button id="dlgImportarBtnCancelar" type="button" class="btn btn-secondary" onclick="onCerrarClick();" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg"></i> @Localizer["CancelButtonTitle"]
+                    </button>
+                    <button id="dlgImportarBtnGuardar" type="button" class="btn btn-primary formButton" onclick="onImportarMovimientosBancariosClick();">
+                        @Localizer["ImportButtonTitle"]
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos personalizados para reducir el tamaño del search y pagelist -->
+<style>
+    .bootstrap-table .search input.form-control {
+        height: 30px;
+        font-size: 12px;
+    }
+
+    .bootstrap-table .pagination-detail .page-list {
+        height: 10px;
+        font-size: 12px;
+    }
+    /* Reducir el tamaño del botón de limpiar búsqueda */
+    .bootstrap-table .search .btn {
+        height: 30px;
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+</style>
+
 @section Scripts {
     <link rel="stylesheet" href="~/lib/bootstrap-table/bootstrap-table.min.css">
     <link rel="stylesheet" href="~/lib/jquery-ui/jquery-ui.min.css">
@@ -218,6 +448,10 @@
     <script src="~/lib/bootstrap-table/extensions/export/xlsx.full.min.js"></script>
     <script src="~/lib/bootstrap-table/extensions/export/exceljs.min.js"></script>
     <script src="~/lib/bootstrap-table/extensions/export/FileSaver.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.2/dist/bootstrap-table.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.2/dist/bootstrap-table.min.js"></script>
 
     <link rel="stylesheet" href="~/css/Conciliaciones.css" />
     <script src="~/../Areas/ERP/Pages/Conciliaciones.cshtml.js"></script>
