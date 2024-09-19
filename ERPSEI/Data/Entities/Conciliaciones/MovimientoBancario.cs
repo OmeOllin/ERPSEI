@@ -9,6 +9,7 @@ namespace ERPSEI.Data.Entities.Conciliaciones
         public string? Descripcion { get; set; }
         public decimal? Importe { get; set; }
         public bool Conciliado { get; set; }
-        //public Conciliacion? Conciliacion { get; set; }
+        public Conciliacion? Conciliacion { get; set; }
+        public ConciliacionDetalleMovimiento? ConciliacionDetalleMovimiento { get; set; }
     }
 }

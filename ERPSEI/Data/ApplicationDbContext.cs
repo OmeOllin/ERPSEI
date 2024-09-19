@@ -144,15 +144,16 @@ namespace ERPSEI.Data
 
 		private static void BuildConciliaciones(ModelBuilder b) 
 		{
-			/*b.Entity<Conciliacion>().HasOne(e => e.Banco).WithMany(a => a.Conciliaciones).OnDelete(DeleteBehavior.NoAction);
+            b.Entity<Conciliacion>().HasOne(e => e.Banco).WithMany(a => a.Conciliaciones).OnDelete(DeleteBehavior.NoAction);
             b.Entity<Conciliacion>().HasOne(e => e.AppUserC).WithMany(a => a.ConciliacionesCreadas).OnDelete(DeleteBehavior.NoAction);
             b.Entity<Conciliacion>().HasOne(e => e.AppUserM).WithMany(a => a.ConciliacionesModificadas).OnDelete(DeleteBehavior.NoAction);
             b.Entity<Conciliacion>().HasOne(e => e.Empresa).WithMany(a => a.Conciliaciones).OnDelete(DeleteBehavior.NoAction);
-            b.Entity<Conciliacion>().HasMany(e => e.DetallesConciliacion).WithOne(a => a.Conciliacion).OnDelete(DeleteBehavior.NoAction);*/
-            //b.Entity<Conciliacion>().HasOne(e => e.Cliente).WithMany(a => a.Conciliaciones).OnDelete(DeleteBehavior.NoAction);
-            //b.Entity<ConciliacionDetalle>().HasOne(e => e.Comprobante).WithOne(a => a.Conciliacion).OnDelete(DeleteBehavior.NoAction);
-            //b.Entity<ConciliacionDetalle>().HasOne(e => e.MovimientoBancario).WithOne(a => a.Conciliacion).OnDelete(DeleteBehavior.NoAction);
-
+            b.Entity<Conciliacion>().HasMany(e => e.DetallesConciliacion).WithOne(a => a.Conciliacion).OnDelete(DeleteBehavior.NoAction);
+            b.Entity<Conciliacion>().HasOne(e => e.Cliente).WithMany(a => a.Conciliaciones).OnDelete(DeleteBehavior.NoAction);
+            b.Entity<ConciliacionDetalle>().HasMany(e => e.ConciliacionesDetallesMovimientos).WithOne(a => a.ConciliacionDetalle).OnDelete(DeleteBehavior.NoAction);
+            b.Entity<ConciliacionDetalle>().HasMany(e => e.ConciliacionesDetallesComprobantes).WithOne(a => a.ConciliacionDetalle).OnDelete(DeleteBehavior.NoAction);
+            b.Entity<ConciliacionDetalleComprobante>().HasOne(e => e.Comprobante).WithOne(a => a.ConciliacionDetalleComprobante).OnDelete(DeleteBehavior.NoAction);
+            b.Entity<ConciliacionDetalleMovimiento>().HasOne(e => e.MovimientoBancario).WithOne(a => a.ConciliacionDetalleMovimiento).OnDelete(DeleteBehavior.NoAction);
         }
 
         private static void BuildEmpresas(ModelBuilder b) 

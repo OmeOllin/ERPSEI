@@ -165,11 +165,23 @@
   <data name="DeactivateButton" xml:space="preserve">
     <value>Dar de baja</value>
   </data>
+  <data name="DeleteDialogQuestion" xml:space="preserve">
+    <value>¿Está seguro que desea dar de baja los registros seleccionados?</value>
+  </data>
+  <data name="DeleteDialogTitle" xml:space="preserve">
+    <value>Eliminar registro</value>
+  </data>
   <data name="DescargarComprobantesPlaceholder" xml:space="preserve">
     <value>Seleccione la fecha inicial y la fecha final del periodo que desea descargar comprobantes:</value>
   </data>
   <data name="DescripcionPlaceholder" xml:space="preserve">
     <value>Descripción</value>
+  </data>
+  <data name="EditButtonTitle" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="EditDialogTitle" xml:space="preserve">
+    <value>Editar registro</value>
   </data>
   <data name="FechaElaboracionFinField" xml:space="preserve">
     <value>Fecha Elaboración (Fin)</value>
@@ -219,6 +231,9 @@
   <data name="ImportButtonTitle" xml:space="preserve">
     <value>Importar</value>
   </data>
+  <data name="NewDialogTitle" xml:space="preserve">
+    <value>Nuevo registro</value>
+  </data>
   <data name="PlantillaButtonTitle" xml:space="preserve">
     <value>Descargar Plantilla</value>
   </data>
@@ -227,6 +242,12 @@
   </data>
   <data name="SearchButton" xml:space="preserve">
     <value>Buscar</value>
+  </data>
+  <data name="SeeButtonTitle" xml:space="preserve">
+    <value>Ver</value>
+  </data>
+  <data name="SeeDialogTitle" xml:space="preserve">
+    <value>Ver registro</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Conciliaciones</value>

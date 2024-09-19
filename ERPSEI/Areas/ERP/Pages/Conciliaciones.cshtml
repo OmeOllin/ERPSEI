@@ -113,7 +113,7 @@
        data-side-pagination="client"
        data-response-handler="responseHandler"
        data-buttons-class="primary"
-       data-url="/ERP/Conciliaciones/ConciliacionesList">
+       data-url="https://examples.wenzhixin.net.cn/examples/bootstrap_table/data">
     <thead>
         <tr align="center" valign="middle" class="bg-primary bg-opacity-10">
         </tr>
@@ -262,31 +262,62 @@
                         <br />
                         <h5>@Localizer["TitleConciliacion"]</h5>
                         <hr />
-                        <a href="#" class="btn btn-primary w-20" data-bs-toggle="modal" data-bs-target="#ConciliacionModal">
-                            @Localizer["TitleModalConciliacionAsistida"]
-                        </a>
-                        <table id="table"
-                               data-toggle="table"
-                               data-search="true"
-                               data-height="460"
-                               data-show-search-button="true"
-                               data-card-view="true"
-                               data-pagination="true"
-                               data-pagination-v-align="both"
-                               data-buttons-class="primary"
-                               data-url="json/data1.json">
-                            <thead>
-                                <tr>
-                                    <th data-field="id">ID</th>
-                                    <th data-field="name">Item Name</th>
-                                    <th data-field="price">Item Price</th>
-                                </tr>
-                            </thead>
-                        </table>
+                        <div class="container mt-4">
+                            <!-- Botón para abrir el modal -->
+                            <a href="#" class="btn btn-primary w-20 mb-4" data-bs-toggle="modal" data-bs-target="#ConciliacionModal">
+                                @Localizer["TitleModalConciliacionAsistida"]
+                            </a>
 
+                            <!-- Fila que contendrá dos columnas, una para cada tabla -->
+                            <div class="row">
+                                <!-- Columna de la izquierda -->
+                                <div class="col-md-6">
+                                    <h4 class="text-center">Comprobantes</h4>
+                                    <table id="tableRight"
+                                           data-toggle="table"
+                                           data-search="true"
+                                           data-height="460"
+                                           data-show-search-button="true"
+                                           data-card-view="false"
+                                           data-pagination="false"
+                                           data-buttons-class="primary">
+                                        <thead>
+                                            <tr>
+                                                <th data-field="id">Folio</th>
+                                                <th data-field="name">Fecha</th>
+                                                <th data-field="price">Desc.</th>
+                                                <th data-field="price">Total</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
 
+                                <!-- Columna de la derecha -->
+                                <div class="col-md-6">
+                                    <h4 class="text-center">Movimientos</h4>
+                                    <table id="tableRight"
+                                           data-toggle="table"
+                                           data-search="true"
+                                           data-height="460"
+                                           data-show-search-button="true"
+                                           data-card-view="false"
+                                           data-pagination="false"
+                                           data-buttons-class="primary">
+                                        <thead>
+                                            <tr>
+                                                <th data-field="id">Folio</th>
+                                                <th data-field="name">Fecha</th>
+                                                <th data-field="name">Banco</th>
+                                                <th data-field="price">Desc.</th>
+                                                <th data-field="price">Total</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
 
-
+                        <!---->
 
                     </div>
                 </div>
@@ -415,24 +446,46 @@
     </div>
 </div>
 
-<!-- Estilos personalizados para reducir el tamaño del search y pagelist -->
+<!-- Estilos personalizados para ajustar todos los elementos al mismo tamaño -->
 <style>
-    .bootstrap-table .search input.form-control {
-        height: 30px;
-        font-size: 12px;
+    /* Reducir el tamaño de todos los botones en la barra de herramientas */
+    .bootstrap-table .toolbar .btn,
+    .bootstrap-table .fixed-table-toolbar .btn-group .btn,
+    .bootstrap-table .pagination .page-item .page-link,
+    .bootstrap-table .dropdown-menu .dropdown-item,
+    .bootstrap-table .search input.form-control,
+    .bootstrap-table .search .btn {
+        height: 30px; /* Ajusta la altura de todos los botones */
+        font-size: 12px; /* Ajusta el tamaño de la fuente */
+        padding: 5px 10px; /* Ajusta el relleno de los botones */
     }
 
-    .bootstrap-table .pagination-detail .page-list {
-        height: 10px;
-        font-size: 12px;
+    /* Ajusta el tamaño de los menús desplegables de la barra de herramientas */
+    .bootstrap-table .fixed-table-toolbar .btn-group .dropdown-menu {
+        font-size: 12px; /* Ajusta el tamaño de la fuente del menú desplegable */
     }
-    /* Reducir el tamaño del botón de limpiar búsqueda */
+
+    /* Ajusta el tamaño de los campos de búsqueda */
+    .bootstrap-table .search input.form-control {
+        height: 30px; /* Ajusta la altura del campo de búsqueda */
+        font-size: 12px; /* Ajusta el tamaño de la fuente en el campo de búsqueda */
+    }
+
+    /* Ajusta el tamaño del listado de opciones de la paginación */
+    .bootstrap-table .pagination .page-item .page-link {
+        height: 30px; /* Ajusta la altura de los elementos de paginación */
+        font-size: 12px; /* Ajusta el tamaño de la fuente en los elementos de paginación */
+        padding: 5px 10px; /* Ajusta el relleno de los elementos de paginación */
+    }
+
+    /* Ajusta el tamaño del botón de búsqueda */
     .bootstrap-table .search .btn {
-        height: 30px;
-        font-size: 12px;
-        padding: 5px 10px;
+        height: 30px; /* Ajusta la altura del botón de búsqueda */
+        font-size: 12px; /* Ajusta el tamaño de la fuente en el botón de búsqueda */
+        padding: 5px 10px; /* Ajusta el relleno del botón de búsqueda */
     }
 </style>
+
 
 @section Scripts {
     <link rel="stylesheet" href="~/lib/bootstrap-table/bootstrap-table.min.css">

@@ -7,6 +7,6 @@ namespace ERPSEI.Data.Entities.Conciliaciones
         public int Id { get; set; }
         public string? Nombre { get; set; }
         public bool Deshabilitado { get; set; }
-        //public ICollection<Conciliacion>? Conciliaciones { get; set; }
+        public ICollection<Conciliacion>? Conciliaciones { get; set; } = [];
     }
 }

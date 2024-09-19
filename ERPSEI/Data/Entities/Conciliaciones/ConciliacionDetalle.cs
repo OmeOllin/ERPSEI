@@ -7,10 +7,12 @@ namespace ERPSEI.Data.Entities.Conciliaciones
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         public int? ConciliacionId { get; set; }
-        //public Conciliacion? Conciliacion { get; set; }
-        public int? ComprobanteId { get; set; }
+        public Conciliacion? Conciliacion { get; set; }
+        public ICollection<ConciliacionDetalleComprobante>? ConciliacionesDetallesComprobantes { get; set; } = [];
+        public ICollection<ConciliacionDetalleMovimiento>? ConciliacionesDetallesMovimientos { get; set; } = [];
+        //public ConciliacionesDetallesMovimientos? conciliacionesDetallesMovimientos { get; set; }
+        //public ConciliacionesDetallesComprobantes? conciliacionesDetallesComprobantes { get; set; }
+        //public int? ComprobanteId { get; set; }
         //public Comprobante? Comprobante { get; set; }
-        public int? MovimientoId { get; set; }
-        //public MovimientoBancario? MovimientoBancario { get; set; }
     }
 }
