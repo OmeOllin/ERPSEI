@@ -3,12 +3,12 @@ using System.Text;
 
 namespace ERPSEI.Utils
 {
-	public class EncriptacionAES(IConfiguration _configuration) : IEncriptacionAES
+	public class EncriptacionAES() : IEncriptacionAES
 	{
-		private byte[] ERPSEI_ALPHA { get; set; } = Encoding.UTF8.GetBytes(_configuration["ERPSEI_ALPHA"] ?? string.Empty);
-		private byte[] ERPSEI_BRAVO { set; get; } = Encoding.UTF8.GetBytes(_configuration["ERPSEI_BRAVO"] ?? string.Empty);
+		private byte[] ERPSEI_ALPHA { get; set; } = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("ERPSEI_ALPHA") ?? string.Empty);
+		private byte[] ERPSEI_BRAVO { set; get; } = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("ERPSEI_BRAVO") ?? string.Empty);
 
-		public string PlainTextToBase64AES(string rawString)
+        public string PlainTextToBase64AES(string rawString)
 		{
 			byte[] encrypted;
 			using (Aes aes = Aes.Create())
