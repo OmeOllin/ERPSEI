@@ -5,7 +5,7 @@ namespace ERPSEI.Data.Entities.Conciliaciones
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
-        public string? Nombre { get; set; }
+        public string Nombre { get; set; } = string.Empty;
         public bool Deshabilitado { get; set; }
         public ICollection<Conciliacion>? Conciliaciones { get; set; } = [];
     }

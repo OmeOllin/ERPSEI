@@ -11,7 +11,7 @@ namespace ERPSEI.Data.Entities.Conciliaciones
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         public DateTime? Fecha { get; set; }
-        public string? Descripcion { get; set; }
+        public string Descripcion { get; set; } = string.Empty;
         public decimal? Total { get; set; }
         public int BancoId { get; set; }
         public Banco? Banco { get; set; }

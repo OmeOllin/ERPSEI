@@ -11,8 +11,8 @@ namespace ERPSEI.Data.Entities.Clientes
         public RegimenFiscal? RegimenFiscal { get; set; }
         public int UsoCFDIId { get; set; }
         public UsoCFDI? UsoCFDI { get; set; }
-        public string? RazonSocial { get; set; }
-        public string? RFC { get; set; }
+        public string RazonSocial { get; set; } = string.Empty;
+        public string RFC { get; set; } = string.Empty;
         public string? DomicilioFiscal { get; set; }
         public string? ResidenciaFiscal { get; set; }
         public string? Telefono { get; set; }

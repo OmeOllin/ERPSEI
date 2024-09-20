@@ -10,9 +10,5 @@ namespace ERPSEI.Data.Entities.Conciliaciones
         public Conciliacion? Conciliacion { get; set; }
         public ICollection<ConciliacionDetalleComprobante>? ConciliacionesDetallesComprobantes { get; set; } = [];
         public ICollection<ConciliacionDetalleMovimiento>? ConciliacionesDetallesMovimientos { get; set; } = [];
-        //public ConciliacionesDetallesMovimientos? conciliacionesDetallesMovimientos { get; set; }
-        //public ConciliacionesDetallesComprobantes? conciliacionesDetallesComprobantes { get; set; }
-        //public int? ComprobanteId { get; set; }
-        //public Comprobante? Comprobante { get; set; }
     }
 }

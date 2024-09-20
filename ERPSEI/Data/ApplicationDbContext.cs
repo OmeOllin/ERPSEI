@@ -1,4 +1,5 @@
 ﻿using ERPSEI.Data.Entities.Conciliaciones;
+using ERPSEI.Data.Entities.Clientes;
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.Reportes;
@@ -99,9 +100,13 @@ namespace ERPSEI.Data
 		public DbSet<ConciliacionDetalle> ConciliacionesDetalles { get; set; }
 		public DbSet<Banco> Bancos { get; set; }
 		public DbSet<MovimientoBancario> MovimientosBancarios { get; set; }
+        public DbSet<Cliente> Clientes { get; set; }
+        public DbSet<ConciliacionDetalleComprobante> ConciliacionesDetallesComprobantes { get; set; }
+        public DbSet<ConciliacionDetalleMovimiento> ConciliacionesDetallesMovimientos { get; set; }
 
-		//Catálogos no administrables Usuarios
-		public DbSet<AccesoModulo> AccesosModulos { get; set; }
+
+        //Catálogos no administrables Usuarios
+        public DbSet<AccesoModulo> AccesosModulos { get; set; }
 		public DbSet<Modulo> Modulos { get; set; }
 
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -130,7 +135,7 @@ namespace ERPSEI.Data
 			BuildAsistencias(modelBuilder);
 
 			//Conciliaciones
-            //BuildConciliaciones(modelBuilder);
+            BuildConciliaciones(modelBuilder);
         }
 
 		private static void BuildAsistencias(ModelBuilder b) 
