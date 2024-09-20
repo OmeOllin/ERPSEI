@@ -162,6 +162,36 @@ namespace ERPSEI.Data
 
             b.Entity<Conciliacion>().Property(t => t.Total).HasPrecision(24, 6);
             b.Entity<MovimientoBancario>().Property(t => t.Importe).HasPrecision(24, 6);
+
+            b.Entity<Banco>()
+                .HasData(
+                    new Banco() {Id = 1, Nombre = "Alquimia" },
+                    new Banco() { Id = 1, Nombre = "Afirme" },
+                    new Banco() { Id = 1, Nombre = "Azteca" },
+                    new Banco() { Id = 1, Nombre = "American Express" },
+                    new Banco() { Id = 1, Nombre = "Bancomer" },
+                    new Banco() { Id = 1, Nombre = "Bancoppel" },
+                    new Banco() { Id = 1, Nombre = "Banorte" },
+                    new Banco() { Id = 1, Nombre = "Banregio" },
+                    new Banco() { Id = 1, Nombre = "Bajio" },
+                    new Banco() { Id = 1, Nombre = "Base" },
+                    new Banco() { Id = 1, Nombre = "Bx" },
+                    new Banco() { Id = 1, Nombre = "Cibanco" },
+                    new Banco() { Id = 1, Nombre = "Citibanamex" },
+                    new Banco() { Id = 1, Nombre = "Fortuna" },
+                    new Banco() { Id = 1, Nombre = "HSBC" },
+                    new Banco() { Id = 1, Nombre = "Inbursa" },
+                    new Banco() { Id = 1, Nombre = "Intercam" },
+                    new Banco() { Id = 1, Nombre = "Invex" },
+                    new Banco() { Id = 1, Nombre = "Jeeves" },
+                    new Banco() { Id = 1, Nombre = "Konfio" },
+                    new Banco() { Id = 1, Nombre = "Mercado Pago" },
+                    new Banco() { Id = 1, Nombre = "Mifel" },
+                    new Banco() { Id = 1, Nombre = "Monex" },
+                    new Banco() { Id = 1, Nombre = "Multiva" },
+                    new Banco() { Id = 1, Nombre = "Santander" },
+                    new Banco() { Id = 1, Nombre = "Scotiabank" }
+                );
         }
 
         private static void BuildEmpresas(ModelBuilder b) 
