@@ -159,6 +159,9 @@ namespace ERPSEI.Data
             b.Entity<ConciliacionDetalle>().HasMany(e => e.ConciliacionesDetallesComprobantes).WithOne(a => a.ConciliacionDetalle).OnDelete(DeleteBehavior.NoAction);
             b.Entity<ConciliacionDetalleComprobante>().HasOne(e => e.Comprobante).WithOne(a => a.ConciliacionDetalleComprobante).OnDelete(DeleteBehavior.NoAction);
             b.Entity<ConciliacionDetalleMovimiento>().HasOne(e => e.MovimientoBancario).WithOne(a => a.ConciliacionDetalleMovimiento).OnDelete(DeleteBehavior.NoAction);
+
+            b.Entity<Conciliacion>().Property(t => t.Total).HasPrecision(24, 6);
+            b.Entity<MovimientoBancario>().Property(t => t.Importe).HasPrecision(24, 6);
         }
 
         private static void BuildEmpresas(ModelBuilder b) 
