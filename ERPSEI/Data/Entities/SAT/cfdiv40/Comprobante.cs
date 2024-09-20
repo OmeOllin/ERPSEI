@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using ERPSEI.Data.Entities.Conciliaciones;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
@@ -130,6 +131,10 @@ namespace ERPSEI.Data.Entities.SAT.cfdiv40
 		
 		[XmlAttribute()]
 		public string? Confirmacion { get; set; }
+
+		[System.Xml.Serialization.XmlIgnoreAttribute()]
+		public ConciliacionDetalleComprobante? ConciliacionDetalleComprobante { get; set; }
+    }
 
 		[XmlIgnore]
 		public bool? Conciliado { get; set; }

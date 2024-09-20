@@ -84,9 +84,13 @@
 			<div class="modal-body">
 				<!-- Botón de exportación dentro del modal -->
 				<div id="toolbarModal" class="mb-3">
-					<button class="btn btn-success" id="btnExportExcel" onclick="$('#jtableContainer table').bootstrapTable('togglePagination').bootstrapTable('export', { type: 'excel', escape: false });">
+					<button class="btn btn-success" id="btnExportExcel">
 						Exportar a Excel
 					</button>
+				</div>
+				<!-- Filtro de búsqueda por nombre -->
+				<div class="mb-3">
+					<input type="text" id="searchByName" class="form-control" placeholder="Buscar por nombre" style="width: 200px;">
 				</div>
 				<!-- Contenedor de la tabla -->
 				<div id="jtableContainer"></div>
@@ -97,6 +101,7 @@
 		</div>
 	</div>
 </div>
+
 
 <!-- Sección tabla de resultados -->
 <div id="toolbar" class="col-xl-12">
@@ -115,7 +120,7 @@
 	   data-show-fullscreen="true"
 	   data-show-columns="true"
 	   data-show-columns-toggle-all="true"
-	   data-show-export="false"
+	   data-show-export="true"
 	   data-click-to-select="true"
 	   data-minimum-count-columns="2"
 	   data-show-pagination-switch="true"

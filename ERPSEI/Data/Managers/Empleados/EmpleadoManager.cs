@@ -192,7 +192,7 @@ namespace ERPSEI.Data.Managers.Empleados
 
         public async Task<Empleado?> GetByIdAsync(int id)
         {
-            return await _db.Empleados.Where(a => a.Deshabilitado == 0 && a.Id == id).FirstOrDefaultAsync();
+            return await _db.Empleados.Where(a => a.Deshabilitado == 0 && a.Id == id).Include(e => e.Horario).ThenInclude(h => h.HorarioDetalles).FirstOrDefaultAsync();
         }
 
         public async Task<Empleado?> GetByCURPAsync(string curp)

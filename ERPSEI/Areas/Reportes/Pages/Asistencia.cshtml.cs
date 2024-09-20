@@ -12,10 +12,7 @@ using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Net.Mime;
-using ERPSEI.Pages.Shared;
-using ERPSEI.Data.Entities.Reportes;
-using ERPSEI.Data.Managers.Reportes;
-using ERPSEI.Resources;
+using System.Globalization;
 public static class SessionExtensions
 {
 	public static void SetObjectAsJson(this ISession session, string key, object value)
@@ -40,6 +37,7 @@ namespace ERPSEI.Areas.Reportes.Pages
 		private readonly IEmpleadoManager empleadoManager;
 		private readonly IStringLocalizer<AsistenciaModel> stringLocalizer;
 		private readonly ILogger<AsistenciaModel> logger;
+		private readonly Data.ApplicationDbContext db;
 
 		[BindProperty]
 		public FiltroModel InputFiltro { get; set; } = new FiltroModel();
@@ -83,7 +81,8 @@ namespace ERPSEI.Areas.Reportes.Pages
 			IEmpleadoManager _empleadoManager,
 			IAsistenciaManager _asistenciaManager,
 			IStringLocalizer<AsistenciaModel> _stringLocalizer,
-			ILogger<AsistenciaModel> _logger
+			ILogger<AsistenciaModel> _logger,
+			Data.ApplicationDbContext _db
 		)
 		{
 			horariosManager = _horariosManager;
@@ -91,6 +90,7 @@ namespace ERPSEI.Areas.Reportes.Pages
 			asistenciaManager = _asistenciaManager;
 			stringLocalizer = _stringLocalizer;
 			logger = _logger;
+			db = _db;
 
 			Input = new InputModel();
 			InputFiltro = new FiltroModel();
@@ -142,8 +142,8 @@ namespace ERPSEI.Areas.Reportes.Pages
 							nombre = g.Key,
 							retardos = g.Count(a => a.ResultadoE == "RETARDO"),
 							omisionesFaltas = g.Count(a => a.ResultadoE == "OMISIÓN/FALTA"),
-							acumuladoRet = g.Count(a => a.ResultadoE == "RETARDO"),
-							totalFaltas = g.Count(a => a.ResultadoE == "OMISIÓN/FALTA") + (g.Count(a => a.ResultadoE == "RETARDO") / 2)
+							acumuladoRet =(int)(g.Count(a => a.ResultadoE == "RETARDO") / 2),
+							totalFaltas = g.Count(a => a.ResultadoE == "OMISIÓN/FALTA") + ((int)(g.Count(a => a.ResultadoE == "RETARDO") / 2))
 						}))
 						.ToList();
 
@@ -228,10 +228,10 @@ namespace ERPSEI.Areas.Reportes.Pages
 			List<Asistencia> asistencias = await ObtenerAsistenciasPorFiltro(filtro);
 
 			// Si se proporciona un filtro y hay resultados, generamos directamente la respuesta JSON
-			if (filtro != null && asistencias.Any())
+			/*if (filtro != null && asistencias.Any())
 			{
 				return GenerarJsonAsistencias(asistencias);
-			}
+			}*/
 
 			// Si no hay filtro o si no se encontraron asistencias con el filtro, procedemos con la lógica completa
 			(DateOnly fIni, DateOnly fFin) = InicializarFechas(filtro);
@@ -378,12 +378,13 @@ namespace ERPSEI.Areas.Reportes.Pages
 				{
 					if (Request.Form.Files.Count >= 1)
 					{
-						//Se procesa el archivo excel.
+						// Se procesa el archivo Excel.
 						using Stream s = Request.Form.Files[0].OpenReadStream();
 						using var reader = ExcelReaderFactory.CreateReader(s);
 						DataSet result = reader.AsDataSet(new ExcelDataSetConfiguration() { FilterSheet = (tableReader, sheetIndex) => sheetIndex == 0 });
 
-						DataRow? firstRow = null;
+						// Diccionario para agrupar filas por nombre y fecha
+						var asistenciasAgrupadas = new Dictionary<(int, DateOnly), List<DateTime>>();
 
 						foreach (DataRow row in result.Tables[0].Rows)
 						{
@@ -391,48 +392,55 @@ namespace ERPSEI.Areas.Reportes.Pages
 							if (result.Tables[0].Rows.IndexOf(row) == 0)
 							{
 								resp.TieneError = false;
-								resp.Mensaje = stringLocalizer["¡Asistencias importadas satisfactoriamente!"];
+								resp.Mensaje = stringLocalizer["AsistenciasImportadosSuccessfully"];
 								continue;
 							}
 
-							// Si firstRow es nulo, significa que estamos procesando el primer registro del par
-							if (firstRow == null)
+							// Obtén los valores de las columnas específicas
+							int id = 0;
+							if (!int.TryParse(row[0]?.ToString(), out id)) { id = 0; };
+							string fechaHoraStr = row[2]?.ToString();
+
+							DateTime fechaHora;
+							if (TryParseDate(fechaHoraStr, out fechaHora))
 							{
-								firstRow = row; // Guardamos el primer registro temporalmente
+								DateOnly onlyFecha = DateOnly.FromDateTime(fechaHora);
+								var key = (id, onlyFecha);
+								if (!asistenciasAgrupadas.ContainsKey(key))
+								{
+									asistenciasAgrupadas[key] = new List<DateTime>();
+								}
+								asistenciasAgrupadas[key].Add(fechaHora);
 							}
-							else
+						}
+
+						await db.Database.BeginTransactionAsync();
+						try
+						{
+							// Procesar cada grupo de asistencias
+							foreach (var grupo in asistenciasAgrupadas)
 							{
-								// Aquí, estamos procesando el segundo registro del par
-								string vmsg = await CreateAsistenciaFromExcelRow(firstRow, row);
+								string vmsg = await CreateAsistenciaFromExcelRow(grupo);
 
 								// Si hubo errores, detenemos el proceso
-								if ((vmsg ?? "").Length >= 1)
+								if (!string.IsNullOrEmpty(vmsg))
 								{
-									resp.TieneError = true;
-									resp.Mensaje = vmsg;
-									break;
+									throw new Exception(vmsg);
 								}
 								else
 								{
 									resp.TieneError = false;
-									resp.Mensaje = stringLocalizer["¡Asistencias importadas satisfactoriamente!"];
+									resp.Mensaje = stringLocalizer["AsistenciasImportadosSuccessfully"];
 								}
-
-								// Reiniciamos firstRow para el siguiente par
-								firstRow = null;
 							}
+
+							await db.Database.CommitTransactionAsync();
 						}
-
-						// Si queda un registro no procesado (por número impar de filas), lo procesamos
-						if (firstRow != null)
+						catch (Exception ex)
 						{
-							string vmsg = await CreateAsistenciaFromExcelRow(firstRow, null);
-
-							if ((vmsg ?? "").Length >= 1)
-							{
-								resp.TieneError = true;
-								resp.Mensaje = vmsg;
-							}
+							await db.Database.RollbackTransactionAsync();
+							resp.TieneError = true;
+							resp.Mensaje = ex.Message;
 						}
 					}
 				}
@@ -445,10 +453,171 @@ namespace ERPSEI.Areas.Reportes.Pages
 			{
 				logger.LogError(ex.Message);
 				resp.TieneError = true;
-				resp.Mensaje = stringLocalizer["Error al importar las asistencias"];
+				resp.Mensaje = stringLocalizer["MistakeAsist"];
 			}
 
 			return new JsonResult(resp);
+		}
+
+
+		private bool TryParseDate(string dateStr, out DateTime result)
+		{
+			// Define los formatos de fecha y hora que podrían estar en el archivo
+			string[] formats = { "dd/MM/yyyy HH:mm", "MM/dd/yyyy HH:mm", "yyyy-MM-dd HH:mm:ss", "MM-dd-yyyy HH:mm" };
+
+			// Intenta analizar la fecha con los formatos proporcionados
+			foreach (var format in formats)
+			{
+				if (DateTime.TryParseExact(dateStr, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
+				{
+					return true;
+				}
+			}
+
+			// Si no se pudo analizar con los formatos anteriores, intenta el análisis estándar
+			if (DateTime.TryParse(dateStr, out DateTime parsedDate))
+			{
+				result = parsedDate;
+				return true;
+			}
+
+			result = default;
+			return false;
+		}
+
+		private static readonly Dictionary<DayOfWeek, string> DiasEnEspanol = new()
+			{
+				{ DayOfWeek.Sunday, "Domingo" },
+				{ DayOfWeek.Monday, "Lunes" },
+				{ DayOfWeek.Tuesday, "Martes" },
+				{ DayOfWeek.Wednesday, "Miércoles" },
+				{ DayOfWeek.Thursday, "Jueves" },
+				{ DayOfWeek.Friday, "Viernes" },
+				{ DayOfWeek.Saturday, "Sábado" }
+			};
+		private async Task<string> CreateAsistenciaFromExcelRow(KeyValuePair<(int, DateOnly), List<DateTime>> row)
+		{
+
+			// Obtener el nombre del empleado de la primera fila
+			int idEmpleado = row.Key.Item1;
+			Empleado? empleado = await empleadoManager.GetByIdAsync(idEmpleado);
+
+			if (empleado == null)
+			{
+				return $"Empleado no encontrado: {idEmpleado}";
+			}
+
+			// Procesar todas las filas para determinar la primera entrada y la última salida
+			DateTime? primeraFechaHora = null;
+			DateTime? ultimaFechaHora = null;
+
+			foreach (var fechaHora in row.Value)
+			{
+				if (primeraFechaHora == null || fechaHora < primeraFechaHora)
+				{
+					primeraFechaHora = fechaHora;
+				}
+				if (ultimaFechaHora == null || fechaHora > ultimaFechaHora)
+				{
+					ultimaFechaHora = fechaHora;
+				}
+			}
+
+			if (primeraFechaHora == null || ultimaFechaHora == null)
+			{
+				return $"No se pudieron determinar las fechas para el empleado: {idEmpleado}";
+			}
+
+			// Separar la fecha y la hora 
+			DateOnly fechaOnly = DateOnly.FromDateTime(primeraFechaHora.Value);
+			TimeSpan horaEntrada = primeraFechaHora.Value.TimeOfDay;
+			TimeSpan horaSalida = ultimaFechaHora.Value.TimeOfDay;
+
+			// Obtener el horario del empleado
+			Horario? horario = empleado.Horario;
+
+			// Inicializar los resultados
+			string resultadoEntrada = "OMISIÓN/FALTA";
+			string resultadoSalida = "OMISIÓN/FALTA";
+
+			HorarioDetalle? hd = horario?.HorarioDetalles?.FirstOrDefault(hd => hd.NumeroDiaSemana == (int)fechaOnly.DayOfWeek);
+			if (horario != null && hd != null)
+			{
+				TimeSpan entrada = hd.Entrada;
+				TimeSpan toleranciaEntrada = hd.ToleranciaEntrada;
+				TimeSpan toleranciaFalta = hd.ToleranciaFalta;
+				TimeSpan salida = hd.Salida;
+				TimeSpan toleranciaSalida = hd.ToleranciaSalida;
+
+				// Evaluar la hora de entrada
+				if (horaEntrada > toleranciaEntrada)
+				{
+					resultadoEntrada = "RETARDO";
+				}
+				if (horaEntrada <= entrada || (horaEntrada >= entrada && horaEntrada <= toleranciaEntrada))
+				{
+					resultadoEntrada = "NORMAL";
+				}
+				if (horaEntrada > toleranciaFalta)
+				{
+					resultadoEntrada = "OMISIÓN/FALTA";
+				}
+				if (horaEntrada == TimeSpan.Zero)
+				{
+					resultadoEntrada = "OMISIÓN/FALTA";
+				}
+
+				// Evaluar la hora de salida
+				if (horaSalida >= toleranciaSalida || horaSalida >= salida)
+				{
+					resultadoSalida = "NORMAL";
+				}
+				if (horaSalida < toleranciaSalida)
+				{
+					resultadoSalida = "TEMPRANO";
+				}
+				if (horaSalida == TimeSpan.Zero)
+				{
+					resultadoSalida = "OMISIÓN/FALTA";
+				}
+			}
+
+			DateTime ds = new(primeraFechaHora.Value.Year,primeraFechaHora.Value.Month, primeraFechaHora.Value.Day);
+			List<Asistencia> asistenciasEmpleado = await asistenciaManager.GetAllAsync(empleado.NombreCompleto, ds);
+			Asistencia? asistenciaExistente = asistenciasEmpleado.Where(a => a.Entrada == TimeSpan.Parse("00:00:00") && a.Salida == TimeSpan.Parse("00:00:00")).FirstOrDefault();
+
+			if (asistenciaExistente != null)
+			{
+				//Actualiza la asistencia si ya existe en la fecha dada.
+
+				asistenciaExistente.Fecha = fechaOnly;
+				asistenciaExistente.Dia = DiasEnEspanol[fechaOnly.DayOfWeek];
+				asistenciaExistente.Entrada = horaEntrada;
+				asistenciaExistente.ResultadoE = resultadoEntrada;
+				asistenciaExistente.Salida = horaSalida;
+				asistenciaExistente.ResultadoS = resultadoSalida;
+
+				await asistenciaManager.UpdateAsync(asistenciaExistente);
+			}
+			else
+			{
+				// Crear la asistencia si no existe
+				Asistencia asistencia = new Asistencia()
+				{
+					EmpleadoId = empleado.Id,
+					Fecha = fechaOnly,
+					Dia = DiasEnEspanol[fechaOnly.DayOfWeek],  // Aquí se asigna el día en español
+					Entrada = horaEntrada,
+					ResultadoE = resultadoEntrada,
+					Salida = horaSalida,
+					ResultadoS = resultadoSalida,
+				};
+
+				// Guardar la asistencia
+				await asistenciaManager.CreateAsync(asistencia);
+			}
+
+			return string.Empty;
 		}
 
 		public async Task<JsonResult> OnPostSaveAsistencia()
@@ -490,130 +659,6 @@ namespace ERPSEI.Areas.Reportes.Pages
 			}
 
 			return new JsonResult(resp);
-		}
-
-
-		private async Task<string> CreateAsistenciaFromExcelRow(DataRow firstRow, DataRow? secondRow)
-		{
-			Horario? horario = await horariosManager.GetByNameAsync(firstRow[0].ToString()?.Trim() ?? string.Empty);
-			Empleado? empleado = await empleadoManager.GetByNameAsync(firstRow[1].ToString()?.Trim() ?? string.Empty);
-
-			DateOnly fechaOnly;
-
-			// Intentar convertir la hora de entrada
-			TimeSpan horaE;
-			if (!TimeSpan.TryParse(firstRow[4].ToString()?.Trim(), out horaE))
-			{
-				// Intentar convertir usando DateTime como fallback
-				if (DateTime.TryParse(firstRow[4].ToString()?.Trim(), out DateTime entradaDateTime))
-				{
-					horaE = entradaDateTime.TimeOfDay;
-				}
-				else
-				{
-					horaE = TimeSpan.Zero; // Manejo del error si falla la conversión
-				}
-			}
-
-			// Intentar convertir la hora de salida
-			TimeSpan horaS;
-			if (!TimeSpan.TryParse(secondRow?[4].ToString()?.Trim(), out horaS))
-			{
-				// Intentar convertir usando DateTime como fallback
-				if (DateTime.TryParse(secondRow?[4].ToString()?.Trim(), out DateTime salidaDateTime))
-				{
-					horaS = salidaDateTime.TimeOfDay;
-				}
-				else
-				{
-					horaS = TimeSpan.Zero; // Manejo del error si falla la conversión
-				}
-			}
-
-			// Obtener y convertir la fecha
-			string? fechaStr = firstRow[2].ToString();
-			if (DateTime.TryParse(fechaStr, out DateTime fechaDateTime))
-			{
-				fechaOnly = DateOnly.FromDateTime(fechaDateTime);
-			}
-			else
-			{
-				fechaOnly = default;
-			}
-
-			// Inicializar el resultado por defecto
-			string resultadoE = firstRow[5].ToString()?.Trim() ?? string.Empty;
-
-			HorarioDetalle? hd = horario?.HorarioDetalles?.Where(hd => hd.NumeroDiaSemana == (int)fechaOnly.DayOfWeek).FirstOrDefault();
-			if (horario != null && hd != null)
-			{
-				TimeSpan entrada = hd.Entrada;
-				TimeSpan toleranciaEntrada = hd.ToleranciaEntrada;
-				TimeSpan toleranciaFalta = hd.ToleranciaFalta;
-
-				if (horaE > toleranciaEntrada)
-				{
-					resultadoE = "RETARDO";
-				}
-				if (horaE <= entrada || horaE >= entrada && horaE <= toleranciaEntrada)
-				{
-					resultadoE = "NORMAL";
-				}
-				if (horaE > toleranciaFalta)
-				{
-					resultadoE = "OMISIÓN/FALTA";
-				}
-				if (horaE == TimeSpan.Zero)
-				{
-					resultadoE = "OMISIÓN/FALTA";
-				}
-				
-			}
-			else
-			{
-				resultadoE = "OMISIÓN/FALTA";
-			}
-
-			// Inicializar el resultado por defecto
-			string resultadoS = secondRow?[5].ToString()?.Trim() ?? string.Empty;
-
-			if (horario != null && hd != null)
-			{
-				TimeSpan salida = hd.Salida;
-				TimeSpan toleranciaSalida = hd.ToleranciaSalida;
-
-				if (horaS >= toleranciaSalida || horaS >= salida)
-				{
-					resultadoS = "NORMAL";
-				}
-				if (horaS < toleranciaSalida)
-				{
-					resultadoS = "TEMPRANO";
-				}
-				if (horaS == TimeSpan.Zero)
-				{
-					resultadoS = "OMISIÓN/FALTA";
-				}
-			}
-			else 
-			{
-				resultadoS = "OMISIÓN/FALTA";
-			}
-
-			Asistencia asistencia = new Asistencia()
-			{
-				EmpleadoId = empleado?.Id,
-				Fecha = fechaOnly,
-				Dia = firstRow[5].ToString()?.Trim() ?? string.Empty,
-				Entrada = horaE,
-				ResultadoE = resultadoE,
-				Salida = horaS,
-				ResultadoS = resultadoS,
-			};
-
-			await asistenciaManager.CreateAsync(asistencia);
-
-			return string.Empty;
 		}
 
 	}

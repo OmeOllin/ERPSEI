@@ -1,6 +1,7 @@
 ﻿using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.SAT;
 using Microsoft.AspNetCore.Identity;
+using ERPSEI.Data.Entities.Conciliaciones;
 
 namespace ERPSEI.Data.Entities.Usuarios
 {
@@ -17,5 +18,9 @@ namespace ERPSEI.Data.Entities.Usuarios
         public ICollection<Prefactura> PrefacturasCreadas { get; set; } = [];
         public ICollection<AutorizacionesPrefactura> AutorizacionesPrefacturas { get; set; } = [];
         public ICollection<Prefactura> PrefacturasTimbradas { get; set; } = [];
+        public ICollection<Conciliacion> ConciliacionesCreadas { get; set; } = [];
+        public ICollection<Conciliacion> ConciliacionesModificadas { get; set; } = [];
+
+
     }
 }

@@ -117,13 +117,211 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AbsencesColumn" xml:space="preserve">
+    <value>Absences</value>
+  </data>
+  <data name="AccesoDenegado" xml:space="preserve">
+    <value>Access denied</value>
+  </data>
+  <data name="AddButton" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="AsistenciasImportadosSuccessfully" xml:space="preserve">
+    <value>Successfully imported assists!</value>
+  </data>
+  <data name="AsistenciasImportadosUnsuccessfully" xml:space="preserve">
+    <value>Error importing attendances</value>
+  </data>
+  <data name="Calculateattendance" xml:space="preserve">
+    <value>Calculate Attendance</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="CancelButtonTitle" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ColAbsencesHeader" xml:space="preserve">
+    <value>Absences</value>
+  </data>
+  <data name="ColActionsHeader" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="ColCardNoHeader" xml:space="preserve">
+    <value>No Card</value>
+  </data>
+  <data name="ColDateHeader" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="ColDateTimeHeader" xml:space="preserve">
+    <value>DateTime</value>
+  </data>
+  <data name="ColDayHeader" xml:space="preserve">
+    <value>Day</value>
+  </data>
+  <data name="ColDepartureTimeHeader" xml:space="preserve">
+    <value>Departure time</value>
+  </data>
+  <data name="ColDeviceNameHeader" xml:space="preserve">
+    <value>Device Name</value>
+  </data>
+  <data name="colDiaHeader" xml:space="preserve">
+    <value>Day</value>
+  </data>
+  <data name="ColDirectionHeader" xml:space="preserve">
+    <value>Direction</value>
+  </data>
+  <data name="colEntradaHeader" xml:space="preserve">
+    <value>Entry</value>
+  </data>
+  <data name="ColEntryHeader" xml:space="preserve">
+    <value>Entry</value>
+  </data>
+  <data name="ColEntryTimeHeader" xml:space="preserve">
+    <value>Entry Time</value>
+  </data>
+  <data name="ColExitHeader" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="colHorarioHeader" xml:space="preserve">
+    <value>Schedule</value>
+  </data>
+  <data name="ColIdHeader" xml:space="preserve">
+    <value>Id</value>
+  </data>
+  <data name="colIdHorarioHeader" xml:space="preserve">
+    <value>Id Schedule</value>
+  </data>
+  <data name="ColIdScheduleHeader" xml:space="preserve">
+    <value>Id Schedule</value>
+  </data>
+  <data name="ColNameHeader" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="colResultadoEHeader" xml:space="preserve">
+    <value>Result</value>
+  </data>
+  <data name="colResultadoSHeader" xml:space="preserve">
+    <value>Result</value>
+  </data>
+  <data name="ColResultEntryHeader" xml:space="preserve">
+    <value>Result</value>
+  </data>
+  <data name="ColResultExitHeader" xml:space="preserve">
+    <value>Result</value>
+  </data>
+  <data name="colSalidaHeader" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="ColSerialNameHeader" xml:space="preserve">
+    <value>Serial Device</value>
+  </data>
+  <data name="ColTimeDelayHeader" xml:space="preserve">
+    <value>Delay</value>
+  </data>
+  <data name="ColTimeHeader" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="ColTotalHeader" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="DelayColumn" xml:space="preserve">
+    <value>Delay</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="dlgAsistenciaTitle" xml:space="preserve">
+    <value>New Registration</value>
+  </data>
+  <data name="EditButtonTitle" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="EditDialogTitle" xml:space="preserve">
+    <value>Edit Record</value>
+  </data>
   <data name="EmpleadosImportadosSuccessfully" xml:space="preserve">
     <value>¡Asistencias importadas satisfactoriamente!</value>
   </data>
   <data name="EmpleadosImportadosUnsuccessfully" xml:space="preserve">
     <value>Error al importar las asistencias</value>
   </data>
+  <data name="EmployeeNameField" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="EntryTimeColumn" xml:space="preserve">
+    <value>Entry Time</value>
+  </data>
+  <data name="ExitTimeColumn" xml:space="preserve">
+    <value>Exit Time</value>
+  </data>
+  <data name="FaltasPlaceholder" xml:space="preserve">
+    <value>Absences</value>
+  </data>
+  <data name="FechaPlaceholder" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="FilterTitle" xml:space="preserve">
+    <value>Search filters</value>
+  </data>
+  <data name="HoraEntradaPlaceholder" xml:space="preserve">
+    <value>Entry Time</value>
+  </data>
+  <data name="HoraSalidaPlaceholder" xml:space="preserve">
+    <value>Exit Time</value>
+  </data>
+  <data name="IdColumn" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="ImportButtonText" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="ImportExcelDialogTitle" xml:space="preserve">
+    <value>Import attendance</value>
+  </data>
+  <data name="ImportExcelSuggestionA" xml:space="preserve">
+    <value>Download the template and fill it out with your information to upload data correctly.</value>
+  </data>
+  <data name="ImportExcelSuggestionB" xml:space="preserve">
+    <value>Select the file you filled out with your information and import the data.</value>
+  </data>
+  <data name="MistakeAsist" xml:space="preserve">
+    <value>Error importing attendances</value>
+  </data>
+  <data name="NameColumn" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NewDialogTitle" xml:space="preserve">
+    <value>New Record</value>
+  </data>
+  <data name="NombrePlaceholder" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="PlantillaButtonTitle" xml:space="preserve">
+    <value>Download template</value>
+  </data>
+  <data name="ProvidedProcessing" xml:space="preserve">
+    <value>No rows provided for processing</value>
+  </data>
+  <data name="RetardoPlaceholder" xml:space="preserve">
+    <value>Delay</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SearchButton" xml:space="preserve">
+    <value>Search</value>
+  </data>
   <data name="Title" xml:space="preserve">
     <value>Attendance Report</value>
+  </data>
+  <data name="TotalColumn" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="TotalPlaceholder" xml:space="preserve">
+    <value>Total</value>
   </data>
 </root>
