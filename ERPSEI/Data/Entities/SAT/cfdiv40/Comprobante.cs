@@ -134,8 +134,7 @@ namespace ERPSEI.Data.Entities.SAT.cfdiv40
 
 		[System.Xml.Serialization.XmlIgnoreAttribute()]
 		public ConciliacionDetalleComprobante? ConciliacionDetalleComprobante { get; set; }
-    }
-
+    
 		[XmlIgnore]
 		public bool? Conciliado { get; set; }
 	}
