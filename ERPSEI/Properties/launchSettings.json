@@ -41,11 +41,7 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Production",
-        "ERPSEI_ALPHA": "6=BP;87nPagsk'z-eNiaQFHd!KL$Ljb!",
-        "ERPSEI_BRAVO": "Ci]Bk[!$_c(ts;XB",
-        "ERPSEI_EDICOM_USR": "RMA9509272C6",
-        "ERPSEI_EDICOM_PWD": "n84kjdgudg"
+        "ASPNETCORE_ENVIRONMENT": "Production"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://tiaspel.ddns.net"
