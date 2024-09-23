@@ -4,6 +4,7 @@ using ERPSEI.Data.Managers.Usuarios;
 using Microsoft.AspNetCore.Identity;
 using ERPSEI.Email;
 using Microsoft.EntityFrameworkCore;
+using ERPSEI.Data.Managers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,7 @@ ServicesConfiguration.ConfigureAuthorization(builder);
 
 //Dependency injection configuration
 ServicesConfiguration.ConfigureDependencyInjection(builder);
+
 
 //Build and run application
 WebApplication app = builder.Build();

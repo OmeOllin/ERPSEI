@@ -9,18 +9,32 @@ using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 using System.Net.Mime;
+using ERPSEI.Data.Entities.Empleados;
+using ERPSEI.Data.Managers.Conciliaciones;
+using ERPSEI.Data.Managers;
+using ERPSEI.Data.Managers.Empleados;
+using ERPSEI.Data.Managers.Reportes;
 
 namespace ERPSEI.Areas.ERP.Pages
 {
-    //[Authorize(Policy = "AccessPolicy")]
     public class ConciliacionesModel : PageModel
     {
         private readonly IStringLocalizer<ConciliacionesModel> stringLocalizer;
         private readonly ILogger<ConciliacionesModel> logger;
+        //private readonly IRCatalogoManager<Banco> bancoManager;
+        private readonly IBancoManager bancoManager;
+        private readonly IConciliacionManager conciliacionManager;
+        private readonly IConciliacionDetalleManager conciliacionDetalleManager;
+        private readonly IConciliacionDetalleComprobanteManager conciliacionDetalleComprobanteManager;
+        private readonly IConciliacionDetalleMovimientoManager conciliacionDetalleMovimientoManager;
+        private readonly IClienteManager clienteManager;
+        private readonly IMovimientoBancarioManager movimientoBancarioManager;
+
         private readonly Data.ApplicationDbContext db;
 
         [BindProperty]
         public InputFiltroModel? InputFiltro { get; set; }
+
         public class InputFiltroModel
         {
             [Display(Name = "IdField")]
@@ -49,62 +63,88 @@ namespace ERPSEI.Areas.ERP.Pages
             [Display(Name = "FechaElaboracionInicioField")]
             [Required(ErrorMessage = "Required")]
             [DataType(DataType.Date)]
-            public DateTime? FechaElaboracionInicio { get; set; } = null;
+            public DateTime? FechaElaboracionInicio { get; set; }
 
             [Display(Name = "FechaElaboracionFinField")]
             [Required(ErrorMessage = "Required")]
             [DataType(DataType.Date)]
-            public DateTime? FechaElaboracionFin { get; set; } = null;
+            public DateTime? FechaElaboracionFin { get; set; }
         }
 
         [BindProperty]
         public InputFiltroModelDComprobantes InputFiltroModalDComprobantes { get; set; }
+
         public class InputFiltroModelDComprobantes
         {
             [Display(Name = "FechaInicioModalDComprobantesField")]
             [Required(ErrorMessage = "Required")]
             [DataType(DataType.Date)]
-            public DateTime? FechaInicioModalDComprobantes { get; set; } = null;
+            public DateTime? FechaInicioModalDComprobantes { get; set; }
 
             [Display(Name = "FechaFinModalDComprobantesField")]
             [Required(ErrorMessage = "Required")]
             [DataType(DataType.Date)]
-            public DateTime? FechaFinModalDComprobantes { get; set; } = null;
+            public DateTime? FechaFinModalDComprobantes { get; set; }
         }
 
-            [BindProperty]
+        [BindProperty]
         public Conciliacion? ConciliacionesList { get; set; }
+        public Banco? BancoList { get; set; }
 
         public ConciliacionesModel(
             IStringLocalizer<ConciliacionesModel> _stringLocalizer,
             ILogger<ConciliacionesModel> _logger,
+            //IRCatalogoManager<Banco> _bancoManager,
+            IBancoManager _bancoManager,
+            IConciliacionManager _conciliacionManager,
+            IConciliacionDetalleManager _conciliacionDetalleManager,
+            IConciliacionDetalleComprobanteManager _conciliacionDetalleComprobanteManager,
+            IConciliacionDetalleMovimientoManager _conciliacionDetalleMovimientoManager,
+            IClienteManager _clienteManager,
+            IMovimientoBancarioManager _movimientoBancarioManager,
             Data.ApplicationDbContext _db
         )
         {
             stringLocalizer = _stringLocalizer;
             logger = _logger;
+            bancoManager = _bancoManager;
+            conciliacionManager = _conciliacionManager;
+            conciliacionDetalleManager = _conciliacionDetalleManager;
+            conciliacionDetalleComprobanteManager = _conciliacionDetalleComprobanteManager;
+            conciliacionDetalleMovimientoManager = _conciliacionDetalleMovimientoManager;
+            clienteManager = _clienteManager;
+            movimientoBancarioManager = _movimientoBancarioManager;
             db = _db;
-
+            BancoList = new Banco();
             InputFiltro = new InputFiltroModel();
             ConciliacionesList = new Conciliacion();
         }
 
         public async Task<JsonResult> OnGetConciliacionesList()
         {
-            // Asegúrate de que ServerResponse esté bien definido y se adapte a tus necesidades
             ServerResponse resp = new(true, stringLocalizer["AsistenciaSavedUnsuccessfully"]);
 
-            // Retorna los datos en formato JSON
+            try
+            {
+                //var bancos = await bancoManager.GetAllAsync();
+                //resp = new ServerResponse(true, "Bancos recuperados correctamente", bancos);
+            }
+            catch (Exception ex)
+            {
+                //logger.LogError(ex.Message);
+                //resp = new ServerResponse(false, "Error al recuperar los bancos");
+            }
+
             return new JsonResult(resp);
         }
 
         public async Task<JsonResult> OnPostSaveConciliacion()
         {
             ServerResponse resp = new(true, stringLocalizer["AsistenciaSavedUnsuccessfully"]);
+
             try
             {
-
-                // Implementa la lógica para guardar la conciliación
+                // Lógica para guardar la conciliación
             }
             catch (Exception ex)
             {
@@ -117,9 +157,10 @@ namespace ERPSEI.Areas.ERP.Pages
         public async Task<JsonResult> OnPostDeleteConciliacion(string[] ids)
         {
             ServerResponse resp = new(true, stringLocalizer["RolDeletedUnsuccessfully"]);
+
             try
             {
-                // Implementa la lógica para eliminar la conciliación
+                // Lógica para eliminar la conciliación
             }
             catch (Exception ex)
             {
@@ -129,18 +170,10 @@ namespace ERPSEI.Areas.ERP.Pages
 
             return new JsonResult(resp);
         }
+
         public ActionResult OnGetDownloadPlantilla()
         {
             return File("/templates/PlantillaAsistencia.xlsx", MediaTypeNames.Application.Octet, "PlantillaAsistencia.xlsx");
-
-            /*if (PuedeTodo || PuedeConsultar || PuedeEditar || PuedeEliminar)
-            {
-                return File("/templates/PlantillaAsistencia.xlsx", MediaTypeNames.Application.Octet, "PlantillaAsistencia.xlsx");
-            }
-            else
-            {
-                return new EmptyResult();
-            }*/
         }
     }
 }

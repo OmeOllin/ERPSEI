@@ -1,7 +1,11 @@
 ﻿@page "{handler?}"
+@using ERPSEI.Data.Managers;
+@using ERPSEI.Data.Managers.Conciliaciones;
 @using Microsoft.AspNetCore.Localization;
 @using Microsoft.AspNetCore.Mvc.Localization;
+@using ERPSEI.Data.Entities.Conciliaciones;
 @model ERPSEI.Areas.ERP.Pages.ConciliacionesModel;
+@inject IBancoManager BancoManager;
 @inject IViewLocalizer Localizer;
 @{
     ViewData["Title"] = Localizer["Title"];
@@ -13,6 +17,8 @@
     System.Globalization.CultureInfo? culture = rqf != null ? rqf.RequestCulture.Culture : new System.Globalization.CultureInfo("es-MX");
 
     string cultureName = culture.Name;
+
+    List<Banco> banco = await BancoManager.GetAllAsync();
 }
 
 <h3 class="title mb-3">@ViewData["Title"]</h3>
@@ -113,7 +119,7 @@
        data-side-pagination="client"
        data-response-handler="responseHandler"
        data-buttons-class="primary"
-       data-url="https://examples.wenzhixin.net.cn/examples/bootstrap_table/data">
+       data-url="/ERP/Conciliaciones/ConciliacionesList">
     <thead>
         <tr align="center" valign="middle" class="bg-primary bg-opacity-10">
         </tr>
@@ -123,7 +129,7 @@
 <!-- --------------------------- -->
 <!-- Sección Nuevo/Editar/Ver Registro (Agregar)-->
 <div id="dlgConciliacion" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 id="dlgConciliacionTitle" class="modal-title"></h5>
@@ -192,13 +198,9 @@
                                            data-search="true"
                                            data-height="460"
                                            data-card-view="true"
-                                           data-pagination="true"
+                                           data-show-export="true"
                                            data-pagination-v-align="top"
-                                           data-page-list="[10, 25, 50, 100]"
-                                           data-show-page-list="true" 
-                                           data-page-size="10"
-                                           data-pagination-parts="['pageList']"
-                                           data-visible-pages="2"
+                                           data-show-fullscreen="true"
                                            data-show-search-clear-button="false"
                                            data-side-pagination="server"
                                            data-buttons-class="primary"
@@ -230,13 +232,9 @@
                                            data-search="true"
                                            data-height="460"
                                            data-card-view="true"
-                                           data-pagination="true"
+                                           data-show-export="true"
                                            data-pagination-v-align="top"
-                                           data-page-list="[10, 25, 50, 100]"
-                                           data-show-page-list="true"
-                                           data-page-size="10"
-                                           data-pagination-parts="['pageList']"
-                                           data-visible-pages="2"
+                                           data-show-fullscreen="true"
                                            data-show-search-clear-button="false"
                                            data-side-pagination="server"
                                            data-buttons-class="primary"
@@ -375,7 +373,7 @@
     </div>
 </div>
 
-<!-- Modal para descarga por fechas -->
+<!-- Modal para movimientos -->
 <div class="modal fade" id="ImportarMovimientosModal" tabindex="-1" aria-labelledby="ImportarMovimientosModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -421,9 +419,16 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="form-floating mb-3">
-                                    <select id="SeleccionarBancos" class="form-select custom-select-width">
-                                        <option value="" selected>Seleccione...</option>
+                                    <select id="selFiltroBanco" asp-for="BancoList.Nombre" class="form-select" placeholder="@Localizer["BancoPlaceholder"]">
+                                        <option value="0">Seleccione...</option>
+                                        @{
+                                            foreach (Banco bancos in banco)
+                                            {
+                                                <option bancoid='@bancos.Id' value='@bancos.Id'>@bancos.Nombre</option>
+                                            }
+                                        }
                                     </select>
+                                    <label for="selFiltroBanco" asp-for="BancoList.Id" class="form-label"></label>
                                 </div>
                             </div>
                         </div>
@@ -501,10 +506,6 @@
     <script src="~/lib/bootstrap-table/extensions/export/xlsx.full.min.js"></script>
     <script src="~/lib/bootstrap-table/extensions/export/exceljs.min.js"></script>
     <script src="~/lib/bootstrap-table/extensions/export/FileSaver.min.js"></script>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.2/dist/bootstrap-table.min.css">
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.2/dist/bootstrap-table.min.js"></script>
 
     <link rel="stylesheet" href="~/css/Conciliaciones.css" />
     <script src="~/../Areas/ERP/Pages/Conciliaciones.cshtml.js"></script>
