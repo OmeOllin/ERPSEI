@@ -49,11 +49,11 @@ using(IServiceScope scope = app.Services.CreateScope())
 		//Se obtienen los accesos del rol.
 		accesos = await accesoModuloManager.GetByRolIdAsync(r.Id);
 
-		//Si el rol no tiene ningún acceso establecido, se crean sus accesos default.
-		if (accesos.Count == 0)
+		IModuloManager moduloManager = scope.ServiceProvider.GetRequiredService<IModuloManager>();
+		foreach (Modulo m in await moduloManager.GetAllAsync())
 		{
-			IModuloManager moduloManager = scope.ServiceProvider.GetRequiredService<IModuloManager>();
-			foreach (Modulo m in await moduloManager.GetAllAsync())
+			//Si el rol analizado no tiene accesos definidos para el módulo analizado, entonces crea sus accesos.
+			if(!accesos.Exists(a => a.Modulo?.NombreNormalizado == m.NombreNormalizado))
 			{
 				switch (r.Name)
 				{
@@ -84,8 +84,8 @@ using(IServiceScope scope = app.Services.CreateScope())
 						//Candidato y cualquier otro rol no considerado de inicio, no tienen acceso a ningún módulo, por lo que no se definen accesos.
 						break;
 				}
-			}
-		}
+            }
+        }
 	}
 
 	//Se crea instancia del administrador de usuarios
