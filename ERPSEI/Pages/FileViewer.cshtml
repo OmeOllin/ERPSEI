@@ -4,12 +4,12 @@
     Layout = null;
 }
 
-@Html.Raw(Model.htmlContainer)
+@Html.Raw(Model.HtmlContainer)
 
 <script type="text/javascript">
 
-    var src = '@Html.Raw(Model.base64)';
-    var extension = '@Html.Raw(Model.extension)';
+    var src = '@Html.Raw(Model.Base64)';
+    var extension = '@Html.Raw(Model.Extension)';
 
     //Función para inicializar el módulo.
     document.addEventListener("DOMContentLoaded", function (event) {

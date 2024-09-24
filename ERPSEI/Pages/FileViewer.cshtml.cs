@@ -1,4 +1,3 @@
-using ERPSEI.Areas.Catalogos.Pages;
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Data.Entities.SAT;
@@ -10,11 +9,11 @@ using ERPSEI.Data.Managers.Usuarios;
 using ERPSEI.Utils;
 using iText.Html2pdf;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
 using System.Net.Mime;
-using System.Web;
 
 namespace ERPSEI.Pages
 {
@@ -25,12 +24,13 @@ namespace ERPSEI.Pages
             IArchivoEmpresaManager archivoEmpresaManager,
             IStringLocalizer<FileViewerModel> localizer,
 			IEncriptacionAES encriptacionAES,
-			AppUserManager userManager
+			AppUserManager userManager,
+			AppRoleManager roleManager
 	) : PageModel
     {
-        public string htmlContainer { get; set; } = string.Empty;
-		public string base64 { get; set; } = string.Empty;
-		public string extension { get; set; } = string.Empty;
+        public string HtmlContainer { get; set; } = string.Empty;
+		public string Base64 { get; set; } = string.Empty;
+		public string Extension { get; set; } = string.Empty;
 
         private class FileToRender
         {
@@ -52,7 +52,7 @@ namespace ERPSEI.Pages
 					string userId = urlParts[1];
 					AppUser? usr = await userManager.GetUserAsync(User);
 
-					if(usr != null && userId == usr.Id){ return await SearchFile(urlParts[3], urlParts[5]); }
+					if(usr != null && userId == usr.Id){ return await SearchFile(urlParts[1], urlParts[3], urlParts[5]); }
 				}
 			}
 			catch (Exception)
@@ -63,29 +63,44 @@ namespace ERPSEI.Pages
 			return RedirectToPage("/404");
 		}
 
-		private async Task<IActionResult> SearchFile(string id, string module)
+		private async Task<bool> UsuarioPuedeEditarEmpresas(string userId)
+		{
+            AppUser? usr = await userManager.FindByIdAsync(userId);
+            IList<string> rolesUsuario = usr != null ? await userManager.GetRolesAsync(usr) : [];
+            List<AccesoModulo> accesos = [];
+            foreach (string rol in rolesUsuario)
+            {
+                AppRole? foundRole = await roleManager.GetByNameAsync(rol);
+                accesos.AddRange(foundRole?.Accesos.Where(acceso => acceso.Modulo?.NombreNormalizado == "empresas" && (acceso.PuedeTodo == 1 || acceso.PuedeEditar == 1)) ?? []);
+            }
+
+			return accesos.Count >= 1;
+        }
+
+		private async Task<IActionResult> SearchFile(string userId, string fileId, string moduleName)
 		{
 			try
 			{
-				if (id == null || module == null) { return RedirectToPage("/404"); }
+				if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(fileId) || string.IsNullOrEmpty(moduleName)) { return RedirectToPage("/404"); }
 
 				FileToRender? ftr = null;
-				switch (module)
+				switch (moduleName)
 				{
 					case "gestiondetalento":
 					case "perfil":
-						ftr = GetArchivoEmpleadoB64(id);
-						break;
+						ftr = GetArchivoEmpleadoB64(fileId);
+                        break;
 					case "empresas":
-						ftr = GetArchivoEmpresaB64(id);
+                        //Se busca si el usuario que está intentando ver el archivo, tiene accesos de edición al módulo de empresas.
+						if(await UsuarioPuedeEditarEmpresas(userId)) { ftr = GetArchivoEmpresaB64(fileId); }
 						break;
 					case "prefacturas":
 						int idPf = 0;
-						if (!int.TryParse(id, out idPf)) { idPf = 0; }
+						if (!int.TryParse(fileId, out idPf)) { idPf = 0; }
 						ftr = await GetPrefacturaB64(idPf);
 						break;
 					default:
-						htmlContainer = string.Empty;
+						HtmlContainer = string.Empty;
 						break;
 				}
 
@@ -95,23 +110,23 @@ namespace ERPSEI.Pages
 				switch (ftr.extension)
 				{
 					case "pdf":
-						htmlContainer = $"<iframe id=\"fileContainer\" style=\"position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;\"></iframe>";
-						base64 = ftr.src;
-						extension = ftr.extension;
+						HtmlContainer = $"<iframe id=\"fileContainer\" style=\"position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;\"></iframe>";
+						Base64 = ftr.src;
+						Extension = ftr.extension;
 						break;
 					case "png":
 					case "jpg":
 					case "jpeg":
-						htmlContainer = $"<img id=\"fileContainer\" style=\"height:100%\" />";
-						base64 = ftr.src;
-						extension = ftr.extension;
+						HtmlContainer = $"<img id=\"fileContainer\" style=\"height:100%\" />";
+						Base64 = ftr.src;
+						Extension = ftr.extension;
 						break;
 					default:
 						//Show page file not viewable
-						htmlContainer = $"<div class=\"container\">" +
+						HtmlContainer = $"<div class=\"container\">" +
 											$"<h1>{localizer["DownloadFileTitle"]}</h1>" +
 											$"<p>{localizer["DownloadFileInstructions"]}</p>" +
-											$"<a id=\"fileContainer\" href=\"{Url.Page("FileViewer", "DownloadFile", new { id, module })}\" download class=\"btn btn-primary\">{localizer["DownloadFileTitle"]}</a>" +
+											$"<a id=\"fileContainer\" href=\"{Url.Page("FileViewer", "DownloadFile", new { fileId, moduleName })}\" download class=\"btn btn-primary\">{localizer["DownloadFileTitle"]}</a>" +
 										$"</div>";
 						break;
 				}

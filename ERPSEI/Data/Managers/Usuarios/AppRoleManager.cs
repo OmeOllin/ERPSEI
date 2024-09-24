@@ -29,6 +29,7 @@ namespace ERPSEI.Data.Managers.Usuarios
 
             return await _db.Roles
                 .Include(r => r.Accesos)
+                .ThenInclude(a => a.Modulo)
                 .ToListAsync();
         }
 
@@ -36,6 +37,8 @@ namespace ERPSEI.Data.Managers.Usuarios
         {
             return await _db.Roles
                 .Where(r => r.Name == name)
+                .Include(r => r.Accesos)
+                .ThenInclude(a => a.Modulo)
                 .FirstOrDefaultAsync();
         }
 
@@ -43,7 +46,9 @@ namespace ERPSEI.Data.Managers.Usuarios
 		{
 			return await _db.Roles
 				.Where(r => r.Id == id)
-				.FirstOrDefaultAsync();
+                .Include(r => r.Accesos)
+                .ThenInclude(a => a.Modulo)
+                .FirstOrDefaultAsync();
 		}
 	}
 }
