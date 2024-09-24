@@ -146,8 +146,8 @@
                         <div class="row">
                             <div class="col-3">
                                 <div class="form-floating mb-3">
-                                    <input id="inpConciliacionId" asp-for="ConciliacionesList.Id" type="text" class="form-control" placeholder="@Localizer["IdPlaceholder"]" />
-                                    <label asp-for="ConciliacionesList.Id"></label>
+                                    <input id="inpConciliacionId" asp-for="InputFiltroModalAgregar.Id" type="text" class="form-control" placeholder="@Localizer["IdPlaceholder"]" />
+                                    <label asp-for="InputFiltroModalAgregar.Id"></label>
                                 </div>
                             </div>
                         </div>
@@ -156,20 +156,20 @@
                         <div class="row">
                             <div class="col-sm-6 col-md-4 col-lg-4">
                                 <div class="form-floating mb-2">
-                                    <input id="inpConciliacionFecha" asp-for="ConciliacionesList.Fecha" type="date" class="form-control" placeholder="@Localizer["FechaElaboracionPlaceholder"]" />
-                                    <label asp-for="ConciliacionesList.Fecha" class="form-label required"></label>
+                                    <input id="inpConciliacionFecha" asp-for="InputFiltroModalAgregar.FechaElaboracionInicio" type="date" class="form-control" placeholder="@Localizer["FechaElaboracionPlaceholder"]" />
+                                    <label asp-for="InputFiltroModalAgregar.FechaElaboracionInicio" class="form-label required"></label>
                                 </div>
                             </div>
                             <div class="col-sm-6 col-md-4 col-lg-4">
                                 <div class="form-floating mb-3">
-                                    <input id="inpConciliacionClienteId" asp-for="ConciliacionesList.ClienteId" type="text" class="form-control" placeholder="@Localizer["ClienteIdPlaceholder"]" idselected='' area="ERP" module="Conciliaciones" source="GetClientesEmpresasSuggestion" />
-                                    <label asp-for="ConciliacionesList.ClienteId" class="form-label required"></label>
+                                    <input id="inpConciliacionClienteId" asp-for="InputFiltroModalAgregar.Cliente" type="text" class="form-control" placeholder="@Localizer["ClienteIdPlaceholder"]" idselected='' area="ERP" module="Conciliaciones" source="GetClientesEmpresasSuggestion" />
+                                    <label asp-for="InputFiltroModalAgregar.Cliente" class="form-label required"></label>
                                 </div>
                             </div>
                             <div class="col-sm-6 col-md-4 col-lg-4">
                                 <div class="form-floating mb-3">
-                                    <input id="inpConciliacionDescripcion" asp-for="ConciliacionesList.Descripcion" type="text" class="form-control" placeholder="@Localizer["DescripcionPlaceholder"]" />
-                                    <label asp-for="ConciliacionesList.Descripcion" class="form-label required"></label>
+                                    <input id="inpConciliacionDescripcion" asp-for="InputFiltroModalAgregar.Descripcion" type="text" class="form-control" placeholder="@Localizer["DescripcionPlaceholder"]" />
+                                    <label asp-for="InputFiltroModalAgregar.Descripcion" class="form-label required"></label>
                                 </div>
                             </div>
                         </div>

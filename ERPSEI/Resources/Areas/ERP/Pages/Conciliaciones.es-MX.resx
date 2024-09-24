@@ -120,6 +120,9 @@
   <data name="AddButton" xml:space="preserve">
     <value>Agregar</value>
   </data>
+  <data name="BancoLabel" xml:space="preserve">
+    <value>Banco</value>
+  </data>
   <data name="CancelButton" xml:space="preserve">
     <value>Cancelar</value>
   </data>

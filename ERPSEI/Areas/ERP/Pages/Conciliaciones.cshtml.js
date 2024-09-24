@@ -34,6 +34,28 @@ async function onImportarMovimientosBancariosClick(event) {
     const file = event.target.files[0];
     if (file) {
         try {
+            // Verificar que el archivo sea un PDF o Excel
+            const validTypes = ['application/pdf', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+            if (!validTypes.includes(file.type)) {
+                alert('El archivo seleccionado no es un PDF ni un archivo de Excel.');
+                return;
+            }
+
+            // Lógica adicional para manejar el archivo (lectura, procesamiento, etc.)
+            console.log('Archivo válido seleccionado:', file.name);
+
+        } catch (error) {
+            console.error('Error al leer el archivo:', error);
+        }
+    }
+}
+
+
+
+/*async function onImportarMovimientosBancariosClick(event) {
+    const file = event.target.files[0];
+    if (file) {
+        try {
             // Verificar que el archivo sea un PDF
             if (file.type !== 'application/pdf') {
                 alert('El archivo seleccionado no es un PDF.');
@@ -77,14 +99,16 @@ async function onImportarMovimientosBancariosClick(event) {
             console.error('Error al leer el archivo PDF:', error);
         }
     }
-}
+}*/
+
+/*
 function exportTextToExcel(text, fileName) {
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet([[text]]);
     XLSX.utils.book_append_sheet(wb, ws, "Datos del PDF");
     // Usar el nombre de archivo proporcionado
     XLSX.writeFile(wb, fileName);
-}
+}*/
 
 //Funcionalidad Tabla
 function getIdSelections() {
