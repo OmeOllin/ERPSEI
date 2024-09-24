@@ -221,7 +221,8 @@ namespace ERPSEI.Data
                     new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.Otro, "Otro"),
 					new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.CER, "CER"),
 					new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.KEY, "KEY"),
-					new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.Logo, "Logo")
+					new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.Logo, "Logo"),
+					new TipoArchivoEmpresa((int)Entities.Empresas.FileTypes.HojaMembretada, "HojaMembretada")
 				);
 		}
 

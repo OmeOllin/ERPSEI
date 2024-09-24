@@ -9,7 +9,8 @@
         Otro,
         CER,
         KEY, 
-        Logo
+        Logo,
+        HojaMembretada
     }
     public class TipoArchivoEmpresa
     {
