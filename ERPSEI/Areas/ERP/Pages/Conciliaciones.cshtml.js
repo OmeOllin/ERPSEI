@@ -24,8 +24,91 @@ document.addEventListener("DOMContentLoaded", function (event) {
         onCerrarClick();
     });
     initTable();
+    // Asignar el evento de clic al botón de importación
+    document.getElementById('fileUpload').addEventListener('change', onImportarMovimientosBancariosClick);
+
+    autoCompletar("#inpConciliacionClienteId");
 });
 
+async function onImportarMovimientosBancariosClick(event) {
+    const file = event.target.files[0];
+    if (file) {
+        try {
+            // Verificar que el archivo sea un PDF o Excel
+            const validTypes = ['application/pdf', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+            if (!validTypes.includes(file.type)) {
+                alert('El archivo seleccionado no es un PDF ni un archivo de Excel.');
+                return;
+            }
+
+            // Lógica adicional para manejar el archivo (lectura, procesamiento, etc.)
+            console.log('Archivo válido seleccionado:', file.name);
+
+        } catch (error) {
+            console.error('Error al leer el archivo:', error);
+        }
+    }
+}
+
+
+
+/*async function onImportarMovimientosBancariosClick(event) {
+    const file = event.target.files[0];
+    if (file) {
+        try {
+            // Verificar que el archivo sea un PDF
+            if (file.type !== 'application/pdf') {
+                alert('El archivo seleccionado no es un PDF.');
+                return;
+            }
+
+            // Leer el archivo PDF
+            const reader = new FileReader();
+            reader.onload = async function () {
+                const typedArray = new Uint8Array(this.result);
+
+                try {
+                    // Cargar el PDF usando pdfjs-dist
+                    const pdf = await pdfjsLib.getDocument({ data: typedArray }).promise;
+                    const pageNumber = 33;
+
+                    if (pageNumber <= pdf.numPages) {
+                        const page = await pdf.getPage(pageNumber);
+                        const textContent = await page.getTextContent();
+                        const text = textContent.items.map(item => item.str).join(' ');
+
+                        // Obtener el nombre del archivo PDF sin la extensión
+                        const fileName = file.name.replace(/\.[^/.]+$/, "");
+                        // Obtener la fecha actual en formato YYYYMMDD
+                        const date = new Date();
+                        const formattedDate = date.toISOString().split('T')[0].replace(/-/g, '');
+                        // Crear el nombre del archivo Excel
+                        const excelFileName = `${fileName}_${formattedDate}.xlsx`;
+
+                        exportTextToExcel(text, excelFileName);
+
+                    } else {
+                        console.error(`El PDF solo tiene ${pdf.numPages} páginas.`);
+                    }
+                } catch (error) {
+                    console.error('Error al procesar el archivo PDF:', error);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        } catch (error) {
+            console.error('Error al leer el archivo PDF:', error);
+        }
+    }
+}*/
+
+/*
+function exportTextToExcel(text, fileName) {
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet([[text]]);
+    XLSX.utils.book_append_sheet(wb, ws, "Datos del PDF");
+    // Usar el nombre de archivo proporcionado
+    XLSX.writeFile(wb, fileName);
+}*/
 
 //Funcionalidad Tabla
 function getIdSelections() {
@@ -86,8 +169,8 @@ function initTable() {
         locale: cultureName,
         exportDataType: 'all',
         exportTypes: ['excel'],
-        toolbar: '#toolbar', // Asegúrate de que este ID coincida con el elemento HTML donde quieres que aparezcan los botones
-        buttons: additionalButtons, // Asegúrate de que `additionalButtons` esté siendo llamado correctamente aquí
+        toolbar: '#toolbar',
+        buttons: additionalButtons,
         columns: [
             {
                 field: "state",
@@ -154,19 +237,31 @@ function initTable() {
                 formatter: operateFormatter
             }
         ]
-    })
-    table.on('check.bs.table uncheck.bs.table ' +
-        'check-all.bs.table uncheck-all.bs.table',
-        function () {
-            buttonRemove.prop('disabled', !table.bootstrapTable('getSelections').length)
+    });
 
-            // save your data, here just save the current page
-            selections = getIdSelections()
-            // push or splice the selections if you want to save all data selections
-        })
-    table.on('all.bs.table', function (e, name, args) {
-        console.log(name, args)
-    })
+    // Aquí gestionamos la selección y deselección de registros
+    table.on('check.bs.table uncheck.bs.table ' +
+        'check-all.bs.table uncheck-all.bs.table', function () {
+
+            // Obtener si hay registros seleccionados
+            const hasSelections = table.bootstrapTable('getSelections').length > 0;
+
+            // Habilitar o deshabilitar el botón en base a las selecciones
+        $('#dlgConsultarBtnGuardar').prop('disabled', !hasSelections);
+
+            // Guardar selecciones
+            selections = getIdSelections();
+
+            // Deshabilitar o habilitar el botón de eliminación
+            buttonRemove.prop('disabled', !hasSelections);
+        });
+
+    // **Verificar si hay selecciones al iniciar**
+    const initialSelections = table.bootstrapTable('getSelections').length > 0;
+    $('#dlgConsultarBtnGuardar').prop('disabled', !initialSelections);
+    buttonRemove.prop('disabled', !initialSelections);
+
+
     buttonRemove.click(function () {
         askConfirmation(dlgDeleteTitle, dlgDeleteQuestion, function () {
             let oParams = { ids: selections };
@@ -183,7 +278,7 @@ function initTable() {
                     table.bootstrapTable('remove', {
                         field: 'id',
                         values: selections
-                    })
+                    });
                     selections = [];
                     buttonRemove.prop('disabled', true);
 
@@ -196,9 +291,8 @@ function initTable() {
                 },
                 postOptions
             );
-
         });
-    })
+    });
 }
 function onCerrarClick() {
     //Removes validation from input-fields
@@ -221,8 +315,14 @@ function initConciliacionDialog(action, row) {
     let fechaField = document.getElementById("inpConciliacionFecha");
     let clienteIdField = document.getElementById("inpConciliacionClienteId");
     let descripcionField = document.getElementById("inpConciliacionDescripcion");
-    let btnGuardar = document.getElementById("dlgConciliacionBtnGuardar");
     let dlgTitle = document.getElementById("dlgConciliacionTitle");
+
+    //Botones
+    let btnGuardar = document.getElementById("dlgConciliacionBtnGuardar");
+    let btnCancelar = document.getElementById("dlgConciliacionBtnCancelar");
+    let btnComprobantesFechas = document.getElementById("dlgConciliacionBtnFechas");
+    let btnBtnMovimientosImportar = document.getElementById("dlgConciliacionBtnMovimientos");
+    //let btnComprobantes = document.getElementById("dlgConciliacionBtnGuardar");
     let summaryContainer = document.getElementById("saveValidationSummary");
 
     // Limpiar los mensajes de validación
@@ -250,14 +350,19 @@ function initConciliacionDialog(action, row) {
         case VER:
             dlgTitle.innerHTML = dlgVerTitle;
 
+            idField.setAttribute("disabled", true);
             fechaField.setAttribute("disabled", true);
             clienteIdField.setAttribute("disabled", true);
             descripcionField.setAttribute("disabled", true);
+
+            //btnComprobantesFechas.setAttribute("disabled", true);
+            //btnBtnMovimientosImportar.setAttribute("disabled", true);
             btnGuardar.setAttribute("disabled", true);
             break;
     }
 
     // Asignar valores a los campos del diálogo usando los valores de la entidad Conciliacion
+    idField.value = row.id || "";
     fechaField.value = row.fecha || "";
     clienteIdField.value = row.clienteId || "";
     descripcionField.value = row.descripcion || "";
@@ -325,3 +430,21 @@ function onGuardarConciliacionClick() {
         postOptions
     );
 }
+
+//Funciones para el cardview del lado izquierdo del principal modal
+function actionFormatter(value, row, index) {
+    return `
+        <button class="btn btn-primary btn-sm" onclick="eliminarRegistro(${row.id})">
+            <i class="bi bi-paperclip rotate-clip"></i> Conciliar/Reconciliar
+        </button>
+    `;
+}
+function eliminarRegistro(id) {
+    if (confirm('¿Estás seguro de eliminar el registro con ID: ' + id + '?')) {
+        alert('Registro eliminado con éxito.');
+        // Lógica para eliminar el registro
+    }
+}
+
+
+

@@ -2,12 +2,15 @@
 using ERPSEI.Data;
 using ERPSEI.Data.Entities.Empleados;
 using ERPSEI.Data.Entities.Empresas;
+using ERPSEI.Data.Entities.Conciliaciones;
+using ERPSEI.Data.Entities.Clientes;
 using ERPSEI.Data.Entities.SAT.Catalogos;
 using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empleados;
 using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Data.Managers.Reportes;
+using ERPSEI.Data.Managers.Conciliaciones;
 using ERPSEI.Data.Managers.SAT;
 using ERPSEI.Data.Managers.SAT.Catalogos;
 using ERPSEI.Data.Managers.Usuarios;
@@ -73,13 +76,28 @@ namespace ERPSEI
 			ConfigureDIEmpleados(_builder);
 
 			ConfigureDIAsistencias(_builder);
-		}
+
+            ConfigureDIConciliaciones(_builder);
+        }
         private static void ConfigureDIAsistencias(WebApplicationBuilder _builder) 
         {
 			//Asistencias
 			_builder.Services.AddScoped<IAsistenciaManager, AsistenciaManager>();
 			_builder.Services.AddScoped<IHorariosManager, HorariosManager>();
 		}
+        private static void ConfigureDIConciliaciones(WebApplicationBuilder _builder)
+        {
+            // Conciliaciones
+            _builder.Services.AddScoped<IBancoManager, BancoManager>();
+            //_builder.Services.AddScoped<IRCatalogoManager<Banco>, BancoManager>(); 
+            _builder.Services.AddScoped<IConciliacionManager, ConciliacionManager>();
+            _builder.Services.AddScoped<IConciliacionDetalleManager, ConciliacionDetalleManager>();
+            _builder.Services.AddScoped<IConciliacionDetalleComprobanteManager, ConciliacionDetalleComprobanteManager>();
+            _builder.Services.AddScoped<IConciliacionDetalleMovimientoManager, ConciliacionDetalleMovimientoManager>();
+            _builder.Services.AddScoped<IClienteManager, ClienteManager>();
+            _builder.Services.AddScoped<IMovimientoBancarioManager, MovimientoBancarioManager>();
+        }
+
         private static void ConfigureDIFacturacion(WebApplicationBuilder _builder)
         {
             //Catálogos SAT

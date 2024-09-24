@@ -2,7 +2,7 @@
 
 namespace ERPSEI.Data.Managers.Conciliaciones
 {
-    public interface IBancoManager : IRCatalogoManager<Banco> 
+    public interface IBancoManager : IRCatalogoManager<Banco>
     {
     }
 }
