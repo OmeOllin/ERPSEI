@@ -19,6 +19,12 @@
     string cultureName = culture.Name;
 
     List<Banco> banco = await BancoManager.GetAllAsync();
+
+    bool puedeTodo = User.Claims.Where(c => c.Type.Equals("PuedeTodo", StringComparison.OrdinalIgnoreCase)).FirstOrDefault()?.Value == "1";
+    bool puedeConsultar = User.Claims.Where(c => c.Type.Equals("PuedeConsultar", StringComparison.OrdinalIgnoreCase)).FirstOrDefault()?.Value == "1";
+    bool puedeEditar = User.Claims.Where(c => c.Type.Equals("PuedeEditar", StringComparison.OrdinalIgnoreCase)).FirstOrDefault()?.Value == "1";
+    bool puedeEliminar = User.Claims.Where(c => c.Type.Equals("PuedeEliminar", StringComparison.OrdinalIgnoreCase)).FirstOrDefault()?.Value == "1";
+    bool puedeAutorizar = User.Claims.Where(c => c.Type.Equals("PuedeAutorizar", StringComparison.OrdinalIgnoreCase)).FirstOrDefault()?.Value == "1";
 }
 
 <h3 class="title mb-3">@ViewData["Title"]</h3>
@@ -106,10 +112,8 @@
        data-show-fullscreen="true"
        data-show-columns="true"
        data-show-columns-toggle-all="true"
-       data-detail-view="true"
        data-show-export="true"
        data-click-to-select="true"
-       data-detail-formatter="detailFormatter"
        data-minimum-count-columns="2"
        data-show-pagination-switch="true"
        data-pagination="true"
@@ -119,7 +123,7 @@
        data-side-pagination="client"
        data-response-handler="responseHandler"
        data-buttons-class="primary"
-       data-url="/ERP/Conciliaciones/ConciliacionesList">
+       data-url="https://examples.wenzhixin.net.cn/examples/bootstrap_table/data">
     <thead>
         <tr align="center" valign="middle" class="bg-primary bg-opacity-10">
         </tr>
@@ -158,7 +162,7 @@
                             </div>
                             <div class="col-sm-6 col-md-4 col-lg-4">
                                 <div class="form-floating mb-3">
-                                    <input id="inpConciliacionClienteId" asp-for="ConciliacionesList.ClienteId" type="text" class="form-control" placeholder="@Localizer["ClienteIdPlaceholder"]" />
+                                    <input id="inpConciliacionClienteId" asp-for="ConciliacionesList.ClienteId" type="text" class="form-control" placeholder="@Localizer["ClienteIdPlaceholder"]" idselected='' area="ERP" module="Conciliaciones" source="GetClientesEmpresasSuggestion" />
                                     <label asp-for="ConciliacionesList.ClienteId" class="form-label required"></label>
                                 </div>
                             </div>
@@ -175,16 +179,16 @@
                             <div class="row">
                                 <!-- Botón en el lado izquierdo antes del primer CardView -->
                                 <div class="col-sm-6 col-md-6 col-lg-6 mb-3">
-                                    <a href="#" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#consultarComprobantesModal">
+                                    <button type="button" id="dlgConciliacionBtnFechas" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#consultarComprobantesModal">
                                         @Localizer["TitleModalCComprobantes"]
-                                    </a>
+                                    </button>
                                 </div>
 
                                 <!-- Botón en el lado derecho antes del segundo CardView -->
                                 <div class="col-sm-6 col-md-6 col-lg-6 mb-3">
-                                    <a href="#" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#ImportarMovimientosModal">
+                                    <button type="button" id="dlgConciliacionBtnMovimientos" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#ImportarMovimientosModal">
                                         @Localizer["TitleModalIMovimientos"]
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
 
@@ -212,6 +216,7 @@
                                                 <th data-field="name">Fecha</th>
                                                 <th data-field="price">Desc.</th>
                                                 <th data-field="">Total</th>
+                                                <th data-field="actions" data-formatter="actionFormatter"></th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -246,6 +251,7 @@
                                                 <th data-field="name">Fecha</th>
                                                 <th data-field="price">Desc.</th>
                                                 <th data-field="">Total</th>
+                                                <th data-field="actions" data-formatter="actionFormatter"></th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -373,7 +379,7 @@
     </div>
 </div>
 
-<!-- Modal para movimientos -->
+<!--Modal para Movimientos-->
 <div class="modal fade" id="ImportarMovimientosModal" tabindex="-1" aria-labelledby="ImportarMovimientosModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -403,7 +409,7 @@
                     <br />
                     <!-- Formulario para importar archivos -->
                     <div class="container mt-4">
-                        <form id="importForm" action="@Url.Page("Conciliaciones", "ImportarArchivo")" method="post" enctype="multipart/form-data">
+                        <form id="importForm" method="post" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group">
@@ -413,29 +419,25 @@
                             </div>
                         </form>
                     </div>
-                    <br />
-                    <!-- Combobox añadido aquí -->
+                    <!-- Combobox para seleccionar el banco -->
                     <div class="container mt-4">
                         <div class="row">
                             <div class="col-12">
                                 <div class="form-floating mb-3">
-                                    <select id="selFiltroBanco" asp-for="BancoList.Nombre" class="form-select" placeholder="@Localizer["BancoPlaceholder"]">
+                                    <select id="selFiltroBanco" class="form-select" placeholder="@Localizer["BancoPlaceholder"]">
                                         <option value="0">Seleccione...</option>
-                                        @{
-                                            foreach (Banco bancos in banco)
-                                            {
-                                                <option bancoid='@bancos.Id' value='@bancos.Id'>@bancos.Nombre</option>
-                                            }
+                                        @foreach (Banco bancos in banco)
+                                        {
+                                            <option value="@bancos.Id">@bancos.Nombre</option>
                                         }
                                     </select>
-                                    <label for="selFiltroBanco" asp-for="BancoList.Id" class="form-label"></label>
+                                    <label for="selFiltroBanco" asp-for="BancoList.Id" class="form-label">@Localizer["BancoLabel"]</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-
+                    <br />
                 </div>
-
             </div>
             <div class="modal-footer">
                 <div class="col-7 text-end">
@@ -489,6 +491,12 @@
         font-size: 12px; /* Ajusta el tamaño de la fuente en el botón de búsqueda */
         padding: 5px 10px; /* Ajusta el relleno del botón de búsqueda */
     }
+
+    .rotate-clip {
+        transform: rotate(90deg);
+        display: inline-block;
+    }
+
 </style>
 
 
@@ -506,6 +514,11 @@
     <script src="~/lib/bootstrap-table/extensions/export/xlsx.full.min.js"></script>
     <script src="~/lib/bootstrap-table/extensions/export/exceljs.min.js"></script>
     <script src="~/lib/bootstrap-table/extensions/export/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.15.349/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+
+
+
 
     <link rel="stylesheet" href="~/css/Conciliaciones.css" />
     <script src="~/../Areas/ERP/Pages/Conciliaciones.cshtml.js"></script>
@@ -531,6 +544,13 @@
         var colUsuarioCreadorHeader = '@Localizer["ColCreatedUserHeader"]';
         var colUsuarioModificoHeader = '@Localizer["ColModifyUserHeader"]';
         var colAccionesHeader = '@Localizer["ColActionsHeader"]';
+
+        /*Permisos*/
+        var puedeTodo = '@puedeTodo' == 'True';
+        var puedeConsultar = '@puedeConsultar' == 'True';
+        var puedeEditar = '@puedeEditar' == 'True';
+        var puedeEliminar = '@puedeEliminar' == 'True';
+        var puedeAutorizar = '@puedeAutorizar' == 'True';
     </script>
 
     <partial name="_ValidationScriptsPartial" />
