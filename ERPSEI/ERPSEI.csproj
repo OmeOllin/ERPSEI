@@ -61,10 +61,22 @@
     <EmbeddedResource Update="Resources\Areas\Catalogos\Pages\Notificador.en-US.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Areas\ERP\Pages\AdministradorDeComprobantes.en-US.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Areas\ERP\Pages\AdministradorDeComprobantes.es-MX.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Areas\ERP\Pages\Prefacturas.en-US.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Areas\ERP\Pages\Prefacturas.es-MX.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Areas\ERP\Pages\AdministradorDeComprobantesModel.en-US.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Areas\ERP\Pages\AdministradorDeComprobantesModel.es-MX.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Areas\Identity\Pages\Account\AccessDenied.en-US.resx">
