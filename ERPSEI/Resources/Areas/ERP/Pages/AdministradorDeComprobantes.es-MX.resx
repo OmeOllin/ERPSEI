@@ -117,18 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ActividadEconomica" xml:space="preserve">
-    <value>Actividad Económica</value>
-  </data>
-  <data name="AddButton" xml:space="preserve">
-    <value>Agregar</value>
-  </data>
-  <data name="AlmenosUnProductoServicioNecesario" xml:space="preserve">
-    <value>Se requiere al menos un producto o servicio agregado en los conceptos para facturar</value>
-  </data>
-  <data name="AuthorizeButtonTitle" xml:space="preserve">
-    <value>Autorizar</value>
-  </data>
   <data name="CancelButtonTitle" xml:space="preserve">
     <value>Cancelar</value>
   </data>
@@ -192,32 +180,8 @@
   <data name="ColUsoCFDIHeader" xml:space="preserve">
     <value>Uso de CFDI</value>
   </data>
-  <data name="Conceptos" xml:space="preserve">
-    <value>Conceptos</value>
-  </data>
-  <data name="ConfirmActionQuestion" xml:space="preserve">
-    <value>Los cambios no guardados se perderán ¿Está seguro que desea realizar esta acción?</value>
-  </data>
-  <data name="ConfirmActionTitle" xml:space="preserve">
-    <value>Confirmar</value>
-  </data>
   <data name="DatosGenerales" xml:space="preserve">
     <value>Datos Generales</value>
-  </data>
-  <data name="DeactivateButton" xml:space="preserve">
-    <value>Dar de baja</value>
-  </data>
-  <data name="DeleteButtonTitle" xml:space="preserve">
-    <value>Eliminar</value>
-  </data>
-  <data name="DeleteCFDIDialogQuestion" xml:space="preserve">
-    <value>¿Está seguro que desea dar de baja los registros seleccionados?</value>
-  </data>
-  <data name="DeleteCFDIDialogTitle" xml:space="preserve">
-    <value>Dar de baja empleado</value>
-  </data>
-  <data name="DeleteElementDialogQuestion" xml:space="preserve">
-    <value>¿Está seguro que desea eliminar los elementos seleccionados del listado?</value>
   </data>
   <data name="Detalles" xml:space="preserve">
     <value>Detalles</value>
@@ -225,13 +189,10 @@
   <data name="DomicilioFiscal" xml:space="preserve">
     <value>Domicilio Fiscal</value>
   </data>
-  <data name="EditButtonTitle" xml:space="preserve">
-    <value>Editar</value>
-  </data>
-  <data name="EditDialogTitle" xml:space="preserve">
-    <value>Editar Registro</value>
-  </data>
   <data name="Emisor" xml:space="preserve">
+    <value>Emisor</value>
+  </data>
+  <data name="EmisorPlaceholder" xml:space="preserve">
     <value>Emisor</value>
   </data>
   <data name="EmptyInfo" xml:space="preserve">
@@ -240,88 +201,37 @@
   <data name="EmptySelectItemText" xml:space="preserve">
     <value>Seleccione...</value>
   </data>
-  <data name="EsManual" xml:space="preserve">
-    <value>Manual</value>
+  <data name="EstatusPlaceholder" xml:space="preserve">
+    <value>Estatus</value>
   </data>
-  <data name="ExportButton" xml:space="preserve">
+  <data name="ExportButtonTitle" xml:space="preserve">
     <value>Exportar a Excel</value>
   </data>
   <data name="ExportCFDIDialogTitle" xml:space="preserve">
     <value>Exportar</value>
   </data>
-  <data name="FaltaEmpresaParaComparar" xml:space="preserve">
-    <value>La primer empresa parece válida. Por favor, seleccione la otra empresa para validar</value>
-  </data>
-  <data name="FaltanEmpresasParaComparar" xml:space="preserve">
-    <value>No se han seleccionado empresas para validar...</value>
+  <data name="FechaPlaceholder" xml:space="preserve">
+    <value>Fecha</value>
   </data>
   <data name="FilterTitle" xml:space="preserve">
     <value>Filtros de búsqueda</value>
   </data>
-  <data name="InformacionEmpresarial" xml:space="preserve">
-    <value>Información de la Empresa</value>
+  <data name="FormaPagoPlaceholder" xml:space="preserve">
+    <value>Forma Pago</value>
   </data>
-  <data name="Limpiar" xml:space="preserve">
-    <value>Limpiar</value>
-  </data>
-  <data name="MismaDireccionNoPuedeFacturar" xml:space="preserve">
-    <value>El emisor y el receptor tienen la misma dirección. No se pueden facturar.</value>
-  </data>
-  <data name="MismoNivelNoPuedeFacturar" xml:space="preserve">
-    <value>El emisor y el receptor tienen el mismo nivel. No se pueden facturar.</value>
-  </data>
-  <data name="NewDialogTitle" xml:space="preserve">
-    <value>Nuevo Registro</value>
-  </data>
-  <data name="Nivel" xml:space="preserve">
-    <value>Nivel</value>
-  </data>
-  <data name="NivelMenorNoPuedeFacturar" xml:space="preserve">
-    <value>El nivel de la empresa emisora no puede ser menor que el nivel de la empresa receptora. Por favor elija otra empresa.</value>
-  </data>
-  <data name="NivelNoPuedeFacturar" xml:space="preserve">
-    <value>El nivel de la empresa seleccionada no permite la facturación. Por favor elija otra empresa.</value>
-  </data>
-  <data name="NoCorresponde" xml:space="preserve">
-    <value>no corresponde a los conceptos permitidos del perfil del</value>
-  </data>
-  <data name="NoPuedeFacturar" xml:space="preserve">
-    <value>por lo que no puede facturar. Por favor cambie o elimine el producto o servicio.</value>
-  </data>
-  <data name="NuevoRegistro" xml:space="preserve">
-    <value>Nuevo</value>
-  </data>
-  <data name="NumeroOperacionPlaceholder" xml:space="preserve">
-    <value>Número de Operación</value>
-  </data>
-  <data name="ObjetoSocial" xml:space="preserve">
-    <value>Objeto Social</value>
-  </data>
-  <data name="Origen" xml:space="preserve">
-    <value>Origen</value>
+  <data name="MetodoPagoPlaceholder" xml:space="preserve">
+    <value>Método Pago</value>
   </data>
   <data name="PDFButtonTitle" xml:space="preserve">
     <value>Ver PDF</value>
-  </data>
-  <data name="Perfil" xml:space="preserve">
-    <value>Perfil</value>
-  </data>
-  <data name="ProductoServicioConClave" xml:space="preserve">
-    <value>El producto o servicio con clave</value>
-  </data>
-  <data name="ProductoServicioPlaceholder" xml:space="preserve">
-    <value>Producto o Servicio</value>
-  </data>
-  <data name="ProductoServicioRepetido" xml:space="preserve">
-    <value>El producto o servicio ya se encuentra en el listado</value>
-  </data>
-  <data name="PuedenFacturar" xml:space="preserve">
-    <value>¡Excelente! Las empresas pueden facturar entre si</value>
   </data>
   <data name="RazonSocial" xml:space="preserve">
     <value>Razón Social</value>
   </data>
   <data name="Receptor" xml:space="preserve">
+    <value>Receptor</value>
+  </data>
+  <data name="ReceptorPlaceholder" xml:space="preserve">
     <value>Receptor</value>
   </data>
   <data name="RFC" xml:space="preserve">
@@ -333,44 +243,23 @@
   <data name="SearchButton" xml:space="preserve">
     <value>Buscar</value>
   </data>
-  <data name="SearchSuggestionA" xml:space="preserve">
-    <value>Todavía no hay nada aquí</value>
-  </data>
-  <data name="SearchSuggestionB" xml:space="preserve">
-    <value>Busque una empresa para comenzar</value>
-  </data>
   <data name="SeeButtonTitle" xml:space="preserve">
     <value>Ver</value>
   </data>
   <data name="SeeDialogTitle" xml:space="preserve">
     <value>Ver Registro</value>
   </data>
-  <data name="SinActividadesNoPuedeFacturar" xml:space="preserve">
-    <value>La empresa seleccionada no puede facturar porque no cuenta con actividades económicas. Por favor elija otra empresa.</value>
-  </data>
-  <data name="SinPerfilNoPuedeFacturar" xml:space="preserve">
-    <value>La empresa seleccionada no puede facturar porque no cuenta con un perfil. Por favor elija otra empresa.</value>
-  </data>
-  <data name="SinProductoServicio" xml:space="preserve">
-    <value>No se ha seleccionado un producto o servicio para agregar</value>
-  </data>
-  <data name="SinProductosServiciosNoPuedeFacturar" xml:space="preserve">
-    <value>El perfil de la empresa no cuenta con productos o servicios permitidos para facturar. Por favor elija otra empresa.</value>
-  </data>
-  <data name="StampButtonTitle" xml:space="preserve">
-    <value>Timbrar</value>
-  </data>
-  <data name="TipoCambioPlaceholder" xml:space="preserve">
-    <value>Tipo de Cambio</value>
+  <data name="SeriePlaceholder" xml:space="preserve">
+    <value>Serie</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Administrador de Comprobantes</value>
   </data>
-  <data name="UsuarioCreadorPlaceholder" xml:space="preserve">
-    <value>Usuario creador</value>
+  <data name="UsoCFDIPlaceholder" xml:space="preserve">
+    <value>Uso CFDI</value>
   </data>
-  <data name="UsuarioTimbradorPlaceholder" xml:space="preserve">
-    <value>Usuario timbrador</value>
+  <data name="UUIDPlaceholder" xml:space="preserve">
+    <value>UUID</value>
   </data>
   <data name="Validar" xml:space="preserve">
     <value>Validar</value>

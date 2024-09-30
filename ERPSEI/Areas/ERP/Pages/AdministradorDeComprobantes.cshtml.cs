@@ -61,16 +61,9 @@ namespace ERPSEI.Areas.ERP.Pages
 			[Display(Name = "SerieField")]
 			public string? Serie { get; set; }
 
-			[DataType(DataType.DateTime)]
-			[Display(Name = "FechaInicioField")]
-			public DateTime? FechaInicio { get; set; }
-
-			[DataType(DataType.DateTime)]
-			[Display(Name = "FechaFinField")]
-			public DateTime? FechaFin { get; set; }
-
-			[Display(Name = "MonedaField")]
-			public int? MonedaId { get; set; }
+			[DataType(DataType.Text)]
+			[Display(Name = "FechaField")]
+			public string? Fecha { get; set; }
 
 			[Display(Name = "FormaPagoField")]
 			public int? FormaPagoId { get; set; }
@@ -81,11 +74,17 @@ namespace ERPSEI.Areas.ERP.Pages
 			[Display(Name = "UsoCFDIField")]
 			public int? UsoCFDIId { get; set; }
 
-			[Display(Name = "UsuarioCreadorField")]
-			public string? UsuarioCreadorId { get; set; }
+			[Display(Name = "UUIDField")]
+			public string? UUID { get; set; }
 
-			[Display(Name = "UsuarioTimbradorField")]
-			public string? UsuarioTimbradorId { get; set; }
+			[Display(Name = "EmisorField")]
+			public string? Emisor { get; set; }
+
+			[Display(Name = "ReceptorField")]
+			public string? Receptor { get; set; }
+
+			[Display(Name = "EstatusField")]
+			public string? Estatus { get; set; }
 		}
 
 		[BindProperty]
@@ -296,22 +295,22 @@ namespace ERPSEI.Areas.ERP.Pages
 
 			string jsonResponse;
 			List<string> jsonPrefacturas = [];
-			List<Prefactura> prefacturas;
+			List<Prefactura> prefacturas = [];
 
 			if (filtro != null)
 			{
-				prefacturas = await prefacturaManager.GetAllAsync(
-					filtro.FechaInicio,
-					filtro.FechaFin,
-					filtro.Serie,
-					filtro.MonedaId,
-					filtro.FormaPagoId,
-					filtro.MetodoPagoId,
-					filtro.UsoCFDIId,
-					filtro.UsuarioCreadorId,
-					filtro.UsuarioTimbradorId,
-					false
-				);
+				//prefacturas = await prefacturaManager.GetAllAsync(
+				//	filtro.Fecha,
+				//	filtro.Fecha,
+				//	filtro.Serie,
+				//	filtro.MonedaId,
+				//	filtro.FormaPagoId,
+				//	filtro.MetodoPagoId,
+				//	filtro.UsoCFDIId,
+				//	filtro.UsuarioCreadorId,
+				//	filtro.UsuarioTimbradorId,
+				//	false
+				//);
 			}
 			else
 			{
