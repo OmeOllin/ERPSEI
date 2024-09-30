@@ -120,6 +120,9 @@
   <data name="AccountingMenu" xml:space="preserve">
     <value>Accounting</value>
   </data>
+  <data name="AdministradorDeComprobantesMenu" xml:space="preserve">
+    <value>Invoice Manager</value>
+  </data>
   <data name="AreasCatalogMenu" xml:space="preserve">
     <value>Areas</value>
   </data>
@@ -128,6 +131,9 @@
   </data>
   <data name="CatalogsMenu" xml:space="preserve">
     <value>Catalogs</value>
+  </data>
+  <data name="ConciliacionesMenu" xml:space="preserve">
+    <value>Conciliations</value>
   </data>
   <data name="DisabilitiesMenu" xml:space="preserve">
     <value>Disabilities</value>

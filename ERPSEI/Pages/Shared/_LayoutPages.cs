@@ -81,13 +81,19 @@ namespace ERPSEI.Pages.Shared
         public static string Prefacturas = "Prefacturas";
         public static string PrefacturasNavClass(ViewContext viewContext) => PageNavClass(viewContext, Prefacturas);
 
-        #endregion
+		public static string AdministradorDeComprobantes = "AdministradorDeComprobantes";
+		public static string AdministradorDeComprobantesNavClass(ViewContext viewContext) => PageNavClass(viewContext, Prefacturas);
 
-        #endregion
+		public static string Conciliaciones = "Conciliaciones";
+		public static string ConciliacionesNavClass(ViewContext viewContext) => PageNavClass(viewContext, Prefacturas);
 
-        #region Reportes
+		#endregion
 
-        public static string Reportes => "Reportes";
+		#endregion
+
+		#region Reportes
+
+		public static string Reportes => "Reportes";
         public static string ReportesNavClass(ViewContext viewContext) => PageNavClass(viewContext, Reportes);
 
         #region Recuros Humanos
