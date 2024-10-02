@@ -192,9 +192,6 @@
   <data name="EmailFormat" xml:space="preserve">
     <value>The {0} field is not a valid email address.</value>
   </data>
-  <data name="EmisorField" xml:space="preserve">
-    <value>Emitter</value>
-  </data>
   <data name="EmployeeNameField" xml:space="preserve">
     <value>Employee name</value>
   </data>
@@ -348,6 +345,9 @@
   <data name="PerfilField" xml:space="preserve">
     <value>Profile</value>
   </data>
+  <data name="PeriodoField" xml:space="preserve">
+    <value>Period</value>
+  </data>
   <data name="PersonName" xml:space="preserve">
     <value>The {0} field must have only letters. Whitespaces are allowed. The first letter must be capitalized and there must be at least two letters.</value>
   </data>
@@ -368,9 +368,6 @@
   </data>
   <data name="RazonSocialField" xml:space="preserve">
     <value>Business name</value>
-  </data>
-  <data name="ReceptorField" xml:space="preserve">
-    <value>Receiver</value>
   </data>
   <data name="RememberField" xml:space="preserve">
     <value>Remember me?</value>
@@ -407,6 +404,9 @@
   </data>
   <data name="TipoComprobanteField" xml:space="preserve">
     <value>Type of receipt</value>
+  </data>
+  <data name="TipoField" xml:space="preserve">
+    <value>Type</value>
   </data>
   <data name="TrasladoField" xml:space="preserve">
     <value>Transfer</value>

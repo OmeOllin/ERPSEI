@@ -348,6 +348,9 @@
   <data name="PerfilField" xml:space="preserve">
     <value>Perfil</value>
   </data>
+  <data name="PeriodoField" xml:space="preserve">
+    <value>Periodo</value>
+  </data>
   <data name="PersonName" xml:space="preserve">
     <value>El campo {0} debe tener solo letras. Se permiten los espacios en blanco. La primera letra debe estar en mayúscula y debe haber mínimo dos letras.</value>
   </data>
@@ -407,6 +410,9 @@
   </data>
   <data name="TipoComprobanteField" xml:space="preserve">
     <value>Tipo de comprobante</value>
+  </data>
+  <data name="TipoField" xml:space="preserve">
+    <value>Tipo</value>
   </data>
   <data name="TrasladoField" xml:space="preserve">
     <value>Traslado</value>
