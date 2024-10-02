@@ -1,6 +1,6 @@
 ﻿var table;
 var buttonExport;
-var buttonStamp;
+var buttonCancel;
 var tableProdServ;
 var selections = [];
 var dlgProdServ = null;
@@ -22,84 +22,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     table = $("#table");
     buttonExport = $("#btnExportar");
-    buttonStamp = $("#btnTimbrar");
-    tableProdServ = $("#tableProductosServicios");
-    dlgCFDI = document.getElementById('dlgCFDI');
-    dlgCFDIModal = new bootstrap.Modal(dlgCFDI, null);
-    //Función para limpiar el cuadro de diálogo cuando es cerrado
-    dlgCFDI.addEventListener('hidden.bs.modal', function (event) {
-        onCerrarClick();
-    });
-
-    dlgProdServ = document.getElementById('dlgProdServ');
-    //Función para limpiar el cuadro de diálogo cuando es cerrado
-    dlgProdServ.addEventListener('hidden.bs.modal', function (event) {
-        onCerrarClick();
-    });
+    buttonCancel = $("#btnCancelar");
 
     initTable();
 
-    let btnBuscar = document.getElementById("btnBuscar");
-    if (btnBuscar) { btnBuscar.click(); }
-
-    autoCompletar("#inpEmisor", {
-        select: function (element, item) { toggleEmisorInfo(item); },
-        change: function (element, item) {
-            let inpEmisor = document.getElementById('inpEmisor');
-
-            inpEmisor.classList.remove("is-invalid");
-            inpEmisor.classList.remove("is-valid");
-
-            if ((inpEmisor.value || "").length <= 0) {
-                toggleEmisorInfo();
-                inpEmisor.classList.add("is-invalid");
-            }
-            else {
-                inpEmisor.classList.add("is-valid");
-            }
-        }
-    });
-    autoCompletar("#inpReceptor", {
-        select: function (element, item) { toggleReceptorInfo(item); },
-        change: function (element, item) {
-            let inpReceptor = document.getElementById('inpReceptor');
-
-            inpReceptor.classList.remove("is-invalid");
-            inpReceptor.classList.remove("is-valid");
-
-            if ((inpReceptor.value || "").length <= 0) {
-                toggleReceptorInfo();
-                inpReceptor.classList.add("is-invalid");
-            }
-            else {
-                inpReceptor.classList.add("is-valid");
-            }
-        }
-    });
-    autoCompletar("#inpProductoServicio", {
-        select: function (element, item) {
-            let inpDescripcion = document.getElementById("inpDescripcion");
-            inpDescripcion.value = item.value;
-        }
-    });
-    autoCompletar("#inpUnidad", {
-        change: function (element, item) {
-            let inpUnidad = document.getElementById('inpUnidad');
-
-            inpUnidad.classList.remove("is-invalid");
-            inpUnidad.classList.remove("is-valid");
-
-            if ((inpUnidad.value || "").length <= 0) {
-                inpUnidad.classList.add("is-invalid");
-            }
-            else {
-                inpUnidad.classList.add("is-valid");
-            }
-        }
-    });
-
-    autoCompletar("#inpFiltroUsuarioCreador");
-    autoCompletar("#inpFiltroUsuarioTimbrador");
+    autoCompletar("#inpEmisor");
+    autoCompletar("#inpReceptor");
 
     jQuery.validator.setDefaults({
         highlight: function (element, errorClass, validClass) {
@@ -225,7 +153,6 @@ function onCancelarCFDIClick(ids = null) {
     );
 }
 
-
 //Función para exportar cfdis
 function onExportarCFDIClick(ids = null) {
     let oParams = {};
@@ -349,19 +276,19 @@ function initTable() {
     })
     table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
         if (buttonExport) { buttonExport.prop('disabled', !table.bootstrapTable('getSelections').length) }
-        if (buttonStamp) { buttonStamp.prop('disabled', !table.bootstrapTable('getSelections').length) }
+        if (buttonCancel) { buttonCancel.prop('disabled', !table.bootstrapTable('getSelections').length) }
 
         // save your data, here just save the current page
         selections = getIdSelections()
         // push or splice the selections if you want to save all data selections
     });
     if (buttonExport) { buttonExport.click(function () { onExportarCFDIClick(selections); }); }
-    if (buttonStamp) { buttonStamp.click(function () { onTimbrarCFDIClick(selections); }); }
+    if (buttonCancel) { buttonCancel.click(function () { onTimbrarCFDIClick(selections); }); }
 }
 
 //Función para cancelar una prefactura
-function onCancelarPrefactura(idPrefactura) {
-    let oParams = { idPrefactura: idPrefactura }
+function onCancelarComprobante(idComprobante) {
+    let oParams = { idComprobante: idComprobante }
 
     doAjax(
         "/ERP/AdministradorDeComprobantes/Cancelar",
@@ -377,8 +304,6 @@ function onCancelarPrefactura(idPrefactura) {
                 showError(dlgTitle.innerHTML, `<ul>${summary}</ul>`);
                 return;
             }
-
-            onBuscarClick();
 
             showSuccess(dlgTitle.innerHTML, resp.mensaje);
         }, function (error) {
@@ -397,29 +322,28 @@ function onShowPDF(safeL) {
 ////////////////////////////////
 //Funcionalidad Filtrar
 ////////////////////////////////
+//Función para detectar el cambio de valor en el campo Tipo
+function onTipoChanged() {
+    if ($("#selFiltroTipo").val() == "0") {
+        $("#inpFiltroEmisor").parent().parent().hide();
+        $("#inpFiltroReceptor").parent().parent().show();
+    }
+    else {
+        $("#inpFiltroReceptor").parent().parent().hide();
+        $("#inpFiltroEmisor").parent().parent().show();
+    }
+}
 //Función para filtrar los datos de la tabla.
 function onBuscarClick() {
-    let btnBuscar = document.getElementById("btnBuscar");
-    let inpSerie = document.getElementById("inpFiltroSerie");
-    let inpFechaInicio = document.getElementById("inpFiltroFechaInicio");
-    let inpFechaFin = document.getElementById("inpFiltroFechaFin");
-    let selMoneda = document.getElementById("selFiltroMoneda");
-    let selFormaPago = document.getElementById("selFiltroFormaPago");
-    let selMetodoPago = document.getElementById("selFiltroMetodoPago");
-    let selUsoCFDI = document.getElementById("selFiltroUsoCFDI");
-    let inpUsuarioCreador = document.getElementById("inpFiltroUsuarioCreador");
-    let inpUsuarioTimbrador = document.getElementById("inpFiltroUsuarioTimbrador");
-
     let oParams = {
-        Serie: inpSerie.value,
-        FechaInicio: inpFechaInicio.value,
-        FechaFin: inpFechaFin.value,
-        MonedaId: selMoneda.value == 0 ? null : parseInt(selMoneda.value),
-        FormaPagoId: selFormaPago.value == 0 ? null : parseInt(selFormaPago.value),
-        MetodoPagoId: selMetodoPago.value == 0 ? null : parseInt(selMetodoPago.value),
-        UsoCFDIId: selUsoCFDI.value == 0 ? null : parseInt(selUsoCFDI.value),
-        UsuarioCreadorId: inpUsuarioCreador.getAttribute("idselected"),
-        UsuarioTimbradorId: inpUsuarioTimbrador.getAttribute("idselected")
+        Periodo: $("#selFiltroPeriodo").val(),
+        EstatusId: $("#selFiltroEstatus").val() == 0 ? null : parseInt($("#selFiltroEstatus").val()),
+        TipoId: $("#selFiltroTipo").val() == 0 ? null : parseInt($("#selFiltroTipo").val()),
+        FormaPagoId: $("#selFiltroFormaPago").val() == 0 ? null : parseInt($("#selFiltroFormaPago").val()),
+        MetodoPagoId: $("#selFiltroMetodoPago").val() == 0 ? null : parseInt($("#selFiltroMetodoPago").val()),
+        UsoCFDIId: $("#selFiltroUsoCFDI").val() == 0 ? null : parseInt($("#selFiltroUsoCFDI").val()),
+        EmisorId: ($("#inpFiltroEmisor").attr("idselected") || "0") == "0" ? null : parseInt($("#inpFiltroEmisor").attr("idselected")),
+        ReceptorId: ($("#inpFiltroReceptor").attr("idselected") || "0") == "0" ? null : parseInt($("#inpFiltroReceptor").attr("idselected"))
     };
 
     //Resetea el valor de los filtros.
@@ -427,18 +351,17 @@ function onBuscarClick() {
     document.querySelectorAll("#filtros .form-select").forEach(function (e) { e.value = 0; });
 
     doAjax(
-        "/ERP/Prefacturas/Filtrar",
+        "/ERP/AdministradorDeComprobantes/Filtrar",
         oParams,
         function (resp) {
             if (resp.tieneError) {
+                let summary = ``;
                 if (Array.isArray(resp.errores) && resp.errores.length >= 1) {
-                    let summary = ``;
                     resp.errores.forEach(function (error) {
                         summary += `<li>${error}</li>`;
                     });
-                    summaryContainer.innerHTML += `<ul>${summary}</ul>`;
                 }
-                showError(btnBuscar.innerHTML, resp.mensaje);
+                showError($("#btnBuscar").text(), resp.mensaje + " " + summary);
                 return;
             }
 

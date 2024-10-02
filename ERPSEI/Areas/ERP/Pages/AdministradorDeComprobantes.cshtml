@@ -69,14 +69,47 @@
 					<div class="row">
 						<div class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<input id="inpFiltroFechaInicio" type="month" asp-for="InputFiltro.Fecha" class="form-control" placeholder="@Localizer["FechaPlaceholder"]" />
-								<label for="inpFiltroFechaInicio" asp-for="InputFiltro.Fecha" class="form-label"></label>
+								<select id="selFiltroPeriodo" asp-for="InputFiltro.Periodo" class="form-select" placeholder="@Localizer["FechaPlaceholder"]">
+									@{
+										for (int i = DateTime.Today.Year - 1; i <= DateTime.Today.Year; i++)
+										{
+											for(int j = 1; j <= 12; j++)
+											{
+												DateTime f = new DateTime(i, j, 1);
+												string description = f.ToString("MMMM 'de' yyyy");
+												description = string.Concat(description[0].ToString().ToUpper(), description.AsSpan(1));
+												string value = f.ToString("yyyy-MM");
+
+												if (i == DateTime.Today.Year && j == DateTime.Today.Month) {
+													<option selected value='@value'>@description</option>
+													break; 
+												}
+
+												<option value='@value'>@description</option>
+											}
+										}
+									}
+								</select>
+								<label for="selFiltroPeriodo" asp-for="InputFiltro.Periodo" class="form-label"></label>
 							</div>
 						</div>
 						<div class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<input id="inpFiltroSerie" asp-for="InputFiltro.Serie" class="form-control" placeholder="@Localizer["SeriePlaceholder"]" />
-								<label for="selFiltroSerie" asp-for="InputFiltro.Serie" class="form-label"></label>
+								<select id="selFiltroEstatus" asp-for="InputFiltro.EstatusId" class="form-select" placeholder="@Localizer["EstatusPlaceholder"]">
+									<option selected value="0">Todos</option>
+									<option value="1">Vigentes</option>
+									<option value="2">Cancelados</option>
+								</select>
+								<label for="selFiltroEstatus" asp-for="InputFiltro.EstatusId" class="form-label"></label>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-6 col-lg-3">
+							<div class="form-floating mb-3">
+								<select id="selFiltroTipo" asp-for="InputFiltro.TipoId" class="form-select" placeholder="@Localizer["TipoPlaceholder"]" onchange="onTipoChanged();">
+									<option selected value="0">Emitidos</option>
+									<option value="1">Recibidos</option>
+								</select>
+								<label for="selFiltroTipo" asp-for="InputFiltro.TipoId" class="form-label"></label>
 							</div>
 						</div>
 						<div class="col-sm-6 col-md-6 col-lg-3">
@@ -121,32 +154,16 @@
 								<label for="selFiltroUsoCFDI" asp-for="InputFiltro.UsoCFDIId" class="form-label"></label>
 							</div>
 						</div>
-						<div class="col-sm-6 col-md-6 col-lg-3">
+						<div style="display: none;" class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<input id="inpFiltroUUID" type="search" asp-for="InputFiltro.UUID" class="form-control" placeholder="@Localizer["UUIDPlaceholder"]" idselected='' area="ERP" module="AdministradorDeComprobantes" source="GetUUIDSuggestion" />
-								<label for="inpFiltroUUID" asp-for="InputFiltro.UUID" class="form-label"></label>
+								<input id="inpFiltroEmisor" type="search" asp-for="InputFiltro.EmisorId" class="form-control" placeholder="@Localizer["EmisorPlaceholder"]" idselected='' area="ERP" module="AdministradorDeComprobantes" source="GetEmisorSuggestion" />
+								<label for="inpFiltroEmisor" asp-for="InputFiltro.EmisorId" class="form-label"></label>
 							</div>
 						</div>
 						<div class="col-sm-6 col-md-6 col-lg-3">
 							<div class="form-floating mb-3">
-								<input id="inpFiltroEmisor" type="search" asp-for="InputFiltro.Emisor" class="form-control" placeholder="@Localizer["EmisorPlaceholder"]" idselected='' area="ERP" module="AdministradorDeComprobantes" source="GetEmisorSuggestion" />
-								<label for="inpFiltroEmisor" asp-for="InputFiltro.Emisor" class="form-label"></label>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-6 col-lg-3">
-							<div class="form-floating mb-3">
-								<input id="inpFiltroEmisor" type="search" asp-for="InputFiltro.Receptor" class="form-control" placeholder="@Localizer["ReceptorPlaceholder"]" idselected='' area="ERP" module="AdministradorDeComprobantes" source="GetReceptorSuggestion" />
-								<label for="inpFiltroEmisor" asp-for="InputFiltro.Receptor" class="form-label"></label>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-6 col-lg-3">
-							<div class="form-floating mb-3">
-								<select id="selFiltroEstatus" asp-for="InputFiltro.Estatus" class="form-select" placeholder="@Localizer["EstatusPlaceholder"]">
-									<option value="0">Todos</option>
-									<option value="1">Vigentes</option>
-									<option value="2">Cancelados</option>
-								</select>
-								<label for="selFiltroEstatus" asp-for="InputFiltro.Estatus" class="form-label"></label>
+								<input id="inpFiltroReceptor" type="search" asp-for="InputFiltro.ReceptorId" class="form-control" placeholder="@Localizer["ReceptorPlaceholder"]" idselected='' area="ERP" module="AdministradorDeComprobantes" source="GetReceptorSuggestion" />
+								<label for="inpFiltroReceptor" asp-for="InputFiltro.ReceptorId" class="form-label"></label>
 							</div>
 						</div>
 					</div>
