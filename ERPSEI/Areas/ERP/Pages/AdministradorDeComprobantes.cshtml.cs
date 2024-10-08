@@ -6,8 +6,8 @@ using ERPSEI.Data.Entities.SAT.cfdiv40;
 using ERPSEI.Data.Entities.Usuarios;
 using ERPSEI.Data.Managers;
 using ERPSEI.Data.Managers.Empresas;
-using ERPSEI.Data.Managers.SAT;
 using ERPSEI.Data.Managers.SAT.Catalogos;
+using ERPSEI.Data.Managers.SAT.cfdiv40;
 using ERPSEI.Data.Managers.Usuarios;
 using ERPSEI.Pages.Shared;
 using ERPSEI.Requests;
@@ -21,12 +21,6 @@ using NuGet.Packaging;
 using ServicioEDICOM;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Xml;
-using System.Xml.Serialization;
-using System.Xml.Xsl;
-using XSDToXML.Utils;
 
 namespace ERPSEI.Areas.ERP.Pages
 {
@@ -37,12 +31,10 @@ namespace ERPSEI.Areas.ERP.Pages
 			AppUserManager userManager,
 			IRWCatalogoManager<Perfil> perfilManager,
 			IEmpresaManager empresaManager,
-			IPrefacturaManager prefacturaManager,
+			IComprobanteManager comprobanteManager,
 			ITasaOCuotaManager tasaOCuotaManager,
 			IStringLocalizer<PrefacturasModel> localizer,
 			ILogger<PrefacturasModel> logger,
-			IConfiguration configuration,
-			IArchivoEmpresaManager archivoEmpresaManager,
 			IEncriptacionAES encriptacionAES
 		) : ERPPageModel
 	{
@@ -100,100 +92,73 @@ namespace ERPSEI.Areas.ERP.Pages
 			}
 			catch (Exception ex)
 			{
-				logger.LogError("{message}", ex.Message);
+				string message = ex.Message;
+				logger.LogError("{message}", message);
 			}
 
 			return new JsonResult(resp);
 		}
 		private async Task<string> GetComprobantesList(FiltroModel? filtro = null)
 		{
-			string nombreTipo;
-			string nombreMoneda;
-			string nombreForma;
-			string nombreMetodo;
-			string nombreUsoCFDI;
-			string nombreExportacion;
-
 			string jsonResponse;
-			List<string> jsonPrefacturas = [];
-			List<Prefactura> comprobantes = [];
+			List<string> jsonComprobantes = [];
+			List<Comprobante> comprobantes = [];
 
 			if (filtro != null)
 			{
-				comprobantes = await prefacturaManager.GetAllAsync(
-					filtro.Fecha,
-					filtro.Fecha,
-					filtro.Serie,
-					filtro.MonedaId,
+				comprobantes = await comprobanteManager.GetAllAsync(
+					filtro.Periodo,
+					filtro.EstatusId,
+					filtro.TipoId,
 					filtro.FormaPagoId,
 					filtro.MetodoPagoId,
 					filtro.UsoCFDIId,
-					filtro.UsuarioCreadorId,
-					filtro.UsuarioTimbradorId,
-					false
+					filtro.EmisorId,
+					filtro.ReceptorId
 				);
 			}
 			else
 			{
-				comprobantes = await prefacturaManager.GetAllAsync();
+				comprobantes = await comprobanteManager.GetAllAsync();
 			}
 
-			foreach (Prefactura p in comprobantes)
+			foreach (Comprobante c in comprobantes)
 			{
-				nombreTipo = p.TipoComprobante != null ? p.TipoComprobante.Descripcion : "";
-				nombreMoneda = p.Moneda != null ? p.Moneda.Descripcion : "";
-				nombreForma = p.FormaPago != null ? p.FormaPago.Descripcion : "";
-				nombreMetodo = p.MetodoPago != null ? p.MetodoPago.Descripcion : "";
-				nombreUsoCFDI = p.UsoCFDI != null ? p.UsoCFDI.Descripcion : "";
-				nombreExportacion = p.Exportacion != null ? p.Exportacion.Descripcion : "";
-
-				DateTime? fecha = p.Fecha == DateTime.MinValue ? null : p.Fecha;
+				DateTime? fecha = c.Fecha == DateTime.MinValue.ToString("yyyy-MM-ddTHH:mm:ss") || string.IsNullOrEmpty(c.Fecha) ? null : DateTime.ParseExact(c.Fecha, "yyyy-MM-ddTHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
 
 				AppUser? usr = userManager.GetUserAsync(User).Result;
 				string safeL = string.Empty;
 				if (usr != null)
 				{
-					safeL = $"userId={usr.Id}&id={p.Id}&module=prefacturas";
+					safeL = $"userId={usr.Id}&id={c.Id}&module=administradordecomprobantes";
 					safeL = encriptacionAES.PlainTextToBase64AES(safeL);
 				}
 
-				jsonPrefacturas.Add(
+				jsonComprobantes.Add(
 					"{" +
-						$"\"id\": {p.Id}," +
+						$"\"id\": {c.Id}," +
 						$"\"safeL\": \"{safeL}\"," +
-						$"\"serie\": \"{p.Serie}\", " +
-						$"\"folio\": \"{p.Folio}\", " +
-						$"\"emisor\": \"{p.Emisor?.RazonSocial}\", " +
-						$"\"emisorId\": {p.Emisor?.Id}, " +
-						$"\"receptor\": \"{p.Receptor?.RazonSocial}\", " +
-						$"\"receptorId\": {p.Receptor?.Id}, " +
-						$"\"tipoComprobante\": \"{nombreTipo}\", " +
-						$"\"tipoComprobanteId\": {p.TipoComprobanteId}, " +
+						$"\"serie\": \"{c.Serie}\", " +
+						$"\"folio\": \"{c.Folio}\", " +
+						$"\"emisor\": \"{c.Emisor?.Nombre}\", " +
+						$"\"emisorId\": {c.Emisor?.Id}, " +
+						$"\"receptor\": \"{c.Receptor?.Nombre}\", " +
+						$"\"receptorId\": {c.Receptor?.Id}, " +
+						$"\"tipoComprobante\": \"{c.TipoDeComprobante}\", " +
 						$"\"fecha\": \"{fecha:dd/MM/yyyy HH:mm:ss}\", " +
 						$"\"fechaJS\": \"{fecha:yyyy-MM-dd HH:mm:ss}\", " +
-						$"\"tipoCambio\": {p.TipoCambio}, " +
-						$"\"moneda\": \"{nombreMoneda}\", " +
-						$"\"monedaId\": {p.MonedaId}, " +
-						$"\"formaPago\": \"{nombreForma}\", " +
-						$"\"formaPagoId\": {p.FormaPagoId}, " +
-						$"\"metodoPago\": \"{nombreMetodo}\", " +
-						$"\"metodoPagoId\": {p.MetodoPagoId}, " +
-						$"\"usoCFDI\": \"{nombreUsoCFDI}\", " +
-						$"\"usoCFDIId\": {p.UsoCFDIId}, " +
-						$"\"exportacion\": \"{nombreExportacion}\", " +
-						$"\"exportacionId\": {p.ExportacionId}, " +
-						$"\"numeroOperacion\": \"{p.NumeroOperacion}\", " +
-						$"\"usuarioCreadorId\": \"{p.UsuarioCreadorId}\", " +
-						$"\"usuarioTimbradorId\": \"{p.UsuarioTimbradorId}\", " +
-						$"\"requiereAutorizacion\": \"{p.RequiereAutorizacion}\", " +
-						$"\"estatus\": \"{p.Estatus?.Descripcion}\", " +
-						$"\"estatusId\": \"{p.Estatus?.Id}\", " +
-						$"\"conceptos\": [] " +
+						$"\"tipoCambio\": {c.TipoCambio}, " +
+						$"\"moneda\": \"{c.Moneda}\", " +
+						$"\"formaPago\": \"{c.FormaPago}\", " +
+						$"\"metodoPago\": \"{c.MetodoPago}\", " +
+						$"\"usoCFDI\": \"{c.Receptor?.UsoCFDI}\", " +
+						$"\"exportacion\": \"{c.Exportacion}\", " +
+						$"\"estatus\": \"\"" +
 					"}"
 				);
 			}
 
-			jsonResponse = $"[{string.Join(",", jsonPrefacturas)}]";
+			jsonResponse = $"[{string.Join(",", jsonComprobantes)}]";
 
 			return jsonResponse;
 		}
@@ -246,18 +211,14 @@ namespace ERPSEI.Areas.ERP.Pages
 					if (idempresa >= 1 && e.Id == idempresa) { continue; }
 
 					e.ObjetoSocial = JsonEscape(e.ObjetoSocial ?? string.Empty);
-					string serie = e.RFC != null ? e.RFC[..3] : string.Empty;
-					List<Prefactura> prefacturas = await prefacturaManager.GetAllAsync(null, null, serie, null, null, null, null);
-					prefacturas = [.. prefacturas.OrderByDescending(p => p.Id)];
-					_ = int.TryParse(prefacturas.FirstOrDefault()?.Folio, out int proximoFolio);
-					proximoFolio += 1;
+					List<Comprobante> comprobantes = await comprobanteManager.GetAllAsync();
+					comprobantes = [.. comprobantes.OrderByDescending(p => p.Id)];
 
 					jsonEmpresas.Add($"{{" +
 										$"\"id\": {e.Id}, " +
 										$"\"value\": \"{e.RazonSocial}\", " +
 										$"\"label\": \"{e.RFC} - {e.RazonSocial}\", " +
 										$"\"rfc\": \"{e.RFC}\", " +
-										$"\"proximoFolio\": \"{proximoFolio}\"," +
 										$"\"razonSocial\": \"{e.RazonSocial}\", " +
 										$"\"objetoSocial\": \"{e.ObjetoSocial}\", " +
 										$"\"origen\": \"{e.Origen}\", " +
@@ -283,7 +244,7 @@ namespace ERPSEI.Areas.ERP.Pages
 
 		public async Task<JsonResult> OnPostExportExcel(string[] ids)
 		{
-			ServerResponse resp = new(true, localizer["PrefacturasExportedUnsuccessfully"]);
+			ServerResponse resp = new(true, localizer["ComprobantesExportedUnsuccessfully"]);
 
 			if (PuedeTodo || PuedeConsultar)
 			{
@@ -308,83 +269,15 @@ namespace ERPSEI.Areas.ERP.Pages
 							foreach (string id in ids)
 							{
 								int intId = Convert.ToInt32(id);
-								Prefactura? p = await prefacturaManager.GetByIdAsync(intId);
+								Comprobante? p = await comprobanteManager.GetByIdAsync(intId);
 								if (p != null)
 								{
-									string clave = p.Serie + p.Folio.PadLeft(6, '0');
-									foreach (Concepto c in p.Conceptos)
-									{
-										IRow row = sheet.CreateRow(rowIndex);
-										//Clave
-										CreateCell(row, 0, clave, cellStyle);
-										//Cliente
-										CreateCell(row, 1, p.ReceptorId.ToString(), cellStyle);
-										//Fecha de elaboración
-										CreateCell(row, 2, p.Fecha.ToString("dd/mm/yyyy"), cellStyle);
-										//Su pedido
-										CreateCell(row, 3, string.Empty, cellStyle);
-										//Clave del artículo
-										CreateCell(row, 4, c.ProductoServicio?.Clave ?? string.Empty, cellStyle);
-										//Cantidad
-										CreateCell(row, 5, c.Cantidad.ToString(), cellStyle);
-										//Precio
-										CreateCell(row, 6, c.PrecioUnitario.ToString(), cellStyle);
-										//Desc. 1
-										CreateCell(row, 7, string.Empty, cellStyle);
-										//Desc. 2
-										CreateCell(row, 8, string.Empty, cellStyle);
-										//Desc. 3
-										CreateCell(row, 9, string.Empty, cellStyle);
-										//Clave de vendedor
-										CreateCell(row, 10, string.Empty, cellStyle);
-										//Comisión
-										CreateCell(row, 11, string.Empty, cellStyle);
-										//Clave de esquema de impuestos
-										CreateCell(row, 12, string.Empty, cellStyle);
-										//I.E.P.S.
-										CreateCell(row, 13, GetIEPSConcepto(c, impuestosIEPS).ToString(), cellStyle);
-										//Impuesto 2
-										CreateCell(row, 14, string.Empty, cellStyle);
-										//Impuesto 3
-										CreateCell(row, 15, string.Empty, cellStyle);
-										//I.V.A.
-										CreateCell(row, 16, GetIVAConcepto(c, impuestosIVA).ToString(), cellStyle);
-										//Impuesto 5
-										CreateCell(row, 17, string.Empty, cellStyle);
-										//Impuesto 6
-										CreateCell(row, 18, string.Empty, cellStyle);
-										//Impuesto 7
-										CreateCell(row, 19, string.Empty, cellStyle);
-										//Impuesto 8
-										CreateCell(row, 20, string.Empty, cellStyle);
-										//Método de pago
-										CreateCell(row, 21, p.MetodoPago?.Clave ?? string.Empty, cellStyle);
-										//Forma de Pago SAT
-										CreateCell(row, 22, p.FormaPago?.Clave ?? string.Empty, cellStyle);
-										//Uso CFDI
-										CreateCell(row, 23, p.UsoCFDI?.Clave ?? string.Empty, cellStyle);
-										//Clave SAT
-										CreateCell(row, 24, c.ProductoServicio?.Clave ?? string.Empty, cellStyle);
-										//Unidad SAT
-										CreateCell(row, 25, c.UnidadMedida?.Clave ?? string.Empty, cellStyle);
-										//Observaciones
-										CreateCell(row, 26, c.Descripcion ?? string.Empty, cellStyle);
-										//Observaciones de partida
-										CreateCell(row, 27, string.Empty, cellStyle);
-										//Fecha de entrega
-										CreateCell(row, 28, string.Empty, cellStyle);
-										//Fecha de vencimiento
-										CreateCell(row, 29, string.Empty, cellStyle);
-										//Descripcion
-										CreateCell(row, 30, c.Descripcion ?? string.Empty, cellStyle);
-
-										rowIndex++;
-									}
+									//TODO: Crear los rows del excel en base a cada concepto.
 								}
 							}
 
 							//Crea el archivo excel y lo exporta al usuario.
-							using (var fileData = new FileStream("wwwroot/templates/Prefacturas.xls", FileMode.OpenOrCreate))
+							using (var fileData = new FileStream("wwwroot/templates/Comprobantes.xls", FileMode.OpenOrCreate))
 							{
 								wb.Write(fileData);
 							}
@@ -395,7 +288,7 @@ namespace ERPSEI.Areas.ERP.Pages
 						await db.Database.CommitTransactionAsync();
 
 						resp.TieneError = false;
-						resp.Mensaje = localizer["PrefacturasExportedSuccessfully"];
+						resp.Mensaje = localizer["ComprobantesExportedSuccessfully"];
 				}
 				catch (Exception ex)
 				{
@@ -529,9 +422,9 @@ namespace ERPSEI.Areas.ERP.Pages
 			}
 		}
 		
-		public async Task<JsonResult> OnPostTimbrarMultiple(string[] ids)
+		public async Task<JsonResult> OnPostCancelarMultiple(string[] ids)
 		{
-			ServerResponse resp = new(true, localizer["PrefacturasStampedUnsuccessfully"]);
+			ServerResponse resp = new(true, localizer["ComprobantesCancelledUnsuccessfully"]);
 
 			if (PuedeTodo || PuedeEditar)
 			{
@@ -541,15 +434,15 @@ namespace ERPSEI.Areas.ERP.Pages
 
 					foreach (string id in ids)
 					{
-						_ = int.TryParse(id, out int idPrefactura);
+						_ = int.TryParse(id, out int idComprobante);
 
 						//Se timbra la prefactura
-						ServerResponse respTimbre = new(true, localizer["FailedToStamp"] + $" {idPrefactura}");
-						if (idPrefactura >= 1){ 
-							respTimbre = await TimbrarPrefactura(idPrefactura);
-							if (respTimbre.TieneError) {
+						ServerResponse respCancelacion = new(true, localizer["FailedToCancel"] + $" {idComprobante}");
+						if (idComprobante >= 1){ 
+							respCancelacion = await CancelarComprobante(idComprobante);
+							if (respCancelacion.TieneError) {
 								//TODO: Refactorizar método para que notifique errores por prefactura.
-								resp.Errores.AddRange(respTimbre.Errores);
+								resp.Errores.AddRange(respCancelacion.Errores);
 							}
 						}
 					}
@@ -557,12 +450,13 @@ namespace ERPSEI.Areas.ERP.Pages
 					await db.Database.CommitTransactionAsync();
 
 					resp.TieneError = false;
-					resp.Mensaje = localizer["PrefacturasExportedSuccessfully"];
+					resp.Mensaje = localizer["ComprobantesCancelledSuccessfully"];
 				}
 				catch (Exception ex)
 				{
-					logger.LogError(message: ex.Message);
-					resp.Mensaje = ex.Message;
+					string message = ex.Message;
+					logger.LogError("{message}", message);
+					resp.Mensaje = message;
 					await db.Database.RollbackTransactionAsync();
 				}
 			}
@@ -573,15 +467,15 @@ namespace ERPSEI.Areas.ERP.Pages
 
 			return new JsonResult(resp);
 		}
-		public async Task<JsonResult> OnPostTimbrar(int idPrefactura)
+		public async Task<JsonResult> OnPostCancelar(int idComprobante)
 		{
-			ServerResponse resp = new(true, localizer["PrefacturaStampedUnsuccessfully"]);
+			ServerResponse resp = new(true, localizer["ComprobanteCancelledUnsuccessfully"]);
 			try
 			{
 				if(PuedeTodo || PuedeEditar)
 				{
 					//Se timbra la prefactura
-					resp = await TimbrarPrefactura(idPrefactura);
+					resp = await CancelarComprobante(idComprobante);
 				}
 				else
 				{
@@ -596,96 +490,22 @@ namespace ERPSEI.Areas.ERP.Pages
 
 			return new JsonResult(resp);
 		}
-		private async Task<ServerResponse> TimbrarPrefactura(int idPrefactura)
+		private async Task<ServerResponse> CancelarComprobante(int idComprobante)
 		{
-			ServerResponse resp = new(true, localizer["PrefacturaStampedUnsuccessfully"]);
+			ServerResponse resp = new(true, localizer["ComprobanteCancelledUnsuccessfully"]);
 			try
 			{
 				//Obtiene los datos de la prefactura
-				Prefactura? p = await prefacturaManager.GetByIdAsync(idPrefactura);
+				Comprobante? c = await comprobanteManager.GetByIdAsync(idComprobante);
 
-				if (p != null)
+				if (c != null)
 				{
-					int anio = DateTime.Now.Year;
-					int mes = DateTime.Now.Month;
-					int dia = DateTime.Now.Day;
-					string guid = $"pref_{idPrefactura}{DateTime.Now:yyyyMMddHHmmssfffffff}";
-
-					string pathXML = $"wwwroot/cfdiv40/xml/{anio}/{mes}/{dia}/sin_timbre/",
-						XMLFilePath = $"{pathXML}{guid}.xml",
-						pathZip = $"wwwroot/cfdiv40/xml/{anio}/{mes}/{dia}/con_timbre/",
-						ZipFilePath = $"{pathZip}{guid}.zip",
-						pathXSLT = "Utils/cadenaoriginal_4_0.xslt",
-						cadenaOriginal = string.Empty;
-
-					SelloDigital sello = new();
-					Comprobante cfdi;
-
-					if (!Path.Exists(pathXML)) { Directory.CreateDirectory(pathXML); }
-					if (!Path.Exists(pathZip)) { Directory.CreateDirectory(pathZip); }
-
-					//Se obtienen los archivos del Emisor
-					List <SemiArchivoEmpresa> archivos = await archivoEmpresaManager.GetFilesByEmpresaIdAsync(p.EmisorId);
-
-					SemiArchivoEmpresa? saCER = archivos.Where(a => a.TipoArchivoId == (int)FileTypes.CER).FirstOrDefault(),
-										saKEY = archivos.Where(a => a.TipoArchivoId == (int)FileTypes.KEY).FirstOrDefault();
-
-                    if (saCER == null || saCER.FileSize <= 0) { throw new Exception(localizer["ArchivoCERMissing"]); }
-                    if (saKEY == null || saKEY.FileSize <= 0) { throw new Exception(localizer["ArchivoKEYMissing"]); }
-
-                    byte[] fileCER = archivoEmpresaManager.GetFileById(saCER.Id)?.Archivo ?? [],
-						   fileKEY = archivoEmpresaManager.GetFileById(saKEY.Id)?.Archivo ?? [];
-
-					if (fileCER == null || fileCER.Length <= 0) { throw new Exception(localizer["ArchivoCERMissing"]); }
-					if (fileKEY == null || fileKEY.Length <= 0) { throw new Exception(localizer["ArchivoKEYMissing"]); }
-
-					//Crea el CFDI a partir de los datos de la prefactura.
-					cfdi = CrearCFDIFromPrefactura(p);
-					if(cfdi == null) { throw new Exception(localizer["ErrorEstructuraCFDI"]); }
-
-					//Establece el número del certificado, obtenido a partir del archivo CER
-					cfdi.NoCertificado = ObtenerNumeroCertificado(fileCER);
-					if (cfdi.NoCertificado.Length <= 0) { throw new Exception(localizer["ErrorNumeroCertificado"]); }
-
-					//Crea el XML a partir del CFDI creado y lo guarda en una ruta física del servidor.
-					await CrearXMLFromCFDIAsync(cfdi, XMLFilePath);
-					if (!System.IO.File.Exists(XMLFilePath)) { throw new Exception(localizer["ErrorEstructuraXML"]); }
-
-					//Se obtiene la cadena original a partir del xml creado y usando el archivo xslt del sat.
-					cadenaOriginal = ObtenerCadenaOriginal(pathXSLT, XMLFilePath);
-					if (cadenaOriginal.Length <= 0) { throw new Exception(localizer["ErrorCadenaOriginal"]); }
-
-					//Se elimina el archivo XML sin sellar
-					System.IO.File.Delete(XMLFilePath);
-
-					//Se obtiene el certificado a partir del archivo CER
-					cfdi.Certificado = sello.Certificado(fileCER);
-					if (cfdi.Certificado.Length <= 0) { throw new Exception(localizer["ErrorCertificado"]); }
-
-					//Se obtiene el sello a partir del archivo KEY usando la cadena original y la clave privada
-					cfdi.Sello = sello.Sellar(cadenaOriginal, fileKEY, encriptacionAES.Base64AESToPlainText(p.Emisor?.PFESAT ?? string.Empty));
-					if (cfdi.Sello.Length <= 0) { throw new Exception(localizer["ErrorSello"]); }
-
-					//Se vuelve a crear el XML sellado.
-					await CrearXMLFromCFDIAsync(cfdi, XMLFilePath);
-					if (!System.IO.File.Exists(XMLFilePath)) { throw new Exception(localizer["ErrorEstructuraXML"]); }
-
-					//Se obtienen los bytes de la cadena base64 generada a partir del XML
-					byte[] fileCFDI = await CrearBytesXMLAsync(XMLFilePath);
-					if (fileCFDI == null || fileCFDI.Length <= 0) { throw new Exception(localizer["ErrorBytesXMLCFDI"]); }
-
-					//Se realiza el timbrado del comprobante
-					byte[] zipComprobanteTimbrado = await TimbrarComprobanteEnEDICOMAsync(configuration["ERPSEI_EDICOM_USR"] ?? string.Empty, configuration["ERPSEI_EDICOM_PWD"] ?? string.Empty, fileCFDI);
-					if (zipComprobanteTimbrado == null || zipComprobanteTimbrado.Length <= 0) { throw new Exception(localizer["ErrorTimbradoCFDI"]); }
-
-					//Se guarda el comprobante timbrado
-					await GuardarZipComprobante(ZipFilePath, zipComprobanteTimbrado);
-					if (!System.IO.File.Exists(ZipFilePath)) { throw new Exception(localizer["ErrorGuardadoCFDI"]); }
+					//TODO: Proceso de cancelación de comprobantes
 
 					//Devuelve mensaje correcto de timbrado.
 					resp.TieneError = false;
 					resp.Errores = [];
-					resp.Mensaje = localizer["PrefacturaStampedSuccessfully"];
+					resp.Mensaje = localizer["ComprobanteCancelledSuccessfully"];
 				}
 			}
 			catch (Exception ex)
@@ -695,221 +515,6 @@ namespace ERPSEI.Areas.ERP.Pages
 			}
 
 			return resp;
-		}
-		private async Task GuardarZipComprobante(string pathZip, byte[] zipComprobanteTimbrado)
-		{
-			string b64Zip = Convert.ToBase64String(zipComprobanteTimbrado);
-			byte[] zip = Convert.FromBase64String(b64Zip);
-			using (FileStream f = new(pathZip, FileMode.OpenOrCreate))
-			{
-				await f.WriteAsync(zip);
-				System.IO.Compression.ZipFile.ExtractToDirectory(f, Path.GetDirectoryName(pathZip) ?? string.Empty);
-			}
-		}
-		private async Task<byte[]> TimbrarComprobanteEnEDICOMAsync(string user, string password, byte[] fileB64)
-		{
-			byte[] zipComprobanteTimbrado;
-
-			getCfdiTestResponse resp = new();
-			getCfdiTestRequest req = new() { user = user, password = password, file = fileB64 };
-			resp = await clienteEDICOM.getCfdiTestAsync(req);
-			zipComprobanteTimbrado = resp.getCfdiTestReturn;
-
-			return zipComprobanteTimbrado;
-		}
-		private async Task<byte[]> CrearBytesXMLAsync(string pathXML)
-		{
-			byte[] fileCFDI;
-			using (FileStream f = new(pathXML, FileMode.Open))
-			{
-				fileCFDI = new byte[f.Length];
-				await f.ReadAsync(fileCFDI);
-			}
-			return fileCFDI;
-		}
-		private async Task CrearXMLFromCFDIAsync(Comprobante cfdi, string pathXML)
-		{
-			XmlSerializerNamespaces xmlsn = new();
-			xmlsn.Add("cfdi", "http://www.sat.gob.mx/cfd/4");
-			xmlsn.Add("tfd", "http://www.sat.gob.mx/TimbreFiscalDigital");
-			xmlsn.Add("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-
-			XmlSerializer xmlSerializer = new(typeof(Comprobante));
-
-			string xml = string.Empty;
-
-			using (StringWriterCustomEncoding sw = new(Encoding.UTF8))
-			{
-				using (XmlWriter xmlw = XmlWriter.Create(sw))
-				{
-					xmlSerializer.Serialize(xmlw, cfdi, xmlsn);
-					xml = sw.ToString();
-				}
-			}
-
-			await System.IO.File.WriteAllTextAsync(pathXML, xml);
-		}
-		private string ObtenerCadenaOriginal(string pathXSLT, string pathXML)
-		{
-			string cadenaOriginal = string.Empty;
-			XslCompiledTransform transformador = new();
-			XsltSettings settings = new(true, true);
-			XmlUrlResolver resolver = new();
-			transformador.Load(pathXSLT, settings, resolver);
-
-			using (StringWriter sw = new())
-			using (XmlWriter xmlw = XmlWriter.Create(sw, transformador.OutputSettings))
-			{
-				transformador.Transform(pathXML, xmlw);
-				cadenaOriginal = sw.ToString();
-			}
-
-			return cadenaOriginal;
-		}
-		private string ObtenerNumeroCertificado(byte[] fileCER)
-		{
-			//Obtiene el número de certificado
-			string noCertificado, x, y, z;
-			SelloDigital.leerCER(fileCER, out x, out y, out z, out noCertificado);
-
-			return noCertificado;
-		}
-		private string ObtenerCodigoPostal(string direccion)
-		{
-			return Regex.Match(direccion, "[0-9]{5}").Value;
-		}
-
-        private List<ComprobanteConcepto> CrearConceptosFromPrefactura(ICollection<Concepto> conceptos)
-		{
-			List<ComprobanteConcepto> lc = [];
-
-			foreach (Concepto c in conceptos ?? [])
-			{
-                string umn = c.UnidadMedida?.Nombre ?? "0";
-                lc.Add(new ComprobanteConcepto()
-				{
-					Impuestos = new()
-					{
-						Traslados = [new() {
-							Base = 0.000001m,
-							Importe = 0,
-							ImporteSpecified = true,
-							Impuesto = "002",
-							TasaOCuota = c.TasaTraslado,
-							TasaOCuotaSpecified = true,
-							TipoFactor = "Tasa"
-                        }],
-						Retenciones = [new() {
-                            Base = 0.000001m,
-                            Importe = 0,
-                            Impuesto = "002",
-                            TasaOCuota = c.TasaRetencion,
-                            TipoFactor = "Tasa"
-                        }]
-					},
-					ClaveProdServ = c.ProductoServicio?.Clave ?? string.Empty,
-					NoIdentificacion = c.ProductoServicio?.Clave ?? string.Empty,
-					Cantidad = c.Cantidad,
-					ClaveUnidad = c.UnidadMedida?.Clave ?? string.Empty,
-					Descripcion = c.Descripcion ?? string.Empty,
-					ValorUnitario = c.PrecioUnitario,
-					Importe = c.Cantidad * c.PrecioUnitario,
-					Descuento = c.Descuento,
-					DescuentoSpecified = true,
-					ObjetoImp = c.ObjetoImpuesto?.Clave ?? string.Empty,
-				});
-			}
-
-			return lc;
-		}
-		private Comprobante CrearCFDIFromPrefactura(Prefactura p)
-		{
-			//Obtiene los datos de los conceptos
-			List<ComprobanteConcepto> lc = CrearConceptosFromPrefactura(p.Conceptos);
-			List<ComprobanteImpuestosTraslado> cit = [];
-            List<ComprobanteImpuestosRetencion> cir = [];
-			decimal totalTraslados = 0m;
-            decimal totalRetenciones = 0m;
-			decimal totalImportes = 0m;
-			decimal totalDescuentos = 0m;
-			string moneda = p.Moneda?.Clave ?? "MXN";
-
-            foreach (ComprobanteConcepto cc in lc)
-			{
-				foreach(ComprobanteConceptoImpuestosTraslado ccit in cc.Impuestos?.Traslados ?? [])
-				{
-					cit.Add(new() { 
-						Base = Math.Round(ccit.Base, 2),
-						Importe = ccit.Importe,
-						ImporteSpecified = ccit.ImporteSpecified,
-						Impuesto = ccit.Impuesto,
-						TasaOCuota = ccit.TasaOCuota,
-						TasaOCuotaSpecified = ccit.TasaOCuotaSpecified,
-						TipoFactor = ccit.TipoFactor
-					});
-					totalTraslados += ccit.Importe;
-				}
-				foreach(ComprobanteConceptoImpuestosRetencion ccir in cc.Impuestos?.Retenciones ?? [])
-				{
-					cir.Add(new() { 
-						Importe = ccir.Importe,
-						Impuesto = ccir.Impuesto
-					});
-					totalRetenciones += ccir.Importe;
-                }
-
-				totalImportes += cc.Importe;
-				totalDescuentos += cc.Descuento;
-            }
-
-            return new()
-			{
-				Emisor = new()
-				{
-					Rfc = p.Emisor?.RFC ?? string.Empty,
-					Nombre = p.Emisor?.RazonSocial ?? string.Empty,
-					RegimenFiscal = p.Emisor?.RegimenFiscal?.Clave ?? string.Empty
-				},
-				Receptor = new()
-				{
-					Rfc = p.Receptor?.RFC ?? string.Empty,
-					Nombre = p.Receptor?.RazonSocial ?? string.Empty,
-					DomicilioFiscalReceptor = ObtenerCodigoPostal(p.Receptor?.DomicilioFiscal ?? string.Empty),
-					RegimenFiscalReceptor = p.Receptor?.RegimenFiscal?.Clave ?? string.Empty,
-					UsoCFDI = p.UsoCFDI?.Clave ?? string.Empty
-                },
-				Conceptos = [.. lc],
-				Impuestos = new()
-				{
-					Retenciones = [.. cir],
-					Traslados = [.. cit],
-					TotalImpuestosRetenidos = totalRetenciones,
-					TotalImpuestosRetenidosSpecified = true,
-					TotalImpuestosTrasladados = totalTraslados,
-					TotalImpuestosTrasladadosSpecified = true
-				},
-				Version = "4.0",
-				Serie = p.Serie ?? string.Empty,
-				Folio = p.Folio ?? string.Empty,
-				Fecha = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss"),
-				Sello = string.Empty,
-				FormaPago = p.FormaPago?.Clave ?? string.Empty,
-				FormaPagoSpecified = true,
-				NoCertificado = string.Empty,
-				Certificado = string.Empty,
-				SubTotal = Math.Round(totalImportes, p.Moneda?.Decimales ?? 2),
-				Descuento = Math.Round(totalDescuentos, p.Moneda?.Decimales ?? 2),
-                DescuentoSpecified = true,
-				Moneda = moneda,
-				TipoCambio = moneda == "MXN" ? 1 : p.TipoCambio,
-				TipoCambioSpecified = true,
-				Total = Math.Round(totalImportes - totalDescuentos + totalTraslados - totalRetenciones, p.Moneda?.Decimales ?? 2),
-                TipoDeComprobante = p.TipoComprobante?.Clave ?? string.Empty,
-				Exportacion = p.Exportacion?.Clave ?? string.Empty,
-				MetodoPago = p.MetodoPago?.Clave ?? string.Empty,
-				MetodoPagoSpecified = true,
-				LugarExpedicion = ObtenerCodigoPostal(p.Emisor?.DomicilioFiscal ?? string.Empty)
-            };
 		}
 	}
 }
