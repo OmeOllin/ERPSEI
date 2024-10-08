@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     });
     initTable();
     // Asignar el evento de clic al botón de importación
-    document.getElementById('fileUpload').addEventListener('change', onImportarMovimientosBancariosClick);
+    //document.getElementById('fileUpload').addEventListener('change', onImportarMovimientosBancariosClick);
 
     autoCompletar("#inpConciliacionClienteId");
 });
@@ -49,66 +49,6 @@ async function onImportarMovimientosBancariosClick(event) {
         }
     }
 }
-
-
-
-/*async function onImportarMovimientosBancariosClick(event) {
-    const file = event.target.files[0];
-    if (file) {
-        try {
-            // Verificar que el archivo sea un PDF
-            if (file.type !== 'application/pdf') {
-                alert('El archivo seleccionado no es un PDF.');
-                return;
-            }
-
-            // Leer el archivo PDF
-            const reader = new FileReader();
-            reader.onload = async function () {
-                const typedArray = new Uint8Array(this.result);
-
-                try {
-                    // Cargar el PDF usando pdfjs-dist
-                    const pdf = await pdfjsLib.getDocument({ data: typedArray }).promise;
-                    const pageNumber = 33;
-
-                    if (pageNumber <= pdf.numPages) {
-                        const page = await pdf.getPage(pageNumber);
-                        const textContent = await page.getTextContent();
-                        const text = textContent.items.map(item => item.str).join(' ');
-
-                        // Obtener el nombre del archivo PDF sin la extensión
-                        const fileName = file.name.replace(/\.[^/.]+$/, "");
-                        // Obtener la fecha actual en formato YYYYMMDD
-                        const date = new Date();
-                        const formattedDate = date.toISOString().split('T')[0].replace(/-/g, '');
-                        // Crear el nombre del archivo Excel
-                        const excelFileName = `${fileName}_${formattedDate}.xlsx`;
-
-                        exportTextToExcel(text, excelFileName);
-
-                    } else {
-                        console.error(`El PDF solo tiene ${pdf.numPages} páginas.`);
-                    }
-                } catch (error) {
-                    console.error('Error al procesar el archivo PDF:', error);
-                }
-            };
-            reader.readAsArrayBuffer(file);
-        } catch (error) {
-            console.error('Error al leer el archivo PDF:', error);
-        }
-    }
-}*/
-
-/*
-function exportTextToExcel(text, fileName) {
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.aoa_to_sheet([[text]]);
-    XLSX.utils.book_append_sheet(wb, ws, "Datos del PDF");
-    // Usar el nombre de archivo proporcionado
-    XLSX.writeFile(wb, fileName);
-}*/
 
 //Funcionalidad Tabla
 function getIdSelections() {
@@ -446,5 +386,155 @@ function eliminarRegistro(id) {
     }
 }
 
+//Método para importar la información del excel y pdf
+function onImportarMovimientosBancariosClick() {
+    var fileUpload = document.getElementById('fileUpload');
+    var selectedBank = $('#selFiltroBanco option:selected').text(); // Obtener el texto del banco seleccionado
 
+    if (fileUpload.files.length === 0) {
+        alert('Por favor selecciona un archivo.');
+        return;
+    }
 
+    if (selectedBank === 'Seleccione...') {
+        alert('Por favor selecciona un banco.');
+        return;
+    }
+
+    var fileType = fileUpload.files[0].name.split('.').pop().toLowerCase(); // Obtener extensión del archivo
+
+    if (fileType === 'xlsx' || fileType === 'xls') {
+        importarMovimientosDesdeExcel(fileUpload.files[0], selectedBank);
+    } else if (fileType === 'pdf') {
+        importarMovimientosDesdePDF(fileUpload.files[0], selectedBank);
+    } else {
+        alert('Por favor selecciona un archivo Excel o PDF.');
+    }
+}
+
+function importarMovimientosDesdeExcel(file, selectedBank) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+        var data = new Uint8Array(e.target.result);
+        var workbook = XLSX.read(data, { type: 'array' });
+
+        // Leer la primera hoja del archivo Excel
+        var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        var excelRows = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+        // Limpiar la tabla antes de insertar nuevos datos
+        $('#tableCardMovimientos').bootstrapTable('removeAll');
+
+        // Función para convertir los seriales de Excel a fechas en formato DD/MM/YYYY
+        function excelDateToJSDate(serial) {
+            var utc_days = Math.floor(serial - 25569); // Fecha base 1900
+            var utc_value = utc_days * 86400; // Convertir días a segundos
+            var date_info = new Date(utc_value * 1000); // Crear la fecha
+
+            // Obtener día, mes y año
+            var day = date_info.getUTCDate().toString().padStart(2, '0');
+            var month = (date_info.getUTCMonth() + 1).toString().padStart(2, '0'); // Meses empiezan desde 0
+            var year = date_info.getUTCFullYear();
+
+            return `${day}/${month}/${year}`; // Formato DD/MM/YYYY
+        }
+
+        // Crear un array para almacenar las filas a insertar
+        var rows = [];
+
+        // Iterar sobre las filas del Excel, empezando desde la segunda fila
+        for (var i = 1; i < excelRows.length; i++) {
+            var row = excelRows[i]; // Obtener la fila actual
+
+            // Verificar si el valor de la fecha es un número y convertirlo a fecha
+            var fecha = row[0];
+            if (!isNaN(fecha)) {
+                fecha = excelDateToJSDate(fecha); // Convertir si es un número serial
+            }
+
+            // Agregar la fila al array de filas
+            rows.push({
+                Fecha: fecha || '',
+                Banco: selectedBank, // Usar el valor seleccionado del banco
+                Descripción: row[1] || '',
+                Cargos: row[2] || '',
+                Abonos: row[3] || ''
+            });
+        }
+
+        // Agregar los datos a la tabla usando Bootstrap Table
+        $('#tableCardMovimientos').bootstrapTable('append', rows);
+
+        // Cerrar el modal después de que los datos se hayan agregado
+        $('#ImportarMovimientosModal').modal('hide');
+    };
+
+    // Leer el archivo Excel
+    reader.readAsArrayBuffer(file);
+}
+
+function importarMovimientosDesdePDF(file, selectedBank) {
+    var reader = new FileReader();
+
+    reader.onload = function (e) {
+        var typedArray = new Uint8Array(e.target.result);
+
+        // Utilizar pdfjs-dist para leer el archivo PDF
+        pdfjsLib.getDocument(typedArray).promise.then(function (pdf) {
+            var numPages = pdf.numPages;
+            var extractedText = '';
+
+            // Leer todas las páginas del PDF
+            var promises = [];
+            for (var i = 1; i <= numPages; i++) {
+                promises.push(pdf.getPage(i).then(function (page) {
+                    return page.getTextContent().then(function (textContent) {
+                        textContent.items.forEach(function (item) {
+                            extractedText += item.str + ' '; // Concatenar el texto extraído
+                        });
+                    });
+                }));
+            }
+
+            // Esperar a que todas las páginas se hayan procesado
+            Promise.all(promises).then(function () {
+                // Detectar el banco en el texto extraído
+                var bancoDetectado = detectarBanco(extractedText);
+
+                // Comparar el banco detectado con el banco seleccionado
+                if (bancoDetectado.toLowerCase() === selectedBank.toLowerCase()) {
+                    alert(`Banco detectado y seleccionado: ${bancoDetectado}`);
+                } else {
+                    alert(`Banco detectado: ${bancoDetectado}, pero seleccionaste: ${selectedBank}. \nFavor de seleccionar el correcto.`);
+                }
+
+                // Aquí puedes continuar con el procesamiento del PDF si se detecta el banco.
+                console.log(extractedText); // Mostrar el texto extraído para depuración
+            });
+        });
+    };
+
+    reader.readAsArrayBuffer(file); // Leer el archivo PDF como ArrayBuffer
+}
+
+function detectarBanco(extractedText) {
+    // Diccionario de bancos y sus palabras clave
+    var bancoKeywords = {
+        "Banregio": ["BANREGIO", "BANCO REGIONAL", "Banregio"],
+        "BBVA": ["BBVA", "BANCO BBVA"],
+        "Alquimia": ["Alquimia", "ALQUIMIA", "Alquimia Digital", "alquimiapay"]
+    };
+
+    // Recorrer cada banco y sus palabras clave
+    for (var banco in bancoKeywords) {
+        var keywords = bancoKeywords[banco];
+        // Comprobar si alguna de las palabras clave está en el texto extraído
+        for (var i = 0; i < keywords.length; i++) {
+            if (extractedText.toLowerCase().includes(keywords[i].toLowerCase())) {
+                return banco; // Retorna el banco detectado
+            }
+        }
+    }
+
+    return "Banco no identificado"; // Retorna esto si no se detecta ningún banco
+}

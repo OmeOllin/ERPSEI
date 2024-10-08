@@ -29,6 +29,9 @@ using Microsoft.AspNetCore.Identity;
 using ERPSEI.Data.Managers.Empresas;
 using ERPSEI.Data.Entities.Empresas;
 using ERPSEI.Areas.Catalogos.Pages;
+using ERPSEI.Data.Entities.Reportes;
+using ERPSEI.Data.Managers.Reportes;
+using NPOI.SS.Formula.Functions;
 
 namespace ERPSEI.Areas.ERP.Pages
 {
@@ -169,6 +172,33 @@ namespace ERPSEI.Areas.ERP.Pages
         }
 
         public async Task<JsonResult> OnGetConciliacionesList()
+        {
+                List<string> jsonConciliaciones = new List<string>();
+                List<Conciliacion> conciliaciones = await conciliacionManager.GetAllAsync();
+
+                foreach (Conciliacion cons in conciliaciones)
+                {
+                    jsonConciliaciones.Add("{" +
+                        $"\"Id\": \"{cons.Id}\", " +
+                        $"\"Fecha\": \"{cons.Fecha}\", " +
+                        $"\"Descripcion\": \"{cons.Descripcion}\", " +
+                        $"\"Total\": \"{cons.Total}\", " +
+                        $"\"BancoId\": \"{cons.BancoId}\", " +
+                        $"\"Cliente\": \"{cons.Cliente?.Id}\", " +
+                        $"\"EmpresaId\": \"{cons.EmpresaId}\", " +
+                        $"\"UsuarioCreadorId\": \"{cons.AppUserC?.Id}\", " +
+                        $"\"AppUserCId\": \"{cons.AppUserC}\", " +
+                        $"\"UsuarioModificadorId\": \"{cons.AppUserM?.Id}\", " +
+                        $"\"AppUserMId\": \"{cons.AppUserM}\", " +
+                        $"\"Deshabilitado\": \"{cons.Deshabilitado}\"" +
+                        "}");
+                }
+
+                string jsonResponse = $"[{string.Join(",", jsonConciliaciones)}]";
+                return new JsonResult(jsonResponse);
+        }
+
+        public async Task<JsonResult> OnGetMovimientosList()
         {
             ServerResponse resp = new(true, stringLocalizer["AsistenciaSavedUnsuccessfully"]);
 
