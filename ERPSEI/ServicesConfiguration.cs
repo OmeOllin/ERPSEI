@@ -23,6 +23,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
 using System.Reflection;
+using ERPSEI.Data.Managers.SAT.cfdiv40;
 
 namespace ERPSEI
 {
@@ -100,6 +101,9 @@ namespace ERPSEI
 
         private static void ConfigureDIFacturacion(WebApplicationBuilder _builder)
         {
+            //Comprobantes
+            _builder.Services.AddScoped<IComprobanteManager, ComprobanteManager>();
+
             //Catálogos SAT
             _builder.Services.AddScoped<IAutorizacionesPrefactura, AutorizacionesPrefacturaManager>();
 			_builder.Services.AddScoped<IExportacionManager, ExportacionManager>();
